@@ -2,6 +2,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.serialization)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -64,4 +67,40 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    // Glide
+    implementation(libs.glide.compose)
+    //accompanist navigation animation\
+    implementation(libs.accompanist.navigation.animation)
+
+    // Timber
+    implementation(libs.timber)
+
+    // dataStore
+    implementation(libs.datastore.preferences)
+
+    // Koin
+    implementation(libs.koin)
+    implementation(libs.koin.worker)
+
+    // livedata
+    implementation(libs.livedata)
+    implementation(libs.livedata.runtime)
+
+    // viewModel
+    implementation(libs.viewmodel.compose)
+
+    // coil
+    implementation(libs.coil.compose)
+
+    // room
+//    implementation(libs.room)
+//    implementation(libs.room.ktx)
+//    ksp(libs.room.compiler)
+
+    // Fuel-kt
+    implementation(libs.fuel)
+
+    // kotlinx.serialization
+    implementation(libs.serialization)
 }
