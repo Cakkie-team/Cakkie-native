@@ -41,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.kotlin.stdlib.jdk7)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -94,13 +95,19 @@ dependencies {
     implementation(libs.coil.compose)
 
     // room
-//    implementation(libs.room)
-//    implementation(libs.room.ktx)
-//    ksp(libs.room.compiler)
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Fuel-kt
     implementation(libs.fuel)
 
     // kotlinx.serialization
     implementation(libs.serialization)
+
+    //destination
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.destinations.core)
+    ksp(libs.destinations.ksp)
+    implementation(libs.accompanist.pager.indicator)
 }

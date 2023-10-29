@@ -1,13 +1,13 @@
 [versions]
 agp = "8.3.0-alpha09"
-kotlin = "1.9.0"
-core-ktx = "1.10.1"
+kotlin = "1.9.10"
+core-ktx = "1.12.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
-lifecycle-runtime-ktx = "2.6.1"
-activity-compose = "1.7.0"
-compose-bom = "2023.08.00"
+lifecycle-runtime-ktx = "2.6.2"
+activity-compose = "1.8.0"
+compose-bom = "2023.10.01"
 
 #compose destination
 composeDestinationsVersion = "1.9.42-beta"
@@ -24,20 +24,21 @@ fuel = "3.0.0-alpha1"
 # kotlinx serialization
 serialization = "1.5.1"
 # ksp
-ksp = "1.8.10-1.0.9"
+ksp = "1.9.10-1.0.13"
 # koin
 koin = "3.4.4"
 koin-worker = "3.4.0"
 
 # Livedata
-lifecycle = "2.6.1"
-lifecycle-runtime = "1.5.0-alpha04"
+lifecycle = "2.6.2"
+lifecycle-runtime = "1.5.4"
 
 # Room
-room = "2.5.1"
+room = "2.6.0"
 
 # Timber
 timber = "5.0.1"
+kotlinStdlibJdk7Version = "1.9.20-RC2"
 
 
 
@@ -106,6 +107,7 @@ koin-worker = { group = "io.insert-koin", name = "koin-androidx-workmanager", ve
 
 # timber
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+kotlin-stdlib-jdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7Version" }
 
 
 
