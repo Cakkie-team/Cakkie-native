@@ -15,11 +15,13 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @RootNavGraph(start = true)
 @Composable
 fun SplashScreen(navigator: DestinationsNavigator) {
+    val viewModel: SplashViewModel = koinViewModel()
     //navigate to the next screen after 2 seconds
     LaunchedEffect(key1 = Unit) {
         delay(2000)
