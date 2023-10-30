@@ -14,6 +14,6 @@ val appModule = module {
 
     //inject SplashViewModel
     viewModel {
-        SplashViewModel()
+        SplashViewModel(get())
     }
 }
