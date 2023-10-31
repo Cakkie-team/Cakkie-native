@@ -27,7 +27,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -99,9 +102,6 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // Fuel-kt
-    implementation(libs.fuel)
-
     // kotlinx.serialization
     implementation(libs.serialization)
 
@@ -110,4 +110,19 @@ dependencies {
     implementation(libs.destinations.core)
     ksp(libs.destinations.ksp)
     implementation(libs.accompanist.pager.indicator)
+
+    //Fuel-core
+    implementation(libs.fuel)
+
+    //Fuel-packages
+    implementation(libs.fuel.android)
+    implementation(libs.fuel.livedata)
+    implementation(libs.fuel.coroutines)
+    implementation(libs.fuel.kotlinx.serialization)
+
+    //gson type converter
+    implementation(libs.gson)
+
+    // file upload
+    implementation(libs.uploadservice)
 }
