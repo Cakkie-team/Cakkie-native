@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -64,5 +65,13 @@ fun EmailScreen() {
             placeholder = stringResource(id = R.string.email),
             keyboardType = KeyboardType.Email
         )
+        Spacer(modifier = Modifier.weight(0.3f))
+        CakkieButton(
+            Modifier.height(50.dp),
+            processing = false,
+            text = stringResource(id = R.string.continue_)
+        ) {
+
+        }
     }
 }
