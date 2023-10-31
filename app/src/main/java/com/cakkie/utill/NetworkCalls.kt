@@ -1,5 +1,8 @@
 package com.cakkie.utill
 
+import android.content.Context
+import android.net.Uri
+import com.cakkie.R
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
@@ -10,6 +13,9 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import net.gotev.uploadservice.data.UploadNotificationConfig
+import net.gotev.uploadservice.data.UploadNotificationStatusConfig
+import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import timber.log.Timber
 
 object NetworkCalls {
@@ -147,53 +153,53 @@ object NetworkCalls {
     }
 
 
-//    fun upload(
-//        context: Context,
-//        token: String,
-//        media: Uri?,
-//        endpoint: String,
-//        parameterName: String
-//    ) {
-//        MultipartUploadRequest(
-//            context,
-//            serverUrl = endpoint
-//        ).apply {
-//            setMethod("POST")
-//            addHeader("Authorization", "Bearer $token")
-//            if (media != null) {
-//                addFileToUpload(
-//                    filePath = media.toString(),
-//                    parameterName = parameterName
-//                )
-//            }
-//        }
-//            .setNotificationConfig { _, uploadId ->
-//                UploadNotificationConfig(
-//                    notificationChannelId = "Cakkie",
-//                    isRingToneEnabled = false,
-//                    success = UploadNotificationStatusConfig(
-//                        title = "Upload Image",
-//                        message = "Image upload successful",
-//                        iconResourceID = R.drawable.ic_azabox_logo,
-//                    ),
-//                    error = UploadNotificationStatusConfig(
-//                        title = "Upload Image",
-//                        message = "Fail to upload image ",
-//                        iconResourceID = R.drawable.ic_azabox_logo,
-//                    ),
-//                    cancelled = UploadNotificationStatusConfig(
-//                        title = "Upload Image",
-//                        message = "Image upload cancelled",
-//                        iconResourceID = R.drawable.ic_azabox_logo,
-//                    ),
-//                    progress = UploadNotificationStatusConfig(
-//                        title = "Upload Image",
-//                        message = "Image upload in progress",
-//                        iconResourceID = R.drawable.ic_azabox_logo,
-//                    )
-//                )
-//            }
-//
-//            .startUpload()
-//    }
+    fun upload(
+        context: Context,
+        token: String,
+        media: Uri?,
+        endpoint: String,
+        parameterName: String
+    ) {
+        MultipartUploadRequest(
+            context,
+            serverUrl = endpoint
+        ).apply {
+            setMethod("POST")
+            addHeader("Authorization", "Bearer $token")
+            if (media != null) {
+                addFileToUpload(
+                    filePath = media.toString(),
+                    parameterName = parameterName
+                )
+            }
+        }
+            .setNotificationConfig { _, uploadId ->
+                UploadNotificationConfig(
+                    notificationChannelId = "Cakkie",
+                    isRingToneEnabled = false,
+                    success = UploadNotificationStatusConfig(
+                        title = "Upload Image",
+                        message = "Image upload successful",
+                        iconResourceID = R.drawable.logo,
+                    ),
+                    error = UploadNotificationStatusConfig(
+                        title = "Upload Image",
+                        message = "Fail to upload image ",
+                        iconResourceID = R.drawable.logo,
+                    ),
+                    cancelled = UploadNotificationStatusConfig(
+                        title = "Upload Image",
+                        message = "Image upload cancelled",
+                        iconResourceID = R.drawable.logo,
+                    ),
+                    progress = UploadNotificationStatusConfig(
+                        title = "Upload Image",
+                        message = "Image upload in progress",
+                        iconResourceID = R.drawable.logo,
+                    )
+                )
+            }
+
+            .startUpload()
+    }
 }
