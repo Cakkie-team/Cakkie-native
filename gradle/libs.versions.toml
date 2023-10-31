@@ -39,6 +39,7 @@ room = "2.6.0"
 # Timber
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
+uploadserviceVersion = "4.7.0"
 
 
 
@@ -90,6 +91,7 @@ glide-compose = { group = "com.github.bumptech.glide", name = "compose", version
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 # viewModel
+uploadservice = { module = "net.gotev:uploadservice", version.ref = "uploadserviceVersion" }
 viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 

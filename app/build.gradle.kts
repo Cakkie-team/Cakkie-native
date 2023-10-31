@@ -122,4 +122,7 @@ dependencies {
 
     //gson type converter
     implementation(libs.gson)
+
+    // file upload
+    implementation(libs.uploadservice)
 }
