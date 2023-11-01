@@ -27,15 +27,17 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 @Composable
 @Destination
-fun EmailScreen() {
+fun EmailScreen(navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     var email by remember {
         mutableStateOf(TextFieldValue(""))
@@ -108,8 +110,10 @@ fun EmailScreen() {
                     processing = false
                     Timber.d(user.toString())
                     //navigate to login screen
+
                 }.addOnFailureListener { exception ->
                     //show toast
+                    navigator.navigate(SignUpScreenDestination)
                     Toaster(
                         context = context,
                         message = "Email not found",

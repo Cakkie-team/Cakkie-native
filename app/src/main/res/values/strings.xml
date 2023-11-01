@@ -5,4 +5,13 @@
     <string name="email">Email</string>
     <string name="continue_">Continue</string>
     <string name="please_enter_a_valid_email">Please enter a valid email</string>
+    <string name="You_are_almost_there">You are almost there!</string>
+    <string name="Create_an_account_to_experience_sweet_delight">Create an account to experience sweet delight</string>
+    <string name="firstName">First Name</string>
+    <string name="LastName">Last Name</string>
+    <string name="Username">Username</string>
+    <string name="Address_City_State">Address/City/State</string>
+    <string name="Password">Password</string>
+    <string name="Create_Account">Create Account</string>
+
 </resources>

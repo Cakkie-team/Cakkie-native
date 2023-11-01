@@ -11,7 +11,6 @@ class NetworkResult<T, E> {
         return this
     }
 
-
     fun addOnFailureListener(listener: (E) -> Unit): NetworkResult<T, E> {
         onFailure = listener
         return this
