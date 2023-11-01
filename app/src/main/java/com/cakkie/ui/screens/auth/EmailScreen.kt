@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,6 +28,7 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.theme.Error
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -48,6 +50,7 @@ fun EmailScreen() {
     var processing by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
@@ -104,9 +107,17 @@ fun EmailScreen() {
                 viewModel.checkEmail(email.text).addOnSuccessListener { user ->
                     processing = false
                     Timber.d(user.toString())
+                    //navigate to login screen
                 }.addOnFailureListener { exception ->
+                    //show toast
+                    Toaster(
+                        context = context,
+                        message = "Email not found",
+                        image = R.drawable.logo
+                    ).show()
                     processing = false
                     Timber.d(exception.message)
+                    //navigate to sign up screen
                 }
             }
         }
