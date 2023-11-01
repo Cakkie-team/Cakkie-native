@@ -125,4 +125,7 @@ dependencies {
 
     // file upload
     implementation(libs.uploadservice)
+
+    //Toaster
+    implementation(libs.toaster.android)
 }

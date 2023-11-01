@@ -39,6 +39,7 @@ room = "2.6.0"
 # Timber
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
+toasterAndroidVersion = "0.3.0"
 uploadserviceVersion = "4.7.0"
 
 
@@ -58,6 +59,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+toaster-android = { module = "com.github.5AbhishekSaxena:Toaster-Android", version.ref = "toasterAndroidVersion" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
