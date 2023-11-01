@@ -7,11 +7,13 @@ import android.content.Context
 import android.os.Build
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import timber.log.Timber
 
 class CakkieApp : Application() {
     override fun onCreate() {
         super.onCreate()
-
+        // Start Timber logging
+        Timber.plant(Timber.DebugTree())
         // Start Koin dependency injection
         startKoin {
             modules(appModule)
