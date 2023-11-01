@@ -21,10 +21,11 @@ fun CakkieButton(
     modifier: Modifier = Modifier,
     text: String,
     processing: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
-        enabled = !processing,
+        enabled = !processing && enabled,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = CakkieBrown,
