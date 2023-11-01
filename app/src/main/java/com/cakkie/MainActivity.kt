@@ -17,6 +17,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.cakkie.ui.screens.NavGraphs
+import com.cakkie.ui.screens.auth.EmailScreen
+import com.cakkie.ui.screens.auth.LoginScreen
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieTheme
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -30,24 +32,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             CakkieTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Image(
-                            painter = painterResource(id = BackgroundImageId(isSystemInDarkTheme())),
-                            contentDescription = "background",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
-                        )
-                        DestinationsNavHost(
-                            navGraph = NavGraphs.root,
-                            engine = rememberAnimatedNavHostEngine()
-                        )
+              LoginScreen()
                     }
                 }
             }
         }
-    }
-}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

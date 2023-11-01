@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.0-alpha09"
+agp = "8.3.0-alpha11"
 fuelVersion = "2.3.1"
 gsonVersion = "2.10"
 kotlin = "1.9.10"
@@ -82,7 +82,6 @@ destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = 
 # Livedata
 livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 livedata-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "lifecycle-runtime" }
-
 
 # Glide
 glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide-compose" }
