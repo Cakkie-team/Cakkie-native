@@ -21,10 +21,12 @@ fun CakkieInputField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     placeholder: String,
-    keyboardType: KeyboardType
+    keyboardType: KeyboardType,
+    isError: Boolean = false
 ) {
 
     OutlinedTextField(
+        isError = isError,
         value = value,
         onValueChange = onValueChange,
         placeholder = {

@@ -12,8 +12,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,13 +26,27 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.theme.Error
 import com.ramcosta.composedestinations.annotation.Destination
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 @Destination
 fun EmailScreen() {
-    var email = remember {
+    val viewModel: AuthViewModel = koinViewModel()
+    var email by remember {
         mutableStateOf(TextFieldValue(""))
+    }
+    //email regex
+    val emailRegex = Regex(pattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")
+
+    //to check if the email is valid
+    var isEmailValid by remember {
+        mutableStateOf(true)
+    }
+    var processing by remember {
+        mutableStateOf(false)
     }
     Column(
         Modifier
@@ -60,18 +76,39 @@ fun EmailScreen() {
 
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = email,
+            onValueChange = { email = it },
             placeholder = stringResource(id = R.string.email),
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            isError = !isEmailValid
         )
+        //show error if email is not valid
+        if (!isEmailValid) {
+            Text(
+                text = stringResource(id = R.string.please_enter_a_valid_email),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Error
+            )
+        }
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
-            processing = false,
+            processing = processing,
+            enabled = email.text.isNotEmpty(),
             text = stringResource(id = R.string.continue_)
         ) {
-
+            //check if the email is valid
+            isEmailValid = emailRegex.matches(input = email.text)
+            if (isEmailValid) {
+                processing = true
+                viewModel.checkEmail(email.text).addOnSuccessListener { user ->
+                    processing = false
+                    Timber.d(user.toString())
+                }.addOnFailureListener { exception ->
+                    processing = false
+                    Timber.d(exception.message)
+                }
+            }
         }
     }
 }
