@@ -1,5 +1,7 @@
 package com.cakkie.ui.screens.auth
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +21,8 @@ import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -41,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import androidx.compose.runtime.*
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.CakkiePassword
@@ -54,7 +60,6 @@ import timber.log.Timber
 @Composable
 @Destination
 fun SignUpScreen() {
-
     var FirstName by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -172,19 +177,50 @@ fun SignUpScreen() {
 
             )
         Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(checked = ischecked, onCheckedChange = { ischecked = it })
 
-            Row(modifier = Modifier
-                .fillMaxWidth(),
-               verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                Text(text = stringResource(id = R.string.I_agree_to),  style = MaterialTheme.typography.bodyLarge)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.I_agree_to),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp
+                )
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = stringResource(id = R.string.Terms_of_Service), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+                Text(
+                    text = stringResource(id = R.string.Terms_of_Service),
+                    color = CakkieBrown,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.clickable {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.cakkie.com/terms-and-conditions")
+                        )
+                        context.startActivity(intent)
+                    },
+                    fontSize = 12.sp
+                )
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = stringResource(id = R.string.and),  style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = stringResource(id = R.string.and),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp
+                )
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = stringResource(id = R.string.Privacy_Policy), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  }, fontSize = 12.sp)
+                Text(
+                    text = stringResource(id = R.string.Privacy_Policy),
+                    color = CakkieBrown,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.clickable {  val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.cakkie.com/privacy-policy")
+                    )
+                        context.startActivity(intent)},
+                    fontSize = 12.sp
+                )
             }
 
 
@@ -220,11 +256,22 @@ fun SignUpScreen() {
 //            }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 50.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-            Text(text = stringResource(id = R.string.Already_have_an_account),  style = MaterialTheme.typography.bodyLarge)
-            Text(text = stringResource(id = R.string.Login), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.Already_have_an_account),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = stringResource(id = R.string.Login),
+                color = CakkieBrown,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.clickable { })
         }
 
     }
