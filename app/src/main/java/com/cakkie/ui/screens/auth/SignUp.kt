@@ -17,44 +17,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Colors
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import androidx.compose.runtime.*
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.CakkiePassword
 import com.cakkie.ui.theme.CakkieBrown
-import com.cakkie.ui.theme.Error
-import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
-import timber.log.Timber
 
 
 @Composable
@@ -69,7 +51,7 @@ fun SignUpScreen() {
     var UserName by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    var Adddress by remember {
+    var Address by remember {
         mutableStateOf(TextFieldValue(""))
     }
     var Password by remember {
@@ -86,6 +68,13 @@ fun SignUpScreen() {
             false
         )
     }
+
+    val canProceed = FirstName.text.isNotBlank() &&
+            LastName.text.isNotBlank() &&
+            UserName.text.isNotBlank() &&
+            Address.text.isNotBlank() &&
+            Password.text.isNotBlank()&&!ischecked
+
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
@@ -160,8 +149,8 @@ fun SignUpScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
         CakkieInputField(
-            value = Adddress,
-            onValueChange = { Adddress = it },
+            value = Address,
+            onValueChange = { Address = it },
             placeholder = stringResource(id = R.string.Address_City_State),
             keyboardType = KeyboardType.Text,
 
@@ -230,7 +219,7 @@ fun SignUpScreen() {
         CakkieButton(
             Modifier.height(50.dp),
             processing = processing,
-//            enabled = email.text.isNotEmpty(),
+           enabled =canProceed,
             text = stringResource(id = R.string.Create_Account)
         ) {
 
