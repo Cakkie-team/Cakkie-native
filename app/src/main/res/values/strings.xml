@@ -12,4 +12,5 @@
     <string name="do_not_have_account">Don\'t have an account? </string>
     <string name="create_account">Create an account</string>
     <string name="forget_password">Forget Password</string>
+    <string name="sorry_password_is_incorrect">Sorry password is incorrect</string>
 </resources>
