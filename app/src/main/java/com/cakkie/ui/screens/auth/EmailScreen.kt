@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.SignUpScreenDestination
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
@@ -108,12 +108,11 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                 processing = true
                 viewModel.checkEmail(email.text).addOnSuccessListener { user ->
                     processing = false
-                    Timber.d(user.toString())
+//                    Timber.d(user.toString())
                     //navigate to login screen
-
+                    navigator.navigate(LoginScreenDestination(user.email))
                 }.addOnFailureListener { exception ->
                     //show toast
-                    navigator.navigate(SignUpScreenDestination)
                     Toaster(
                         context = context,
                         message = "Email not found",
