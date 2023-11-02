@@ -13,5 +13,13 @@
     <string name="Address_City_State">Address/City/State</string>
     <string name="Password">Password</string>
     <string name="Create_Account">Create Account</string>
+    <string name="I_agree_to">I agree to </string>
+    <string name="Terms_of_Service"> Terms of Service</string>
+    <string name="and">and</string>
+    <string name="Privacy_Policy"> Privacy Policy</string>
+    <string name="Already_have_an_account">Already have an account?</string>
+    <string name="Login">Login</string>
+
+
 
 </resources>

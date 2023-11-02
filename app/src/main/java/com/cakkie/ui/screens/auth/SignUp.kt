@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Colors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,12 +33,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.CakkiePassword
+import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
@@ -54,6 +64,9 @@ fun SignUpScreen() {
     var UserName by remember {
         mutableStateOf(TextFieldValue(""))
     }
+    var Adddress by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
     var Password by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -61,6 +74,12 @@ fun SignUpScreen() {
     val context = LocalContext.current
     var processing by remember {
         mutableStateOf(false)
+    }
+
+    var ischecked by remember {
+        mutableStateOf(
+            false
+        )
     }
     Column(
         Modifier
@@ -72,7 +91,7 @@ fun SignUpScreen() {
 
         Box(
 
-           contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
 
@@ -80,9 +99,10 @@ fun SignUpScreen() {
                 painter = painterResource(id = R.drawable.arrow_back),
                 contentDescription = "Arrow Back",
 
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .clickable {
 
-                }
+                    }
                     .align(Alignment.TopStart)
                     .size(24.dp)
             )
@@ -133,13 +153,49 @@ fun SignUpScreen() {
 
             )
 
-        Spacer(modifier = Modifier.weight(0.3f))
+        Spacer(modifier = Modifier.height(16.dp))
+        CakkieInputField(
+            value = Adddress,
+            onValueChange = { Adddress = it },
+            placeholder = stringResource(id = R.string.Address_City_State),
+            keyboardType = KeyboardType.Text,
+
+            )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        CakkiePassword(
+
+            value = Password,
+            onValueChange = { Password = it },
+            placeholder = stringResource(id = R.string.Password),
+            keyboardType = KeyboardType.Password,
+
+            )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = ischecked, onCheckedChange = { ischecked = it })
+
+            Row(modifier = Modifier
+                .fillMaxWidth(),
+               verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                Text(text = stringResource(id = R.string.I_agree_to),  style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = stringResource(id = R.string.Terms_of_Service), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = stringResource(id = R.string.and),  style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = stringResource(id = R.string.Privacy_Policy), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+            }
+        }
+        Spacer(modifier = Modifier.height(50.dp))
+
         CakkieButton(
             Modifier.height(50.dp),
             processing = processing,
 //            enabled = email.text.isNotEmpty(),
             text = stringResource(id = R.string.Create_Account)
         ) {
+
             //check if the email is valid
 //            isEmailValid = emailRegex.matches(input = email.text)
 //            if (isEmailValid) {
@@ -161,5 +217,13 @@ fun SignUpScreen() {
 //                }
 //            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 50.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+            Text(text = stringResource(id = R.string.Already_have_an_account),  style = MaterialTheme.typography.bodyLarge)
+            Text(text = stringResource(id = R.string.Login), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+        }
+
     }
 }
