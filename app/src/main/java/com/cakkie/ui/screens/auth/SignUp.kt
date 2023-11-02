@@ -184,7 +184,7 @@ fun SignUpScreen() {
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = stringResource(id = R.string.and),  style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = stringResource(id = R.string.Privacy_Policy), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  })
+                Text(text = stringResource(id = R.string.Privacy_Policy), color = CakkieBrown, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable {  }, fontSize = 12.sp)
             }
         }
         Spacer(modifier = Modifier.height(50.dp))
