@@ -28,6 +28,7 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
@@ -121,6 +122,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                     processing = false
                     Timber.d(exception.message)
                     //navigate to sign up screen
+                    navigator.navigate(SignUpScreenDestination(email = email.text))
                 }
             }
         }

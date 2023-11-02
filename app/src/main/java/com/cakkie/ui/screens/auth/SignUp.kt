@@ -21,7 +21,11 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,14 +38,13 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.components.CakkiePassword
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 
 
 @Composable
 @Destination
-fun SignUpScreen() {
+fun SignUpScreen(email: String) {
     var FirstName by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -73,7 +76,7 @@ fun SignUpScreen() {
             LastName.text.isNotBlank() &&
             UserName.text.isNotBlank() &&
             Address.text.isNotBlank() &&
-            Password.text.isNotBlank()&&!ischecked
+            Password.text.isNotBlank() && !ischecked
 
     Column(
         Modifier
@@ -113,11 +116,11 @@ fun SignUpScreen() {
 
 
         Text(
-            text = stringResource(id = R.string.You_are_almost_there),
+            text = stringResource(id = R.string.you_are_almost_there),
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = stringResource(id = R.string.Create_an_account_to_experience_sweet_delight),
+            text = stringResource(id = R.string.create_an_account_to_experience_sweet_delight),
             style = MaterialTheme.typography.bodyLarge
         )
 
@@ -151,20 +154,18 @@ fun SignUpScreen() {
         CakkieInputField(
             value = Address,
             onValueChange = { Address = it },
-            placeholder = stringResource(id = R.string.Address_City_State),
+            placeholder = stringResource(id = R.string.address_City_State),
             keyboardType = KeyboardType.Text,
 
             )
 
         Spacer(modifier = Modifier.height(16.dp))
-        CakkiePassword(
-
+        CakkieInputField(
             value = Password,
             onValueChange = { Password = it },
-            placeholder = stringResource(id = R.string.Password),
+            placeholder = stringResource(id = R.string.password),
             keyboardType = KeyboardType.Password,
-
-            )
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(checked = ischecked, onCheckedChange = { ischecked = it })
@@ -174,13 +175,13 @@ fun SignUpScreen() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(id = R.string.I_agree_to),
+                    text = stringResource(id = R.string.i_agree_to),
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = stringResource(id = R.string.Terms_of_Service),
+                    text = stringResource(id = R.string.terms_of_Service),
                     color = CakkieBrown,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.clickable {
@@ -200,14 +201,16 @@ fun SignUpScreen() {
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = stringResource(id = R.string.Privacy_Policy),
+                    text = stringResource(id = R.string.privacy_Policy),
                     color = CakkieBrown,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.clickable {  val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("https://www.cakkie.com/privacy-policy")
-                    )
-                        context.startActivity(intent)},
+                    modifier = Modifier.clickable {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.cakkie.com/privacy-policy")
+                        )
+                        context.startActivity(intent)
+                    },
                     fontSize = 12.sp
                 )
             }
@@ -219,8 +222,8 @@ fun SignUpScreen() {
         CakkieButton(
             Modifier.height(50.dp),
             processing = processing,
-           enabled =canProceed,
-            text = stringResource(id = R.string.Create_Account)
+            enabled = canProceed,
+            text = stringResource(id = R.string.create_Account)
         ) {
 
             //check if the email is valid
@@ -253,11 +256,11 @@ fun SignUpScreen() {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(id = R.string.Already_have_an_account),
+                text = stringResource(id = R.string.already_have_an_account),
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = stringResource(id = R.string.Login),
+                text = stringResource(id = R.string.login),
                 color = CakkieBrown,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.clickable { })
