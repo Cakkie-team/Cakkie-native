@@ -35,7 +35,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
-fun LoginScreen() {
+fun LoginScreen(email: String) {
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }

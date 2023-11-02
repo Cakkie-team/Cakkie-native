@@ -110,7 +110,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                     processing = false
 //                    Timber.d(user.toString())
                     //navigate to login screen
-                    navigator.navigate(LoginScreenDestination)
+                    navigator.navigate(LoginScreenDestination(user.email))
                 }.addOnFailureListener { exception ->
                     //show toast
                     Toaster(
