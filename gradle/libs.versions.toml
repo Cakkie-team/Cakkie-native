@@ -83,7 +83,6 @@ destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = 
 livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 livedata-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "lifecycle-runtime" }
 
-
 # Glide
 glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide-compose" }
 
