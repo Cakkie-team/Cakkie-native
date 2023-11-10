@@ -1,6 +1,7 @@
 package com.cakkie.di
 
 import com.cakkie.datastore.Settings
+import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,5 +16,10 @@ val appModule = module {
     //inject SplashViewModel
     viewModel {
         SplashViewModel(get())
+    }
+
+    //inject AuthViewModel
+    viewModel {
+        AuthViewModel(get())
     }
 }

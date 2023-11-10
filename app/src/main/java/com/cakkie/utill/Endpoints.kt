@@ -12,8 +12,8 @@ object Endpoints {
     /**
      * Authentication
      **/
-
     val CHECK_EMAIL = { email: String -> "$BASE_URL/auth/check-email/$email" } /* GET request */
+    const val LOGIN = "$BASE_URL/auth/sign-in" /* POST request */
 
     /**
      * Pin
