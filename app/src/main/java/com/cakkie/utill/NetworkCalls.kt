@@ -12,6 +12,7 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.serializer
 import net.gotev.uploadservice.data.UploadNotificationConfig
 import net.gotev.uploadservice.data.UploadNotificationStatusConfig
@@ -22,23 +23,38 @@ object NetworkCalls {
     inline fun <reified T : Any> post(
         endpoint: String,
         body: List<Pair<String, Any?>>
-    ): NetworkResult<T, FuelError> {
-        val networkResult = NetworkResult<T, FuelError>()
-        endpoint.httpPost().body(JsonBody.generate(body))
+    ): NetworkResult<T, String> {
+        val networkResult = NetworkResult<T, String>()
+        val jsonBody = JsonBody.generate(body)
+        endpoint.httpPost().body(jsonBody)
             .responseObject<T>(json = Json {
                 ignoreUnknownKeys = true
                 coerceInputValues = true
             }) { request, response, result ->
+                response.let {
+                    Timber.d("request: $request")
+                    Timber.d("response: $response")
+                }
                 result.fold(
                     {
                         Timber.i(it.toString())
                         networkResult.onSuccess(it)
                     }, { e ->
                         Timber.e(e)
-                        Timber.d("body: ${JsonBody.generate(body)}")
-                        networkResult.onFailure(e)
+                        Timber.d("body: $jsonBody")
+                        response.let {
+                            //get data from response
+                            val data = response.data.toString(Charsets.UTF_8)
+                            Timber.d("data: $data")
+                            //convert data to json object
+                            val json = Json.parseToJsonElement(data)
+                            //get message from json object
+                            val message = json.jsonObject["message"].toString()
+                            networkResult.onFailure(message)
+                        }
                     }
                 )
+
             }
         return networkResult
     }

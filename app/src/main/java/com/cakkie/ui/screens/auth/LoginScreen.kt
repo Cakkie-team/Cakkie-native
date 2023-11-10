@@ -53,6 +53,9 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
     var isError by remember {
         mutableStateOf(false)
     }
+    var message by remember {
+        mutableStateOf("")
+    }
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
@@ -92,7 +95,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
         //show error if email is not valid
         if (isError) {
             Text(
-                text = stringResource(id = R.string.sorry_password_is_incorrect),
+                text = message,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Error
             )
@@ -122,6 +125,8 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                 }.addOnFailureListener {
                     processing = false
                     isError = true
+                    //replace all "
+                    message = it.replace("\"", "")
                     Toaster(
                         context = context,
                         message = "Login Failed",

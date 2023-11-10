@@ -21,11 +21,13 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
     fun login(email: String, password: String) =
         NetworkCalls.post<User>(
             endpoint = Endpoints.LOGIN, body = listOf(
-                "email" to email,
-                "password" to password,
-                "deviceName" to deviceName,
-                "deviceToken" to deviceID,
-                "os" to os
+                Pair("email", email),
+                Pair("password", password),
+                Pair("deviceName", deviceName),
+                Pair("deviceToken", deviceID),
+                Pair("os", os)
             )
-        )
+        ).addOnSuccessListener {
+
+        }
 }
