@@ -2,10 +2,14 @@ package com.cakkie.ui.screens.auth
 
 import android.os.Build
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cakkie.datastore.Settings
+import com.cakkie.models.LoginResponse
 import com.cakkie.models.User
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent {
@@ -19,7 +23,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
 
     //login
     fun login(email: String, password: String) =
-        NetworkCalls.post<User>(
+        NetworkCalls.post<LoginResponse>(
             endpoint = Endpoints.LOGIN, body = listOf(
                 Pair("email", email),
                 Pair("password", password),
@@ -28,6 +32,10 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("os", os)
             )
         ).addOnSuccessListener {
-
+            if (it.token.isNotEmpty()) {
+                viewModelScope.launch(Dispatchers.IO) {
+//                    settings.putPreference(SettingsConstants.TOKEN, it.token)
+                }
+            }
         }
 }

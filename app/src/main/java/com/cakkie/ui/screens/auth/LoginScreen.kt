@@ -117,16 +117,24 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
             viewModel.login(email, password.text)
                 .addOnSuccessListener {
                     processing = false
-                    Toaster(
-                        context = context,
-                        message = "Login Success",
-                        image = R.drawable.logo
-                    ).show()
+                    if (it.isNewDevice) {
+                        Toaster(
+                            context = context,
+                            message = it.message,
+                            image = R.drawable.logo
+                        ).show()
+                    } else {
+                        Toaster(
+                            context = context,
+                            message = "Login Success",
+                            image = R.drawable.logo
+                        ).show()
+                    }
+
                 }.addOnFailureListener {
                     processing = false
                     isError = true
-                    //replace all "
-                    message = it.replace("\"", "")
+                    message = it
                     Toaster(
                         context = context,
                         message = "Login Failed",

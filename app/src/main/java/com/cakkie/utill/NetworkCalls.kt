@@ -50,7 +50,7 @@ object NetworkCalls {
                             val json = Json.parseToJsonElement(data)
                             //get message from json object
                             val message = json.jsonObject["message"].toString()
-                            networkResult.onFailure(message)
+                            networkResult.onFailure(message.replace("\"", ""))
                         }
                     }
                 )
