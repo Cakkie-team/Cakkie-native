@@ -14,4 +14,7 @@
     <string name="create_account">Create an account</string>
     <string name="forget_password">Forget Password</string>
     <string name="sorry_password_is_incorrect">Sorry password is incorrect</string>
+    <string name="new_device_detected">New Device Detected</string>
+    <string name="kindly_enter_the_verification_code_sent_to_your_email">Kindly enter the verification code sent to %1$s below</string>
+    <string name="to_register_device">to register device</string>
 </resources>

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
@@ -123,6 +124,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             message = it.message,
                             image = R.drawable.logo
                         ).show()
+                        navigator.navigate(OtpScreenDestination(email = email, isNewDevice = true))
                     } else {
                         Toaster(
                             context = context,

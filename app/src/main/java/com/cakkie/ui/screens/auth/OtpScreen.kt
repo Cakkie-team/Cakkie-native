@@ -12,26 +12,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.components.CakkieInputField
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 @Destination
-fun OtpScreen() {
-    var email = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNavigator) {
+
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
@@ -50,21 +44,21 @@ fun OtpScreen() {
 
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = stringResource(id = R.string.otp_verification),
+            text = stringResource(
+                id =
+                if (isNewDevice) R.string.new_device_detected else R.string.otp_verification
+            ),
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = stringResource(id = R.string.enter_your_email_to_continue),
+            text = stringResource(
+                id = R.string.kindly_enter_the_verification_code_sent_to_your_email,
+                email
+            ) + if (isNewDevice) " " + stringResource(id = R.string.to_register_device) else "",
             style = MaterialTheme.typography.bodyLarge
         )
-
         Spacer(modifier = Modifier.height(40.dp))
-        CakkieInputField(
-            value = email.value,
-            onValueChange = { email.value = it },
-            placeholder = stringResource(id = R.string.email),
-            keyboardType = KeyboardType.Email
-        )
+
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
