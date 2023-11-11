@@ -56,4 +56,10 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 }
             }
         }
+
+    //resend otp
+    fun resendOtp(email: String) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.RESEND_OTP(email), body = listOf()
+        )
 }
