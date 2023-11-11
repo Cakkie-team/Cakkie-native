@@ -134,6 +134,7 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
                         message = "Verification Successful",
                         image = R.drawable.logo
                     ).show()
+                    //Todo: navigate to home screen
                 }.addOnFailureListener {
                     processing = false
                     isError = true
