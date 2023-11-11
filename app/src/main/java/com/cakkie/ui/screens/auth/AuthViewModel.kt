@@ -38,4 +38,22 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 }
             }
         }
+
+    //verify otp
+    fun verifyOtp(email: String, otp: String) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.VERIFY_OTP, body = listOf(
+                Pair("email", email),
+                Pair("otp", otp),
+                Pair("deviceName", deviceName),
+                Pair("deviceToken", deviceID),
+                Pair("os", os)
+            )
+        ).addOnSuccessListener {
+            if (it.token.isNotEmpty()) {
+                viewModelScope.launch(Dispatchers.IO) {
+//                    settings.putPreference(SettingsConstants.TOKEN, it.token)
+                }
+            }
+        }
 }
