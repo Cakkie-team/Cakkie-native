@@ -164,6 +164,23 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
                 .clickable {
                     if (!timerRunning) {
                         timerRunning = true
+                        viewModel
+                            .resendOtp(email = email)
+                            .addOnSuccessListener {
+                                timerRunning = true
+                                Toaster(
+                                    context = context,
+                                    message = "Otp Sent",
+                                    image = R.drawable.logo
+                                ).show()
+                            }
+                            .addOnFailureListener {
+                                Toaster(
+                                    context = context,
+                                    message = "Otp Resend Failed",
+                                    image = R.drawable.logo
+                                ).show()
+                            }
                     }
                 })
 
