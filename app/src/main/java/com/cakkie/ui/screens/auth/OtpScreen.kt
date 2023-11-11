@@ -24,10 +24,12 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -43,6 +45,10 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
 
     var timerRunning by remember {
         mutableStateOf(true)
+    }
+
+    var otp by remember {
+        mutableStateOf(TextFieldValue(""))
     }
 
     LaunchedEffect(key1 = timerRunning) {
@@ -85,7 +91,9 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(40.dp))
-
+        OtpInput(value = otp, onValueChange = {
+            otp = it
+        })
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
