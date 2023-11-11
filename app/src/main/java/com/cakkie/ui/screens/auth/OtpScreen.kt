@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -31,13 +32,28 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.Error
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @Destination
 fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNavigator) {
+    val viewModel: AuthViewModel = koinViewModel()
+    val context = LocalContext.current
+
+    var processing by remember {
+        mutableStateOf(false)
+    }
+    var isError by remember {
+        mutableStateOf(false)
+    }
+    var message by remember {
+        mutableStateOf("")
+    }
     //countdown timer
     var timer by remember {
         mutableIntStateOf(60)
@@ -50,6 +66,7 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
     var otp by remember {
         mutableStateOf(TextFieldValue(""))
     }
+
 
     LaunchedEffect(key1 = timerRunning) {
         timer = 60
@@ -94,13 +111,39 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
         OtpInput(value = otp, onValueChange = {
             otp = it
         })
+        //show error if email is not valid
+        if (isError) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Error
+            )
+        }
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
             processing = false,
             text = stringResource(id = R.string.continue_)
         ) {
-
+            processing = true
+            viewModel.verifyOtp(email, otp.text)
+                .addOnSuccessListener {
+                    processing = false
+                    Toaster(
+                        context = context,
+                        message = "Verification Successful",
+                        image = R.drawable.logo
+                    ).show()
+                }.addOnFailureListener {
+                    processing = false
+                    isError = true
+                    message = it
+                    Toaster(
+                        context = context,
+                        message = "Verification Failed",
+                        image = R.drawable.logo
+                    ).show()
+                }
         }
         Spacer(modifier = Modifier.height(20.dp))
 
