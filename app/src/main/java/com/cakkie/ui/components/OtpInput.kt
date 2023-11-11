@@ -56,7 +56,7 @@ fun OtpInput(
                 Text(
                     text = if (value.text.length > it) value.text[it].toString() else "",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 35.sp,
+                    fontSize = 32.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
