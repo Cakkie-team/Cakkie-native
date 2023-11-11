@@ -64,7 +64,12 @@ fun OtpInput(
     }
 
     TextField(
-        value = value, onValueChange = onValueChange,
+        value = value.copy(text = value.text.take(4)), // Limit to 4 characters
+        onValueChange = {
+            if (it.text.length <= 4) {
+                onValueChange(it)
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier
             .focusRequester(focusRequester)
