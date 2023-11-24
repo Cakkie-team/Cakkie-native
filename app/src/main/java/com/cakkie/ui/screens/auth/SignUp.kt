@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -132,7 +134,6 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { firstName = it },
                 placeholder = stringResource(id = R.string.firstName),
                 keyboardType = KeyboardType.Text,
-
                 )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
@@ -140,7 +141,6 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { lastName = it },
                 placeholder = stringResource(id = R.string.LastName),
                 keyboardType = KeyboardType.Text,
-
                 )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -149,7 +149,6 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { userName = it },
                 placeholder = stringResource(id = R.string.Username),
                 keyboardType = KeyboardType.Text,
-
                 )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +159,9 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 keyboardType = KeyboardType.Text,
                 isAddress = true
             )
-
+//Popup {
+//
+//}
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = password,
@@ -170,7 +171,15 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = ischecked, onCheckedChange = { ischecked = it })
+                Checkbox(
+                    checked = ischecked,
+                    onCheckedChange = { ischecked = it },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = CakkieBrown,
+                        uncheckedColor = CakkieBrown,
+                        checkmarkColor = CakkieBackground
+                    )
+                )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

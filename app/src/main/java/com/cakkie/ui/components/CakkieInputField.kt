@@ -33,7 +33,9 @@ fun CakkieInputField(
     placeholder: String,
     keyboardType: KeyboardType,
     isError: Boolean = false,
-    isAddress: Boolean = false
+    isAddress: Boolean = false,
+    onLocationClick: () -> Unit = {},
+    leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
@@ -90,11 +92,12 @@ fun CakkieInputField(
                     painter = painterResource(id = R.drawable.location),
                     contentDescription = "eye closed",
                     modifier = Modifier.clickable {
-
+                        onLocationClick.invoke()
                     }
                 )
             }
         },
+        leadingIcon = leadingIcon,
         visualTransformation = if (!visible) {
             PasswordVisualTransformation()
         } else {
