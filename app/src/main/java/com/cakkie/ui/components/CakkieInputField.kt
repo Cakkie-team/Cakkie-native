@@ -32,7 +32,8 @@ fun CakkieInputField(
     onValueChange: (TextFieldValue) -> Unit,
     placeholder: String,
     keyboardType: KeyboardType,
-    isError: Boolean = false
+    isError: Boolean = false,
+    isAddress: Boolean = false
 ) {
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
@@ -83,6 +84,15 @@ fun CakkieInputField(
                         }
                     )
                 }
+            }
+            if (isAddress) {
+                Image(
+                    painter = painterResource(id = R.drawable.location),
+                    contentDescription = "eye closed",
+                    modifier = Modifier.clickable {
+
+                    }
+                )
             }
         },
         visualTransformation = if (!visible) {
