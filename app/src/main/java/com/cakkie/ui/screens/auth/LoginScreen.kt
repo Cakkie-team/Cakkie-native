@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,14 +32,30 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.Error
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @Destination
-fun LoginScreen(email: String) {
+fun LoginScreen(email: String, navigator: DestinationsNavigator) {
+    val viewModel: AuthViewModel = koinViewModel()
+    val context = LocalContext.current
     var password by remember {
         mutableStateOf(TextFieldValue(""))
+    }
+    var processing by remember {
+        mutableStateOf(false)
+    }
+    var isError by remember {
+        mutableStateOf(false)
+    }
+    var message by remember {
+        mutableStateOf("")
     }
     Column(
         Modifier
@@ -67,10 +85,22 @@ fun LoginScreen(email: String) {
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                isError = false
+                password = it
+            },
             placeholder = stringResource(id = R.string.password),
-            keyboardType = KeyboardType.Password
+            keyboardType = KeyboardType.Password,
+            isError = isError,
         )
+        //show error if email is not valid
+        if (isError) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Error
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(id = R.string.forget_password),
@@ -80,9 +110,39 @@ fun LoginScreen(email: String) {
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
-            processing = false,
-            text = stringResource(id = R.string.login)
+            processing = processing,
+            text = stringResource(id = R.string.login),
+            enabled = password.text.isNotEmpty()
         ) {
+            processing = true
+            viewModel.login(email, password.text)
+                .addOnSuccessListener {
+                    processing = false
+                    if (it.isNewDevice) {
+                        Toaster(
+                            context = context,
+                            message = it.message,
+                            image = R.drawable.logo
+                        ).show()
+                        navigator.navigate(OtpScreenDestination(email = email, isNewDevice = true))
+                    } else {
+                        Toaster(
+                            context = context,
+                            message = "Login Success",
+                            image = R.drawable.logo
+                        ).show()
+                    }
+
+                }.addOnFailureListener {
+                    processing = false
+                    isError = true
+                    message = it
+                    Toaster(
+                        context = context,
+                        message = "Login Failed",
+                        image = R.drawable.logo
+                    ).show()
+                }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -98,7 +158,11 @@ fun LoginScreen(email: String) {
             Text(
                 text = stringResource(id = R.string.create_account),
                 style = MaterialTheme.typography.titleMedium,
-                color = CakkieBrown
+                color = CakkieBrown,
+                modifier = Modifier.clickable {
+                    //navigate to sign up screen
+//                    navigator.navigate(SignUpScreenDestination(email))
+                }
             )
         }
     }
