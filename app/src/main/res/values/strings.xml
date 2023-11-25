@@ -31,7 +31,7 @@
     <string name="and">and</string>
     <string name="privacy_Policy"> Privacy Policy</string>
     <string name="already_have_an_account">Already have an account?</string>
-
+    <string name="search_address_city_state">Search Address/City/State</string>
 
 
 </resources>

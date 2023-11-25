@@ -134,14 +134,14 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { firstName = it },
                 placeholder = stringResource(id = R.string.firstName),
                 keyboardType = KeyboardType.Text,
-                )
+            )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = lastName,
                 onValueChange = { lastName = it },
                 placeholder = stringResource(id = R.string.LastName),
                 keyboardType = KeyboardType.Text,
-                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
@@ -149,7 +149,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { userName = it },
                 placeholder = stringResource(id = R.string.Username),
                 keyboardType = KeyboardType.Text,
-                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
@@ -157,11 +157,9 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 onValueChange = { address = it },
                 placeholder = stringResource(id = R.string.address_City_State),
                 keyboardType = KeyboardType.Text,
-                isAddress = true
+                isAddress = true,
+                isEditable = false,
             )
-//Popup {
-//
-//}
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = password,
