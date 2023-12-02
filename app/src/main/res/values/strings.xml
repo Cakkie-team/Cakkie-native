@@ -19,4 +19,19 @@
     <string name="to_register_device">to register device</string>
     <string name="did_not_get_code">Didn’t get Verification Code?</string>
     <string name="resend_code">Resend Code</string>
+    <string name="you_are_almost_there">You are almost there!</string>
+    <string name="create_an_account_to_experience_sweet_delight">Create an account to experience sweet delight</string>
+    <string name="firstName">First Name</string>
+    <string name="LastName">Last Name</string>
+    <string name="Username">Username</string>
+    <string name="address_City_State">Address/City/State</string>
+    <string name="create_Account">Create Account</string>
+    <string name="i_agree_to">I agree to </string>
+    <string name="terms_of_Service"> Terms of Service</string>
+    <string name="and">and</string>
+    <string name="privacy_Policy"> Privacy Policy</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="search_address_city_state">Search Address/City/State</string>
+
+
 </resources>
