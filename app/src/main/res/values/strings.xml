@@ -32,6 +32,10 @@
     <string name="privacy_Policy"> Privacy Policy</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="search_address_city_state">Search Address/City/State</string>
+    <string name="forgot_your_password">Forgot your password?\n</string>
+    <string name="sorry_email_is_incorrect">Sorry email is incorrect</string>
+    <string name="submit">Submit</string>
+    <string name="no_worries">No worries sweetie, we got you covered.\nEnter the email linked to this account</string>
 
 
 </resources>
