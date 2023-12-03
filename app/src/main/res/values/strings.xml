@@ -4,21 +4,16 @@
     <string name="enter_your_email_to_continue">Please enter your email to continue</string>
     <string name="email">Email</string>
     <string name="continue_">Continue</string>
-    <string name="otp_verification">OTP Verification</string>
     <string name="please_enter_a_valid_email">Please enter a valid email</string>
     <string name="welcome_back">Welcome back!</string>
-    <string name="please_enter_password">please enter your password to continue</string>
+    <string name="please_enter_password">please enter password to continue</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="do_not_have_account">Don\'t have an account? </string>
     <string name="create_account">Create an account</string>
     <string name="forget_password">Forget Password</string>
     <string name="sorry_password_is_incorrect">Sorry password is incorrect</string>
-    <string name="new_device_detected">New Device Detected</string>
-    <string name="kindly_enter_the_verification_code_sent_to_your_email">Kindly enter the verification code sent to %1$s below</string>
-    <string name="to_register_device">to register device</string>
-    <string name="did_not_get_code">Didn’t get Verification Code?</string>
-    <string name="resend_code">Resend Code</string>
+    <string name="otp_verification">OTP Verification</string>
     <string name="you_are_almost_there">You are almost there!</string>
     <string name="create_an_account_to_experience_sweet_delight">Create an account to experience sweet delight</string>
     <string name="firstName">First Name</string>
@@ -32,6 +27,10 @@
     <string name="privacy_Policy"> Privacy Policy</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="search_address_city_state">Search Address/City/State</string>
+    <string name="forgot_your_password">Forgot your Password?</string>
+    <string name="submit">Submit</string>
+    <string name="no_worries">No worries sweetie, we got you covered. Enter the email linked to this account.</string>
+    <string name="sorry_email_is_incorrect">Sorry Email is incorrect.</string>
 
 
 </resources>

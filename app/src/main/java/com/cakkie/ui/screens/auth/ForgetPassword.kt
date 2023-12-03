@@ -1,17 +1,12 @@
 package com.cakkie.ui.screens.auth
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -32,20 +27,19 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
-import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
-import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @Destination
-fun LoginScreen(email: String, navigator: DestinationsNavigator) {
+fun ForgetPassword( navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     val context = LocalContext.current
-    var password by remember {
+    var email by remember {
         mutableStateOf(TextFieldValue(""))
     }
     var processing by remember {
@@ -62,6 +56,12 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Image(
+            painter = painterResource(id = R.drawable.arrow_back),
+            contentDescription = "arrow back",
+            modifier = Modifier
+                .padding(bottom = 30.dp)
+        )
+        Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "cakkie logo",
             modifier = Modifier
@@ -71,87 +71,43 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = stringResource(id = R.string.welcome_back),
+            text = stringResource(id = R.string.forgot_your_password),
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = stringResource(id = R.string.please_enter_password),
-            style = MaterialTheme.typography.bodyLarge
+            text = stringResource(id = R.string.no_worries),
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
-            value = password,
+            value = email,
             onValueChange = {
                 isError = false
-                password = it
+                email = it
             },
-            placeholder = stringResource(id = R.string.password),
-            keyboardType = KeyboardType.Password,
+            placeholder = stringResource(id = R.string.email),
+            keyboardType = KeyboardType.Email,
             isError = isError,
         )
         //show error if email is not valid
         if (isError) {
             Text(
-                text = stringResource(id = R.string.sorry_password_is_incorrect),
+                text = stringResource(id = R.string.sorry_email_is_incorrect),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Error
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(id = R.string.forget_password),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.align(Alignment.End)
-        )
-        Spacer(modifier = Modifier.weight(0.3f))
+        Spacer(modifier = Modifier.height(50.dp))
         CakkieButton(
             Modifier.height(50.dp),
             processing = processing,
-            text = stringResource(id = R.string.login),
-            enabled = password.text.isNotEmpty()
+            text = stringResource(id = R.string.submit),
+            enabled = email.text.isNotEmpty()
         ) {
-            processing = true
-            viewModel.login(email, password.text)
-                .addOnSuccessListener {
-                    processing = false
-                    Toaster(
-                        context = context,
-                        message = "Login Success",
-                        image = R.drawable.logo
-                    ).show()
-                }.addOnFailureListener {
-                    processing = false
-                    isError = true
-                    Toaster(
-                        context = context,
-                        message = "Login Failed",
-                        image = R.drawable.logo
-                    ).show()
-                }
-            //navigate to sign up screen
-            navigator.navigate(ForgetPasswordDestination)
+            navigator.navigate(OtpScreenDestination)
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.do_not_have_account),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = stringResource(id = R.string.create_account),
-                style = MaterialTheme.typography.titleMedium,
-                color = CakkieBrown,
-                modifier = Modifier.clickable {
-                    //navigate to sign up screen
-//                    navigator.navigate(SignUpScreenDestination(email))
-                }
-            )
-        }
+        Spacer(modifier = Modifier.height(60.dp))
+
     }
 }
