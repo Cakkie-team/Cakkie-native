@@ -125,4 +125,8 @@ dependencies {
 
     // file upload
     implementation(libs.uploadservice)
+
+    //location
+    implementation(libs.play.services.location)
+
 }
