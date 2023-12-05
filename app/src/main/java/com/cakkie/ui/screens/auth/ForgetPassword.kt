@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,86 +28,117 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.screens.destinations.ResetPasswordDestination
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 @Destination
 fun ForgetPassword( navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
-    val context = LocalContext.current
     var email by remember {
         mutableStateOf(TextFieldValue(""))
+    }
+    //email regex
+    val emailRegex = Regex(pattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")
+
+    //to check if the email is valid
+    var isEmailValid by remember {
+        mutableStateOf(true)
     }
     var processing by remember {
         mutableStateOf(false)
     }
-    var isError by remember {
-        mutableStateOf(false)
-    }
+    val context = LocalContext.current
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
-            contentDescription = "arrow back",
+            contentDescription = "Arrow Back",
+
             modifier = Modifier
-                .padding(bottom = 30.dp)
+                .clickable {
+                    navigator.popBackStack()
+                }
+                .size(24.dp)
         )
+        Spacer(modifier = Modifier.height(20.dp))
+
         Image(
             painter = painterResource(id = R.drawable.logo),
-            contentDescription = "cakkie logo",
+            contentDescription = "Cakkie Logo",
             modifier = Modifier
                 .padding(bottom = 30.dp)
                 .size(160.dp)
                 .align(Alignment.CenterHorizontally)
         )
+
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = stringResource(id = R.string.forgot_your_password),
+            text = stringResource(id = R.string.forget_password),
             style = MaterialTheme.typography.titleLarge
         )
         Text(
             text = stringResource(id = R.string.no_worries),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyLarge
         )
 
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
             value = email,
-            onValueChange = {
-                isError = false
-                email = it
-            },
+            onValueChange = { email = it },
             placeholder = stringResource(id = R.string.email),
             keyboardType = KeyboardType.Email,
-            isError = isError,
+            isError = !isEmailValid
         )
         //show error if email is not valid
-        if (isError) {
+        if (!isEmailValid) {
             Text(
-                text = stringResource(id = R.string.sorry_email_is_incorrect),
+                text = stringResource(id = R.string.please_enter_a_valid_email),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Error
             )
         }
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
             processing = processing,
-            text = stringResource(id = R.string.submit),
-            enabled = email.text.isNotEmpty()
+            enabled = email.text.isNotEmpty(),
+            text = stringResource(id = R.string.submit)
         ) {
-            navigator.navigate(OtpScreenDestination)
+            //check if the email is valid
+            isEmailValid = emailRegex.matches(input = email.text)
+            if (isEmailValid) {
+//                processing = true
+//                viewModel.checkEmail(email.text).addOnSuccessListener { user ->
+//                    processing = false
+//                    Timber.d(user.toString())
+//                    navigate to login screen
+//                    navigator.navigate(LoginScreenDestination(user.email))
+//                }.addOnFailureListener { exception ->
+                    //show toast
+//                    Toaster(
+//                        context = context,
+//                        message = "Email not found",
+//                        image = R.drawable.logo
+//                    ).show()
+//                    processing = false
+//                    Timber.d(exception.message)
+                    //navigate to sign up screen
+                    navigator.navigate(OtpScreenDestination(email = email.text, isNewDevice = false))
+               // }
+            }
         }
-        Spacer(modifier = Modifier.height(60.dp))
-
     }
 }

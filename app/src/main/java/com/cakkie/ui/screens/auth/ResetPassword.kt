@@ -37,7 +37,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 @Destination
-fun ResetPassword(navigator: DestinationsNavigator) {
+fun ResetPassword(email: String, navigator: DestinationsNavigator) {
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -47,18 +47,12 @@ fun ResetPassword(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
 
-    var ischecked by remember {
-        mutableStateOf(
-            false
-        )
-    }
     var confirmPassword by remember {
-        mutableStateOf(false)
+        mutableStateOf(TextFieldValue(""))
     }
 
-    var newPassword by remember {
-        mutableStateOf(false)
-    }
+    val canProceed = password.text.isNotEmpty() &&
+            password.text == confirmPassword.text
 
 
     Column(
@@ -120,21 +114,18 @@ fun ResetPassword(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
 
             CakkieInputField(
-                value = password,
-                onValueChange = { password = it },
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
                 placeholder = stringResource(id = R.string.confirm_new_password),
                 keyboardType = KeyboardType.Password,
             )
             Spacer(modifier = Modifier.height(150.dp))
 
-            if (confirmPassword == newPassword) {
-
-            }
 
             CakkieButton(
                 Modifier.height(50.dp),
                 processing = processing,
-                enabled = false,
+                enabled = canProceed,
                 text = stringResource(id = R.string.continue_)
             ) {
 

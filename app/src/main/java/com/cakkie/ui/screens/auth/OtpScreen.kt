@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
+import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
@@ -134,7 +135,11 @@ fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNaviga
                         message = "Verification Successful",
                         image = R.drawable.logo
                     ).show()
-                    //Todo: navigate to home screen
+                    if (isNewDevice) {
+                        //Todo: navigate to home screen
+                    } else {
+                        navigator.navigate(ResetPasswordDestination(email))
+                    }
                 }.addOnFailureListener {
                     processing = false
                     isError = true

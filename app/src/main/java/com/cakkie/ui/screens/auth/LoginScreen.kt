@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
@@ -105,8 +106,11 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
         Text(
             text = stringResource(id = R.string.forget_password),
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable { navigator.navigate(ForgetPasswordDestination) }
         )
+
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
