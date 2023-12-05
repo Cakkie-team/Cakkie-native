@@ -33,6 +33,7 @@ import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -40,7 +41,7 @@ import timber.log.Timber
 
 @Composable
 @Destination
-fun ForgetPassword( navigator: DestinationsNavigator) {
+fun ForgetPassword(navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     var email by remember {
         mutableStateOf(TextFieldValue(""))
@@ -120,24 +121,32 @@ fun ForgetPassword( navigator: DestinationsNavigator) {
             //check if the email is valid
             isEmailValid = emailRegex.matches(input = email.text)
             if (isEmailValid) {
-//                processing = true
-//                viewModel.checkEmail(email.text).addOnSuccessListener { user ->
-//                    processing = false
-//                    Timber.d(user.toString())
-//                    navigate to login screen
-//                    navigator.navigate(LoginScreenDestination(user.email))
-//                }.addOnFailureListener { exception ->
-                    //show toast
-//                    Toaster(
-//                        context = context,
-//                        message = "Email not found",
-//                        image = R.drawable.logo
-//                    ).show()
-//                    processing = false
-//                    Timber.d(exception.message)
-                    //navigate to sign up screen
-                    navigator.navigate(OtpScreenDestination(email = email.text, isNewDevice = false))
-               // }
+                processing = true
+                viewModel.forgetPassword(email.text).addOnSuccessListener { response ->
+                    processing = false
+                    //  show toast
+                    Toaster(
+                        context = context,
+                        message = response.message,
+                        image = R.drawable.logo
+                    ).show()
+                    //    navigate to otp screen
+                    navigator.navigate(
+                        OtpScreenDestination(
+                            email = email.text,
+                            isNewDevice = false
+                        )
+                    )
+                }.addOnFailureListener { exception ->
+                    //  show toast
+                    Toaster(
+                        context = context,
+                        message = exception,
+                        image = R.drawable.logo
+                    ).show()
+                    processing = false
+                    Timber.d(exception)
+                }
             }
         }
     }

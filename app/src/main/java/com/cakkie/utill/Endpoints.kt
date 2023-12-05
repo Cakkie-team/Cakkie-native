@@ -16,6 +16,7 @@ object Endpoints {
     const val LOGIN = "$BASE_URL/auth/sign-in" /* POST request */
     const val VERIFY_OTP = "$BASE_URL/auth/verify-account" /* POST request */
     val RESEND_OTP = { email: String -> "$BASE_URL/auth/resend-otp/$email" } /* GET request */
+    const val FORGET_PASSWORD = "$BASE_URL/auth/forgot-password" /*FORGET_PASSWORD POST request*/
 
     /**
      * Pin

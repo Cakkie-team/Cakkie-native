@@ -62,4 +62,13 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
         NetworkCalls.post<LoginResponse>(
             endpoint = Endpoints.RESEND_OTP(email), body = listOf()
         )
+
+    //forget password
+    fun forgetPassword(email:String)=
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.FORGET_PASSWORD,
+            body = listOf(
+                "email" to email
+            )
+        )
 }
