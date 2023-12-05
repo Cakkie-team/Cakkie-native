@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.auth
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -40,6 +41,7 @@ import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -64,6 +66,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
     }
 
     val context = LocalContext.current
+    val activity = context as Activity
     var processing by remember {
         mutableStateOf(false)
     }
@@ -73,6 +76,8 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             false
         )
     }
+
+    val currentLocation = activity.getCurrentLocation()
 
     val canProceed = firstName.text.isNotBlank() &&
             lastName.text.isNotBlank() &&

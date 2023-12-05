@@ -1,5 +1,6 @@
 package com.cakkie.ui.components
 
+import android.location.Location
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -57,7 +58,8 @@ fun CakkieInputField(
     isAddress: Boolean = false,
     onLocationClick: () -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
-    isEditable: Boolean = true
+    isEditable: Boolean = true,
+    location: Location? = null
 ) {
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
