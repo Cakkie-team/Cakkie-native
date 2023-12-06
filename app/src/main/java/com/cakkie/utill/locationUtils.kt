@@ -54,11 +54,11 @@ fun Activity.getCurrentLocation(): Location? {
 
 
 //get address from location
-fun Context.getAddressFromLocation(location: Location): String {
+fun Context.getAddressFromLocation(location: Location): Address? {
     val geocoder = android.location.Geocoder(this)
     val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
     Timber.d("address: $addresses")
-    return addresses?.get(0)?.getAddressLine(0) ?: ""
+    return addresses?.get(0)
 }
 
 //get nearby address from location

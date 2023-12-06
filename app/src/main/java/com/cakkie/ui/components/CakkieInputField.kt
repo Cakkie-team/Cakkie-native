@@ -64,7 +64,7 @@ fun CakkieInputField(
     keyboardType: KeyboardType,
     isError: Boolean = false,
     isAddress: Boolean = false,
-    onLocationClick: () -> Unit = {},
+    onLocationClick: (Address) -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
     isEditable: Boolean = true,
     location: Location? = null
@@ -161,15 +161,21 @@ fun CakkieInputField(
                         modifier = Modifier.clickable {
                             if (location != null) {
 //                                Timber.d("address is: "+context.getAddressFromLocation(location))
-                                onValueChange.invoke(
+                                context.getAddressFromLocation(
+                                    location
+                                )?.let {
                                     TextFieldValue(
-                                        context.getAddressFromLocation(
-                                            location
-                                        )
+                                        it.getAddressLine(0)
                                     )
-                                )
+                                }?.let {
+                                    onValueChange.invoke(
+                                        it
+                                    )
+                                }
+                                context.getAddressFromLocation(
+                                    location
+                                )?.let { onLocationClick.invoke(it) }
                             }
-//                            onLocationClick.invoke()
                         }
                     )
                 }
@@ -239,6 +245,7 @@ fun CakkieInputField(
                                     .padding(6.dp)
                                     .clickable {
                                         onValueChange.invoke(TextFieldValue(address.getAddressLine(0)))
+                                        onLocationClick.invoke(address)
                                         showSearch = false
                                     }
                             )
