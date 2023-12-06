@@ -12,17 +12,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +27,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Transparent
@@ -42,10 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -188,73 +184,55 @@ fun CakkieInputField(
             },
             readOnly = !isEditable
         )
-        if (isAddress && showSearch) {
-            Popup(
-                onDismissRequest = {
-                    showSearch = false
+        DropdownMenu(
+            expanded = isAddress && showSearch,
+            onDismissRequest = {
+                showSearch = false
+            },
+            modifier = Modifier
+                .background(CakkieBackground, RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp))
+                .padding(horizontal = 10.dp, vertical = 5.dp)
+                .fillMaxWidth(0.9f)
+                .align(CenterHorizontally)
+        ) {
+            CakkieInputField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = stringResource(id = R.string.search_address_city_state),
+                keyboardType = KeyboardType.Text,
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.search),
+                        contentDescription = "search",
+                    )
                 },
-                offset = IntOffset(
-                    x = 0,
-                    y = 120
-                ),
-                properties = PopupProperties(
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true,
-                )
-            ) {
-                Card(
-                    Modifier.padding(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = CakkieBackground
-                    ),
-                    elevation = CardDefaults.elevatedCardElevation(),
-                ) {
-                    LazyColumn(
-                        Modifier
+                modifier = Modifier.padding(6.dp)
+            )
+            addressList.forEach { address ->
+                DropdownMenuItem(onClick = {
+                    // Handle item selection
+                    onValueChange.invoke(TextFieldValue(address.getAddressLine(0)))
+                    onLocationClick.invoke(address)
+                    showSearch = false
+                }) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = address.getAddressLine(0),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Black,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .shadow(1.dp, RoundedCornerShape(8.dp))
+                            .background(CakkieBackground)
                             .fillMaxWidth()
-                            .heightIn(max = 500.dp)
-                            .padding(10.dp)
-                    ) {
-                        stickyHeader {
-                            CakkieInputField(
-                                value = searchQuery,
-                                onValueChange = { searchQuery = it },
-                                placeholder = stringResource(id = R.string.search_address_city_state),
-                                keyboardType = KeyboardType.Text,
-                                leadingIcon = {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.search),
-                                        contentDescription = "search",
-                                    )
-                                },
-                            )
-                        }
-                        items(
-                            items = addressList,
-                        ) { address ->
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = address.getAddressLine(0),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Black,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .shadow(1.dp, RoundedCornerShape(8.dp))
-                                    .background(CakkieBackground)
-                                    .fillMaxWidth()
-                                    .padding(6.dp)
-                                    .clickable {
-                                        onValueChange.invoke(TextFieldValue(address.getAddressLine(0)))
-                                        onLocationClick.invoke(address)
-                                        showSearch = false
-                                    }
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                        }
-
-                    }
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
                 }
+
+
             }
         }
+
     }
 }
