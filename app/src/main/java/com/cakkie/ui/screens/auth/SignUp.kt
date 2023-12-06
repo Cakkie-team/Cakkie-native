@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.auth
 
 import android.app.Activity
 import android.content.Intent
+import android.location.Address
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -39,16 +40,21 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 
 @Composable
 @Destination
 fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
+    val viewModel: AuthViewModel = koinViewModel()
     var firstName by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -65,13 +71,17 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
         mutableStateOf(TextFieldValue(""))
     }
 
+    var location by remember {
+        mutableStateOf<Address?>(null)
+    }
+
     val context = LocalContext.current
     val activity = context as Activity
     var processing by remember {
         mutableStateOf(false)
     }
 
-    var ischecked by remember {
+    var isChecked by remember {
         mutableStateOf(
             false
         )
@@ -83,7 +93,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             lastName.text.isNotBlank() &&
             userName.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            password.text.isNotBlank() && !ischecked
+            password.text.isNotBlank() && !isChecked
 
     Column(
         Modifier
@@ -164,7 +174,10 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 keyboardType = KeyboardType.Text,
                 isAddress = true,
                 isEditable = false,
-                location = currentLocation
+                location = currentLocation,
+                onLocationClick = {
+                    location = it
+                }
             )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
@@ -176,8 +189,8 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = ischecked,
-                    onCheckedChange = { ischecked = it },
+                    checked = isChecked,
+                    onCheckedChange = { isChecked = it },
                     colors = CheckboxDefaults.colors(
                         checkedColor = CakkieBrown,
                         uncheckedColor = CakkieBrown,
@@ -241,26 +254,36 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 text = stringResource(id = R.string.create_Account)
             ) {
 
-                //check if the email is valid
-//            isEmailValid = emailRegex.matches(input = email.text)
-//            if (isEmailValid) {
-//                processing = true
-//                viewModel.checkEmail(email.text).addOnSuccessListener { user ->
-//                    processing = false
-//                    Timber.d(user.toString())
-//                    //navigate to login screen
-//                }.addOnFailureListener { exception ->
-//                    //show toast
-//                    Toaster(
-//                        context = context,
-//                        message = "Email not found",
-//                        image = R.drawable.logo
-//                    ).show()
-//                    processing = false
-//                    Timber.d(exception.message)
-//                    //navigate to sign up screen
-//                }
-//            }
+                // check if the email is valid
+                processing = true
+                viewModel.signUp(
+                    email = email,
+                    password = password.text,
+                    firstName = firstName.text,
+                    lastName = lastName.text,
+                    userName = userName.text,
+                    address = address.text,
+                    location = location!!
+                ).addOnSuccessListener { resp ->
+                    processing = false
+                    Timber.d(resp.toString())
+                    //navigate to home screen
+                    if (resp.isNewDevice) {
+                        navigator.navigate(OtpScreenDestination(email = email, isNewDevice = true))
+                    } else {
+                        //todo navigate to home screen
+                    }
+                }.addOnFailureListener { exception ->
+                    //show toast
+                    Toaster(
+                        context = context,
+                        message = exception,
+                        image = R.drawable.logo
+                    ).show()
+                    processing = false
+                    Timber.d(exception)
+                }
+
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(

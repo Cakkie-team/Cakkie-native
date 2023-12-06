@@ -1,9 +1,11 @@
 package com.cakkie.ui.screens.auth
 
+import android.location.Address
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cakkie.datastore.Settings
+import com.cakkie.datastore.SettingsConstants
 import com.cakkie.models.LoginResponse
 import com.cakkie.models.User
 import com.cakkie.utill.Endpoints
@@ -35,6 +37,40 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
             if (it.token.isNotEmpty()) {
                 viewModelScope.launch(Dispatchers.IO) {
 //                    settings.putPreference(SettingsConstants.TOKEN, it.token)
+                }
+            }
+        }
+
+    //login
+    fun signUp(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        userName: String,
+        address: String,
+        location: Address,
+        referralCode: String? = null
+    ) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.LOGIN, body = listOf(
+                Pair("email", email),
+                Pair("password", password),
+                Pair("firstName", firstName),
+                Pair("lastName", lastName),
+                Pair("userName", userName),
+                Pair("address", address),
+                Pair("city", location.subAdminArea),
+                Pair("state", location.adminArea),
+                Pair("latitude", location.latitude),
+                Pair("longitude", location.longitude),
+                Pair("country", location.countryName),
+                Pair("referralCode", referralCode),
+            )
+        ).addOnSuccessListener {
+            if (it.token.isNotEmpty()) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    settings.putPreference(SettingsConstants.TOKEN, it.token)
                 }
             }
         }
