@@ -2,7 +2,6 @@ package com.cakkie.ui.components
 
 import android.location.Address
 import android.location.Location
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,7 +49,6 @@ import com.cakkie.utill.getAddressFromLocation
 import com.cakkie.utill.getNearbyAddressFromLocation
 import com.cakkie.utill.searchAddressFromLocation
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CakkieInputField(
     modifier: Modifier = Modifier,
