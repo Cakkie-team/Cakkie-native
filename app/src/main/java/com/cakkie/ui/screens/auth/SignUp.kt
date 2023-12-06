@@ -164,6 +164,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 keyboardType = KeyboardType.Text,
                 isAddress = true,
                 isEditable = false,
+                location = currentLocation
             )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(

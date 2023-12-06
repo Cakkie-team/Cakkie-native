@@ -1,8 +1,10 @@
 package com.cakkie.ui.components
 
+import android.location.Address
 import android.location.Location
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -29,10 +31,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -45,6 +50,9 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.getAddressFromLocation
+import com.cakkie.utill.getNearbyAddressFromLocation
+import com.cakkie.utill.searchAddressFromLocation
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -61,6 +69,7 @@ fun CakkieInputField(
     isEditable: Boolean = true,
     location: Location? = null
 ) {
+    val context = LocalContext.current
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
     }
@@ -72,12 +81,19 @@ fun CakkieInputField(
     }
     var addressList by remember {
         mutableStateOf(
-            listOf(
-                "12 Aba Road/Umuahia/Abia",
-                "12 Aba Road/Umuahia/Abia",
-                "12 Aba Road/Umuahia/Abia"
-            )
+            listOf<Address>()
         )
+    }
+
+    LaunchedEffect(key1 = searchQuery, key2 = location) {
+        if (isAddress && searchQuery.text.isEmpty()) {
+            if (location != null) {
+                addressList = context.getNearbyAddressFromLocation(location)
+            }
+        }
+        if (searchQuery.text.isNotEmpty() && location != null) {
+            addressList = context.searchAddressFromLocation(location, searchQuery.text)
+        }
     }
     Column {
         OutlinedTextField(
@@ -143,7 +159,17 @@ fun CakkieInputField(
                         painter = painterResource(id = R.drawable.location),
                         contentDescription = "eye closed",
                         modifier = Modifier.clickable {
-                            onLocationClick.invoke()
+                            if (location != null) {
+//                                Timber.d("address is: "+context.getAddressFromLocation(location))
+                                onValueChange.invoke(
+                                    TextFieldValue(
+                                        context.getAddressFromLocation(
+                                            location
+                                        )
+                                    )
+                                )
+                            }
+//                            onLocationClick.invoke()
                         }
                     )
                 }
@@ -180,8 +206,8 @@ fun CakkieInputField(
                     LazyColumn(
                         Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 600.dp)
-                            .padding(16.dp)
+                            .heightIn(max = 500.dp)
+                            .padding(10.dp)
                     ) {
                         stickyHeader {
                             CakkieInputField(
@@ -200,12 +226,23 @@ fun CakkieInputField(
                         items(
                             items = addressList,
                         ) { address ->
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = address,
+                                text = address.getAddressLine(0),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = Black,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .shadow(1.dp, RoundedCornerShape(8.dp))
+                                    .background(CakkieBackground)
+                                    .fillMaxWidth()
+                                    .padding(6.dp)
+                                    .clickable {
+                                        onValueChange.invoke(TextFieldValue(address.getAddressLine(0)))
+                                        showSearch = false
+                                    }
                             )
+                            Spacer(modifier = Modifier.height(2.dp))
                         }
 
                     }
