@@ -31,13 +31,19 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 
 @Composable
 @Destination
 fun ResetPassword(email: String, navigator: DestinationsNavigator) {
+    val viewModel: AuthViewModel = koinViewModel()
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -128,9 +134,33 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
                 enabled = canProceed,
                 text = stringResource(id = R.string.continue_)
             ) {
-
+                viewModel.resetPassword(password = password.text, passwordConfirmation = confirmPassword.text).addOnSuccessListener { response ->
+                    processing = false
+                    //  show toast
+                    Toaster(
+                        context = context,
+                        message = response.message,
+                        image = R.drawable.logo
+                    ).show()
+                    //    navigate to login screen
+                    navigator.navigate(
+                        LoginScreenDestination(
+                            email = email,
+                        )
+                    )
+                }.addOnFailureListener { exception ->
+                    //  show toast
+                    Toaster(
+                        context = context,
+                        message = exception,
+                        image = R.drawable.logo
+                    ).show()
+                    processing = false
+                    Timber.d(exception)
+                }
 
             }
+
 
         }
     }

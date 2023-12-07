@@ -1,9 +1,11 @@
 package com.cakkie.ui.screens.auth
 
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cakkie.datastore.Settings
+import com.cakkie.datastore.SettingsConstants
 import com.cakkie.models.LoginResponse
 import com.cakkie.models.User
 import com.cakkie.utill.Endpoints
@@ -11,6 +13,7 @@ import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import timber.log.Timber
 
 class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent {
     private val deviceName = Build.MODEL
@@ -50,9 +53,10 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("os", os)
             )
         ).addOnSuccessListener {
+            Log.d("The token is ", it.toString())
             if (it.token.isNotEmpty()) {
                 viewModelScope.launch(Dispatchers.IO) {
-//                    settings.putPreference(SettingsConstants.TOKEN, it.token)
+                   settings.putPreference(SettingsConstants.TOKEN, it.token)
                 }
             }
         }
@@ -64,11 +68,29 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
         )
 
     //forget password
-    fun forgetPassword(email:String)=
+    fun forgetPassword(email: String) =
         NetworkCalls.post<LoginResponse>(
             endpoint = Endpoints.FORGET_PASSWORD,
             body = listOf(
                 "email" to email
             )
         )
+
+    //reset password
+    fun resetPassword(password: String, passwordConfirmation: String) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.RESET_PASSWORD,
+            body = listOf(
+                Pair("password", password),
+                Pair("passwordConfirmation", passwordConfirmation),
+                Pair("deviceName", deviceName),
+                Pair("deviceToken", deviceID),
+                Pair("os", os)
+            )
+        ) .addOnSuccessListener {
+            viewModelScope.launch(Dispatchers.IO) {
+                settings.removePreference(SettingsConstants.TOKEN)
+            }
+        }
+
 }
