@@ -129,6 +129,19 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             image = R.drawable.logo
                         ).show()
                         navigator.navigate(OtpScreenDestination(email = email, isNewDevice = true))
+                    } else if (it.token.isEmpty()) {
+                        Toaster(
+                            context = context,
+                            message = it.message,
+                            image = R.drawable.logo
+                        ).show()
+                        navigator.navigate(
+                            OtpScreenDestination(
+                                email = email,
+                                isNewDevice = false,
+                                isSignUp = true
+                            )
+                        )
                     } else {
                         Toaster(
                             context = context,

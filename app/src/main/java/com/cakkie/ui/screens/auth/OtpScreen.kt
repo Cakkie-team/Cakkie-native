@@ -142,6 +142,8 @@ fun OtpScreen(
                     ).show()
                     if (isNewDevice) {
                         //Todo: navigate to home screen
+                    } else if (isSignUp) {
+                        //Todo: navigate to home screen
                     } else {
                         navigator.navigate(ResetPasswordDestination(email))
                     }

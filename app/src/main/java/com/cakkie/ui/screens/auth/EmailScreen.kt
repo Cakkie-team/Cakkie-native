@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,7 +51,6 @@ fun EmailScreen(navigator: DestinationsNavigator) {
     var processing by remember {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
