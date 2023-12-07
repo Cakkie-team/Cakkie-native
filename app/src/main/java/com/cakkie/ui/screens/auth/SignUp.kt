@@ -93,7 +93,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             lastName.text.isNotBlank() &&
             userName.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            password.text.isNotBlank() && !isChecked
+            password.text.isNotBlank() && isChecked
 
     Column(
         Modifier
@@ -268,11 +268,13 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     processing = false
                     Timber.d(resp.toString())
                     //navigate to home screen
-                    if (resp.isNewDevice) {
-                        navigator.navigate(OtpScreenDestination(email = email, isNewDevice = true))
-                    } else {
-                        //todo navigate to home screen
-                    }
+                    navigator.navigate(
+                        OtpScreenDestination(
+                            email = email,
+                            isNewDevice = false,
+                            isSignUp = true
+                        )
+                    )
                 }.addOnFailureListener { exception ->
                     //show toast
                     Toaster(

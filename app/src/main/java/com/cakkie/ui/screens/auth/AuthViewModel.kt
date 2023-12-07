@@ -53,7 +53,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
         referralCode: String? = null
     ) =
         NetworkCalls.post<LoginResponse>(
-            endpoint = Endpoints.LOGIN, body = listOf(
+            endpoint = Endpoints.SIGNUP, body = listOf(
                 Pair("email", email),
                 Pair("password", password),
                 Pair("firstName", firstName),

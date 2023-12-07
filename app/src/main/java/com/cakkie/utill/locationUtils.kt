@@ -9,7 +9,6 @@ import android.location.Address
 import android.location.Location
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import timber.log.Timber
 
 
 fun Activity.isLocationPermissionGranted(): Boolean {
@@ -57,7 +56,7 @@ fun Activity.getCurrentLocation(): Location? {
 fun Context.getAddressFromLocation(location: Location): Address? {
     val geocoder = android.location.Geocoder(this)
     val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-    Timber.d("address: $addresses")
+//    Timber.d("address: $addresses")
     return addresses?.get(0)
 }
 
@@ -65,7 +64,7 @@ fun Context.getAddressFromLocation(location: Location): Address? {
 fun Context.getNearbyAddressFromLocation(location: Location): List<Address> {
     val geocoder = android.location.Geocoder(this)
     val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 5)
-    Timber.d("address: $addresses")
+//    Timber.d("address: $addresses")
     return addresses ?: listOf()
 }
 
@@ -80,6 +79,6 @@ fun Context.searchAddressFromLocation(location: Location, query: String): List<A
         location.latitude + 0.1,
         location.longitude + 0.1
     )
-    Timber.d("address: $addresses")
+//    Timber.d("address: $addresses")
     return addresses ?: listOf()
 }

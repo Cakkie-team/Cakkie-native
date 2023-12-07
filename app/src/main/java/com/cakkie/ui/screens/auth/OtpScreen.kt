@@ -41,7 +41,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @Destination
-fun OtpScreen(email: String, isNewDevice: Boolean, navigator: DestinationsNavigator) {
+fun OtpScreen(
+    email: String,
+    isNewDevice: Boolean,
+    isSignUp: Boolean = false,
+    navigator: DestinationsNavigator
+) {
     val viewModel: AuthViewModel = koinViewModel()
     val context = LocalContext.current
 
