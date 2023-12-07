@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -124,7 +125,8 @@ fun CakkieInputField(
                         Image(
                             painter = painterResource(id = R.drawable.eye_closed),
                             contentDescription = "eye closed",
-                            modifier = Modifier.clickable {
+                            modifier = Modifier.size(24.dp)
+                                .clickable {
                                 visible = !visible
                             }
                         )
@@ -132,7 +134,8 @@ fun CakkieInputField(
                         Image(
                             painter = painterResource(id = R.drawable.eye_open),
                             contentDescription = "eye closed",
-                            modifier = Modifier.clickable {
+                            modifier = Modifier.size(24.dp)
+                                .clickable {
                                 visible = !visible
                             }
                         )
@@ -142,7 +145,8 @@ fun CakkieInputField(
                     Image(
                         painter = painterResource(id = R.drawable.location),
                         contentDescription = "eye closed",
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.size(24.dp)
+                        .clickable {
                             onLocationClick.invoke()
                         }
                     )
