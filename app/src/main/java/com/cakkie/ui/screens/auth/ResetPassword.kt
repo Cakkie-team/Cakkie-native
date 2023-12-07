@@ -32,6 +32,7 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -150,7 +151,11 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
                         LoginScreenDestination(
                             email = email,
                         )
-                    )
+                    ) {
+                        popUpTo(ResetPasswordDestination.route) {
+                            inclusive = true
+                        }
+                    }
                 }.addOnFailureListener { exception ->
                     //  show toast
                     Toaster(

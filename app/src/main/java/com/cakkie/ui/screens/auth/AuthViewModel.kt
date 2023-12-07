@@ -13,7 +13,6 @@ import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import timber.log.Timber
 
 class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent {
     private val deviceName = Build.MODEL
@@ -79,7 +78,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
     //save token
     fun saveToken(token: String) =
         viewModelScope.launch(Dispatchers.IO) {
-            Timber.tag("The token is ").d(token)
+//            Timber.tag("The token is ").d(token)
             settings.putPreference(SettingsConstants.TOKEN, token)
         }
 
