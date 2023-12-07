@@ -266,6 +266,9 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     location = location!!
                 ).addOnSuccessListener { resp ->
                     processing = false
+                    if (resp.token.isNotEmpty()) {
+                        viewModel.saveToken(resp.token)
+                    }
                     Timber.d(resp.toString())
                     //navigate to home screen
                     navigator.navigate(

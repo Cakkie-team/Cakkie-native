@@ -108,7 +108,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .align(Alignment.End)
-                .clickable { navigator.navigate(ForgetPasswordDestination) }
+                .clickable { navigator.navigate(ForgetPasswordDestination(email)) }
         )
 
         Spacer(modifier = Modifier.weight(0.3f))
@@ -122,6 +122,9 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
             viewModel.login(email, password.text)
                 .addOnSuccessListener {
                     processing = false
+                    if (it.token.isNotEmpty()) {
+                        viewModel.saveToken(it.token)
+                    }
                     if (it.isNewDevice) {
                         Toaster(
                             context = context,

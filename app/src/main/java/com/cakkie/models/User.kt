@@ -1,6 +1,5 @@
 package com.cakkie.models
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -43,7 +42,6 @@ data class User(
 data class LoginResponse(
     val isNewDevice: Boolean = false,
     val message: String = "",
-    @SerialName("access_token")
     val token: String = "",
     val user: User = User()
 )

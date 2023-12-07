@@ -2,7 +2,6 @@ package com.cakkie.ui.screens.auth
 
 import android.location.Address
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cakkie.datastore.Settings
@@ -35,13 +34,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        ).addOnSuccessListener {
-            if (it.token.isNotEmpty()) {
-                viewModelScope.launch(Dispatchers.IO) {
-//                    settings.putPreference(SettingsConstants.TOKEN, it.token)
-                }
-            }
-        }
+        )
 
     //login
     fun signUp(
@@ -69,13 +62,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("country", location.countryName),
                 Pair("referralCode", referralCode),
             )
-        ).addOnSuccessListener {
-            if (it.token.isNotEmpty()) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    settings.putPreference(SettingsConstants.TOKEN, it.token)
-                }
-            }
-        }
+        )
 
     //verify otp
     fun verifyOtp(email: String, otp: String) =
@@ -87,13 +74,13 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        ).addOnSuccessListener {
-            Log.d("The token is ", it.toString())
-            if (it.token.isNotEmpty()) {
-                viewModelScope.launch(Dispatchers.IO) {
-                   settings.putPreference(SettingsConstants.TOKEN, it.token)
-                }
-            }
+        )
+
+    //save token
+    fun saveToken(token: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            Timber.tag("The token is ").d(token)
+            settings.putPreference(SettingsConstants.TOKEN, token)
         }
 
     //resend otp
@@ -122,10 +109,11 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        ) .addOnSuccessListener {
-            viewModelScope.launch(Dispatchers.IO) {
-                settings.removePreference(SettingsConstants.TOKEN)
-            }
-        }
+        )
 
+    //remove token
+    fun removeToken() =
+        viewModelScope.launch(Dispatchers.IO) {
+            settings.removePreference(SettingsConstants.TOKEN)
+        }
 }

@@ -28,10 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
-import com.cakkie.ui.screens.destinations.ResetPasswordDestination
-import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
@@ -41,10 +38,10 @@ import timber.log.Timber
 
 @Composable
 @Destination
-fun ForgetPassword(navigator: DestinationsNavigator) {
+fun ForgetPassword(mail: String, navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     var email by remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(mail))
     }
     //email regex
     val emailRegex = Regex(pattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")

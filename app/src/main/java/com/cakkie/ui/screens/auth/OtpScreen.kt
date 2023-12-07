@@ -135,6 +135,9 @@ fun OtpScreen(
             viewModel.verifyOtp(email, otp.text)
                 .addOnSuccessListener {
                     processing = false
+                    if (it.token.isNotEmpty()) {
+                        viewModel.saveToken(it.token)
+                    }
                     Toaster(
                         context = context,
                         message = "Verification Successful",

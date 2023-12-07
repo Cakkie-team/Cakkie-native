@@ -32,7 +32,6 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -134,8 +133,12 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
                 enabled = canProceed,
                 text = stringResource(id = R.string.continue_)
             ) {
-                viewModel.resetPassword(password = password.text, passwordConfirmation = confirmPassword.text).addOnSuccessListener { response ->
+                viewModel.resetPassword(
+                    password = password.text,
+                    passwordConfirmation = confirmPassword.text
+                ).addOnSuccessListener { response ->
                     processing = false
+                    viewModel.removeToken()
                     //  show toast
                     Toaster(
                         context = context,

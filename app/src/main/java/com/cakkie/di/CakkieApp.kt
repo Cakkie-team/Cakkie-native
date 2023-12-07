@@ -13,7 +13,6 @@ import com.github.kittinunf.fuel.core.Headers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.logger.UploadServiceLogger
 import org.koin.android.ext.android.inject
@@ -61,25 +60,24 @@ class CakkieApp : Application() {
 
         val settings: Settings by inject()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main) {
-                settings.getPreference(SettingsConstants.TOKEN, "").asLiveData()
-                    .observeForever {
-                        Timber.d("Token in: $it")
+        CoroutineScope(Dispatchers.Main).launch {
+            settings.getPreference(SettingsConstants.TOKEN, "").asLiveData()
+                .observeForever {
+                    Timber.d("Token in: $it")
 
-                        FuelManager.instance.apply {
-                            baseHeaders = if (it.isNullOrBlank()) {
-                                mapOf(Headers.CONTENT_TYPE to "application/json")
-                            } else {
-                                mapOf(
-                                    Headers.CONTENT_TYPE to "application/json",
-                                    Headers.AUTHORIZATION to "Bearer $it"
-                                )
-                            }
+                    FuelManager.instance.apply {
+                        baseHeaders = if (it.isNullOrBlank()) {
+                            mapOf(Headers.CONTENT_TYPE to "application/json")
+                        } else {
+                            mapOf(
+                                Headers.CONTENT_TYPE to "application/json",
+                                Headers.AUTHORIZATION to "Bearer $it"
+                            )
                         }
                     }
-            }
+                }
         }
+
     }
 
 
