@@ -27,7 +27,7 @@ fun SplashScreen(navigator: DestinationsNavigator) {
     val isLoggedIn = viewModel.isLoggedIn.collectAsState().value
     //navigate to the next screen after 2 seconds
     LaunchedEffect(key1 = Unit) {
-        delay(2000)
+        delay(3000)
         if (isLoggedIn) {
             navigator.navigate(ExploreScreenDestination) {
                 popUpTo(SplashScreenDestination.route) {

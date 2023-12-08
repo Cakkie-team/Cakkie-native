@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -30,6 +30,7 @@ import com.cakkie.ui.screens.destinations.Destination
 import com.cakkie.ui.screens.startAppDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.Inactive
 import com.ramcosta.composedestinations.navigation.navigate
 
 
@@ -55,6 +56,7 @@ fun BottomNav(
     ) {
         BottomNavigation(
             backgroundColor = CakkieBackground,
+            elevation = 30.dp,
         ) {
 //            val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination: Destination = navController.appCurrentDestinationAsState().value
@@ -73,30 +75,20 @@ fun BottomNav(
                     },
 
                     icon = {
-                        Column {
-                            if (currentDestination == screen.direction) {
-                                Icon(
-                                    painter = painterResource(R.drawable.line),
-                                    contentDescription = null,
-                                    tint = CakkieBrown,
-                                    modifier = Modifier
-                                        .height(2.dp)
-                                        .width(31.dp),
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(R.drawable.line),
-                                    contentDescription = null,
-                                    tint = Color.Transparent,
-                                    modifier = Modifier
-                                        .height(2.dp)
-                                        .width(31.dp),
-                                )
-                            }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(R.drawable.line),
+                                contentDescription = null,
+                                tint = if (currentDestination == screen.direction) CakkieBrown else Color.Transparent,
+                                modifier = Modifier
+                                    .height(3.dp)
+                                    .width(38.dp),
+                            )
                             Spacer(modifier = Modifier.height(7.dp))
                             Icon(
                                 painter = painterResource(screen.icon!!),
-                                contentDescription = null,
+                                contentDescription = screen.title,
+                                tint = if (currentDestination == screen.direction) CakkieBrown else Color.Gray,
                                 modifier = Modifier
                                     .height(24.dp)
                                     .width(24.dp)
@@ -113,7 +105,7 @@ fun BottomNav(
 
                     alwaysShowLabel = true,
                     selectedContentColor = CakkieBrown,
-                    unselectedContentColor = CakkieBrown.copy(alpha = ContentAlpha.disabled),
+                    unselectedContentColor = Inactive,
                 )
             }
         }
