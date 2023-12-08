@@ -7,6 +7,7 @@ val CakkieBrown = Color(0xFF8B4513)
 val TextColorDark = Color(0xFF2E1706)
 val CakkieBackground = Color(0xFFF5F5DC)
 val Error = Color(0xFFF50A0A)
+val Inactive = Color(0x4D2E1706)
 
 
 fun BackgroundImageId(isDarkMode: Boolean) =

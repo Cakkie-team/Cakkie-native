@@ -1,3 +1,11 @@
 package com.cakkie.ui.screens.explore
 
-class ExploreScreen
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import com.ramcosta.composedestinations.annotation.Destination
+
+@Destination
+@Composable
+fun ExploreScreen() {
+    Text(text = "Explore")
+}

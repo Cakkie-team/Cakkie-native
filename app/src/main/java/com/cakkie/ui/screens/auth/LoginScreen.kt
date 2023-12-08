@@ -32,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
@@ -151,6 +153,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             message = "Login Success",
                             image = R.drawable.logo
                         ).show()
+                        navigator.navigate(ExploreScreenDestination)
                     }
 
                 }.addOnFailureListener {
@@ -181,7 +184,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                 color = CakkieBrown,
                 modifier = Modifier.clickable {
                     //navigate to sign up screen
-//                    navigator.navigate(SignUpScreenDestination(email))
+                    navigator.navigate(SignUpScreenDestination(email))
                 }
             )
         }
