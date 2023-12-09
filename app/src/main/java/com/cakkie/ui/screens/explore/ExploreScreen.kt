@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.explore
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +22,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.NotificationDestination
+import com.cakkie.ui.screens.destinations.ProfileDestination
+import com.cakkie.ui.screens.destinations.WalletDestination
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun ExploreScreen() {
+fun ExploreScreen(navigator: DestinationsNavigator) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,6 +49,9 @@ fun ExploreScreen() {
                     modifier = Modifier
                         .size(40.dp)
                         .clip(shape = CircleShape)
+                        .clickable {
+                            navigator.navigate(ProfileDestination)
+                        }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
@@ -61,14 +69,14 @@ fun ExploreScreen() {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.notification),
                         contentDescription = "notification"
                     )
                 }
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigator.navigate(WalletDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.wallet),
                         contentDescription = "wallet"
