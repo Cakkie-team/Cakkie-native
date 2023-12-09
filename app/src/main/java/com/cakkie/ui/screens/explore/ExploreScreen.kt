@@ -16,21 +16,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun ExploreScreen(navigator: DestinationsNavigator) {
+    val viewModel: ExploreViewModal = koinViewModel()
+
+    val user = viewModel.user.observeAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,8 +52,8 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_pic),
+                GlideImage(
+                    model = user?.profileImage?.replace("http", "https") ?: "",
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
@@ -60,7 +69,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = "Cakkie",
+                        text = user?.name ?: "",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
