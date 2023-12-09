@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -75,11 +76,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 Column {
                     Text(
                         text = "Welcome \uD83D\uDC4B",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = user?.name ?: "",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -150,13 +153,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             }
 
             items(10) {
-                GlideImage(
-                    model = "https://source.unsplash.com/500x300/?cakes",
-                    contentDescription = "cake",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                )
+                ExploreItem()
             }
         }
     }

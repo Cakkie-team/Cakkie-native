@@ -42,6 +42,10 @@
     <string name="reset_password_message">You are almost there, just enter your new password below to continue</string>
     <string name="cakespiration">Cakespiration</string>
     <string name="watch_all">Watch All</string>
+    <string name="order">Order</string>
+    <string name="see_more">See more</string>
+    <string name="view_profile">View Profile</string>
+    <string name="sponsored">Sponsored</string>
 
 
 </resources>
