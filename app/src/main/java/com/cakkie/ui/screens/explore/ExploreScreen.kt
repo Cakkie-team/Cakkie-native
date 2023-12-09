@@ -117,7 +117,8 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 ) {
                     Text(
                         text = stringResource(id = R.string.cakespiration),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
