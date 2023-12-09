@@ -1,7 +1,7 @@
 [versions]
 agp = "8.3.0-alpha09"
 fuelVersion = "2.3.1"
-gsonVersion = "2.10"
+gsonVersion = "2.10.1"
 kotlin = "1.9.20"
 core-ktx = "1.12.0"
 junit = "4.13.2"
