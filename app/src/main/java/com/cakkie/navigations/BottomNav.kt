@@ -63,6 +63,7 @@ fun BottomNav(
         visible = state,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
+        modifier = modifier
     ) {
         //            val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination: Destination =
@@ -70,7 +71,7 @@ fun BottomNav(
                 ?: NavGraphs.root.startAppDestination
 
         Card(
-            modifier = modifier
+            modifier = Modifier
                 .shadow(80.dp)
                 .fillMaxWidth(),
             backgroundColor = Color.Transparent,

@@ -8,7 +8,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -20,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds
                         )
-                        Column(
+                        Box(
                             Modifier.padding(
                                 top = if (currentDestination == SplashScreenDestination) 0.dp
                                 else 30.dp
@@ -86,7 +86,12 @@ class MainActivity : ComponentActivity() {
                             DestinationsNavHost(
                                 navGraph = NavGraphs.root,
                                 navController = navController,
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier
+                                    .padding(
+                                        bottom = if (currentDestination == SplashScreenDestination) 0.dp
+                                        else 50.dp
+                                    )
+                                    .fillMaxSize(),
                                 engine = rememberAnimatedNavHostEngine()
                             )
                             BottomNav(
@@ -99,6 +104,8 @@ class MainActivity : ComponentActivity() {
                                     OrdersDestination -> true
                                     else -> false
                                 },
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
                             )
                         }
                     }
