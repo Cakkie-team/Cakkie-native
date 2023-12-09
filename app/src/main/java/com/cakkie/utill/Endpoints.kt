@@ -37,7 +37,7 @@ object Endpoints {
      *User
      **/
     val VERIFY_EMAIL = { email: String -> "$BASE_URL/verify-email?email=$email" }  /*get all users*/
-    const val ACCOUNT = "$BASE_URL/account" /* Put request */
+    const val ACCOUNT = "$BASE_URL/account/profile" /* Get request */
     const val UPDATE_PROFILE_IMAGE = "$BASE_URL/account/update-profile-image" /* Put request */
     const val VERIFY_USERNAME = "$BASE_URL/verify-username?username=" /* verify tag */
 

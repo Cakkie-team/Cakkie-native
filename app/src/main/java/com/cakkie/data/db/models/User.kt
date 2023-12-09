@@ -1,7 +1,13 @@
-package com.cakkie.models
+package com.cakkie.data.db.models
 
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+@Entity(tableName = "user")
+@Parcelize
 @Serializable
 data class User(
     val address: String = "",
@@ -16,6 +22,7 @@ data class User(
     val firstName: String = "",
     val gender: String = "",
     val hasShop: Boolean = false,
+    @PrimaryKey
     val id: String = "",
     val isDriver: Boolean = false,
     val lastName: String = "",
@@ -35,13 +42,4 @@ data class User(
     val userType: String = "",
     val username: String = "",
     val websocketId: String? = null
-)
-
-
-@Serializable
-data class LoginResponse(
-    val isNewDevice: Boolean = false,
-    val message: String = "",
-    val token: String = "",
-    val user: User = User()
-)
+) : Parcelable

@@ -1,5 +1,8 @@
 package com.cakkie.di
 
+import androidx.room.Room
+import com.cakkie.data.db.DB
+import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
@@ -22,4 +25,22 @@ val appModule = module {
     viewModel {
         AuthViewModel(get())
     }
+
+    // Database
+    single {
+
+        Room.databaseBuilder(
+            androidApplication(),
+            DB::class.java,
+            "cakkie.db",
+        )
+//            .openHelperFactory(get()) //TODO: enable this when we're going live
+            .build()
+    }
+
+    // DAOs
+    single { get<DB>().userDao() }
+
+    // Repositories
+    single { UserRepository(get()) }
 }

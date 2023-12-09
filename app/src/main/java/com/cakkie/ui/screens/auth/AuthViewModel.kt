@@ -4,21 +4,23 @@ import android.location.Address
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cakkie.data.db.models.User
+import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
-import com.cakkie.models.LoginResponse
-import com.cakkie.models.User
+import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent {
     private val deviceName = Build.MODEL
     private val deviceID = Build.ID
     private val os = "Android"
-
+    private val userRepository: UserRepository by inject()
 
     fun checkEmail(email: String) =
         NetworkCalls.get<User>(endpoint = Endpoints.CHECK_EMAIL(email), body = listOf())
@@ -33,7 +35,12 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        )
+        ).addOnSuccessListener {
+            if (it.user.id.isNotEmpty())
+                viewModelScope.launch(Dispatchers.IO) {
+                    userRepository.createUser(it.user)
+                }
+        }
 
     //login
     fun signUp(
@@ -73,7 +80,12 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        )
+        ).addOnSuccessListener {
+            if (it.user.id.isNotEmpty())
+                viewModelScope.launch(Dispatchers.IO) {
+                    userRepository.createUser(it.user)
+                }
+        }
 
     //save token
     fun saveToken(token: String) =
