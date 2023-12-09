@@ -1,11 +1,11 @@
 package com.cakkie.data.db.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import androidx.room.Upsert
 import com.cakkie.data.db.models.User
 import kotlinx.coroutines.flow.Flow
 
@@ -16,8 +16,8 @@ interface UserDao {
     fun getUser(): Flow<User>
 
     // create a User
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun createUser(chain: User)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun createUser(user: User)
 
 //    @Insert(onConflict = OnConflictStrategy.IGNORE)
 //    suspend fun createUser(chains: List<User>)
@@ -25,8 +25,8 @@ interface UserDao {
 
     // update a chain
     @Update
-    suspend fun updateUser()
+    suspend fun updateUser(user: User)
 
-    @Upsert
-    suspend fun upsertUser()
+    @Delete
+    suspend fun upsertUser(user: User)
 }

@@ -38,4 +38,15 @@ class Converters {
     fun dateToTimestamp(date: Date): Long {
         return date.time
     }
+
+    //list of string converter
+    @TypeConverter
+    fun stringListToString(list: List<String>): String {
+        return list.joinToString(",")
+    }
+
+    @TypeConverter
+    fun stringToStringList(string: String): List<String> {
+        return string.split(",")
+    }
 }

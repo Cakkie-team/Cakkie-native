@@ -8,8 +8,8 @@ class UserRepository(private val userDao: UserDao) {
     fun getUser() = userDao.getUser()
 
     //    fun getChain(chainId: Int) = chainDao.getChain(chainId)
-    suspend fun updateUser() = userDao.updateUser()
+    suspend fun updateUser(user: User) = userDao.updateUser(user)
 
     //delete a user
-    suspend fun deleteUser() = userDao.upsertUser()
+    suspend fun deleteUser(user: User) = userDao.upsertUser(user)
 }

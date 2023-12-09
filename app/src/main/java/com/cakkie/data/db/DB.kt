@@ -20,7 +20,7 @@ import com.smcdao.peniwallet.core.data.db.models.typeConverters.Converters
 //        AutoMigration (from = 1, to = 2),
 //    ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class DB : RoomDatabase() {

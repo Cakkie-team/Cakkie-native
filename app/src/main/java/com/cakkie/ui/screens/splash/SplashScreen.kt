@@ -16,7 +16,6 @@ import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Destination
@@ -25,19 +24,21 @@ import org.koin.androidx.compose.koinViewModel
 fun SplashScreen(navigator: DestinationsNavigator) {
     val viewModel: SplashViewModel = koinViewModel()
     val isLoggedIn = viewModel.isLoggedIn.collectAsState().value
+    val isReady = viewModel.isReady.collectAsState().value
     //navigate to the next screen after 2 seconds
-    LaunchedEffect(key1 = Unit) {
-        delay(5000)
-        if (isLoggedIn) {
-            navigator.navigate(ExploreScreenDestination) {
-                popUpTo(SplashScreenDestination.route) {
-                    inclusive = true
+    LaunchedEffect(key1 = isReady) {
+        if (isReady) {
+            if (isLoggedIn) {
+                navigator.navigate(ExploreScreenDestination) {
+                    popUpTo(SplashScreenDestination.route) {
+                        inclusive = true
+                    }
                 }
-            }
-        } else {
-            navigator.navigate(EmailScreenDestination) {
-                popUpTo(SplashScreenDestination.route) {
-                    inclusive = true
+            } else {
+                navigator.navigate(EmailScreenDestination) {
+                    popUpTo(SplashScreenDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
