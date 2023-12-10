@@ -156,6 +156,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             items(10) {
                 ExploreItem()
             }
+            item { Spacer(modifier = Modifier.height(80.dp)) }
         }
     }
 }

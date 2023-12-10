@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.explore
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,9 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -42,10 +46,14 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun ExploreItem() {
     var maxLines by remember {
@@ -60,6 +68,7 @@ fun ExploreItem() {
     var isSponsored by remember {
         mutableStateOf(true)
     }
+    val pageState = rememberPagerState(pageCount = { 3 })
     Column {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -127,14 +136,16 @@ fun ExploreItem() {
                 )
             }
         }
-        GlideImage(
-            model = "https://source.unsplash.com/600x400/?cakes",
-            contentDescription = "cake",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(240.dp),
-            contentScale = ContentScale.FillBounds
-        )
+        HorizontalPager(state = pageState) {
+            GlideImage(
+                model = "https://source.unsplash.com/600x400/?cakes",
+                contentDescription = "cake",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp),
+                contentScale = ContentScale.FillBounds
+            )
+        }
         Row(
             Modifier
                 .padding(start = 8.dp, end = 16.dp)
@@ -175,6 +186,15 @@ fun ExploreItem() {
                         .padding(8.dp)
                 )
             }
+            HorizontalPagerIndicator(
+                pagerState = pageState,
+                activeColor = CakkieBrown,
+                spacing = 8.dp,
+                indicatorWidth = 5.dp,
+                indicatorHeight = 5.dp,
+                pageCount = 3,
+                modifier = Modifier.offset(x = (-24).dp)
+            )
             Card(
                 onClick = { },
                 modifier = Modifier
