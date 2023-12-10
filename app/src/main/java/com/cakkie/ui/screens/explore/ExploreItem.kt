@@ -47,6 +47,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -172,7 +173,9 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                 Image(
                     painter = painterResource(id = R.drawable.comment),
                     contentDescription = "comment",
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier
+                        .clickable { navigator.navigate(CommentDestination) }
+                        .padding(8.dp)
                 )
                 Image(
                     painter = painterResource(
@@ -241,7 +244,9 @@ fun ExploreItem(navigator: DestinationsNavigator) {
         Text(
             text = "View all 20 comments",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 5.dp),
+            modifier = Modifier
+                .clickable { navigator.navigate(CommentDestination) }
+                .padding(start = 16.dp, end = 16.dp, top = 5.dp),
             color = CakkieBrown
         )
 
