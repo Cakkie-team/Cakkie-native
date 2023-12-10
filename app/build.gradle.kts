@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
     packaging {
         resources {
@@ -77,7 +77,7 @@ dependencies {
     // Glide
     implementation(libs.glide.compose)
     //accompanist navigation animation\
-    implementation(libs.accompanist.navigation.animation)
+//    implementation(libs.accompanist.navigation.animation)
 
     // Timber
     implementation(libs.timber)
@@ -130,5 +130,8 @@ dependencies {
 
     //location
     implementation(libs.play.services.location)
+
+    //navigation
+    implementation(libs.accompanist.navigation.material)
 
 }

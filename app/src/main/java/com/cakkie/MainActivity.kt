@@ -39,6 +39,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.BottomSheetNavigatorSheetState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 
@@ -67,9 +68,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    ModalBottomSheetLayout(
-//                        bottomSheetNavigator = bottomSheetNavigator
-//                    ) {
+                    ModalBottomSheetLayout(bottomSheetNavigator) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Image(
                             painter = painterResource(id = BackgroundImageId(isSystemInDarkTheme())),
@@ -109,7 +108,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
-//                    }
+                    }
                 }
             }
         }
