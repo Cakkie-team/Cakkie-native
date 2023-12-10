@@ -47,15 +47,17 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(
     ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class
 )
 @Composable
-fun ExploreItem() {
+fun ExploreItem(navigator: DestinationsNavigator) {
     var maxLines by remember {
         mutableIntStateOf(1)
     }
@@ -104,8 +106,7 @@ fun ExploreItem() {
                 }
             }
 
-
-            IconButton(onClick = { }) {
+            IconButton(onClick = { navigator.navigate(MoreOptionsDestination) }) {
                 Image(
                     painter = painterResource(id = R.drawable.options),
                     contentDescription = "notification"
