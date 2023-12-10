@@ -41,7 +41,7 @@ fun Comment() {
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn {
             items(10) {
-
+                CommentItem()
             }
         }
     }
