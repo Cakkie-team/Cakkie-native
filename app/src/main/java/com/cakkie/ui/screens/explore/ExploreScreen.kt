@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
-import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
@@ -69,7 +69,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         .size(40.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-                            navigator.navigate(ProfileDestination)
+                            navigator.navigate(MyProfileDestination)
                         }
                 )
                 Spacer(modifier = Modifier.width(8.dp))

@@ -49,6 +49,7 @@ import com.cakkie.R
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
+import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -90,7 +91,7 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                         .size(40.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-
+                            navigator.navigate(ProfileDestination)
                         }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
