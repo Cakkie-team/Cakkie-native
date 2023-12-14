@@ -49,6 +49,8 @@
     <string name="share">Share</string>
     <string name="flag">Flag</string>
     <string name="report">Report</string>
+    <string name="post">Post</string>
+    <string name="add_comment">Add a comment</string>
 
 
 </resources>
