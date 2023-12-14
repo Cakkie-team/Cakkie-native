@@ -51,6 +51,10 @@
     <string name="report">Report</string>
     <string name="post">Post</string>
     <string name="add_comment">Add a comment</string>
+    <string name="notification">Notification</string>
+    <string name="Special_Offer">Special Offer</string>
+    <string name="Limited_Time_Offer_Enjoy_">🎂 Limited Time Offer: Enjoy 15% off on all cake orders this weekend. Indulge in happiness.\n</string>
+    <string name="time">4:54 pm</string>
 
 
 </resources>
