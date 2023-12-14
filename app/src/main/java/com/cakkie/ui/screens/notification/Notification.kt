@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -34,6 +36,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun Notification(navigator: DestinationsNavigator) {
+    val itemList =
+        mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7")
+
+
     Column(
     ) {
 
@@ -55,18 +61,18 @@ fun Notification(navigator: DestinationsNavigator) {
 
             Text(
                 text = stringResource(id = R.string.notification),
-                style = MaterialTheme().typography.titleMedium,
-                modifier = Modifier.padding(start = 60.dp)
-
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
 
-        val itemList = mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7")
+
         LazyColumn(
             state = rememberLazyListState()
         ) {
-            items(7) {index ->
+            items(7) { index ->
                 val state = rememberDismissState(
                     confirmValueChange = {
                         if (it == DismissValue.DismissedToEnd) {
@@ -111,9 +117,12 @@ fun Notification(navigator: DestinationsNavigator) {
 
                                 )
                         }
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(id = R.string.time),
                             style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
                         )
                     }
 
