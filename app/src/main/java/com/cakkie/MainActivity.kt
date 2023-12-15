@@ -26,6 +26,9 @@ import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.ui.screens.orders.Orders
+import com.cakkie.ui.screens.profile.MyProfile
+import com.cakkie.ui.screens.profile.Profile
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieTheme
@@ -68,12 +71,12 @@ class MainActivity : ComponentActivity() {
                         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
-                            Image(
-                                painter = painterResource(id = BackgroundImageId(isSystemInDarkTheme())),
-                                contentDescription = "background",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.FillBounds
-                            )
+                        Image(
+                            painter = painterResource(id = BackgroundImageId(isSystemInDarkTheme())),
+                            contentDescription = "background",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
+                        )
                             Box(
                                 Modifier.padding(
                                     top = if (currentDestination == SplashScreenDestination) 0.dp
@@ -106,6 +109,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }
+
+                                            }
                     }
                 }
             }
@@ -114,19 +119,19 @@ class MainActivity : ComponentActivity() {
 }
 
 
-//@ExperimentalMaterialNavigationApi
-//@OptIn(ExperimentalMaterialApi::class)
-//@Composable
-//fun rememberBottomSheetNavigator(
-//    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-//    skipHalfExpanded: Boolean = false,
-//): BottomSheetNavigator {
-//    val sheetState = rememberModalBottomSheetState(
-//        initialValue = ModalBottomSheetValue.Hidden,
-//        animationSpec = animationSpec,
-//        skipHalfExpanded = skipHalfExpanded,
-//    )
-//    return remember(sheetState) {
-//        BottomSheetNavigator(sheetState = sheetState)
-//    }
-//}
+@ExperimentalMaterialNavigationApi
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun rememberBottomSheetNavigator(
+    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+    skipHalfExpanded: Boolean = false,
+): BottomSheetNavigator {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        animationSpec = animationSpec,
+        skipHalfExpanded = skipHalfExpanded,
+    )
+    return remember(sheetState) {
+        BottomSheetNavigator(sheetState = sheetState)
+    }
+}

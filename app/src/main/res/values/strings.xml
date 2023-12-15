@@ -43,12 +43,28 @@
     <string name="cakespiration">Cakespiration</string>
     <string name="watch_all">Watch All</string>
     <string name="order">Order</string>
+    <string name="orders">Orders</string>
     <string name="see_more">See more</string>
     <string name="view_profile">View Profile</string>
     <string name="sponsored">Sponsored</string>
     <string name="share">Share</string>
     <string name="flag">Flag</string>
+    <string name="posts">Posts</string>
+    <string name="about">About</string>
+    <string name="filters">Filters</string>
+    <string name="follow">Follow</string>
+    <string name="declined">Declined</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
     <string name="report">Report</string>
+    <string name="profile">Profile</string>
+    <string name="all">All</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="pending">Pending</string>
+    <string name="completed">Completed</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="in_progress">In Progress</string>
+    <string name="favourite_feed">Favourite Feed</string>
 
 
 </resources>
