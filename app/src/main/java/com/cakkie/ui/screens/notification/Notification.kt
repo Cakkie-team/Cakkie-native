@@ -11,17 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material3.DismissValue
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +42,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun Notification(navigator: DestinationsNavigator) {
     val itemList =
         mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7")
-
 
     Column(
     ) {
@@ -74,7 +77,7 @@ fun Notification(navigator: DestinationsNavigator) {
         ) {
             items(7) { index ->
                 val state = rememberDismissState(
-                    confirmValueChange = {
+                    confirmStateChange = {
                         if (it == DismissValue.DismissedToEnd) {
                             itemList.removeAt(index)
                         }
@@ -83,51 +86,60 @@ fun Notification(navigator: DestinationsNavigator) {
                 )
                 SwipeToDismiss(state = state, background =
                 {
-                    val color = when (state.dismissDirection) {
-                        androidx.compose.material3.DismissDirection.EndToStart -> Color.Red
-                        null -> Color.Transparent
-                        androidx.compose.material3.DismissDirection.StartToEnd -> TODO()
+                    val color = when (state.dismissDirection)  {
+                        DismissDirection.EndToStart -> Color.Red
+                        else -> Color.Transparent
                     }
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.fillMaxSize()
+                        .background(color)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.delete),
+                            contentDescription = "Arrow Back",
 
+                            modifier = Modifier
+                                .clickable {
+                                    navigator.popBackStack()
+                                }
+                                .size(24.dp)
+                        )
                     }
                 }, dismissContent =
                 {
 
-                    Row(
+                    Column(
                         modifier = Modifier
                             .background(Color.White)
                             .padding(horizontal = 16.dp)
                             .height(65.dp)
                     ) {
-                        Column {
+                        Row {
                             Spacer(modifier = Modifier.height(5.dp))
 
                             Text(
                                 text = stringResource(id = R.string.Special_Offer),
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleSmall,
 
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
 
                             Text(
+                                text = stringResource(id = R.string.time),
+                                style = MaterialTheme.typography.bodySmall,
+
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
                                 text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier,
 
                                 )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(id = R.string.time),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                        )
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
                 })
+                Spacer(modifier = Modifier.height(16.dp))
+
             }
 
         }
