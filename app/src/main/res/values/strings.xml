@@ -53,6 +53,7 @@
     <string name="about">About</string>
     <string name="filters">Filters</string>
     <string name="follow">Follow</string>
+    <string name="favourite_feed">Favourite Feed</string>
     <string name="declined">Declined</string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
@@ -64,7 +65,8 @@
     <string name="completed">Completed</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="in_progress">In Progress</string>
-    <string name="favourite_feed">Favourite Feed</string>
+    <string name="velvet_cupcakes">Velvet Cupcakes</string>
+    <string name="chocolate_cake">Chocolate Cake</string>
 
 
 </resources>

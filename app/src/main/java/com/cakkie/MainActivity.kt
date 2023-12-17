@@ -65,11 +65,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ModalBottomSheetLayout(
-                        bottomSheetNavigator = bottomSheetNavigator,
-                        sheetBackgroundColor = CakkieBackground,
-                        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                    ) {
+//                    ModalBottomSheetLayout(
+//                        bottomSheetNavigator = bottomSheetNavigator,
+//                        sheetBackgroundColor = CakkieBackground,
+//                        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+//                    ) {
                         Box(modifier = Modifier.fillMaxSize()) {
                         Image(
                             painter = painterResource(id = BackgroundImageId(isSystemInDarkTheme())),
@@ -77,38 +77,39 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds
                         )
-                            Box(
-                                Modifier.padding(
-                                    top = if (currentDestination == SplashScreenDestination) 0.dp
-                                    else 30.dp
-                                )
-                            ) {
-                                DestinationsNavHost(
-                                    navGraph = NavGraphs.root,
-                                    navController = navController,
-                                    modifier = Modifier
-                                        .padding(
-                                            bottom = if (currentDestination == SplashScreenDestination) 0.dp
-                                            else 50.dp
-                                        )
-                                        .fillMaxSize(),
-                                    engine = rememberAnimatedNavHostEngine()
-                                )
-                                BottomNav(
-                                    navController = navController,
-                                    state = when (currentDestination) {
-                                        ExploreScreenDestination -> true
-                                        JobsDestination -> true
-                                        ShopDestination -> true
-                                        ChatDestination -> true
-                                        OrdersDestination -> true
-                                        else -> false
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                )
-                            }
-                        }
+                            Orders()
+//                            Box(
+//                                Modifier.padding(
+//                                    top = if (currentDestination == SplashScreenDestination) 0.dp
+//                                    else 30.dp
+//                                )
+//                            ) {
+//                                DestinationsNavHost(
+//                                    navGraph = NavGraphs.root,
+//                                    navController = navController,
+//                                    modifier = Modifier
+//                                        .padding(
+//                                            bottom = if (currentDestination == SplashScreenDestination) 0.dp
+//                                            else 50.dp
+//                                        )
+//                                        .fillMaxSize(),
+//                                    engine = rememberAnimatedNavHostEngine()
+//                                )
+//                                BottomNav(
+//                                    navController = navController,
+//                                    state = when (currentDestination) {
+//                                        ExploreScreenDestination -> true
+//                                        JobsDestination -> true
+//                                        ShopDestination -> true
+//                                        ChatDestination -> true
+//                                        OrdersDestination -> true
+//                                        else -> false
+//                                    },
+//                                    modifier = Modifier
+//                                        .align(Alignment.BottomCenter)
+//                                )
+//                            }
+//                        }
 
                                             }
                     }
@@ -116,22 +117,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
 
-@ExperimentalMaterialNavigationApi
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun rememberBottomSheetNavigator(
-    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    skipHalfExpanded: Boolean = false,
-): BottomSheetNavigator {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        animationSpec = animationSpec,
-        skipHalfExpanded = skipHalfExpanded,
-    )
-    return remember(sheetState) {
-        BottomSheetNavigator(sheetState = sheetState)
-    }
-}
+//@ExperimentalMaterialNavigationApi
+//@OptIn(ExperimentalMaterialApi::class)
+//@Composable
+//fun rememberBottomSheetNavigator(
+//    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+//    skipHalfExpanded: Boolean = false,
+//): BottomSheetNavigator {
+//    val sheetState = rememberModalBottomSheetState(
+//        initialValue = ModalBottomSheetValue.Hidden,
+//        animationSpec = animationSpec,
+//        skipHalfExpanded = skipHalfExpanded,
+//    )
+//    return remember(sheetState) {
+//        BottomSheetNavigator(sheetState = sheetState)
+//    }
+//}

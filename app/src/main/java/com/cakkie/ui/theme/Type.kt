@@ -20,6 +20,13 @@ val Typography = Typography(
                 letterSpacing = 0.5.sp,
                 color = TextColorDark
         ),
+        bodySmall = TextStyle(
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                fontWeight = FontWeight(600),
+                fontSize = 10.sp,
+                lineHeight = 16.sp,
+                color = TextColorDark
+        ),
         titleLarge = TextStyle(
                 fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
                 fontWeight = FontWeight.Normal,
@@ -31,6 +38,14 @@ val Typography = Typography(
         labelMedium = TextStyle(
                 fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
                 fontWeight = FontWeight(400),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                letterSpacing = 0.sp,
+                color = TextColorDark
+        ),
+        bodyMedium = TextStyle(
+                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontWeight = FontWeight(600),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 letterSpacing = 0.sp,
