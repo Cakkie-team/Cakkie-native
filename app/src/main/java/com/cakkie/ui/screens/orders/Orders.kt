@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -491,7 +492,8 @@ fun Orders() {
                     verticalArrangement = Arrangement.SpaceBetween
                 ){
                     Text(text = stringResource(id = R.string.velvet_cupcakes),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(text = "12 May, 8:23 am",
@@ -537,7 +539,8 @@ fun Orders() {
                     verticalArrangement = Arrangement.SpaceBetween
                 ){
                     Text(text = stringResource(id = R.string.velvet_cupcakes),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(text = "12 May, 8:23 am",
