@@ -26,6 +26,7 @@ import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.ui.screens.orders.Order
 import com.cakkie.ui.screens.orders.Orders
 import com.cakkie.ui.screens.profile.MyProfile
 import com.cakkie.ui.screens.profile.Profile
