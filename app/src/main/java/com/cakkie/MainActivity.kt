@@ -85,8 +85,15 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     modifier = Modifier
                                         .padding(
-                                            bottom = if (currentDestination == SplashScreenDestination) 0.dp
-                                            else 50.dp
+                                            bottom =
+                                            when (currentDestination) {
+                                                ExploreScreenDestination -> 50.dp
+                                                JobsDestination -> 50.dp
+                                                ShopDestination -> 50.dp
+                                                ChatDestination -> 50.dp
+                                                OrdersDestination -> 50.dp
+                                                else -> 0.dp
+                                            }
                                         )
                                         .fillMaxSize(),
                                     engine = rememberAnimatedNavHostEngine()
@@ -112,7 +119,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 //@ExperimentalMaterialNavigationApi
 //@OptIn(ExperimentalMaterialApi::class)
