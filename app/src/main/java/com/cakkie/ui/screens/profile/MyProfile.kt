@@ -59,15 +59,12 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
-fun MyProfile() {
-    val img10 = painterResource(id = R.drawable.cake65)
-    val img11 = painterResource(id = R.drawable.cake60)
-    val img12 = painterResource(id = R.drawable.cake62)
-    val love = painterResource(id = R.drawable.gridicons_heart)
+fun MyProfile(navigator: DestinationsNavigator) {
 
 
     var sizeImage by remember {
@@ -90,7 +87,9 @@ fun MyProfile() {
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .clickable { },
+                    .clickable {
+                        navigator.popBackStack()
+                    },
             )
             Text(
                 text = stringResource(id = R.string.profile),
@@ -324,7 +323,7 @@ fun MyProfile() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Image(
-                                painter = love, contentDescription = "",
+                                painter = painterResource(id = R.drawable.gridicons_heart), contentDescription = "",
                                 modifier = Modifier.size(12.dp)
                             )
                             Text(

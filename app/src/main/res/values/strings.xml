@@ -68,7 +68,6 @@
     <string name="time">4:54 pm</string>
     <string name="was_this_you">Was This You?</string>
     <string name="unknown_device">An unknown device has been used to access your cakkie account</string>
-    <string name="location">Location:</string>
     <string name="ikosi_ketu">Ikosi-Ketu,</string>
     <string name="lagos_nigeria">Lagos, Nigeria</string>
     <string name="greenish_meridian">2:02PM</string>
@@ -82,6 +81,15 @@
     <string name="profile">Profile</string>
     <string name="reviews">Reviews</string>
     <string name="size">Size:</string>
+    <string name="shape">Shape:</string>
+    <string name="status">Status:</string>
+    <string name="proposed_price">Proposed Price:</string>
+    <string name="location">Location:</string>
+    <string name="icing">Icing:</string>
+    <string name="see_reciept">See Reciept</string>
+    <string name="reciept">Reciept</string>
+    <string name="rounded_shape">Rounded Shape:</string>
+    <string name="medium_sized_pan">Medium-sized pan:</string>
     <string name="availability">Availability:</string>
     <string name="price">Price</string>
     <string name="description">Description</string>
@@ -99,6 +107,7 @@
     <string name="strawberry_sponge_cake">Strawberry Sponge Cake</string>
     <string name="indulge_in_the_heavenly_delight_of_our_signature_cake_fluffy_layers_creamy_goodness_and_fresh_fruits_combine_for_a_slice_of_paradise_join_us_and_savor_the_sweetness">Indulge in the heavenly delight of our signature cake. Fluffy layers, creamy goodness, and fresh fruits combine for a slice of  paradise. Join us and savor the sweetness! 🍰✨</string>
     <string name="please_note_that_under_normal_circumstances_this_cake_requires_a_minimum_of_24_hours_to_prepare_and_will_be_delivered_to_you_within_24_hours_after_preparation">Please note that under normal circumstances, this cake requires a mimimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation.</string>
+    <string name="ordered_from_cakkie">Ordered from Cakkie</string>
 
 
 
