@@ -3,14 +3,13 @@ package com.cakkie.ui.screens.notification
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.DismissDirection
@@ -22,17 +21,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -42,6 +40,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun Notification(navigator: DestinationsNavigator) {
     val itemList =
         mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7")
+    val context = LocalContext.current
 
     Column(
     ) {
@@ -67,10 +66,17 @@ fun Notification(navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
+                    .padding(start = 70.dp)
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
 
+        Toaster(
+            context = context,
+            message = "Swipe a notification right to delete",
+            image = R.drawable.logo,
+
+            ).show()
 
         LazyColumn(
             state = rememberLazyListState()
@@ -86,23 +92,58 @@ fun Notification(navigator: DestinationsNavigator) {
                 )
                 SwipeToDismiss(state = state, background =
                 {
-                    val color = when (state.dismissDirection)  {
+                    val color = when (state.dismissDirection) {
                         DismissDirection.EndToStart -> Color.Red
                         else -> Color.Transparent
                     }
-                    Box(modifier = Modifier.fillMaxSize()
-                        .background(color)) {
+
+                    Row() {
+
                         Image(
                             painter = painterResource(id = R.drawable.delete),
-                            contentDescription = "Arrow Back",
-
+                            contentDescription = "delete",
                             modifier = Modifier
-                                .clickable {
-                                    navigator.popBackStack()
-                                }
+                                .shadow(elevation = 40.dp)
+                                .background(Color.Red)
+                                .height(80.dp)
                                 .size(24.dp)
                         )
+
+                        Column(
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(horizontal = 16.dp)
+                                .height(65.dp)
+                        ) {
+                            Row {
+                                Spacer(modifier = Modifier.height(5.dp))
+
+                                Text(
+                                    text = stringResource(id = R.string.Special_Offer),
+                                    style = MaterialTheme.typography.titleSmall,
+
+                                    )
+                                Spacer(modifier = Modifier.width(100.dp))
+
+                                Text(
+                                    text = stringResource(id = R.string.time),
+                                    style = MaterialTheme.typography.bodySmall,
+
+                                    )
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Text(
+                                text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier,
+
+                                )
+                        }
                     }
+
+
                 }, dismissContent =
                 {
 
@@ -111,6 +152,10 @@ fun Notification(navigator: DestinationsNavigator) {
                             .background(Color.White)
                             .padding(horizontal = 16.dp)
                             .height(65.dp)
+                            .clickable { navigator.navigate(
+                                com.cakkie.ui.screens.destinations.AuthNotificationDestination
+                            ) }
+
                     ) {
                         Row {
                             Spacer(modifier = Modifier.height(5.dp))
@@ -119,23 +164,24 @@ fun Notification(navigator: DestinationsNavigator) {
                                 text = stringResource(id = R.string.Special_Offer),
                                 style = MaterialTheme.typography.titleSmall,
 
-                            )
+                                )
+                            Spacer(modifier = Modifier.width(100.dp))
 
                             Text(
                                 text = stringResource(id = R.string.time),
                                 style = MaterialTheme.typography.bodySmall,
 
-                            )
+                                )
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                                text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier,
+                            text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier,
 
-                                )
+                            )
                     }
                 })
                 Spacer(modifier = Modifier.height(16.dp))
