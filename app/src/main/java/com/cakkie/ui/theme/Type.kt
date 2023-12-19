@@ -6,7 +6,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 
@@ -36,7 +35,7 @@ val Typography = Typography(
                 color = TextColorDark
         ),
         labelMedium = TextStyle(
-                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 fontWeight = FontWeight(400),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
@@ -44,7 +43,7 @@ val Typography = Typography(
                 color = TextColorDark
         ),
         bodyMedium = TextStyle(
-                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 fontWeight = FontWeight(600),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
@@ -52,7 +51,7 @@ val Typography = Typography(
                 color = TextColorDark
         ),
         labelLarge = TextStyle(
-                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 fontWeight = FontWeight(600),
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
@@ -60,7 +59,7 @@ val Typography = Typography(
                 color = TextColorDark
         ),
         labelSmall = TextStyle(
-                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 fontWeight = FontWeight(400),
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
@@ -68,7 +67,7 @@ val Typography = Typography(
                 color = TextColorDark
         ),
         displaySmall = TextStyle(
-                fontFamily = FontFamily(Font(R.font.playfairdisplay_medium)),
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 fontWeight = FontWeight(400),
                 fontSize = 8.sp,
                 lineHeight = 16.8.sp,
