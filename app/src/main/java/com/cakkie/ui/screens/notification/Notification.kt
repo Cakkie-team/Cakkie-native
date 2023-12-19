@@ -6,17 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
@@ -28,8 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -87,109 +82,20 @@ fun Notification(navigator: DestinationsNavigator) {
                 val state = rememberDismissState(
                     confirmStateChange = {
                         if (it == DismissValue.DismissedToEnd) {
-                            itemList.removeAt(index)
+//                            itemList.removeAt(index)
                         }
                         true
                     }
                 )
                 SwipeToDismiss(state = state, background =
                 {
-                    val color = when (state.dismissDirection) {
-                        DismissDirection.EndToStart -> Color.Red
-                        else -> Color.Transparent
-                    }
-
-                    Row {
-
-                        Image(
-                            painter = painterResource(id = R.drawable.delete),
-                            contentDescription = "delete",
-                            modifier = Modifier
-                                .shadow(elevation = 40.dp)
-                                .background(Color.Red)
-                                .height(80.dp)
-                                .size(24.dp)
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .background(Color.White)
-                                .padding(horizontal = 16.dp)
-                                .height(65.dp)
-                        ) {
-                            Row {
-                                Spacer(modifier = Modifier.height(5.dp))
-
-                                Text(
-                                    text = stringResource(id = R.string.Special_Offer),
-                                    style = MaterialTheme.typography.titleSmall,
-
-                                    )
-                                Spacer(modifier = Modifier.width(100.dp))
-
-                                Text(
-                                    text = stringResource(id = R.string.time),
-                                    style = MaterialTheme.typography.bodySmall,
-
-                                    )
-                            }
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Text(
-                                text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier,
-
-                                )
-                        }
-                    }
-
+                    NotificationItem(isBackground = true, navigator = navigator)
 
                 }, dismissContent =
                 {
-
-                    Column(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .padding(horizontal = 16.dp)
-                            .height(65.dp)
-                            .clickable {
-                                navigator.navigate(
-                                    com.cakkie.ui.screens.destinations.AuthNotificationDestination
-                                )
-                            }
-
-                    ) {
-                        Row {
-                            Spacer(modifier = Modifier.height(5.dp))
-
-                            Text(
-                                text = stringResource(id = R.string.Special_Offer),
-                                style = MaterialTheme.typography.titleSmall,
-
-                                )
-                            Spacer(modifier = Modifier.width(100.dp))
-
-                            Text(
-                                text = stringResource(id = R.string.time),
-                                style = MaterialTheme.typography.bodySmall,
-
-                                )
-                        }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text(
-                            text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier,
-
-                            )
-                    }
+                    NotificationItem(isBackground = false, navigator = navigator)
                 })
-                Spacer(modifier = Modifier.height(16.dp))
-
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
         }
