@@ -99,7 +99,9 @@
     <string name="strawberry_sponge_cake">Strawberry Sponge Cake</string>
     <string name="indulge_in_the_heavenly_delight_of_our_signature_cake_fluffy_layers_creamy_goodness_and_fresh_fruits_combine_for_a_slice_of_paradise_join_us_and_savor_the_sweetness">Indulge in the heavenly delight of our signature cake. Fluffy layers, creamy goodness, and fresh fruits combine for a slice of  paradise. Join us and savor the sweetness! 🍰✨</string>
     <string name="please_note_that_under_normal_circumstances_this_cake_requires_a_minimum_of_24_hours_to_prepare_and_will_be_delivered_to_you_within_24_hours_after_preparation">Please note that under normal circumstances, this cake requires a mimimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation.</string>
-
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="job_post_posting_followers_following">Job post, Posting, Followers, Following</string>
 
 
 </resources>
