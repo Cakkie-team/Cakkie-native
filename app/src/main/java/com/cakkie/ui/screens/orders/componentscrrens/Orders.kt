@@ -63,7 +63,7 @@ fun Orders(navigator: DestinationsNavigator) {
             Text(
                 text = stringResource(id = R.string.orders),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 70.dp)
+                modifier = Modifier.align(Alignment.Center)
             )
         }
         Spacer(modifier = Modifier.height(20.dp))

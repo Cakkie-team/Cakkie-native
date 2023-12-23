@@ -26,6 +26,12 @@ import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.ui.screens.orders.CancelOrder
+import com.cakkie.ui.screens.orders.CompletedOrder
+import com.cakkie.ui.screens.orders.InProgressOrder
+import com.cakkie.ui.screens.orders.Reciept
+import com.cakkie.ui.screens.orders.components.OrdersItem
+import com.cakkie.ui.screens.orders.componentscrrens.Completed
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieTheme
@@ -74,44 +80,45 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.FillBounds
                             )
-                            Box(
-                                Modifier.padding(
-                                    top = if (currentDestination == SplashScreenDestination) 0.dp
-                                    else 30.dp
-                                )
-                            ) {
-                                DestinationsNavHost(
-                                    navGraph = NavGraphs.root,
-                                    navController = navController,
-                                    modifier = Modifier
-                                        .padding(
-                                            bottom =
-                                            when (currentDestination) {
-                                                ExploreScreenDestination -> 50.dp
-                                                JobsDestination -> 50.dp
-                                                ShopDestination -> 50.dp
-                                                ChatDestination -> 50.dp
-                                                OrdersDestination -> 50.dp
-                                                else -> 0.dp
-                                            }
-                                        )
-                                        .fillMaxSize(),
-                                    engine = rememberAnimatedNavHostEngine()
-                                )
-                                BottomNav(
-                                    navController = navController,
-                                    state = when (currentDestination) {
-                                        ExploreScreenDestination -> true
-                                        JobsDestination -> true
-                                        ShopDestination -> true
-                                        ChatDestination -> true
-                                        OrdersDestination -> true
-                                        else -> false
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.BottomCenter)
-                                )
-                            }
+//                            Box(
+//                                Modifier.padding(
+//                                    top = if (currentDestination == SplashScreenDestination) 0.dp
+//                                    else 30.dp
+//                                )
+//                            ) {
+CancelOrder()
+                        //                                DestinationsNavHost(
+//                                    navGraph = NavGraphs.root,
+//                                    navController = navController,
+//                                    modifier = Modifier
+//                                        .padding(
+//                                            bottom =
+//                                            when (currentDestination) {
+//                                                ExploreScreenDestination -> 50.dp
+//                                                JobsDestination -> 50.dp
+//                                                ShopDestination -> 50.dp
+//                                                ChatDestination -> 50.dp
+//                                                OrdersDestination -> 50.dp
+//                                                else -> 0.dp
+//                                            }
+//                                        )
+//                                        .fillMaxSize(),
+//                                    engine = rememberAnimatedNavHostEngine()
+//                                )
+//                                BottomNav(
+//                                    navController = navController,
+//                                    state = when (currentDestination) {
+//                                        ExploreScreenDestination -> true
+//                                        JobsDestination -> true
+//                                        ShopDestination -> true
+//                                        ChatDestination -> true
+//                                        OrdersDestination -> true
+//                                        else -> false
+//                                    },
+//                                    modifier = Modifier
+//                                        .align(Alignment.BottomCenter)
+//                                )
+//                            }
                         }
                     }
                 }

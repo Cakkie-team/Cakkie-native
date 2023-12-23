@@ -62,7 +62,7 @@ fun Completed(navigator: DestinationsNavigator){
                         )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
-                    CakkieFilter(navigator= navigator)
+                    CakkieFilter(navigator = navigator)
                     Spacer(modifier = Modifier.height(16.dp))
 
                     LazyColumn {

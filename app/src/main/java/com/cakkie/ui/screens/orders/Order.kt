@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.HorizontalPagerIndicator
-import com.cakkie.ui.screens.destinations.Orders1Destination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -310,7 +309,7 @@ fun Order (navigator: DestinationsNavigator) {
             CakkieButton(
                 text = stringResource(id = R.string.order)
             ) {
-navigator.navigate(Orders1Destination)
+navigator.navigate(CompletedOrderDestination)
             }
         }
     }

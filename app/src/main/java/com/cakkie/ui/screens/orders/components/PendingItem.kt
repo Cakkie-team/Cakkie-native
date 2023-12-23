@@ -27,6 +27,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBlue
+import com.cakkie.ui.theme.TextColorDark
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PendingItem () {
@@ -43,16 +45,18 @@ fun PendingItem () {
                 .background(Color.White),
             contentAlignment = Alignment.CenterStart
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp),
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/100x100/?cakes",
-                    contentDescription = "")
+                    model = "https://source.unsplash.com/100x100/?cakes,cover",
+                    contentDescription = ""
+                )
                 Column(
                     modifier = Modifier
                         .padding(start = 5.dp),
@@ -65,13 +69,14 @@ fun PendingItem () {
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = "12 May, 8:23 am",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextColorDark.copy(0.7f)
                     )
                 }
-                Spacer(modifier = Modifier.width(70.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .size(width = 80.dp, height = 32.dp)
+                        .size(width = 96.dp, height = 32.dp)
                         .clip(RoundedCornerShape(10))
                         .background(CakkieBlue),
                     contentAlignment = Alignment.Center
@@ -80,7 +85,6 @@ fun PendingItem () {
                         text = stringResource(id = R.string.pending),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
-                        modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 5.dp)
                     )
                 }
             }

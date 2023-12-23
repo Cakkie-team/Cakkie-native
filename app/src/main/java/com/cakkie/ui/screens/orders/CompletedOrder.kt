@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,23 +22,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.Destination
-import com.cakkie.ui.screens.destinations.RecieptDestination
 import com.cakkie.ui.theme.CakkieBrown
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.cakkie.ui.theme.TextColorDark
+
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
-fun Orders1 (navigator: DestinationsNavigator) {
+fun CompletedOrder (navigator: DestinationsNavigator) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
         ) {
             Image(
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
@@ -52,16 +49,18 @@ fun Orders1 (navigator: DestinationsNavigator) {
             )
             Text(
                 text = stringResource(id = R.string.orders),
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .align(Alignment.Center)
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row {
-            Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = stringResource(id = R.string.ordered_from_cakkie),
-                style = MaterialTheme.typography.labelMedium
-            )
+                style = MaterialTheme.typography.labelMedium,
+
+                )
             Text(
                 text = " Jane Doe",
                 style = MaterialTheme.typography.labelMedium,
@@ -70,21 +69,24 @@ fun Orders1 (navigator: DestinationsNavigator) {
         }
         Text(
             text = "Posted 19th June",
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(start = 16.dp)
+            style = MaterialTheme.typography.bodySmall,
+            color = TextColorDark.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.bodyLarge,
             color = CakkieBrown,
-            modifier = Modifier.padding(start = 16.dp)
         )
-        Spacer(modifier = Modifier.height(70.dp))
-
+        Spacer(modifier = Modifier.height(20.dp))
+Text(text = "HI, I would like to klnfn  jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
+        "woyrory r yrororywer;iorryo   row;tyr8tw8o \n y8wyoiy/iy o ryhfo /yoryi r" +
+        " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o  fwry.riuyrukyr8ir.rufyr.grog8y/o",
+    style = MaterialTheme.typography.bodySmall
+)
+        Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
-                .padding(start = 16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
@@ -99,15 +101,15 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 Row {
                     Text(
                         text = "6 inches:",
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
                         text = stringResource(id = R.string.medium_sized_pan),
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(70.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text(
                     text = stringResource(id = R.string.proposed_price),
@@ -117,15 +119,15 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "NGN 20,000",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(end = 35.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -138,10 +140,10 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = stringResource(id = R.string.rounded_shape),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
-            Spacer(modifier = Modifier.width(1300.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text(
                     text = stringResource(id = R.string.location),
@@ -151,15 +153,15 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Lagos State",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(end = 60.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -171,11 +173,12 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.gridicons_heart),
+                    painter = painterResource(id = R.drawable.badge
+                    ),
                     contentDescription = ""
                 )
             }
-            Spacer(modifier = Modifier.width(150.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text(
                     text = stringResource(id = R.string.icing),
@@ -185,7 +188,7 @@ fun Orders1 (navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "300 ",
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

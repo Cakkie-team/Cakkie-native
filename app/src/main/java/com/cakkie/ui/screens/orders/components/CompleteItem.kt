@@ -29,6 +29,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieLightBrown
+import com.cakkie.ui.theme.TextColorDark
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CompleteItem () {
@@ -50,12 +52,13 @@ fun CompleteItem () {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp),
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 GlideImage(
-                    model = "https://source.unsplash.com/100x100/?cakes",
+                    model = "https://source.unsplash.com/100x100/?cakes,cover",
                     contentDescription = "")
                 Column(
                     modifier = Modifier
@@ -70,13 +73,13 @@ fun CompleteItem () {
                     Text(
                         text = "12 May, 8:23 am",
                         style = MaterialTheme.typography.bodySmall,
-                        color = CakkieLightBrown
+                        color = TextColorDark.copy(0.7f)
                     )
                 }
-                Spacer(modifier = Modifier.width(70.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .size(width = 80.dp, height = 32.dp)
+                        .size(width = 96.dp, height = 32.dp)
                         .clip(RoundedCornerShape(10))
                         .background(CakkieGreen),
                     contentAlignment = Alignment.Center
@@ -85,10 +88,10 @@ fun CompleteItem () {
                         text = stringResource(id = R.string.completed),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
-                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                     )
                 }
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
