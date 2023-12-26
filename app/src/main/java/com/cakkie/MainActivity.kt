@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.navigations.BottomNav
+import com.cakkie.ui.components.CakkieFilter2
 import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.appCurrentDestinationAsState
 import com.cakkie.ui.screens.destinations.ChatDestination
@@ -29,9 +30,13 @@ import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.screens.orders.CancelOrder
 import com.cakkie.ui.screens.orders.CompletedOrder
 import com.cakkie.ui.screens.orders.InProgressOrder
+import com.cakkie.ui.screens.orders.OrderState
 import com.cakkie.ui.screens.orders.Reciept
 import com.cakkie.ui.screens.orders.components.OrdersItem
 import com.cakkie.ui.screens.orders.componentscrrens.Completed
+import com.cakkie.ui.screens.orders.componentscrrens.CompletedOrders
+import com.cakkie.ui.screens.orders.componentscrrens.OngoingOrder
+import com.cakkie.ui.screens.orders.componentscrrens.PendingOrders
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieTheme
@@ -80,7 +85,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.FillBounds
                             )
-                            Box(
+                                                    Box(
                                 Modifier.padding(
                                     top = if (currentDestination == SplashScreenDestination) 0.dp
                                     else 30.dp

@@ -73,6 +73,7 @@
     <string name="greenish_meridian">2:02PM</string>
     <string name="date">June 19, 2023</string>
     <string name="device">Device:</string>
+    <string name="yesterday">Yesterday</string>
     <string name="model">iPhone 33 Pro X</string>
     <string name="duration">Time:</string>
     <string name="yes_it_was_me">Yes, It was me</string>
@@ -101,7 +102,12 @@
     <string name="price">Price</string>
     <string name="description">Description</string>
     <string name="all">All</string>
+    <string name="view">View</string>
     <string name="cancel">Cancel</string>
+    <string name="today">Today</string>
+    <string name="is_working_on_your_order">is working on your order</string>
+    <string name="you_made_an_order_to">You made an order to</string>
+    <string name="order_completed">Order Completed</string>
     <string name="warning">Warning</string>
     <string name="cancel_order">Cancel Order</string>
     <string name="download">Download</string>

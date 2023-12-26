@@ -309,7 +309,7 @@ fun Order (navigator: DestinationsNavigator) {
             CakkieButton(
                 text = stringResource(id = R.string.order)
             ) {
-navigator.navigate(CompletedOrderDestination)
+//navigator.navigate(CompletedOrderDestination)
             }
         }
     }

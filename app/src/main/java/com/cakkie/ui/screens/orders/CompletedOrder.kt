@@ -196,7 +196,7 @@ Text(text = "HI, I would like to klnfn  jwfjwkh jiefj;wi hfwiu hrif hukseh fuio 
         Spacer(modifier = Modifier.height(50.dp))
         CakkieButton(text = stringResource(id = R.string.see_reciept)
         ) {
-            navigator.navigate(RecieptDestination())
+//            navigator.navigate(RecieptDestination())
         }
     }
 }
