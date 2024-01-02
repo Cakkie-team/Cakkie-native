@@ -70,6 +70,9 @@ fun CakkieInputField(
     var searchQuery by remember {
         mutableStateOf(TextFieldValue(""))
     }
+    var isEdit by remember {
+        mutableStateOf(false)
+    }
     var showSearch by remember {
         mutableStateOf(false)
     }
@@ -147,6 +150,16 @@ fun CakkieInputField(
                             }
                         )
                     }
+                }
+                if (isEdit) {
+                    Image(
+                        painter = painterResource(id = R.drawable.edit),
+                        contentDescription = "edit",
+
+                    )
+                } else {
+                    VisualTransformation.None
+
                 }
                 if (isAddress) {
                     Image(

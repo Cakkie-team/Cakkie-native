@@ -66,7 +66,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
-fun MyProfile(navigator: DestinationsNavigator) {
+fun MyProfile( navigator: DestinationsNavigator) {
     val img10 = painterResource(id = R.drawable.cake65)
     val img11 = painterResource(id = R.drawable.cake60)
     val img12 = painterResource(id = R.drawable.cake62)
