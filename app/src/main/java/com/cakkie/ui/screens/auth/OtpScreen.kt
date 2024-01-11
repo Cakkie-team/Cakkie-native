@@ -131,14 +131,16 @@ fun OtpScreen(
             Modifier.height(50.dp),
             processing = processing,
             text = stringResource(id = R.string.continue_),
-            enabled = otp.text.length == 6
+            enabled = otp.text.length == 4
         ) {
             processing = true
             viewModel.verifyOtp(email, otp.text)
                 .addOnSuccessListener {
                     processing = false
                     if (it.token.isNotEmpty()) {
-                        viewModel.saveToken(it.token)
+                        viewModel.saveToken(
+                            it.token
+                        )
                     }
                     Toaster(
                         context = context,
