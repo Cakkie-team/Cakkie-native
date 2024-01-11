@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,16 +32,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieButton2
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -54,6 +48,7 @@ import com.cakkie.ui.theme.CakkieOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun Profile(navigator: DestinationsNavigator) {
@@ -74,7 +69,7 @@ fun Profile(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable {
-                               navigator.popBackStack()
+                        navigator.popBackStack()
                     },
             )
             Text(
@@ -90,20 +85,24 @@ fun Profile(navigator: DestinationsNavigator) {
                 .height(200.dp),
             contentAlignment = Alignment.TopCenter
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.rec130), contentDescription = null,
+            GlideImage(
+                model = "https://source.unsplash.com/600x400/?cakes,cover",
+                contentDescription = "cover",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
+                    .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
                     .height(150.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.ell4), contentDescription = null,
+            GlideImage(
+                model = "https://source.unsplash.com/100x100/?profile,cute",
+                contentDescription = "profile pic",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .padding(top = 100.dp)
                     .size(100.dp)
+                    .clip(RoundedCornerShape(100))
                     .border(
-                        width = 2.dp,
+                        width = 3.dp,
                         color = CakkieBackground,
                         shape = RoundedCornerShape(100)
                     )

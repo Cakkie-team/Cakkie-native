@@ -91,7 +91,7 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                         .size(40.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-//                            navigator.navigate(ProfileDestination)
+                            navigator.navigate(ProfileDestination)
                         }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
