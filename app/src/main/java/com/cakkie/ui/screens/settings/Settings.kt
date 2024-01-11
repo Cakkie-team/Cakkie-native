@@ -56,7 +56,6 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 @Composable
 fun Settings(navigator: DestinationsNavigator) {
-    var expanded by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
     var itemExpanded by remember { mutableStateOf(false) }
     var isItemExpanded by remember { mutableStateOf(false) }
@@ -187,6 +186,7 @@ fun Settings(navigator: DestinationsNavigator) {
                     description = R.string.about_cakkie_privacy_policy_terms_and_onditions
                 ),
             ).forEach {
+                var expanded by remember { mutableStateOf(false) }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -231,134 +231,134 @@ fun Settings(navigator: DestinationsNavigator) {
                         )
                     }
                 }
-            }
 
-            if (expanded) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = CakkieLightBrown.copy(alpha = 0.10f))
-
-                ) {
-                    Row(
+                if (expanded) {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                            .background(color = CakkieLightBrown.copy(alpha = 0.10f))
 
+                    ) {
                         Row(
-                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painterResource(id = R.drawable.notification),
-                                contentDescription = "notification",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Text(text = switch.text)
-                            Spacer(modifier = Modifier.weight(1f))
-                            Switch(checked = switch.isChecked, onCheckedChange = { isChecked ->
-                                switch = switch.copy(isChecked = isChecked)
-                            })
-                            Text(
-                                text = stringResource(id = R.string.pause_notification),
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier,
-                                fontWeight = FontWeight.W400,
-                                fontSize = 16.sp
-                            )
 
-                        }
-                    }
-
-                    Image(
-                        painter = if (switchOn) painterResource(id = R.drawable.switch_on) else painterResource(
-                            id = R.drawable.switch_
-                        ),
-                        contentDescription = "expand",
-                        modifier = Modifier
-                            .size(height = 24.dp, width = 24.dp)
-                            .clickable {
-                                isSwitchOn = true
-                            }
-                    )
-                    if (isSwitchOn) {
-                        ModalBottomSheet(
-                            sheetState = sheetState,
-                            onDismissRequest = { isSwitchOn = false },
-                            containerColor = CakkieBackground
-                        )
-
-                        {
-
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 32.dp)
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-
+                                Image(
+                                    painterResource(id = R.drawable.notification),
+                                    contentDescription = "notification",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(text = switch.text)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Switch(checked = switch.isChecked, onCheckedChange = { isChecked ->
+                                    switch = switch.copy(isChecked = isChecked)
+                                })
                                 Text(
                                     text = stringResource(id = R.string.pause_notification),
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier,
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontWeight = FontWeight.W400,
                                     fontSize = 16.sp
                                 )
 
-                                Text(
-                                    text = stringResource(id = R.string.pause_notification_message),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier,
-                                    fontSize = 10.sp
-                                )
-                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                        }
 
-                                Row(modifier = Modifier.fillMaxWidth()) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(color = Color.Unspecified)
-                                    ) {
-                                        radioButtons.forEachIndexed { index, info ->
-                                            Row(verticalAlignment = Alignment.CenterVertically,
-                                                modifier = Modifier.clickable {
-                                                    radioButtons.replaceAll {
-                                                        it.copy(
-                                                            isChecked = it.text == info.text
-                                                        )
+                        Image(
+                            painter = if (switchOn) painterResource(id = R.drawable.switch_on) else painterResource(
+                                id = R.drawable.switch_
+                            ),
+                            contentDescription = "expand",
+                            modifier = Modifier
+                                .size(height = 24.dp, width = 24.dp)
+                                .clickable {
+                                    isSwitchOn = true
+                                }
+                        )
+                        if (isSwitchOn) {
+                            ModalBottomSheet(
+                                sheetState = sheetState,
+                                onDismissRequest = { isSwitchOn = false },
+                                containerColor = CakkieBackground
+                            )
+
+                            {
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 32.dp)
+                                ) {
+
+                                    Text(
+                                        text = stringResource(id = R.string.pause_notification),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 16.sp
+                                    )
+
+                                    Text(
+                                        text = stringResource(id = R.string.pause_notification_message),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier,
+                                        fontSize = 10.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(color = Color.Unspecified)
+                                        ) {
+                                            radioButtons.forEachIndexed { index, info ->
+                                                Row(verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = Modifier.clickable {
+                                                        radioButtons.replaceAll {
+                                                            it.copy(
+                                                                isChecked = it.text == info.text
+                                                            )
+                                                        }
                                                     }
-                                                }
-                                            ) {
-                                                RadioButton(
-                                                    selected = info.isChecked,
-                                                    onClick = {
-                                                        radioButtons[index] = info.copy(
-                                                            isChecked = info.isChecked
-                                                        )
-                                                    },
+                                                ) {
+                                                    RadioButton(
+                                                        selected = info.isChecked,
+                                                        onClick = {
+                                                            radioButtons[index] = info.copy(
+                                                                isChecked = info.isChecked
+                                                            )
+                                                        },
 
-                                                    )
-                                                Text(text = info.text)
+                                                        )
+                                                    Text(text = info.text)
+                                                }
                                             }
                                         }
+
                                     }
+                                    Spacer(modifier = Modifier.height(15.dp))
+
+                                    CakkieButton(
+                                        Modifier.height(50.dp),
+                                        processing = processing,
+                                        text = stringResource(id = R.string.done)
+                                    ) {
+                                    }
+                                    Spacer(modifier = Modifier.height(50.dp))
 
                                 }
-                                Spacer(modifier = Modifier.height(15.dp))
 
-                                CakkieButton(
-                                    Modifier.height(50.dp),
-                                    processing = processing,
-                                    text = stringResource(id = R.string.done)
-                                ) {
-                                }
-                                Spacer(modifier = Modifier.height(50.dp))
 
                             }
-
-
                         }
                     }
                 }
