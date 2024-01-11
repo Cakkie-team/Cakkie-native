@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
+import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
@@ -128,8 +129,9 @@ fun OtpScreen(
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
             Modifier.height(50.dp),
-            processing = false,
-            text = stringResource(id = R.string.continue_)
+            processing = processing,
+            text = stringResource(id = R.string.continue_),
+            enabled = otp.text.length == 6
         ) {
             processing = true
             viewModel.verifyOtp(email, otp.text)
@@ -144,9 +146,9 @@ fun OtpScreen(
                         image = R.drawable.logo
                     ).show()
                     if (isNewDevice) {
-                        //Todo: navigate to home screen
+                        navigator.navigate(ExploreScreenDestination)
                     } else if (isSignUp) {
-                        //Todo: navigate to home screen
+                        navigator.navigate(ExploreScreenDestination)
                     } else {
                         navigator.navigate(ResetPasswordDestination(email))
                     }

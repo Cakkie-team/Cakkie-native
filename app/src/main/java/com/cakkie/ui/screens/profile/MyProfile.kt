@@ -54,8 +54,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton2
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
-import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -66,11 +64,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
-fun MyProfile( navigator: DestinationsNavigator) {
-    val img10 = painterResource(id = R.drawable.cake65)
-    val img11 = painterResource(id = R.drawable.cake60)
-    val img12 = painterResource(id = R.drawable.cake62)
-    val love = painterResource(id = R.drawable.gridicons_heart)
+fun MyProfile(navigator: DestinationsNavigator) {
 
 
     var sizeImage by remember {
@@ -93,7 +87,9 @@ fun MyProfile( navigator: DestinationsNavigator) {
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .clickable { },
+                    .clickable {
+                        navigator.popBackStack()
+                    },
             )
             Text(
                 text = stringResource(id = R.string.profile),
@@ -181,7 +177,7 @@ fun MyProfile( navigator: DestinationsNavigator) {
                     )
                 }
                 OutlinedButton(
-                    onClick = {navigator.navigate(SettingsDestination)},
+                    onClick = {},
                     modifier = Modifier
                         .size(width = 70.dp, height = 34.dp),
                     border = BorderStroke(1.dp, color = CakkieLightBrown),
@@ -196,7 +192,6 @@ fun MyProfile( navigator: DestinationsNavigator) {
                         modifier = Modifier,
                         tint = CakkieBrown
                     )
-
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -328,7 +323,7 @@ fun MyProfile( navigator: DestinationsNavigator) {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Image(
-                                painter = love, contentDescription = "",
+                                painter = painterResource(id = R.drawable.gridicons_heart), contentDescription = "",
                                 modifier = Modifier.size(12.dp)
                             )
                             Text(
