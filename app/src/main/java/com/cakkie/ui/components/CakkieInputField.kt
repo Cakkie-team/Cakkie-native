@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,6 +70,9 @@ fun CakkieInputField(
     }
     var searchQuery by remember {
         mutableStateOf(TextFieldValue(""))
+    }
+    var isEdit by remember {
+        mutableStateOf(false)
     }
     var showSearch by remember {
         mutableStateOf(false)
@@ -148,6 +152,16 @@ fun CakkieInputField(
                         )
                     }
                 }
+                if (isEdit) {
+                    Image(
+                        painter = painterResource(id = R.drawable.edit),
+                        contentDescription = "edit",
+
+                    )
+                } else {
+                    VisualTransformation.None
+
+                }
                 if (isAddress) {
                     Image(
                         painter = painterResource(id = R.drawable.location),
@@ -194,19 +208,21 @@ fun CakkieInputField(
                 .fillMaxWidth(0.9f)
                 .align(CenterHorizontally)
         ) {
-            CakkieInputField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = stringResource(id = R.string.search_address_city_state),
-                keyboardType = KeyboardType.Text,
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.search),
-                        contentDescription = "search",
-                    )
-                },
-                modifier = Modifier.padding(6.dp)
-            )
+           Box(modifier = Modifier.height(60.dp).fillMaxWidth()){
+               CakkieInputField(
+                   value = searchQuery,
+                   onValueChange = { searchQuery = it },
+                   placeholder = stringResource(id = R.string.search_address_city_state),
+                   keyboardType = KeyboardType.Text,
+                   leadingIcon = {
+                       Image(
+                           painter = painterResource(id = R.drawable.search),
+                           contentDescription = "search",
+                       )
+                   },
+                   modifier = Modifier.padding(6.dp).height(60.dp)
+               )
+           }
             addressList.forEach { address ->
                 DropdownMenuItem(onClick = {
                     // Handle item selection

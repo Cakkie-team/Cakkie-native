@@ -54,6 +54,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton2
+import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -177,7 +178,9 @@ fun MyProfile(navigator: DestinationsNavigator) {
                     )
                 }
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        navigator.navigate(SettingsDestination)
+                    },
                     modifier = Modifier
                         .size(width = 70.dp, height = 34.dp),
                     border = BorderStroke(1.dp, color = CakkieLightBrown),
@@ -323,7 +326,8 @@ fun MyProfile(navigator: DestinationsNavigator) {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.gridicons_heart), contentDescription = "",
+                                painter = painterResource(id = R.drawable.gridicons_heart),
+                                contentDescription = "",
                                 modifier = Modifier.size(12.dp)
                             )
                             Text(

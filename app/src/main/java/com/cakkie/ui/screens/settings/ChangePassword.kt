@@ -1,5 +1,4 @@
-package com.cakkie.ui.screens.auth
-
+package com.cakkie.ui.screens.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,10 +26,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.auth.AuthViewModel
+import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.utill.Toaster
@@ -42,23 +44,29 @@ import timber.log.Timber
 
 @Composable
 @Destination
-fun ResetPassword(email: String, navigator: DestinationsNavigator) {
+fun ChangePassword(email: String, navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }
+
+
 
     val context = LocalContext.current
     var processing by remember {
         mutableStateOf(false)
     }
 
-    var confirmPassword by remember {
+    var newPassword by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+
+    var retypePassword by remember {
         mutableStateOf(TextFieldValue(""))
     }
 
     val canProceed = password.text.isNotEmpty() &&
-            password.text == confirmPassword.text
+            newPassword.text == retypePassword.text
 
 
     Column(
@@ -89,7 +97,7 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
                 contentDescription = "Cakkie Logo",
                 modifier = Modifier
                     .padding(bottom = 52.dp)
-                    .size(67.dp)
+                    .size(160.dp)
                     .align(Alignment.Center)
             )
         }
@@ -101,75 +109,65 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
         ) {
 
             Text(
-                text = stringResource(id = R.string.reset_password),
+                text = stringResource(id = R.string.change_your_password),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = stringResource(id = R.string.reset_password_message),
+                text = stringResource(id = R.string.change_password_message),
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            Spacer(modifier = Modifier.height(52.dp))
+            Spacer(modifier = Modifier.height(34.dp))
 
             CakkieInputField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = stringResource(id = R.string.new_password_),
+                placeholder = stringResource(id = R.string.password),
                 keyboardType = KeyboardType.Password,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             CakkieInputField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                placeholder = stringResource(id = R.string.confirm_new_password),
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                placeholder = stringResource(id = R.string.new_password),
                 keyboardType = KeyboardType.Password,
             )
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+            CakkieInputField(
+                value = retypePassword,
+                onValueChange = { retypePassword = it },
+                placeholder = stringResource(id = R.string.retype_password),
+                keyboardType = KeyboardType.Password,
+            )
+            Spacer(modifier = Modifier.height(26.dp))
 
 
             CakkieButton(
-                Modifier.height(50.dp),
+                Modifier
+                    .height(50.dp)
+                   ,
                 processing = processing,
                 enabled = canProceed,
-                text = stringResource(id = R.string.continue_)
+                text = stringResource(id = R.string.submit)
             ) {
-                viewModel.resetPassword(
-                    password = password.text,
-                    passwordConfirmation = confirmPassword.text
-                ).addOnSuccessListener { response ->
-                    processing = false
-                    viewModel.removeToken()
-                    //  show toast
-                    Toaster(
-                        context = context,
-                        message = response.message,
-                        image = R.drawable.logo
-                    ).show()
-                    //    navigate to login screen
-                    navigator.navigate(
-                        LoginScreenDestination(
-                            email = email,
-                        )
-                    ) {
-                        popUpTo(ResetPasswordDestination.route) {
-                            inclusive = true
-                        }
-                    }
-                }.addOnFailureListener { exception ->
-                    //  show toast
-                    Toaster(
-                        context = context,
-                        message = exception,
-                        image = R.drawable.logo
-                    ).show()
-                    processing = false
-                    Timber.d(exception)
-                }
 
-                
             }
 
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Text(
+                text = stringResource(id = R.string.forgot_password),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable {
+                        navigator.navigate(ForgetPasswordDestination(email))
+                    }
+            )
 
         }
     }

@@ -82,7 +82,7 @@ fun Notification(navigator: DestinationsNavigator) {
                 val state = rememberDismissState(
                     confirmStateChange = {
                         if (it == DismissValue.DismissedToEnd) {
-//                            itemList.removeAt(index)
+                           itemList.removeAt(index)
                         }
                         true
                     }
