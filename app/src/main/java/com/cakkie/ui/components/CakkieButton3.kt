@@ -1,5 +1,6 @@
 package com.cakkie.ui.components
 
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,17 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
-import com.cakkie.ui.theme.Error
 
 @Composable
-fun CancelButton(
+fun CakkieButton3(
     modifier: Modifier = Modifier,
     text: String,
     processing: Boolean = false,
@@ -32,26 +29,27 @@ fun CancelButton(
         enabled = !processing && enabled,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Error,
-            contentColor = Color.White,
+            containerColor = CakkieBrown,
+            contentColor = CakkieBackground,
             disabledContainerColor = CakkieBrown.copy(alpha = 0.5f),
             disabledContentColor = CakkieBackground
         ),
         modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
+            .size(width = 115.dp, height = 40.dp),
+        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+
     ) {
         if (processing) {
             CircularProgressIndicator(
                 color = CakkieBackground,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(20.dp)
                     .align(Alignment.CenterVertically),
                 strokeWidth = 2.dp,
                 strokeCap = StrokeCap.Butt
             )
         } else {
-            Text(text = text, style = MaterialTheme.typography.bodyLarge, color = CakkieBackground)
+            Text(text = text, style = MaterialTheme.typography.bodySmall, color = CakkieBackground)
         }
     }
 }

@@ -7,6 +7,7 @@ import com.cakkie.datastore.Settings
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.screens.notification.NotificationViewModel
+import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -37,6 +38,11 @@ val appModule = module {
     viewModel {
         NotificationViewModel(get())
     }
+
+//    //inject OrderViewModel
+//    viewModel {
+//        OrderViewModel(get())
+//    }
 
     // Database
     single {

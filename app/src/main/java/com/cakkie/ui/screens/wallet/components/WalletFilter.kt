@@ -1,4 +1,5 @@
-package com.cakkie.ui.components
+package com.cakkie.ui.screens.wallet.components
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,16 +27,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.ramcosta.composedestinations.annotation.Destination
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.CompletedDestination
+import com.cakkie.ui.screens.destinations.CompletedOrderDestination
+import com.cakkie.ui.screens.destinations.CompletedOrdersDestination
 import com.cakkie.ui.screens.destinations.DeclinedDestination
 import com.cakkie.ui.screens.destinations.InProgressDestination
+import com.cakkie.ui.screens.destinations.OngoingOrderDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.PendingDestination
+import com.cakkie.ui.screens.destinations.PendingOrdersDestination
+import com.cakkie.ui.screens.orders.OrderState
 import com.cakkie.ui.screens.orders.componentscrrens.InProgress
+import com.cakkie.ui.screens.orders.componentscrrens.PendingOrders
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -42,10 +51,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CakkieFilter (navigator: DestinationsNavigator){
-        var expanded by remember {
-            mutableStateOf(false)
-        }
+fun WalletFilter (){
+//fun WalletFilter (navigator: DestinationsNavigator){
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,6 +70,7 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                 .fillMaxWidth()
                 .size(width = 160.dp, height = 94.dp)
                 .background(CakkieBackground)
+                .clip(RoundedCornerShape(8))
         ) {
             OutlinedTextField(
                 value = "Filters",
@@ -83,7 +94,7 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                     Text(text = stringResource(id = R.string.all),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.clickable {
-                            navigator.navigate(OrdersDestination())
+//                            navigator.navigate((OrdersDestination()))
                         }
                     )
                 },
@@ -97,10 +108,10 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                     color = CakkieLightBrown
                 )
                 DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.in_progress),
+                    Text(text = stringResource(id = R.string.proposal_fee),
                         style = MaterialTheme.typography.labelSmall,
                         modifier =  Modifier.clickable {
-                            navigator.navigate(InProgressDestination())
+//                            navigator.navigate(OngoingOrderDestination())
                         }
 
                     )
@@ -115,10 +126,10 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                     color = CakkieLightBrown
                 )
                 DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.completed),
+                    Text(text = stringResource(id = R.string.icing_purchase),
                         style = MaterialTheme.typography.labelSmall,
                         modifier =  Modifier.clickable {
-                            navigator.navigate(CompletedDestination())
+//                            navigator.navigate(PendingOrdersDestination())
                         }
                     )
                 },
@@ -133,10 +144,10 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                 )
                 DropdownMenuItem(
                     text = {
-                        Text(text = stringResource(id = R.string.pending),
+                        Text(text = stringResource(id = R.string.withdrawal),
                             style = MaterialTheme.typography.labelSmall,
                             modifier =  Modifier.clickable {
-                                navigator.navigate(PendingDestination())
+//                                navigator.navigate(CompletedOrdersDestination())
                             }
                         )
                     },
@@ -149,14 +160,33 @@ fun CakkieFilter (navigator: DestinationsNavigator){
                     thickness = 1.dp,
                     color = CakkieLightBrown
                 )
-                DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.declined),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier =  Modifier.clickable {
-                            navigator.navigate(DeclinedDestination())
-                        }
-                    )
-                },
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(id = R.string.deposit),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier =  Modifier.clickable {
+//                                navigator.navigate(CompletedOrdersDestination())
+                            }
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                    }
+                )
+                Divider(
+                    modifier = Modifier.padding(start = 5.dp),
+                    thickness = 1.dp,
+                    color = CakkieLightBrown
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(id = R.string.orders),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier =  Modifier.clickable {
+//                                navigator.navigate(CompletedOrdersDestination())
+                            }
+                        )
+                    },
                     onClick = {
                         expanded = false
                     }
