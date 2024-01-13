@@ -13,28 +13,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
-import com.cakkie.ui.theme.Error
 
 @Composable
-fun CancelButton(
+fun CakkieButton(
     modifier: Modifier = Modifier,
     text: String,
     processing: Boolean = false,
     enabled: Boolean = true,
+    color: Color = CakkieBrown,
+    contentColor: Color = CakkieBackground,
     onClick: () -> Unit
 ) {
     Button(
         enabled = !processing && enabled,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Error,
-            contentColor = Color.White,
-            disabledContainerColor = CakkieBrown.copy(alpha = 0.5f),
+            containerColor = color,
+            contentColor = contentColor,
+            disabledContainerColor = color.copy(alpha = 0.5f),
             disabledContentColor = CakkieBackground
         ),
         modifier = modifier

@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieFilter2
+import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.screens.destinations.CompletedOrdersDestination
 import com.cakkie.ui.screens.destinations.InProgressOrderDestination
 import com.cakkie.ui.theme.CakkieBrown
@@ -72,7 +72,7 @@ fun OrderState (navigator: DestinationsNavigator){
                 modifier = Modifier.padding(start = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
-      CakkieFilter2(navigator = navigator)
+            CakkieFilter(navigator = navigator)
         }
         Spacer(modifier = Modifier.height(3.dp))
         Row(

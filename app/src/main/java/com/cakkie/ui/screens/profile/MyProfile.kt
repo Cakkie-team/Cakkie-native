@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -42,8 +44,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +58,7 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieButton2
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -66,8 +71,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
-
-
+    //screen size
+    val configuration = LocalConfiguration.current
+    val height = configuration.screenHeightDp.dp
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -103,7 +109,8 @@ fun MyProfile(navigator: DestinationsNavigator) {
         Column(
             Modifier
                 .fillMaxSize()
-//                .verticalScroll(rememberScrollState())
+                .nestedScroll(rememberNestedScrollInteropConnection())
+                .verticalScroll(rememberScrollState())
         ) {
 
             Box(
@@ -156,7 +163,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CakkieButton2(
+                CakkieButton(
                     text = stringResource(id = R.string.edit_profile)
                 ) {
                 }
@@ -297,7 +304,10 @@ fun MyProfile(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(20.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                modifier = Modifier.padding(horizontal = 2.dp)
+                modifier = Modifier
+//                    .nestedScroll(nestedScroll)
+                    .padding(horizontal = 2.dp)
+                    .height(height - 220.dp)
             ) {
                 items(50) {
                     Box(

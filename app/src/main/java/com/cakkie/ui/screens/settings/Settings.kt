@@ -43,7 +43,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.components.CakkieButton2
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
@@ -56,9 +55,6 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 @Composable
 fun Settings(navigator: DestinationsNavigator) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var itemExpanded by remember { mutableStateOf(false) }
-    var isItemExpanded by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var isSwitchOn by rememberSaveable { mutableStateOf(false) }
     var switchOn by remember { mutableStateOf(false) }
@@ -120,7 +116,6 @@ fun Settings(navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .align(Alignment.Center),
-                fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             )
 
@@ -144,12 +139,12 @@ fun Settings(navigator: DestinationsNavigator) {
                 text = user?.name ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
-                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
             )
 
             Spacer(Modifier.height(9.dp))
 
-            CakkieButton2(
+            CakkieButton(
                 text = stringResource(id = R.string.edit_profile),
                 processing = processing,
                 modifier = Modifier.clickable {

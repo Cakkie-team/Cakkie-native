@@ -1,7 +1,5 @@
 package com.cakkie.ui.screens.orders
 
-import androidx.compose.material3.Button
-import com.cakkie.ui.theme.Error
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,16 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.components.CancelButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
-fun CancelOrder(navigator: DestinationsNavigator){
+fun CancelOrder(navigator: DestinationsNavigator) {
     val openDialog = remember {
         mutableStateOf(false)
     }
@@ -103,9 +99,10 @@ fun CancelOrder(navigator: DestinationsNavigator){
             color = CakkieBrown,
         )
         Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "HI, I would like to klnfn  jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
-                "woyrory r yrororywer;iorryo   row;tyr8tw8o \n y8wyoiy/iy o ryhfo /yoryi r" +
-                " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o  fwry.riuyrukyr8ir.rufyr.grog8y/o",
+        Text(
+            text = "HI, I would like to klnfn  jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
+                    "woyrory r yrororywer;iorryo   row;tyr8tw8o \n y8wyoiy/iy o ryhfo /yoryi r" +
+                    " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o  fwry.riuyrukyr8ir.rufyr.grog8y/o",
             style = MaterialTheme.typography.bodySmall
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -225,32 +222,33 @@ fun CancelOrder(navigator: DestinationsNavigator){
             }
         }
         Spacer(modifier = Modifier.height(80.dp))
-CancelButton(
-    text = stringResource(id = R.string.cancel_order)
-) {
-    openDialog.value = true
+        CakkieButton(
+            text = stringResource(id = R.string.cancel_order),
+            color = Error
+        ) {
+            openDialog.value = true
         }
         if (openDialog.value)
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
                 title = {
-                        Row (
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            Image(
-                                painter = painterResource(id = R.drawable.cakkie_icon),
-                                contentDescription = ""
-                            )
-                            Text(
-                                text = stringResource(id = R.string.warning),
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(start = 50.dp)
-                            )
-                        }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.cakkie_icon),
+                            contentDescription = ""
+                        )
+                        Text(
+                            text = stringResource(id = R.string.warning),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(start = 50.dp)
+                        )
+                    }
                 },
                 text = {
                     Text(
@@ -260,19 +258,21 @@ CancelButton(
                     )
                 },
                 confirmButton =
-                    {
-                       Button(
-                            onClick = { },
-                           colors = ButtonDefaults.buttonColors(
-                               contentColor = CakkieBrown,
-                               containerColor = Color.Transparent
-                           )
-                               ){
-                               Text(text = stringResource(id = R.string.yes,
-                                   )
-                               )
-                           }
-                    },
+                {
+                    Button(
+                        onClick = { },
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = CakkieBrown,
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.yes,
+                            )
+                        )
+                    }
+                },
                 dismissButton = {
                     Button(
                         onClick = { },
@@ -280,15 +280,17 @@ CancelButton(
                             contentColor = CakkieBrown,
                             containerColor = Color.Transparent
                         )
-                    ){
-                            Text(text = stringResource(id = R.string.no,
-                                )
+                    ) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.no,
                             )
-                        }
-                    },
+                        )
+                    }
+                },
                 containerColor = CakkieBackground,
                 shape = RectangleShape,
-                 modifier = Modifier.border(
+                modifier = Modifier.border(
                     width = 1.dp,
                     color = CakkieBrown,
                 )
