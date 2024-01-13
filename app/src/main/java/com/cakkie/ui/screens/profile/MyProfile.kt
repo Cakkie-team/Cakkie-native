@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -42,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -74,7 +77,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
-    val nestedScroll = rememberNestedScrollInteropConnection()
     val gradient = Brush.linearGradient(
         0.0f to Color.Transparent,
         500.0f to Color.Black,
@@ -107,6 +109,8 @@ fun MyProfile(navigator: DestinationsNavigator) {
         Column(
             Modifier
                 .fillMaxSize()
+                .nestedScroll(rememberNestedScrollInteropConnection())
+                .verticalScroll(rememberScrollState())
         ) {
 
             Box(
