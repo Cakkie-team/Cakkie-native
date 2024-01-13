@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +37,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.ui.components.WalletButton
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
@@ -90,7 +87,7 @@ fun Wallet() {
                     Image(
                         painter = painterResource(id = R.drawable.arrow_back_fill),
                         contentDescription = "",
-                        modifier = Modifier.clickable {  }
+                        modifier = Modifier.clickable { }
                     )
                     Text(
                         text = stringResource(id = R.string.wallet),
@@ -193,11 +190,23 @@ fun Wallet() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    WalletButton(text = stringResource(id = R.string.withdraw)) {
+                    CakkieButton(
+                        text = stringResource(id = R.string.withdraw),
+                        contentColor = CakkieBrown,
+                        color = CakkieBackground
+                    ) {
                     }
-                    WalletButton(text = stringResource(id = R.string.deposit)) {
+                    CakkieButton(
+                        text = stringResource(id = R.string.deposit),
+                        contentColor = CakkieBrown,
+                        color = CakkieBackground
+                    ) {
                     }
-                    WalletButton(text = stringResource(id = R.string.buy_icing)) {
+                    CakkieButton(
+                        text = stringResource(id = R.string.buy_icing),
+                        contentColor = CakkieBrown,
+                        color = CakkieBackground
+                    ) {
                     }
                 }
             }
@@ -238,8 +247,10 @@ fun Wallet() {
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp)
-                    .background(color = CakkieBackground,
-                    shape = RoundedCornerShape(50))
+                    .background(
+                        color = CakkieBackground,
+                        shape = RoundedCornerShape(50)
+                    )
             )
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -286,8 +297,10 @@ fun Wallet() {
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
-                    shape = RoundedCornerShape(50))
+                modifier = Modifier.background(
+                    color = CakkieBackground,
+                    shape = RoundedCornerShape(50)
+                )
             )
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -334,8 +347,10 @@ fun Wallet() {
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
-                    shape = RoundedCornerShape(50))
+                modifier = Modifier.background(
+                    color = CakkieBackground,
+                    shape = RoundedCornerShape(50)
+                )
             )
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -382,7 +397,8 @@ fun Wallet() {
             Image(
                 painter = painterResource(id = R.drawable.cakicon),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -431,7 +447,8 @@ fun Wallet() {
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -480,7 +497,8 @@ fun Wallet() {
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )

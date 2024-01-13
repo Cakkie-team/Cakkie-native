@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieButton2
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -126,7 +126,7 @@ fun Profile(navigator: DestinationsNavigator) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CakkieButton2(
+            CakkieButton(
                 text = stringResource(id = R.string.follow)
             ) {
             }

@@ -1,7 +1,5 @@
 package com.cakkie.ui.screens.wallet
 
-import android.icu.util.Calendar
-import android.text.format.DateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieButton2
-import com.cakkie.ui.components.CakkieButton3
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
@@ -64,14 +60,17 @@ Box(modifier = Modifier
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            CakkieButton3(text = stringResource(id = R.string.withdraw),
-            ){
+            CakkieButton(
+                text = stringResource(id = R.string.withdraw),
+            ) {
             }
-            CakkieButton3(text = stringResource(id = R.string.fund_wallet),
-            ){
+            CakkieButton(
+                text = stringResource(id = R.string.fund_wallet),
+            ) {
             }
-            CakkieButton3(text = stringResource(id = R.string.icing_purchase),
-            ){
+            CakkieButton(
+                text = stringResource(id = R.string.icing_purchase),
+            ) {
             }
         }
         Spacer(modifier = Modifier.height(50.dp))
@@ -112,8 +111,7 @@ Box(modifier = Modifier
                 Column (
                     modifier = Modifier.padding(start = 5.dp)
                 ){
-                    Row (
-                    ){
+                    Row {
                         Text(text = "NGN5,000 ",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBrown,
@@ -150,8 +148,7 @@ Box(modifier = Modifier
                 Column (
                     modifier = Modifier.padding(start = 5.dp)
                 ){
-                    Row (
-                    ){
+                    Row {
                         Text(text = "100 ",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBrown,
