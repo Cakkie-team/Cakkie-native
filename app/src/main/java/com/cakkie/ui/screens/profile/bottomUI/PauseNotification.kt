@@ -117,8 +117,6 @@ fun PauseNotification() {
 
 }
 
-}
-
 
 data class ToggledInfo(
     val isChecked: Boolean,
