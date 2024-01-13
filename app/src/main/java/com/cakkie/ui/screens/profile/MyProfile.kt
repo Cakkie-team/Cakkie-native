@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,11 +68,13 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
-
-
+    //screen size
+    val configuration = LocalConfiguration.current
+    val height = configuration.screenHeightDp.dp
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
+    val nestedScroll = rememberNestedScrollInteropConnection()
     val gradient = Brush.linearGradient(
         0.0f to Color.Transparent,
         500.0f to Color.Black,
@@ -103,7 +107,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
         Column(
             Modifier
                 .fillMaxSize()
-//                .verticalScroll(rememberScrollState())
         ) {
 
             Box(
@@ -297,7 +300,10 @@ fun MyProfile(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(20.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                modifier = Modifier.padding(horizontal = 2.dp)
+                modifier = Modifier
+//                    .nestedScroll(nestedScroll)
+                    .padding(horizontal = 2.dp)
+                    .height(height - 220.dp)
             ) {
                 items(50) {
                     Box(
