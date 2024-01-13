@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.settings
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,31 +13,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -44,54 +42,21 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
+import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
+import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun Settings(navigator: DestinationsNavigator) {
-    val sheetState = rememberModalBottomSheetState()
-    var isSwitchOn by rememberSaveable { mutableStateOf(false) }
-    var switchOn by remember { mutableStateOf(false) }
-    var processing by remember {
-        mutableStateOf(false)
-    }
     val viewModel: ExploreViewModal = koinViewModel()
     val user = viewModel.user.observeAsState().value
-
-    val radioButtons = remember {
-        mutableStateListOf(
-            Toggledinfo(
-                isChecked = true, text = "6 hours"
-            ),
-            Toggledinfo(
-                isChecked = false, text = "24 hours"
-            ),
-            Toggledinfo(
-                isChecked = false, text = "1 week"
-            ),
-            Toggledinfo(
-                isChecked = false, text = "1 Month"
-            ),
-            Toggledinfo(
-                isChecked = false, text = "Till Further Notice"
-            ),
-
-            )
-    }
-
-    var switch by remember {
-        mutableStateOf(
-            Toggledinfo(
-                isChecked = false, text = "Pause Notification"
-            ),
-        )
-    }
 
     Column {
         Box(
@@ -140,17 +105,15 @@ fun Settings(navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
             )
 
             Spacer(Modifier.height(9.dp))
 
             CakkieButton(
                 text = stringResource(id = R.string.edit_profile),
-                processing = processing,
-                modifier = Modifier.clickable {
-                    navigator.navigate(ChangeProfileDestination)
-                }
             ) {
+                navigator.navigate(ChangeProfileDestination)
             }
 
         }
@@ -186,7 +149,7 @@ fun Settings(navigator: DestinationsNavigator) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { expanded = !expanded }
-                        .padding(16.dp),
+                        .padding(start = 20.dp, end = 14.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -211,8 +174,10 @@ fun Settings(navigator: DestinationsNavigator) {
                             Text(
                                 text = stringResource(id = it.description),
                                 style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier,
-                                fontSize = 10.sp
+                                modifier = Modifier.fillMaxWidth(0.9f),
+                                fontSize = 10.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -220,629 +185,150 @@ fun Settings(navigator: DestinationsNavigator) {
                         Image(
                             painter = painterResource(id = R.drawable.arrow_right),
                             contentDescription = "expand",
-                            Modifier
-                                .size(20.dp)
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .height(12.dp)
                                 .rotate(if (expanded) 90f else 0f)
                         )
                     }
                 }
-
-                if (expanded) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = CakkieLightBrown.copy(alpha = 0.10f))
-
-                    ) {
-                        Row(
+                Spacer(modifier = Modifier.height(16.dp))
+                AnimatedVisibility(expanded) {
+                    Box(Modifier.background(color = CakkieLightBrown.copy(alpha = 0.20f))) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                         ) {
-
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painterResource(id = R.drawable.notification),
-                                    contentDescription = "notification",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Text(text = switch.text)
-                                Spacer(modifier = Modifier.weight(1f))
-                                Switch(checked = switch.isChecked, onCheckedChange = { isChecked ->
-                                    switch = switch.copy(isChecked = isChecked)
-                                })
-                                Text(
-                                    text = stringResource(id = R.string.pause_notification),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier,
-                                    fontWeight = FontWeight.W400,
-                                    fontSize = 16.sp
-                                )
-
-                            }
-                        }
-
-                        Image(
-                            painter = if (switchOn) painterResource(id = R.drawable.switch_on) else painterResource(
-                                id = R.drawable.switch_
-                            ),
-                            contentDescription = "expand",
-                            modifier = Modifier
-                                .size(height = 24.dp, width = 24.dp)
-                                .clickable {
-                                    isSwitchOn = true
-                                }
-                        )
-                        if (isSwitchOn) {
-                            ModalBottomSheet(
-                                sheetState = sheetState,
-                                onDismissRequest = { isSwitchOn = false },
-                                containerColor = CakkieBackground
-                            )
-
-                            {
-
-                                Column(
+                            when (it.text) {
+                                R.string.notifications -> notificationItem
+                                R.string.security -> securityItem
+                                R.string.help -> helpItem
+                                R.string.about -> aboutItem
+                                else -> listOf()
+                            }.forEach {
+                                Row(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 32.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-
-                                    Text(
-                                        text = stringResource(id = R.string.pause_notification),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 16.sp
-                                    )
-
-                                    Text(
-                                        text = stringResource(id = R.string.pause_notification_message),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier,
-                                        fontSize = 10.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-
-                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.Unspecified)
-                                        ) {
-                                            radioButtons.forEachIndexed { index, info ->
-                                                Row(verticalAlignment = Alignment.CenterVertically,
-                                                    modifier = Modifier.clickable {
-                                                        radioButtons.replaceAll {
-                                                            it.copy(
-                                                                isChecked = it.text == info.text
-                                                            )
-                                                        }
-                                                    }
-                                                ) {
-                                                    RadioButton(
-                                                        selected = info.isChecked,
-                                                        onClick = {
-                                                            radioButtons[index] = info.copy(
-                                                                isChecked = info.isChecked
-                                                            )
-                                                        },
-
-                                                        )
-                                                    Text(text = info.text)
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                    Spacer(modifier = Modifier.height(15.dp))
-
-                                    CakkieButton(
-                                        Modifier.height(50.dp),
-                                        processing = processing,
-                                        text = stringResource(id = R.string.done)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
+                                        Image(
+                                            painterResource(id = it.image),
+                                            contentDescription = "notification",
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(text = stringResource(id = it.text))
                                     }
-                                    Spacer(modifier = Modifier.height(50.dp))
-
+                                    if (it.text == R.string.pause_notification) {
+                                        var switchState by remember { mutableStateOf(false) }
+                                        Switch(
+                                            checked = switchState,
+                                            onCheckedChange = { isChecked ->
+                                                switchState = isChecked
+                                                navigator.navigate(PauseNotificationDestination)
+                                            },
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = CakkieBrown,
+                                                uncheckedThumbColor = CakkieBackground,
+                                                uncheckedTrackColor = CakkieBrown.copy(alpha = 0.4f),
+                                                checkedTrackColor = CakkieBrown.copy(alpha = 0.5f),
+                                            ),
+                                        )
+                                    } else {
+                                        IconButton(onClick = { /*TODO*/ }) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.arrow_right),
+                                                contentDescription = "expand",
+                                                contentScale = ContentScale.Fit,
+                                                modifier = Modifier
+                                                    .clickable { }
+                                                    .height(12.dp)
+                                            )
+                                        }
+                                    }
                                 }
-
-
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.message_),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.comment),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//                )
-//            }
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.users),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.following_and_followers),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//                )
-//            }
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.mail),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.email_notifications),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//                )
-//            }
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.message),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.messages),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//            }
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.list),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.proposal),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//            }
-//
-//
-//        }
         }
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//
-//        Row(
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Image(
-//                painterResource(id = R.drawable.shield),
-//                contentDescription = "notification",
-//                modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//            )
-//            Column(
-//                modifier = Modifier.padding(horizontal = 10.dp)
-//            ) {
-//                Text(
-//                    text = stringResource(id = R.string.security),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontWeight = FontWeight.W400,
-//                    fontSize = 16.sp
-//                )
-//
-//                Text(
-//                    text = stringResource(id = R.string.change_password_forgot_assword),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontSize = 10.sp
-//                )
-//
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//
-//        IconButton(onClick = { isExpanded = !isExpanded }) {
-//
-//            Image(
-//                painter = if (isExpanded) painterResource(id = R.drawable.arrow_down) else painterResource(
-//                    id = R.drawable.expand
-//                ),
-//                contentDescription = "expand",
-//                Modifier.size(20.dp)
-//            )
-//        }
-//    }
-//
-//    if (isExpanded) {
-//        SecurityItem(navigator = navigator, email = "")
-//    }
-//
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//
-//        Row(
-//
-//        ) {
-//            Image(
-//                painterResource(id = R.drawable.problem),
-//                contentDescription = "notification",
-//                modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//            )
-//            Column(
-//                modifier = Modifier.padding(horizontal = 10.dp)
-//            ) {
-//                Text(
-//                    text = stringResource(id = R.string.help),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontWeight = FontWeight.W400,
-//                    fontSize = 16.sp
-//                )
-//
-//                Text(
-//                    text = stringResource(id = R.string.help_center_contact_us_terms_privacy_policy_app_nfo),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontSize = 10.sp
-//
-//                )
-//
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//        IconButton(onClick = { itemExpanded = !itemExpanded }) {
-//
-//            Image(
-//                painter = if (itemExpanded) painterResource(id = R.drawable.arrow_down) else painterResource(
-//                    id = R.drawable.expand
-//                ),
-//                contentDescription = "expand",
-//                Modifier.size(20.dp)
-//            )
-//        }
-//    }
-//
-//    if (itemExpanded) {
-//        HelpItems(navigator = navigator)
-//    }
-//
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//
-//        Row(
-//
-//        ) {
-//            Image(
-//                painterResource(id = R.drawable.info),
-//                contentDescription = "notification",
-//                modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//            )
-//            Column(
-//                modifier = Modifier.padding(horizontal = 10.dp)
-//            ) {
-//                Text(
-//                    text = stringResource(id = R.string.about),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontWeight = FontWeight.W400,
-//                    fontSize = 16.sp
-//                )
-//
-//                Text(
-//                    text = stringResource(id = R.string.about_cakkie_privacy_policy_terms_and_onditions),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier,
-//                    fontSize = 10.sp
-//                )
-//
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//        IconButton(onClick = { isItemExpanded = !isItemExpanded }) {
-//
-//            Image(
-//                painter = if (isItemExpanded) painterResource(id = R.drawable.arrow_down) else painterResource(
-//                    id = R.drawable.expand
-//                ),
-//                contentDescription = "expand",
-//                Modifier.size(20.dp)
-//            )
-//        }
-//    }
-//    if (isItemExpanded) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(color = CakkieLightBrown)
-//
-//        ) {
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.cakkie),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.about_cakkie),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//
-//                )
-//            }
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.policy),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.privacy_Policy),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//
-//                )
-//            }
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                Row(
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Image(
-//                        painterResource(id = R.drawable.terms),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//                    )
-//                    Column(
-//                        modifier = Modifier.padding(horizontal = 10.dp)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.terms_and_conditions),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            modifier = Modifier,
-//                            fontWeight = FontWeight.W400,
-//                            fontSize = 16.sp
-//                        )
-//
-//                    }
-//                }
-//
-//                Image(
-//                    painterResource(id = R.drawable.arrow_right),
-//                    contentDescription = "expand",
-//                    modifier = Modifier.size(height = 24.dp, width = 24.dp)
-//
-//
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(38.dp))
-//
-//        }
-//    }
     }
 }
 
 
-data class Toggledinfo(
-    val isChecked: Boolean,
-    val text: String
+val notificationItem = listOf(
+    SettingsItemData(
+        image = R.drawable.bell,
+        text = R.string.pause_notification,
+    ),
+    SettingsItemData(
+        image = R.drawable.post,
+        text = R.string.post_and_comments,
+    ),
+    SettingsItemData(
+        image = R.drawable.users,
+        text = R.string.following_and_followers,
+    ),
+    SettingsItemData(
+        image = R.drawable.mail,
+        text = R.string.email_notifications,
+    ),
+    SettingsItemData(
+        image = R.drawable.message,
+        text = R.string.messages,
+    ),
+    SettingsItemData(
+        image = R.drawable.list,
+        text = R.string.proposal,
+    ),
+)
+val securityItem = listOf(
+    SettingsItemData(
+        image = R.drawable.lock,
+        text = R.string.change_password,
+    )
+)
+val helpItem = listOf(
+    SettingsItemData(
+        image = R.drawable.problem,
+        text = R.string.report_a_problem,
+    ),
+    SettingsItemData(
+        image = R.drawable.help,
+        text = R.string.help_center,
+    ),
+    SettingsItemData(
+        image = R.drawable.contact,
+        text = R.string.contact_us,
+    )
 )
 
+val aboutItem = listOf(
+    SettingsItemData(
+        image = R.drawable.cakkie,
+        text = R.string.about_cakkie,
+    ),
+    SettingsItemData(
+        image = R.drawable.policy,
+        text = R.string.privacy_Policy,
+    ),
+    SettingsItemData(
+        image = R.drawable.terms,
+        text = R.string.terms_and_conditions,
+    )
+)
 
 data class SettingsItemData(
     val image: Int,
     val text: Int,
-    val description: Int
+    val description: Int = 0
 )

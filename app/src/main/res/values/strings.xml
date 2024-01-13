@@ -166,7 +166,7 @@
     <string name="security">Security</string>
     <string name="change_password_forgot_assword">Change Password, Forgot Password</string>
     <string name="help">Help</string>
-    <string name="help_center_contact_us_terms_privacy_policy_app_nfo">Help Center, Contact Us, Terms  Privacy \n Policy, App Info</string>
+    <string name="help_center_contact_us_terms_privacy_policy_app_nfo">Help Center, Contact Us, Report a problem</string>
     <string name="about_cakkie_privacy_policy_terms_and_onditions">About Cakkie, Privacy Policy, Terms and Conditions</string>
     <string name="pause_notification">Pause Notification</string>
     <string name="comment">Posts and Comments</string>
@@ -174,7 +174,7 @@
     <string name="email_notifications">Email Notifications</string>
     <string name="messages">Messages</string>
     <string name="proposal">Proposal</string>
-    <string name="change_password">Change Password\n</string>
+    <string name="change_password">Change Password</string>
     <string name="about_cakkie">About Cakkie</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="retype_password">Retype New Password</string>
@@ -191,7 +191,7 @@
     <string name="day">24 Hours</string>
     <string name="hours">6 Hours</string>
     <string name="report_a_problem">Report A Problem</string>
-    <string name="help_center">Help Center\n</string>
+    <string name="help_center">Help Center</string>
     <string name="contact_us">Contact Us</string>
     <string name="call_us">Call Us</string>
     <string name="send_us_an_email">Send Us An Email</string>
@@ -200,7 +200,7 @@
     <string name="contact_cakkie_message">Please reach out to us and we would reepond as soonas possible.</string>
     <string name="report_problem_message">Please type in your report here and we would take appropriate actions as soon as possible</string>
     <string name="ordered_from_cakkie">Ordered from Cakkie</string>
-
+    <string name="post_and_comments">Posts and comments</string>
 
 
 </resources>

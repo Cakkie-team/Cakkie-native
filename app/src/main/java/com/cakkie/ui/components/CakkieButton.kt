@@ -1,6 +1,5 @@
 package com.cakkie.ui.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -36,8 +35,7 @@ fun CakkieButton(
             disabledContainerColor = color.copy(alpha = 0.5f),
             disabledContentColor = CakkieBackground
         ),
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         shape = RoundedCornerShape(8.dp),
     ) {
         if (processing) {

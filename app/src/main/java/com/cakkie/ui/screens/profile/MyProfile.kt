@@ -164,7 +164,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CakkieButton(
-                    text = stringResource(id = R.string.edit_profile)
+                    text = stringResource(id = R.string.edit_profile),
                 ) {
                 }
                 OutlinedButton(
