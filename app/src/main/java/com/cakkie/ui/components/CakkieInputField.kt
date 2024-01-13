@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenu
@@ -62,6 +63,7 @@ fun CakkieInputField(
     onLocationClick: (Address) -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
     isEditable: Boolean = true,
+    showEditIcon: Boolean = false,
     location: Location? = null
 ) {
     val context = LocalContext.current
@@ -72,7 +74,7 @@ fun CakkieInputField(
         mutableStateOf(TextFieldValue(""))
     }
     var isEdit by remember {
-        mutableStateOf(false)
+        mutableStateOf(showEditIcon)
     }
     var showSearch by remember {
         mutableStateOf(false)
@@ -156,6 +158,7 @@ fun CakkieInputField(
                     Image(
                         painter = painterResource(id = R.drawable.edit),
                         contentDescription = "edit",
+                        modifier = Modifier.size(16.dp)
 
                     )
                 } else {

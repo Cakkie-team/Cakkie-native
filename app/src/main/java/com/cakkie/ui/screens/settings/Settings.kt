@@ -41,6 +41,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
@@ -223,6 +224,13 @@ fun Settings(navigator: DestinationsNavigator) {
                                         )
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(text = stringResource(id = it.text))
+                                    }
+                                    if (it.text == R.string.change_password) {
+                                        IconButton(onClick = {
+                                            navigator.navigate(
+                                                ChangePasswordDestination
+                                            ) }) {
+                                        }
                                     }
                                     if (it.text == R.string.pause_notification) {
                                         var switchState by remember { mutableStateOf(false) }

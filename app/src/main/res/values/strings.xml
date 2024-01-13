@@ -201,6 +201,8 @@
     <string name="report_problem_message">Please type in your report here and we would take appropriate actions as soon as possible</string>
     <string name="ordered_from_cakkie">Ordered from Cakkie</string>
     <string name="post_and_comments">Posts and comments</string>
+    <string name="username">Username</string>
+    <string name="phone_number">Phone Number</string>
 
 
 </resources>

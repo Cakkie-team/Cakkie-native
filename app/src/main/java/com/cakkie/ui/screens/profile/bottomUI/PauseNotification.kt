@@ -72,35 +72,39 @@ fun PauseNotification() {
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(color = Color.Unspecified)
             ) {
-                radioButtons.forEachIndexed { index, info ->
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            radioButtons.replaceAll {
-                                it.copy(
-                                    isChecked = it.text == info.text
-                                )
-                            }
-                        }
-                    ) {
-                        RadioButton(
-                            selected = info.isChecked,
-                            onClick = {
-                                radioButtons[index] = info.copy(
-                                    isChecked = info.isChecked
-                                )
-                            },
 
-                            )
+                radioButtons.forEachIndexed { index, info ->
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                radioButtons.replaceAll {
+                                    it.copy(
+                                        isChecked = it.text == info.text
+                                    )
+                                }
+                            }
+                        ) {
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                            RadioButton(
+                                selected = info.isChecked,
+                                onClick = {
+                                    radioButtons[index] = info.copy(
+                                        isChecked = info.isChecked
+                                    )
+                                },
+
+                                )
+
+                                Text(text = info.text)
+
+                            }
+
                     }
 
-                    Text(text = info.text)
-                }
             }
         }
 
@@ -108,8 +112,8 @@ fun PauseNotification() {
     Spacer(modifier = Modifier.height(15.dp))
 
     CakkieButton(
-        Modifier.height(50.dp),
-        processing = false,
+        Modifier.height(50.dp)
+            .fillMaxWidth(),
         text = stringResource(id = R.string.done)
     ) {
     }

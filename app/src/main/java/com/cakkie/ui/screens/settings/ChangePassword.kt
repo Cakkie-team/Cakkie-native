@@ -44,7 +44,7 @@ import timber.log.Timber
 
 @Composable
 @Destination
-fun ChangePassword(email: String, navigator: DestinationsNavigator) {
+fun ChangePassword( navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
     var password by remember {
         mutableStateOf(TextFieldValue(""))
@@ -165,7 +165,7 @@ fun ChangePassword(email: String, navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-                        navigator.navigate(ForgetPasswordDestination(email))
+                        navigator.navigate(ForgetPasswordDestination(""))
                     }
             )
 
