@@ -2,6 +2,7 @@ package com.cakkie.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.ui.theme.CakkieBrown
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -31,13 +34,15 @@ import kotlin.math.sign
 fun PageTabs(
     pagerState: PagerState,
     pageCount: Int,
+    tabs: List<String>,
     modifier: Modifier = Modifier,
     pageIndexMapping: (Int) -> Int = { it },
     activeColor: Color = CakkieBrown,
 ) {
-    val screenSize = LocalConfiguration.current.screenWidthDp.dp / 2
+    val screenSize = LocalConfiguration.current.screenWidthDp.dp / tabs.size
     val indicatorWidthPx = LocalDensity.current.run { screenSize.roundToPx() }
     val spacingPx = LocalDensity.current.run { 10.dp.roundToPx() }
+    val scope = rememberCoroutineScope()
 
     Box {
         Row(
@@ -47,29 +52,27 @@ fun PageTabs(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Description",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    color = activeColor
-                )
-            }
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Reviews",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    color = activeColor
-                )
+            tabs.forEachIndexed { index, tab ->
+                Box(
+                    modifier = Modifier
+                        .clickable {
+                            scope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        }
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = tab,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp,
+                        color = if (pagerState.currentPage == index) activeColor else {
+                            activeColor.copy(alpha = 0.4f)
+                        },
+                    )
+                }
             }
         }
         Box(

@@ -51,7 +51,7 @@
     <string name="fund_wallet">Fund Wallet</string>
     <string name="flag">Flag</string>
     <string name="total">Total</string>
-    <string name="delivery_fee">Delivery_Fee</string>
+    <string name="delivery_fee">Delivery Fee</string>
     <string name="posts">Posts</string>
     <string name="about">About</string>
     <string name="filters">Filters</string>
@@ -107,7 +107,7 @@
     <string name="swipe_a_notification_to_delete_it">Swipe a notification to delete it</string>
     <string name="profile">Profile</string>
     <string name="reviews">Reviews</string>
-    <string name="size">Size:</string>
+    <string name="size">Size</string>
     <string name="shape">Shape:</string>
     <string name="status">Status:</string>
     <string name="proposed_price">Proposed Price:</string>
@@ -118,7 +118,7 @@
     <string name="reciept">Reciept</string>
     <string name="rounded_shape">Rounded Shape</string>
     <string name="medium_sized_pan">Medium-sized pan</string>
-    <string name="availability">Availability:</string>
+    <string name="availability">Availability</string>
     <string name="transaction_id">Transaction ID:</string>
     <string name="transaction_date">Transaction Date:</string>
     <string name="transatcion_time">Transaction Time:</string>

@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.explore
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,13 +13,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,27 +37,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ProfileDestination
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Destination
 @Composable
 fun ItemDetails(navigator: DestinationsNavigator) {
     var expanded by remember { mutableStateOf(false) }
     val imagePageState = rememberPagerState(pageCount = { 3 })
     val pageState = rememberPagerState(pageCount = { 2 })
+    val sizes = listOf("6 in", "8 in", "10 in")
+    var selectedSize by remember { mutableStateOf(sizes.first()) }
     Column {
         IconButton(onClick = { navigator.popBackStack() }) {
             Image(
@@ -125,7 +140,13 @@ fun ItemDetails(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(20.dp))
 
             //page tabs
-            PageTabs(pagerState = pageState, pageCount = pageState.pageCount)
+            PageTabs(
+                pagerState = pageState, pageCount = pageState.pageCount,
+                tabs = listOf(
+                    stringResource(id = R.string.description),
+                    stringResource(id = R.string.reviews)
+                )
+            )
             Spacer(modifier = Modifier.height(10.dp))
             //page
             HorizontalPager(state = pageState) {
@@ -135,9 +156,106 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                                 "\n" +
                                 "#CakeLove #DessertParadise",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 16.sp,
+                        fontSize = 13.sp,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = stringResource(id = R.string.size) + ":",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    LazyRow(Modifier.padding(horizontal = 16.dp)) {
+                        items(
+                            items = sizes
+                        ) {
+                            Card(
+                                onClick = { selectedSize = it },
+                                colors = CardDefaults.cardColors(
+                                    containerColor =
+                                    if (selectedSize == it) CakkieBrown
+                                    else CakkieBackground
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                border = BorderStroke(
+                                    width = 1.dp,
+                                    color = CakkieBrown.copy(alpha = 0.4f)
+                                ),
+                            ) {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    ),
+                                    color = if (selectedSize == it) CakkieBackground
+                                    else CakkieBrown.copy(alpha = 0.4f)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = stringResource(id = R.string.availability) + ":",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Please note that under normal circumstances, this cake requires a minimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    listOf(
+                        R.string.price,
+                        R.string.delivery_fee,
+                        R.string.total
+                    ).forEach {
+                        Row(
+                            Modifier
+                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(id = it),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = if (it == R.string.total) 16.sp else 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+
+                            Text(
+                                text = when (it) {
+                                    R.string.price -> "NGN 20,000"
+                                    R.string.delivery_fee -> "NGN 1,000"
+                                    else -> "NGN 21,000"
+                                },
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = if (it == R.string.total) 16.sp else 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CakkieButton(
+                        text = stringResource(id = R.string.order),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
