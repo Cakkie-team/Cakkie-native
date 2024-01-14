@@ -93,14 +93,16 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "notification"
+                        contentDescription = "notification",
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
                 IconButton(onClick = { navigator.navigate(WalletDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.wallet),
-                        contentDescription = "wallet"
+                        contentDescription = "wallet",
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
