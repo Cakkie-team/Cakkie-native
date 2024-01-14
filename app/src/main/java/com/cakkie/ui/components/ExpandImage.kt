@@ -1,5 +1,6 @@
 package com.cakkie.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -72,6 +73,11 @@ fun ExpandImage(
     }
     var isStarred by remember {
         mutableStateOf(false)
+    }
+
+    //close on back press
+    BackHandler(expanded) {
+        onDismiss.invoke()
     }
 
     AnimatedVisibility(visible = expanded) {
