@@ -177,7 +177,7 @@ fun ExpandImage(
                                 spacing = 8.dp,
                                 indicatorWidth = 5.dp,
                                 indicatorHeight = 5.dp,
-                                pageCount = 3,
+                                pageCount = pageState.pageCount,
                                 modifier = Modifier.offset(x = (-24).dp)
                             )
                             Card(
