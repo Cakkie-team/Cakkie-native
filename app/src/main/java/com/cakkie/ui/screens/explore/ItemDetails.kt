@@ -38,6 +38,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
@@ -48,7 +49,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun ItemDetails(navigator: DestinationsNavigator) {
     var expanded by remember { mutableStateOf(false) }
-    val pageState = rememberPagerState(pageCount = { 3 })
+    val imagePageState = rememberPagerState(pageCount = { 3 })
+    val pageState = rememberPagerState(pageCount = { 2 })
     Column {
         IconButton(onClick = { navigator.popBackStack() }) {
             Image(
@@ -58,16 +60,14 @@ fun ItemDetails(navigator: DestinationsNavigator) {
             )
         }
         Column(Modifier.verticalScroll(rememberScrollState())) {
-            HorizontalPager(state = pageState) {
-                GlideImage(
-                    model = "https://source.unsplash.com/600x400/?cakes",
+            HorizontalPager(state = imagePageState) {
+                GlideImage(model = "https://source.unsplash.com/600x400/?cakes",
                     contentDescription = "cake",
                     modifier = Modifier
                         .clickable { expanded = !expanded }
                         .fillMaxWidth()
                         .height(240.dp),
-                    contentScale = ContentScale.FillBounds
-                )
+                    contentScale = ContentScale.FillBounds)
             }
 
             Row(
@@ -78,7 +78,7 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 HorizontalPagerIndicator(
-                    pagerState = pageState,
+                    pagerState = imagePageState,
                     activeColor = CakkieBrown,
                     spacing = 8.dp,
                     indicatorWidth = 5.dp,
@@ -92,25 +92,21 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
+                GlideImage(model = "https://source.unsplash.com/60x60/?profile",
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(32.dp)
                         .clip(shape = CircleShape)
                         .clickable {
                             navigator.navigate(ProfileDestination)
-                        }
-                )
+                        })
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
@@ -126,6 +122,24 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            //page tabs
+            PageTabs(pagerState = pageState, pageCount = pageState.pageCount)
+            Spacer(modifier = Modifier.height(10.dp))
+            //page
+            HorizontalPager(state = pageState) {
+                Column {
+                    Text(
+                        text = "Indulge in the heavenly delight of our signature cake. Fluffy layers, creamy goodness, and fresh fruits combine for a slice of paradise. Join us and savor the sweetness! \uD83C\uDF70✨ \n" +
+                                "\n" +
+                                "#CakeLove #DessertParadise",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
         }
     }
 
@@ -134,6 +148,6 @@ fun ItemDetails(navigator: DestinationsNavigator) {
         expanded = expanded,
         onDismiss = { expanded = false },
         navigator = navigator,
-        pageState = pageState
+        pageState = imagePageState
     )
 }
