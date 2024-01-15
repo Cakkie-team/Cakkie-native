@@ -66,7 +66,9 @@ fun Profile(navigator: DestinationsNavigator) {
         ) {
             Image(
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier
+                    .width(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
                         navigator.popBackStack()

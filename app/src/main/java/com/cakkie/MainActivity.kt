@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.navigations.BottomNav
 import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.appCurrentDestinationAsState
+import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
@@ -76,8 +77,11 @@ class MainActivity : ComponentActivity() {
                             )
                             Box(
                                 Modifier.padding(
-                                    top = if (currentDestination == SplashScreenDestination) 0.dp
-                                    else 30.dp
+                                    top = when (currentDestination) {
+                                        SplashScreenDestination -> 0.dp
+                                        CakespirationDestination -> 16.dp
+                                        else -> 26.dp
+                                    }
                                 )
                             ) {
                                 DestinationsNavHost(

@@ -59,8 +59,8 @@ fun ItemDetails(navigator: DestinationsNavigator) {
         IconButton(onClick = { navigator.popBackStack() }) {
             Image(
                 painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "Back",
-//                modifier = Modifier.height(24.dp)
+                contentDescription = "Back", contentScale = ContentScale.FillWidth,
+                modifier = Modifier.width(24.dp)
             )
         }
         Column(Modifier.verticalScroll(rememberScrollState())) {
