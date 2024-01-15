@@ -33,7 +33,6 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
@@ -151,13 +150,13 @@ fun OtpScreen(
                     ).show()
                     if (isNewDevice) {
                         navigator.navigate(ExploreScreenDestination) {
-                            popUpTo(OtpScreenDestination.route) {
+                            popUpTo(ExploreScreenDestination.route) {
                                 inclusive = true
                             }
                         }
                     } else if (isSignUp) {
                         navigator.navigate(ExploreScreenDestination) {
-                            popUpTo(OtpScreenDestination.route) {
+                            popUpTo(ExploreScreenDestination.route) {
                                 inclusive = true
                             }
                         }
