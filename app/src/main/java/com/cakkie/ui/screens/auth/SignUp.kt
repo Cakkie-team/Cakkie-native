@@ -248,7 +248,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(50.dp))
 
             CakkieButton(
-                Modifier.height(50.dp),
+                Modifier.fillMaxWidth(),
                 processing = processing,
                 enabled = canProceed,
                 text = stringResource(id = R.string.create_Account)

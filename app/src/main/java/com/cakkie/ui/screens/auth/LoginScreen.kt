@@ -109,13 +109,14 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
             text = stringResource(id = R.string.forget_password),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
+                .height(48.dp)
                 .align(Alignment.End)
                 .clickable { navigator.navigate(ForgetPasswordDestination(email)) }
         )
 
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
-            Modifier.height(50.dp),
+            Modifier.fillMaxWidth(),
             processing = processing,
             text = stringResource(id = R.string.login),
             enabled = password.text.isNotEmpty()

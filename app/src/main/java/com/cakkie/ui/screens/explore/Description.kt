@@ -140,7 +140,9 @@ fun Description(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(10.dp))
         CakkieButton(
             text = stringResource(id = R.string.order),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         ) {
 
         }
