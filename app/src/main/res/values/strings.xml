@@ -204,6 +204,8 @@
     <string name="username">Username</string>
     <string name="phone_number">Phone Number</string>
     <string name="cakespiation">Cakespiration</string>
+    <string name="search">Search</string>
+    <string name="arrow">arrow</string>
 
 
 </resources>
