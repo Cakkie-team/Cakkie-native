@@ -32,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
@@ -155,7 +157,10 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             image = R.drawable.logo
                         ).show()
                         navigator.navigate(ExploreScreenDestination) {
-                            popUpTo(ExploreScreenDestination.route) {
+                            popUpTo(EmailScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(LoginScreenDestination.route) {
                                 inclusive = true
                             }
                         }
