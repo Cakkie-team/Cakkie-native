@@ -47,7 +47,7 @@ fun SecurityItem(email: String, navigator: DestinationsNavigator) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navigator.navigate(ChangePasswordDestination(email)) }
+                .clickable { navigator.navigate(ChangePasswordDestination()) }
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
