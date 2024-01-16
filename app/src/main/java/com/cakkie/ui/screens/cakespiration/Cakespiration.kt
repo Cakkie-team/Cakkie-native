@@ -21,6 +21,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,7 +51,16 @@ fun Cakespiration(index: Int = 0, navigator: DestinationsNavigator) {
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
             items(10) {
-                CakespirationItem(navigator)
+                CakespirationItem(
+                    navigator,
+                    remember {
+                        derivedStateOf { listState.firstVisibleItemIndex }
+                    }.value == it - 1 || remember {
+                        derivedStateOf {
+                            !listState.canScrollBackward || !listState.canScrollForward
+                        }
+                    }.value
+                )
             }
         }
 

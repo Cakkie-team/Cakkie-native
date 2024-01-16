@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
-   implementation(platform("androidx.compose:compose-bom:2023.06.01"))
+    implementation(platform("androidx.compose:compose-bom:2023.06.01"))
     implementation(libs.compose.animation)
     implementation(libs.compose.material)
     implementation(libs.ui)
@@ -133,6 +133,11 @@ dependencies {
 
     //navigation
     implementation(libs.accompanist.navigation.material)
+
+    //video
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.exoplayer.hls)
 
 
 }

@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +30,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.SimpleExoPlayer
+import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
@@ -47,25 +54,48 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieYellow
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CakespirationItem(navigator: DestinationsNavigator) {
+fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var isLiked by remember { mutableStateOf(false) }
     var isStarred by remember { mutableStateOf(false) }
     var maxLines by remember { mutableIntStateOf(1) }
+
+    val context = LocalContext.current
+
+    val exoPlayer = remember {
+        SimpleExoPlayer.Builder(context).build().apply {
+            setMediaItem(MediaItem.fromUri("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"))
+            playWhenReady = false
+            repeatMode = Player.REPEAT_MODE_ONE
+            prepare()
+        }
+    }
+    val isPlaying = exoPlayer.isPlaying
+    LaunchedEffect(key1 = shouldPlay) {
+        if (shouldPlay) {
+            exoPlayer.play()
+        } else {
+            exoPlayer.pause()
+        }
+    }
+
     Box(
         modifier = Modifier
             .background(Color.Black)
             .height(screenHeight - 42.dp),
         contentAlignment = Alignment.Center
     ) {
-        GlideImage(
-            model = "https://source.unsplash.com/400x750/?cake?video",
-            contentDescription = "cake video",
-            modifier = Modifier
-                .fillMaxSize(),
-            contentScale = ContentScale.FillWidth
+        AndroidView(
+            factory = { context ->
+                PlayerView(context).apply {
+                    player = exoPlayer
+                    useController = false
+                }
+            },
+            modifier = Modifier.fillMaxSize()
         )
 
         Column(
