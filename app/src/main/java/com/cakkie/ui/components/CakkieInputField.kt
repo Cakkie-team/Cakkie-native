@@ -104,7 +104,8 @@ fun CakkieInputField(
                 Text(
                     text = placeholder,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TextColorDark.copy(alpha = 0.5f)
+                    color = TextColorDark.copy(alpha = 0.5f),
+
                 )
             },
             textStyle = MaterialTheme.typography.bodyLarge,

@@ -44,6 +44,7 @@ import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
+import com.cakkie.ui.screens.destinations.ReportProblemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -217,6 +218,9 @@ fun Settings(navigator: DestinationsNavigator) {
                                             when (it.text) {
                                                 R.string.change_password -> navigator.navigate(
                                                     ChangePasswordDestination
+                                                )
+                                                R.string.report_a_problem -> navigator.navigate(
+                                                    ReportProblemDestination
                                                 )
                                                 
                                                 else -> { }
