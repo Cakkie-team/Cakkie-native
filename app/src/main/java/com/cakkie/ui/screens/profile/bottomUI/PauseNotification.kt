@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonColors
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.theme.CakkieBackground
+import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
@@ -32,7 +36,7 @@ fun PauseNotification() {
     val radioButtons = remember {
         mutableStateListOf(
             ToggledInfo(
-                isChecked = true, text = "6 hours"
+                isChecked = false, text = "6 hours"
             ),
             ToggledInfo(
                 isChecked = false, text = "24 hours"
@@ -53,7 +57,7 @@ fun PauseNotification() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp)
+            .padding(horizontal = 32.dp, vertical = 17.dp)
     ) {
 
         Text(
@@ -72,12 +76,7 @@ fun PauseNotification() {
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.Unspecified)
-            ) {
-
+        Column(modifier = Modifier.fillMaxWidth()) {
                 radioButtons.forEachIndexed { index, info ->
                         Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
@@ -86,9 +85,9 @@ fun PauseNotification() {
                                         isChecked = it.text == info.text
                                     )
                                 }
+
                             }
                         ) {
-                            Row(modifier = Modifier.fillMaxWidth()) {
                             RadioButton(
                                 selected = info.isChecked,
                                 onClick = {
@@ -96,16 +95,17 @@ fun PauseNotification() {
                                         isChecked = info.isChecked
                                     )
                                 },
+                               colors = RadioButtonDefaults.colors(
+                                   selectedColor = CakkieBrown,
+                                   unselectedColor = CakkieBrown,
+                               )
 
                                 )
 
                                 Text(text = info.text)
 
                             }
-
                     }
-
-            }
         }
 
     }
@@ -113,11 +113,12 @@ fun PauseNotification() {
 
     CakkieButton(
         Modifier.height(50.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.done)
     ) {
     }
-    Spacer(modifier = Modifier.height(50.dp))
+    Spacer(modifier = Modifier.height(17.dp))
 
 }
 

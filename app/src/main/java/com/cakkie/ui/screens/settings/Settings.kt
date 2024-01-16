@@ -131,7 +131,7 @@ fun Settings(navigator: DestinationsNavigator) {
                 SettingsItemData(
                     image = R.drawable.shield,
                     text = R.string.security,
-                    description = R.string.change_password_forgot_assword
+                    description = R.string.change_password_forgot_password
                 ),
                 SettingsItemData(
                     image = R.drawable.help_circle,
@@ -191,7 +191,9 @@ fun Settings(navigator: DestinationsNavigator) {
                                 .height(12.dp)
                                 .rotate(if (expanded) 90f else 0f)
                         )
+
                     }
+
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 AnimatedVisibility(expanded) {
@@ -210,7 +212,16 @@ fun Settings(navigator: DestinationsNavigator) {
                             }.forEach {
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            when (it.text) {
+                                                R.string.change_password -> navigator.navigate(
+                                                    ChangePasswordDestination
+                                                )
+                                                
+                                                else -> { }
+                                            }
+                                        },
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -225,13 +236,8 @@ fun Settings(navigator: DestinationsNavigator) {
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(text = stringResource(id = it.text))
                                     }
-                                    if (it.text == R.string.change_password) {
-                                        IconButton(onClick = {
-                                            navigator.navigate(
-                                                ChangePasswordDestination
-                                            ) }) {
-                                        }
-                                    }
+
+
                                     if (it.text == R.string.pause_notification) {
                                         var switchState by remember { mutableStateOf(false) }
                                         Switch(
@@ -259,16 +265,18 @@ fun Settings(navigator: DestinationsNavigator) {
                                             )
                                         }
                                     }
+
                                 }
-                                Spacer(modifier = Modifier.height(16.dp))
+
                             }
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
-
+            Spacer(modifier = Modifier.height(16.dp))
         }
+
     }
 }
 
@@ -340,3 +348,8 @@ data class SettingsItemData(
     val text: Int,
     val description: Int = 0
 )
+
+data class SecurityItemData(
+    val isExpanded: Boolean,
+
+    )

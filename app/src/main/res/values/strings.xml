@@ -164,7 +164,7 @@
     <string name="notifications">Notifications</string>
     <string name="job_post_posting_followers_following">Job post, Posting, Followers, Following</string>
     <string name="security">Security</string>
-    <string name="change_password_forgot_assword">Change Password, Forgot Password</string>
+    <string name="change_password_forgot_password">Change Password, Forgot Password</string>
     <string name="help">Help</string>
     <string name="help_center_contact_us_terms_privacy_policy_app_nfo">Help Center, Contact Us, Report a problem</string>
     <string name="about_cakkie_privacy_policy_terms_and_onditions">About Cakkie, Privacy Policy, Terms and Conditions</string>
