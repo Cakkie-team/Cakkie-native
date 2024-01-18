@@ -142,4 +142,7 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
+
+    //collapsing toolbar
+    implementation(libs.toolbar.compose)
 }

@@ -45,6 +45,7 @@ room = "2.6.0"
 # Timber
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
+toolbarComposeVersion = "2.3.5"
 uiVersion = "1.5.4"
 uploadserviceVersion = "4.7.0"
 
@@ -74,6 +75,7 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "compose" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
