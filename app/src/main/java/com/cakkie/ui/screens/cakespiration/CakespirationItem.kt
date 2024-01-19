@@ -1,5 +1,7 @@
 package com.cakkie.ui.screens.cakespiration
 
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,10 +42,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.SimpleExoPlayer
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -58,7 +66,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var isLiked by remember { mutableStateOf(false) }
     var isStarred by remember { mutableStateOf(false) }
     var maxLines by remember { mutableIntStateOf(1) }
@@ -66,14 +73,29 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
     val context = LocalContext.current
 
     val exoPlayer = remember {
-        SimpleExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"))
-            playWhenReady = false
-            repeatMode = Player.REPEAT_MODE_ONE
-            prepare()
+        ExoPlayer.Builder(context)
+            .build()
+            .apply {
+                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                    context,
+                    defaultDataSourceFactory
+                )
+                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"))
+                setMediaSource(source)
+                prepare()
+            }
+    }
+    exoPlayer.playWhenReady = false
+    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+
+    val isPlaying = remember {
+        derivedStateOf {
+            exoPlayer.isPlaying
         }
     }
-    val isPlaying = exoPlayer.isPlaying
     LaunchedEffect(key1 = shouldPlay) {
         if (shouldPlay) {
             exoPlayer.play()
@@ -85,23 +107,35 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
     Box(
         modifier = Modifier
             .background(Color.Black)
-            .height(screenHeight - 42.dp),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        AndroidView(
-            factory = { context ->
+        DisposableEffect(
+            AndroidView(factory = {
                 PlayerView(context).apply {
-                    player = exoPlayer
+                    hideController()
                     useController = false
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    player = exoPlayer
+                    layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                 }
-            },
-            modifier = Modifier.fillMaxSize()
+            })
+        ) {
+            onDispose { exoPlayer.release() }
+        }
+
+        Box(modifier = Modifier
+            .fillMaxSize()
+//            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable {
+                if (isPlaying.value) exoPlayer.pause() else exoPlayer.play()
+            }
         )
 
         Column(
             Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 28.dp)
                 .offset(x = (-14).dp, y = (-16).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -173,7 +207,7 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
         Column(
             Modifier
                 .align(Alignment.BottomStart)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 28.dp)
                 .offset(x = 16.dp, y = (-16).dp),
         ) {
             Row(
