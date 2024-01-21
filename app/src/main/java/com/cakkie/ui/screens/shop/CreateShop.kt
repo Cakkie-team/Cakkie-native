@@ -147,7 +147,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                     .size(64.dp)
                     .clip(shape = CircleShape)
                     .clickable {
-                        galleryLauncher.launch("video/*")
+                        galleryLauncher.launch("image/*")
                     }
             )
             Spacer(modifier = Modifier.height(10.dp))
