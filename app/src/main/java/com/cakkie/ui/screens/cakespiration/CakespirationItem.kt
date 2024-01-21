@@ -110,17 +110,16 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        DisposableEffect(
-            AndroidView(factory = {
-                PlayerView(context).apply {
-                    hideController()
-                    useController = false
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    player = exoPlayer
-                    layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                }
-            })
-        ) {
+        AndroidView(factory = {
+            PlayerView(context).apply {
+                hideController()
+                useController = false
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                player = exoPlayer
+                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            }
+        })
+        DisposableEffect(Unit) {
             onDispose { exoPlayer.release() }
         }
 

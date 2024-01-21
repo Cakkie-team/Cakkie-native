@@ -59,11 +59,7 @@ fun Cakespiration(index: Int = 0, navigator: DestinationsNavigator) {
                         navigator,
                         remember {
                             derivedStateOf { listState.firstVisibleItemIndex }
-                        }.value == it - 1 || remember {
-                            derivedStateOf {
-                                !listState.canScrollBackward || !listState.canScrollForward
-                            }
-                        }.value
+                        }.value == it
                     )
                 }
             }
