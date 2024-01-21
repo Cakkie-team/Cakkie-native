@@ -25,6 +25,7 @@ fun Shop(navigator: DestinationsNavigator) {
                 popUpTo(ShopDestination) {
                     inclusive = true
                 }
+                launchSingleTop = true
             }
         }
     }
