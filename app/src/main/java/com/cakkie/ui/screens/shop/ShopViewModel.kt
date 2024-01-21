@@ -1,11 +1,15 @@
 package com.cakkie.ui.screens.shop
 
+import android.location.Address
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.LoginResponse
+import com.cakkie.utill.Endpoints
+import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -24,6 +28,27 @@ class ShopViewModel : ViewModel(), KoinComponent {
             }
         }
     }
+
+
+    //create shop
+    fun createShop(
+        name: String,
+        address: String,
+        imageUrl: String,
+        location: Address,
+    ) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.SIGNUP, body = listOf(
+                Pair("name", name),
+                Pair("address", address),
+                Pair("city", location.subAdminArea),
+                Pair("state", location.adminArea),
+                Pair("latitude", location.latitude),
+                Pair("longitude", location.longitude),
+                Pair("country", location.countryName),
+                Pair("image", imageUrl),
+            )
+        )
 
     init {
         getUser()
