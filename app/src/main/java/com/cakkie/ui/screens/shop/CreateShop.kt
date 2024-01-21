@@ -48,12 +48,17 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.CreateShopDestination
+import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
@@ -245,24 +250,31 @@ fun CreateShop(navigator: DestinationsNavigator) {
 
                 // check if the email is valid
                 processing = true
-//                viewModel.signUp(
-//                    firstName = name.text,
-//                    location = location!!
-//                ).addOnSuccessListener { resp ->
-//                    processing = false
-//                    Timber.d(resp.toString())
-//                    //navigate to shop screen
-//
-//                }.addOnFailureListener { exception ->
-//                    //show toast
-//                    Toaster(
-//                        context = context,
-//                        message = exception,
-//                        image = R.drawable.logo
-//                    ).show()
-//                    processing = false
-//                    Timber.d(exception)
-//                }
+                viewModel.createShop(
+                    name = name.text,
+                    address = address.text,
+                    imageUrl = imageUri.toString(),
+                    location = location!!
+                ).addOnSuccessListener { resp ->
+                    processing = false
+                    Timber.d(resp.toString())
+                    //navigate to shop screen
+                    navigator.navigate(ShopDestination) {
+                        launchSingleTop = true
+                        popUpTo(CreateShopDestination) {
+                            inclusive = true
+                        }
+                    }
+                }.addOnFailureListener { exception ->
+                    //show toast
+                    Toaster(
+                        context = context,
+                        message = exception,
+                        image = R.drawable.logo
+                    ).show()
+                    processing = false
+                    Timber.d(exception)
+                }
 
             }
         }
