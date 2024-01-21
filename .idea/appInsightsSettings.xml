@@ -6,13 +6,18 @@
         <entry key="Android Vitals">
           <value>
             <InsightsFilterSettings>
+              <option name="connection">
+                <ConnectionSetting>
+                  <option name="appId" value="com.cakkie" />
+                </ConnectionSetting>
+              </option>
               <option name="failureTypes">
                 <list>
                   <option value="FATAL" />
                 </list>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
-              <option name="timeIntervalDays" value="ONE_DAY" />
+              <option name="timeIntervalDays" value="SEVEN_DAYS" />
               <option name="visibilityType" value="ALL" />
             </InsightsFilterSettings>
           </value>
@@ -22,10 +27,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.cakkie" />
+                  <option name="mobileSdkAppId" value="1:728014565527:android:e174456cb2fb1cd57079d2" />
+                  <option name="projectId" value="cakkie" />
+                  <option name="projectNumber" value="728014565527" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
