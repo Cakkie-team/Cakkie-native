@@ -206,6 +206,12 @@
     <string name="cakespiation">Cakespiration</string>
     <string name="search">Search</string>
     <string name="arrow">arrow</string>
+    <string name="cakkie_logo">Cakkie logo</string>
+    <string name="shop">Shop</string>
+    <string name="chat">Chat</string>
+    <string name="jobs">Jobs</string>
+    <string name="explore">Expore</string>
+    <string name="wider_audience">Wider Audience</string>
 
 
 </resources>
