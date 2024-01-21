@@ -154,6 +154,7 @@ fun OtpScreen(
                     ).show()
                     if (isNewDevice) {
                         navigator.navigate(ExploreScreenDestination) {
+                            launchSingleTop = true
                             popUpTo(EmailScreenDestination.route) {
                                 inclusive = true
                             }
@@ -166,6 +167,7 @@ fun OtpScreen(
                         }
                     } else if (isSignUp) {
                         navigator.navigate(ExploreScreenDestination) {
+                            launchSingleTop = true
                             popUpTo(EmailScreenDestination.route) {
                                 inclusive = true
                             }
@@ -178,6 +180,7 @@ fun OtpScreen(
                         }
                     } else {
                         navigator.navigate(ResetPasswordDestination(email)) {
+                            launchSingleTop = true
                             popUpTo(OtpScreenDestination.route) {
                                 inclusive = true
                             }

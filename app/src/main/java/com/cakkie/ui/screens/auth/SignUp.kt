@@ -277,7 +277,9 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                             isNewDevice = false,
                             isSignUp = true
                         )
-                    )
+                    ) {
+                        launchSingleTop = true
+                    }
                 }.addOnFailureListener { exception ->
                     //show toast
                     Toaster(

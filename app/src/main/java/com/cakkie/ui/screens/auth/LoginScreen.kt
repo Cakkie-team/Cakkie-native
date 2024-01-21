@@ -163,6 +163,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             popUpTo(LoginScreenDestination.route) {
                                 inclusive = true
                             }
+                            launchSingleTop = true
                         }
                     }
 
