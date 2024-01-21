@@ -218,6 +218,10 @@
     <string name="more_sales_desc">Make more sales and earn more</string>
     <string name="strong_online_presence_desc">Boost the online presence of your business</string>
     <string name="become_a_seller">Become a seller</string>
+    <string name="create_shop">Create Shop</string>
+    <string name="business_name">Business Name</string>
+    <string name="fill_out_this_form_to_get_your_shop">Please fill out this form to get  your shop up and runnung on Cakkie.</string>
+    <string name="upload_a_business_logo">Upload a Business Logo</string>
 
 
 </resources>
