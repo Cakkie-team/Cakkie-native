@@ -152,6 +152,7 @@ fun ResetPassword(email: String, navigator: DestinationsNavigator) {
                             email = email,
                         )
                     ) {
+                        launchSingleTop = true
                         popUpTo(ResetPasswordDestination.route) {
                             inclusive = true
                         }

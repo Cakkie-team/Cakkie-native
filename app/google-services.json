@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "728014565527",
+    "project_id": "cakkie",
+    "storage_bucket": "cakkie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728014565527:android:e174456cb2fb1cd57079d2",
+        "android_client_info": {
+          "package_name": "com.cakkie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMFSEg0fzydWoT2nmvl-pXCEtRmLhPPLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

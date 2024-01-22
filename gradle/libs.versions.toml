@@ -49,6 +49,14 @@ toolbarComposeVersion = "2.3.5"
 uiVersion = "1.5.4"
 uploadserviceVersion = "4.7.0"
 
+# googleServices
+googleServicesVersion = "4.4.0"
+
+#firebase
+firebase-bom = "32.7.1"
+
+#crashlytics
+firebaseCrashlyticsVersion = "2.9.9"
 
 
 
@@ -132,7 +140,10 @@ koin-worker = { group = "io.insert-koin", name = "koin-androidx-workmanager", ve
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 kotlin-stdlib-jdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7Version" }
 
-
+#firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 
 [plugins]
@@ -141,4 +152,6 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServicesVersion" }
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsVersion" }
 

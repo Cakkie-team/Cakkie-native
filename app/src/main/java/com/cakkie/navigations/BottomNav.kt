@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -123,7 +124,7 @@ fun BottomNav(
                                 Spacer(modifier = Modifier.height(7.dp))
                                 Icon(
                                     painter = painterResource(screen.icon!!),
-                                    contentDescription = screen.title,
+                                    contentDescription = stringResource(id = screen.title!!),
                                     tint = if (currentDestination == screen.direction) CakkieBrown else Color.Gray,
                                     modifier = Modifier
                                         .height(24.dp)
@@ -131,7 +132,7 @@ fun BottomNav(
                                         .padding(bottom = 5.dp),
                                 )
                                 Text(
-                                    text = screen.title!!,
+                                    text = stringResource(id = screen.title),
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.body1,
                                     color = if (currentDestination == screen.direction) CakkieBrown else Inactive,
@@ -153,7 +154,7 @@ fun BottomNav(
                             .padding(top = 15.dp, start = 15.dp, end = 15.dp)
                             .clickable {
                                 navController.navigate(
-                                    screens.find { it.title == "Shop" }!!.direction,
+                                    screens.find { it.title == R.string.shop }!!.direction,
                                     fun NavOptionsBuilder.() {
                                         launchSingleTop = true
                                     })
@@ -168,18 +169,18 @@ fun BottomNav(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                painter = painterResource(screens.find { it.title == "Shop" }!!.icon!!),
-                                contentDescription = screens.find { it.title == "Shop" }!!.title,
+                                painter = painterResource(screens.find { it.title == R.string.shop }!!.icon!!),
+                                contentDescription = stringResource(id = screens.find { it.title == R.string.shop }!!.title!!),
                                 tint = CakkieBackground,
                                 modifier = Modifier
                                     .size(24.dp)
                             )
                         }
                         Text(
-                            text = screens.find { it.title == "Shop" }!!.title!!,
+                            text = stringResource(id = screens.find { it.title == R.string.shop }!!.title!!),
                             fontSize = 12.sp,
                             style = MaterialTheme.typography.body1,
-                            color = if (currentDestination == screens.find { it.title == "Shop" }!!
+                            color = if (currentDestination == screens.find { it.title == R.string.shop }!!
                                     .direction
                             ) CakkieBrown else Inactive,
                             modifier = Modifier.padding(bottom = 15.dp)

@@ -109,7 +109,9 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                     processing = false
 //                    Timber.d(user.toString())
                     //navigate to login screen
-                    navigator.navigate(LoginScreenDestination(user.email))
+                    navigator.navigate(LoginScreenDestination(user.email)) {
+                        launchSingleTop = true
+                    }
                 }.addOnFailureListener { exception ->
                     //show toast
 //                    Toaster(
@@ -120,7 +122,9 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                     processing = false
                     Timber.d(exception.message)
                     //navigate to sign up screen
-                    navigator.navigate(SignUpScreenDestination(email = email.text))
+                    navigator.navigate(SignUpScreenDestination(email = email.text)) {
+                        launchSingleTop = true
+                    }
                 }
             }
         }

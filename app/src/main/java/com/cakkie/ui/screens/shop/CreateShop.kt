@@ -1,16 +1,18 @@
-package com.cakkie.ui.screens.auth
+package com.cakkie.ui.screens.shop
 
 import android.app.Activity
 import android.content.Intent
 import android.location.Address
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,11 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Text
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,139 +33,136 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.screens.destinations.CreateShopDestination
+import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
-
-@Composable
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
-fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
-    val viewModel: AuthViewModel = koinViewModel()
-    var firstName by remember {
+@Composable
+fun CreateShop(navigator: DestinationsNavigator) {
+    val viewModel: ShopViewModel = koinViewModel()
+    val context = LocalContext.current
+    var name by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    var lastName by remember {
-        mutableStateOf(TextFieldValue(""))
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
     }
-    var userName by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                imageUri = it
+            }
+        }
+    )
     var address by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    var password by remember {
-        mutableStateOf(TextFieldValue(""))
+    var isChecked by remember {
+        mutableStateOf(false)
     }
-
-    var location by remember {
-        mutableStateOf<Address?>(null)
-    }
-
-    val context = LocalContext.current
-    val activity = context as Activity
     var processing by remember {
         mutableStateOf(false)
     }
-
-    var isChecked by remember {
-        mutableStateOf(
-            false
-        )
+    var location by remember {
+        mutableStateOf<Address?>(null)
     }
-
+    val activity = context as Activity
     val currentLocation = activity.getCurrentLocation()
 
-    val canProceed = firstName.text.isNotBlank() &&
-            lastName.text.isNotBlank() &&
-            userName.text.isNotBlank() &&
+    val canProceed = name.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            password.text.isNotBlank() && isChecked
+            isChecked && imageUri != null
 
-    Column(
-        Modifier
-            .padding(vertical = 30.dp, horizontal = 16.dp)
-            .fillMaxSize()
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+    Column(Modifier.padding(horizontal = 16.dp)) {
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "Arrow Back",
-
-                modifier = Modifier
-                    .clickable {
-                        navigator.popBackStack()
-                    }
-                    .align(Alignment.TopStart)
-                    .size(24.dp)
-            )
             Image(
                 painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Cakkie Logo",
+                contentDescription = stringResource(
+                    id = R.string.cakkie_logo
+                ),
                 modifier = Modifier
-                    .padding(bottom = 52.dp)
-                    .size(67.dp)
-                    .align(Alignment.Center)
+                    .size(27.dp),
+                contentScale = ContentScale.FillWidth
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = stringResource(id = R.string.shop),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 16.sp,
+                color = CakkieBrown,
+                fontWeight = FontWeight.SemiBold
             )
         }
-
+        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         Column(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Text(
-                text = stringResource(id = R.string.you_are_almost_there),
+            androidx.compose.material3.Text(
+                text = stringResource(id = R.string.hello_there),
                 style = MaterialTheme.typography.titleLarge
             )
-            Text(
-                text = stringResource(id = R.string.create_an_account_to_experience_sweet_delight),
+            androidx.compose.material3.Text(
+                text = stringResource(id = R.string.fill_out_this_form_to_get_your_shop),
                 style = MaterialTheme.typography.bodyLarge
             )
-
             Spacer(modifier = Modifier.height(28.dp))
-            CakkieInputField(
-                value = firstName,
-                onValueChange = { firstName = it },
-                placeholder = stringResource(id = R.string.firstName),
-                keyboardType = KeyboardType.Text,
+
+            GlideImage(
+                model = imageUri ?: "https://source.unsplash.com/100x150/?cake?logo",
+                contentDescription = "cake logo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(shape = CircleShape)
+                    .clickable {
+                        galleryLauncher.launch("image/*")
+                    }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            CakkieInputField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                placeholder = stringResource(id = R.string.LastName),
-                keyboardType = KeyboardType.Text,
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = stringResource(id = R.string.upload_a_business_logo),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 16.sp,
+                color = CakkieBrown,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
-                value = userName,
-                onValueChange = { userName = it },
-                placeholder = stringResource(id = R.string.Username),
+                value = name,
+                onValueChange = { name = it },
+                placeholder = stringResource(id = R.string.business_name),
                 keyboardType = KeyboardType.Text,
             )
 
@@ -179,13 +179,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     location = it
                 }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            CakkieInputField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder = stringResource(id = R.string.password),
-                keyboardType = KeyboardType.Password,
-            )
+
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
@@ -202,13 +196,13 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
+                    androidx.compose.material3.Text(
                         text = stringResource(id = R.string.i_agree_to),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp
                     )
                     Spacer(modifier = Modifier.width(2.dp))
-                    Text(
+                    androidx.compose.material3.Text(
                         text = stringResource(id = R.string.terms_of_Service),
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
@@ -222,13 +216,13 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                         fontSize = 12.sp
                     )
                     Spacer(modifier = Modifier.width(2.dp))
-                    Text(
+                    androidx.compose.material3.Text(
                         text = stringResource(id = R.string.and),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp
                     )
                     Spacer(modifier = Modifier.width(2.dp))
-                    Text(
+                    androidx.compose.material3.Text(
                         text = stringResource(id = R.string.privacy_Policy),
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
@@ -251,34 +245,25 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 Modifier.fillMaxWidth(),
                 processing = processing,
                 enabled = canProceed,
-                text = stringResource(id = R.string.create_Account)
+                text = stringResource(id = R.string.create_shop)
             ) {
 
                 // check if the email is valid
                 processing = true
-                viewModel.signUp(
-                    email = email,
-                    password = password.text,
-                    firstName = firstName.text,
-                    lastName = lastName.text,
-                    userName = userName.text,
+                viewModel.createShop(
+                    name = name.text,
                     address = address.text,
+                    imageUrl = imageUri.toString(),
                     location = location!!
                 ).addOnSuccessListener { resp ->
                     processing = false
-                    if (resp.token.isNotEmpty()) {
-                        viewModel.saveToken(resp.token)
-                    }
                     Timber.d(resp.toString())
-                    //navigate to home screen
-                    navigator.navigate(
-                        OtpScreenDestination(
-                            email = email,
-                            isNewDevice = false,
-                            isSignUp = true
-                        )
-                    ) {
+                    //navigate to shop screen
+                    navigator.navigate(ShopDestination) {
                         launchSingleTop = true
+                        popUpTo(CreateShopDestination) {
+                            inclusive = true
+                        }
                     }
                 }.addOnFailureListener { exception ->
                     //show toast
@@ -291,24 +276,6 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     Timber.d(exception)
                 }
 
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 50.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.already_have_an_account),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = stringResource(id = R.string.login),
-                    color = CakkieBrown,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.clickable { })
             }
         }
     }
