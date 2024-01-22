@@ -43,7 +43,10 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
+import com.cakkie.ui.screens.destinations.ContactCakkieDestination
+import com.cakkie.ui.screens.destinations.DeleteAccountDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
+import com.cakkie.ui.screens.destinations.ReportProblemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -131,7 +134,7 @@ fun Settings(navigator: DestinationsNavigator) {
                 SettingsItemData(
                     image = R.drawable.shield,
                     text = R.string.security,
-                    description = R.string.change_password_forgot_assword
+                    description = R.string.change_password_delete_account
                 ),
                 SettingsItemData(
                     image = R.drawable.help_circle,
@@ -191,7 +194,9 @@ fun Settings(navigator: DestinationsNavigator) {
                                 .height(12.dp)
                                 .rotate(if (expanded) 90f else 0f)
                         )
+
                     }
+
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 AnimatedVisibility(expanded) {
@@ -210,7 +215,24 @@ fun Settings(navigator: DestinationsNavigator) {
                             }.forEach {
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            when (it.text) {
+                                                R.string.change_password -> navigator.navigate(
+                                                    ChangePasswordDestination
+                                                )
+                                                R.string.report_a_problem -> navigator.navigate(
+                                                    ReportProblemDestination
+                                                )
+                                                R.string.contact_us -> navigator.navigate(
+                                                    ContactCakkieDestination
+                                                )
+                                                R.string.delete_account -> navigator.navigate(
+                                                    DeleteAccountDestination
+                                                )
+                                                else -> { }
+                                            }
+                                        },
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -225,13 +247,8 @@ fun Settings(navigator: DestinationsNavigator) {
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(text = stringResource(id = it.text))
                                     }
-                                    if (it.text == R.string.change_password) {
-                                        IconButton(onClick = {
-                                            navigator.navigate(
-                                                ChangePasswordDestination
-                                            ) }) {
-                                        }
-                                    }
+
+
                                     if (it.text == R.string.pause_notification) {
                                         var switchState by remember { mutableStateOf(false) }
                                         Switch(
@@ -259,16 +276,18 @@ fun Settings(navigator: DestinationsNavigator) {
                                             )
                                         }
                                     }
+
                                 }
-                                Spacer(modifier = Modifier.height(16.dp))
+
                             }
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
-
+            Spacer(modifier = Modifier.height(16.dp))
         }
+
     }
 }
 
@@ -303,6 +322,10 @@ val securityItem = listOf(
     SettingsItemData(
         image = R.drawable.lock,
         text = R.string.change_password,
+    ),
+    SettingsItemData(
+        image = R.drawable.problem,
+        text = R.string.delete_account,
     )
 )
 val helpItem = listOf(
@@ -340,3 +363,4 @@ data class SettingsItemData(
     val text: Int,
     val description: Int = 0
 )
+

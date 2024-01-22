@@ -32,25 +32,15 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PauseNotification() {
+fun DeleteAccount() {
     val radioButtons = remember {
         mutableStateListOf(
-            ToggledInfo(
-                isChecked = false, text = "6 hours"
+            BottomSheetInfo(
+                isChecked = false, text = "Yes"
             ),
-            ToggledInfo(
-                isChecked = false, text = "24 hours"
-            ),
-            ToggledInfo(
-                isChecked = false, text = "1 week"
-            ),
-            ToggledInfo(
-                isChecked = false, text = "1 Month"
-            ),
-            ToggledInfo(
-                isChecked = false, text = "Till Further Notice"
-            ),
-
+            BottomSheetInfo(
+                isChecked = false, text = "No"
+            )
             )
     }
 
@@ -61,7 +51,7 @@ fun PauseNotification() {
     ) {
 
         Text(
-            text = stringResource(id = R.string.pause_notification),
+            text = stringResource(id = R.string.delete_account),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontWeight = FontWeight.SemiBold,
@@ -69,7 +59,7 @@ fun PauseNotification() {
         )
 
         Text(
-            text = stringResource(id = R.string.pause_notification_message),
+            text = stringResource(id = R.string.delete_account_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
@@ -77,35 +67,35 @@ fun PauseNotification() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
-                radioButtons.forEachIndexed { index, info ->
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                radioButtons.replaceAll {
-                                    it.copy(
-                                        isChecked = it.text == info.text
-                                    )
-                                }
+            radioButtons.forEachIndexed { index, info ->
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        radioButtons.replaceAll {
+                            it.copy(
+                                isChecked = it.text == info.text
+                            )
+                        }
 
-                            }
-                        ) {
-                            RadioButton(
-                                selected = info.isChecked,
-                                onClick = {
-                                    radioButtons[index] = info.copy(
-                                        isChecked = info.isChecked
-                                    )
-                                },
-                               colors = RadioButtonDefaults.colors(
-                                   selectedColor = CakkieBrown,
-                                   unselectedColor = CakkieBrown,
-                               )
-
-                                )
-
-                                Text(text = info.text)
-
-                            }
                     }
+                ) {
+                    RadioButton(
+                        selected = info.isChecked,
+                        onClick = {
+                            radioButtons[index] = info.copy(
+                                isChecked = info.isChecked
+                            )
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = CakkieBrown,
+                            unselectedColor = CakkieBrown,
+                        )
+
+                    )
+
+                    Text(text = info.text)
+
+                }
+            }
         }
 
     }
@@ -123,7 +113,7 @@ fun PauseNotification() {
 }
 
 
-data class ToggledInfo(
+data class BottomSheetInfo(
     val isChecked: Boolean,
     val text: String
 )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +72,7 @@ fun ChangePassword( navigator: DestinationsNavigator) {
 
     Column(
         Modifier
-            .padding(vertical = 30.dp, horizontal = 16.dp)
+            .padding(vertical = 11.dp, horizontal = 16.dp)
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -96,7 +97,7 @@ fun ChangePassword( navigator: DestinationsNavigator) {
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Cakkie Logo",
                 modifier = Modifier
-                    .padding(bottom = 52.dp)
+                    .padding(top = 52.dp)
                     .size(160.dp)
                     .align(Alignment.Center)
             )
@@ -148,6 +149,7 @@ fun ChangePassword( navigator: DestinationsNavigator) {
             CakkieButton(
                 Modifier
                     .height(50.dp)
+                    .width(328.dp)
                    ,
                 processing = processing,
                 enabled = canProceed,
