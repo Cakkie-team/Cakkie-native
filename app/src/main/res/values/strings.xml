@@ -203,6 +203,9 @@
     <string name="post_and_comments">Posts and comments</string>
     <string name="username">Username</string>
     <string name="phone_number">Phone Number</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_message">How are you sure you want to delete your account?</string>
+    <string name="change_password_delete_account">Change Password, Delete Account</string>
 
 
 </resources>

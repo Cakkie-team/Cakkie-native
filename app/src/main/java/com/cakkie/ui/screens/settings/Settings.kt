@@ -44,6 +44,7 @@ import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.ContactCakkieDestination
+import com.cakkie.ui.screens.destinations.DeleteAccountDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
@@ -133,7 +134,7 @@ fun Settings(navigator: DestinationsNavigator) {
                 SettingsItemData(
                     image = R.drawable.shield,
                     text = R.string.security,
-                    description = R.string.change_password_forgot_password
+                    description = R.string.change_password_delete_account
                 ),
                 SettingsItemData(
                     image = R.drawable.help_circle,
@@ -225,6 +226,9 @@ fun Settings(navigator: DestinationsNavigator) {
                                                 )
                                                 R.string.contact_us -> navigator.navigate(
                                                     ContactCakkieDestination
+                                                )
+                                                R.string.delete_account -> navigator.navigate(
+                                                    DeleteAccountDestination
                                                 )
                                                 else -> { }
                                             }
@@ -318,6 +322,10 @@ val securityItem = listOf(
     SettingsItemData(
         image = R.drawable.lock,
         text = R.string.change_password,
+    ),
+    SettingsItemData(
+        image = R.drawable.problem,
+        text = R.string.delete_account,
     )
 )
 val helpItem = listOf(
@@ -356,7 +364,3 @@ data class SettingsItemData(
     val description: Int = 0
 )
 
-data class SecurityItemData(
-    val isExpanded: Boolean,
-
-    )
