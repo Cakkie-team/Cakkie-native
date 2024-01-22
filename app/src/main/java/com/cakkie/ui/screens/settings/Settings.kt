@@ -43,6 +43,7 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
+import com.cakkie.ui.screens.destinations.ContactCakkieDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
@@ -222,7 +223,9 @@ fun Settings(navigator: DestinationsNavigator) {
                                                 R.string.report_a_problem -> navigator.navigate(
                                                     ReportProblemDestination
                                                 )
-                                                
+                                                R.string.contact_us -> navigator.navigate(
+                                                    ContactCakkieDestination
+                                                )
                                                 else -> { }
                                             }
                                         },
