@@ -67,6 +67,7 @@ fun ReportProblem(navigator: DestinationsNavigator) {
                         CakkieInputField(
                             value = email,
                             onValueChange = { email = it },
+                            singleLine = false,
                             placeholder = "Type Something",
                             keyboardType = KeyboardType.Text,
                             modifier = Modifier

@@ -64,7 +64,8 @@ fun CakkieInputField(
     leadingIcon: @Composable (() -> Unit)? = null,
     isEditable: Boolean = true,
     showEditIcon: Boolean = false,
-    location: Location? = null
+    location: Location? = null,
+    singleLine:Boolean = true
 ) {
     val context = LocalContext.current
     var visible by remember {
@@ -109,7 +110,7 @@ fun CakkieInputField(
                 )
             },
             textStyle = MaterialTheme.typography.bodyLarge,
-            singleLine = true,
+            singleLine = singleLine,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 backgroundColor = Transparent,
                 focusedBorderColor = CakkieBrown,
