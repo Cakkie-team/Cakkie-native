@@ -20,6 +20,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,8 +47,10 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.screens.destinations.CommentDestination
+import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -56,7 +59,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(
     ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class, ExperimentalMaterialApi::class
 )
 @Composable
 fun ExploreItem(navigator: DestinationsNavigator) {
@@ -72,7 +75,11 @@ fun ExploreItem(navigator: DestinationsNavigator) {
     var isSponsored by remember {
         mutableStateOf(true)
     }
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     val pageState = rememberPagerState(pageCount = { 3 })
+
     Column {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -144,6 +151,7 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                 model = "https://source.unsplash.com/600x400/?cakes",
                 contentDescription = "cake",
                 modifier = Modifier
+                    .clickable { expanded = !expanded }
                     .fillMaxWidth()
                     .height(240.dp),
                 contentScale = ContentScale.FillBounds
@@ -197,11 +205,11 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                 spacing = 8.dp,
                 indicatorWidth = 5.dp,
                 indicatorHeight = 5.dp,
-                pageCount = 3,
+                pageCount = pageState.pageCount,
                 modifier = Modifier.offset(x = (-24).dp)
             )
             Card(
-                onClick = { },
+                onClick = { navigator.navigate(ItemDetailsDestination) },
                 modifier = Modifier
                     .width(64.dp)
                     .height(24.dp),
@@ -252,4 +260,12 @@ fun ExploreItem(navigator: DestinationsNavigator) {
         )
 
     }
+
+    ExpandImage(
+        expanded = expanded,
+        onDismiss = { expanded = false },
+        navigator = navigator,
+        showDetails = true,
+        pageState = pageState
+    )
 }

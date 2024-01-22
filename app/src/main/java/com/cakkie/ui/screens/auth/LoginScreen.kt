@@ -32,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
@@ -109,13 +111,14 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
             text = stringResource(id = R.string.forget_password),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
+                .height(48.dp)
                 .align(Alignment.End)
                 .clickable { navigator.navigate(ForgetPasswordDestination(email)) }
         )
 
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
-            Modifier.height(50.dp),
+            Modifier.fillMaxWidth(),
             processing = processing,
             text = stringResource(id = R.string.login),
             enabled = password.text.isNotEmpty()
@@ -153,7 +156,14 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             message = "Login Success",
                             image = R.drawable.logo
                         ).show()
-                        navigator.navigate(ExploreScreenDestination)
+                        navigator.navigate(ExploreScreenDestination) {
+                            popUpTo(EmailScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(LoginScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
                     }
 
                 }.addOnFailureListener {

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,9 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -30,6 +27,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -44,11 +42,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,8 +62,12 @@ import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ScrollStrategy
+import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
+import timber.log.Timber
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
@@ -77,6 +77,10 @@ fun MyProfile(navigator: DestinationsNavigator) {
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
+    val state = rememberCollapsingToolbarScaffoldState()
+    val offsetY = state.offsetY // y offset of the layout
+    val progress = state.toolbarState.progress
+    Timber.d("offsetY: $offsetY progress: $progress")
     val gradient = Brush.linearGradient(
         0.0f to Color.Transparent,
         500.0f to Color.Black,
@@ -92,7 +96,9 @@ fun MyProfile(navigator: DestinationsNavigator) {
         ) {
             Image(
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier
+                    .width(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
                         navigator.popBackStack()
@@ -106,208 +112,217 @@ fun MyProfile(navigator: DestinationsNavigator) {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Column(
-            Modifier
-                .fillMaxSize()
-                .nestedScroll(rememberNestedScrollInteropConnection())
-                .verticalScroll(rememberScrollState())
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(200.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                GlideImage(
-                    model = "https://source.unsplash.com/600x400/?cakes,cover",
-                    contentDescription = "cover",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-                        .height(150.dp)
-                )
-                GlideImage(
-                    model = "https://source.unsplash.com/100x100/?profile,cute",
-                    contentDescription = "profile pic",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .padding(top = 100.dp)
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(100))
-                        .border(
-                            width = 3.dp,
-                            color = CakkieBackground,
-                            shape = RoundedCornerShape(100)
+        CollapsingToolbarScaffold(
+            state = state,
+            modifier = Modifier,
+            scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
+            toolbar = {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .height(200.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        GlideImage(
+                            model = "https://source.unsplash.com/600x400/?cakes,cover",
+                            contentDescription = "cover",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+                                .height(150.dp)
                         )
-                )
-            }
-            Text(
-                text = "Jennifer Victor",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
-            )
-            Text(
-                text = "   Uyo Nwaniba",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CakkieButton(
-                    text = stringResource(id = R.string.edit_profile),
-                ) {
-                }
-                OutlinedButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .size(width = 70.dp, height = 34.dp),
-                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieBackground,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(20)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share, contentDescription = "",
-                        modifier = Modifier,
-                        tint = CakkieBrown
-                    )
-                }
-                OutlinedButton(
-                    onClick = {
-                        navigator.navigate(SettingsDestination)
-                    },
-                    modifier = Modifier
-                        .size(width = 70.dp, height = 34.dp),
-                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieBackground,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(20)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings, contentDescription = "",
-                        modifier = Modifier,
-                        tint = CakkieBrown
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .padding(start = 31.dp, end = 31.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        GlideImage(
+                            model = "https://source.unsplash.com/100x100/?profile,cute",
+                            contentDescription = "profile pic",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .padding(top = 100.dp)
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(100))
+                                .border(
+                                    width = 3.dp,
+                                    color = CakkieBackground,
+                                    shape = RoundedCornerShape(100)
+                                )
+                        )
+                    }
                     Text(
-                        text = "870",
+                        text = "Jennifer Victor",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBrown
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp
                     )
                     Text(
-                        text = stringResource(id = R.string.posts),
-                        style = MaterialTheme.typography.labelMedium
+                        text = "   Uyo Nwaniba",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .padding(start = 16.dp, end = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CakkieButton(
+                            text = stringResource(id = R.string.edit_profile),
+                        ) {
+                        }
+                        OutlinedButton(
+                            onClick = {},
+                            modifier = Modifier
+                                .size(width = 70.dp, height = 34.dp),
+                            border = BorderStroke(1.dp, color = CakkieLightBrown),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CakkieBackground,
+                                contentColor = CakkieBrown
+                            ),
+                            shape = RoundedCornerShape(20)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share, contentDescription = "",
+                                modifier = Modifier,
+                                tint = CakkieBrown
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                navigator.navigate(SettingsDestination)
+                            },
+                            modifier = Modifier
+                                .size(width = 70.dp, height = 34.dp),
+                            border = BorderStroke(1.dp, color = CakkieLightBrown),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CakkieBackground,
+                                contentColor = CakkieBrown
+                            ),
+                            shape = RoundedCornerShape(20)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings, contentDescription = "",
+                                modifier = Modifier,
+                                tint = CakkieBrown
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
+                            .padding(start = 31.dp, end = 31.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "870",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = CakkieBrown
+                            )
+                            Text(
+                                text = stringResource(id = R.string.posts),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                        Divider(
+                            color = CakkieBrown,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(1.dp)
+                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "120k",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = CakkieBrown
+                            )
+                            Text(
+                                text = stringResource(id = R.string.following),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                        Divider(
+                            color = CakkieBrown,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(1.dp)
+                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "354k",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = CakkieBrown
+                            )
+                            Text(
+                                text = stringResource(id = R.string.followers),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Column(
+                        modifier = Modifier.height(50.dp)
+                    ) {
+                        if (offsetY > -1000) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                OutlinedButton(
+                                    onClick = {},
+                                    modifier = Modifier
+                                        .size(width = 90.dp, height = 34.dp),
+                                    border = BorderStroke(1.dp, color = CakkieLightBrown),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = CakkieBackground,
+                                        contentColor = CakkieBrown
+                                    ),
+                                    shape = RoundedCornerShape(60)
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.posts),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = CakkieLightBrown
+                                    )
+                                }
+                                Button(
+                                    onClick = {},
+                                    modifier = Modifier
+                                        .size(width = 200.dp, height = 34.dp)
+                                        .padding(start = 20.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = CakkieOrange,
+                                        contentColor = CakkieBrown
+                                    ),
+                                    shape = RoundedCornerShape(60)
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.favourite_feed),
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
-                Divider(
-                    color = CakkieBrown,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "120k",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = CakkieBrown
-                    )
-                    Text(
-                        text = stringResource(id = R.string.following),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-                Divider(
-                    color = CakkieBrown,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "354k",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = CakkieBrown
-                    )
-                    Text(
-                        text = stringResource(id = R.string.followers),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .size(width = 90.dp, height = 34.dp),
-                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieBackground,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(60)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.posts),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = CakkieLightBrown
-                    )
-                }
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .size(width = 200.dp, height = 34.dp)
-                        .padding(start = 20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieOrange,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(60)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.favourite_feed),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
+            },
+        ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier
 //                    .nestedScroll(nestedScroll)
-                    .padding(horizontal = 2.dp)
-                    .height(height - 220.dp)
+                    .padding(horizontal = 2.dp, vertical = 10.dp)
             ) {
                 items(50) {
                     Box(

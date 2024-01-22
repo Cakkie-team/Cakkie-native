@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
@@ -93,14 +94,16 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "notification"
+                        contentDescription = "notification",
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
                 IconButton(onClick = { navigator.navigate(WalletDestination) }) {
                     Image(
                         painter = painterResource(id = R.drawable.wallet),
-                        contentDescription = "wallet"
+                        contentDescription = "wallet",
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -121,7 +124,8 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         fontWeight = FontWeight.SemiBold
                     )
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { navigator.navigate(CakespirationDestination()) }
                     ) {
                         Text(
                             text = stringResource(id = R.string.watch_all),
@@ -148,6 +152,9 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                 .padding(6.dp)
                                 .clip(shape = RoundedCornerShape(8.dp))
                                 .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
+                                .clickable {
+                                    navigator.navigate(CakespirationDestination(index = it))
+                                }
                         )
                     }
                 }

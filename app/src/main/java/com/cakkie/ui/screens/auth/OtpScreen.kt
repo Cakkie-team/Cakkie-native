@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,8 +32,12 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
+import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
+import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
@@ -128,7 +133,7 @@ fun OtpScreen(
         }
         Spacer(modifier = Modifier.weight(0.3f))
         CakkieButton(
-            Modifier.height(50.dp),
+            Modifier.fillMaxWidth(),
             processing = processing,
             text = stringResource(id = R.string.continue_),
             enabled = otp.text.length == 4
@@ -148,11 +153,35 @@ fun OtpScreen(
                         image = R.drawable.logo
                     ).show()
                     if (isNewDevice) {
-                        navigator.navigate(ExploreScreenDestination)
+                        navigator.navigate(ExploreScreenDestination) {
+                            popUpTo(EmailScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(LoginScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(OtpScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
                     } else if (isSignUp) {
-                        navigator.navigate(ExploreScreenDestination)
+                        navigator.navigate(ExploreScreenDestination) {
+                            popUpTo(EmailScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(SignUpScreenDestination.route) {
+                                inclusive = true
+                            }
+                            popUpTo(OtpScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
                     } else {
-                        navigator.navigate(ResetPasswordDestination(email))
+                        navigator.navigate(ResetPasswordDestination(email)) {
+                            popUpTo(OtpScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 }.addOnFailureListener {
                     processing = false
