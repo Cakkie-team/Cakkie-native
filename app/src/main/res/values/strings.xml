@@ -225,6 +225,10 @@
     <string name="business_name">Business Name</string>
     <string name="fill_out_this_form_to_get_your_shop">Please fill out this form to get  your shop up and runnung on Cakkie.</string>
     <string name="upload_a_business_logo">Upload a Business Logo</string>
+    <string name="who_can_see_your_post">Who can see your posts?</string>
+    <string name="who_can_comment_on_your_posts">Who can comment on your posts?</string>
+    <string name="manage_your_posts_and_comments">Manage your posts and comments</string>
+    <string name="who_can_see_your_post_comment">Who can see your posts and comments?</string>
 
 
 </resources>

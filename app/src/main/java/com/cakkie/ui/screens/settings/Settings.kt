@@ -46,6 +46,8 @@ import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.ContactCakkieDestination
 import com.cakkie.ui.screens.destinations.DeleteAccountDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
+import com.cakkie.ui.screens.destinations.PostDestination
+import com.cakkie.ui.screens.destinations.PostItemDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
@@ -229,6 +231,10 @@ fun Settings(navigator: DestinationsNavigator) {
                                                 )
                                                 R.string.delete_account -> navigator.navigate(
                                                     DeleteAccountDestination
+                                                )
+
+                                                R.string.post_and_comments -> navigator.navigate(
+                                                    PostItemDestination
                                                 )
                                                 else -> { }
                                             }
