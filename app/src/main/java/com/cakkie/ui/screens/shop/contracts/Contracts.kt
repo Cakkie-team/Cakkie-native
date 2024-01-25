@@ -38,7 +38,7 @@ fun Contracts() {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = stringResource(id = R.string.get_started_now_by_checking_out_our_available_jobs),
