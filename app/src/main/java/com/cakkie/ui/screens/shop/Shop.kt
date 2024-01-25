@@ -19,7 +19,7 @@ fun Shop(navigator: DestinationsNavigator) {
 
     //check if user is has a shop
     LaunchedEffect(key1 = user) {
-        if (true) {
+        if (user?.hasShop == true) {
             //navigate to create shop screen
             navigator.navigate(ShopOnboardingDestination) {
                 popUpTo(ShopDestination) {
