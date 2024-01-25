@@ -9,10 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,11 +22,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +54,9 @@ import com.cakkie.ui.screens.destinations.CreateShopDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -72,6 +76,12 @@ fun CreateShop(navigator: DestinationsNavigator) {
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+    var uploding by remember {
+        mutableStateOf(false)
+    }
+    var uploadMessage by remember {
+        mutableStateOf("Upload a business logo")
+    }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -80,7 +90,40 @@ fun CreateShop(navigator: DestinationsNavigator) {
             }
         }
     )
+    var fileUrl by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = imageUri) {
+        if (imageUri != null) {
+            uploding = true
+            val file = context.createTmpFileFromUri(
+                uri = imageUri!!,
+                fileName = "shopLogo"
+            )!!
+            viewModel.uploadImage(
+                image = file,
+                path = "shop-logos",
+                fileName = file.name + ".png"
+            ).addOnSuccessListener { resp ->
+                fileUrl = Endpoints.FILE_URL(file.name)
+                Timber.d(resp)
+                uploadMessage = "Logo uploaded"
+                uploding = false
+                file.delete()
+            }.addOnFailureListener { exception ->
+                Timber.d(exception)
+                uploding = false
+                uploadMessage = "Failed to upload logo, try again"
+                file.delete()
+            }
+        }
+    }
+
     var address by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    var description by remember {
         mutableStateOf(TextFieldValue(""))
     }
     var isChecked by remember {
@@ -97,7 +140,8 @@ fun CreateShop(navigator: DestinationsNavigator) {
 
     val canProceed = name.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            isChecked && imageUri != null
+            description.text.isNotBlank() &&
+            isChecked && fileUrl.isNotBlank() && location != null
 
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(30.dp))
@@ -122,7 +166,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 fontWeight = FontWeight.SemiBold
             )
         }
-        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+        Spacer(modifier = Modifier.height(80.dp))
         Column(
             Modifier
                 .fillMaxSize()
@@ -139,20 +183,30 @@ fun CreateShop(navigator: DestinationsNavigator) {
             )
             Spacer(modifier = Modifier.height(28.dp))
 
-            GlideImage(
-                model = imageUri ?: "https://source.unsplash.com/100x150/?cake?logo",
-                contentDescription = "cake logo",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(shape = CircleShape)
-                    .clickable {
-                        galleryLauncher.launch("image/*")
-                    }
-            )
+            Box(contentAlignment = Alignment.Center) {
+                GlideImage(
+                    model = imageUri ?: "https://source.unsplash.com/100x150/?cake?logo",
+                    contentDescription = "cake logo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(shape = CircleShape)
+                        .clickable {
+                            galleryLauncher.launch("image/*")
+                        }
+                )
+                if (uploding) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(30.dp),
+                        strokeWidth = 2.dp,
+                        color = CakkieBrown,
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = stringResource(id = R.string.upload_a_business_logo),
+                text = uploadMessage,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
                 color = CakkieBrown,
@@ -164,6 +218,16 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 onValueChange = { name = it },
                 placeholder = stringResource(id = R.string.business_name),
                 keyboardType = KeyboardType.Text,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            CakkieInputField(
+                value = description,
+                onValueChange = { description = it },
+                placeholder = stringResource(id = R.string.about_business),
+                keyboardType = KeyboardType.Text,
+                singleLine = false,
+                modifier = Modifier.height(120.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -254,7 +318,8 @@ fun CreateShop(navigator: DestinationsNavigator) {
                     name = name.text,
                     address = address.text,
                     imageUrl = imageUri.toString(),
-                    location = location!!
+                    location = location!!,
+                    description = description.text
                 ).addOnSuccessListener { resp ->
                     processing = false
                     Timber.d(resp.toString())
@@ -277,6 +342,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 }
 
             }
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 }
