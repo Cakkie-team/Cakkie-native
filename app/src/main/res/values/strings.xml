@@ -225,6 +225,9 @@
     <string name="business_name">Business Name</string>
     <string name="fill_out_this_form_to_get_your_shop">Please fill out this form to get  your shop up and runnung on Cakkie.</string>
     <string name="upload_a_business_logo">Upload a Business Logo</string>
+    <string name="about_business">a brief description about your business</string>
+    <string name="uploading">Uploading</string>
+    <string name="logo_uploaded">Logo uploaded</string>
 
 
 </resources>
