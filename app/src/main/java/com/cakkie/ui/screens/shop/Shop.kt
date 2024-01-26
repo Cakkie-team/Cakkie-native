@@ -65,7 +65,8 @@ fun Shop(navigator: DestinationsNavigator) {
 
         //page tabs
         PageTabs(
-            pagerState = pageState, pageCount = pageState.pageCount,
+            pagerState = pageState,
+            pageCount = pageState.pageCount,
             tabs = listOf(
                 stringResource(id = R.string.contracts),
                 stringResource(id = R.string.proposals),
