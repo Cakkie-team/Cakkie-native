@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
+import com.cakkie.datastore.SettingsConstants
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,6 +16,9 @@ import org.koin.core.component.inject
 class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _user = MutableLiveData<User>()
+    private val _notificationState = MutableStateFlow(NotificationState())
+
+    val notificationState = _notificationState
 
     val user = _user
 
@@ -23,8 +28,88 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
+    fun setPauseNotification(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.PAUSE_NOTIFICATIONS, state)
+        }
+    }
+    fun setPostsAndComments(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.POSTS_COMMENTS, state)
+        }
+    }
+    fun setFollowingsAndFollowers(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.FOLLOWING_FOLLOWERS, state)
+        }
+    }
+    fun setEmailNotifications(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.EMAIL_NOTIFICATIONS, state)
+        }
+    }
+    fun setMessages(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.MESSAGE, state)
+        }
+    }
+
+    fun setProposal(state: Boolean) {
+        viewModelScope.launch {
+            settings.putPreference(SettingsConstants.PROPOSAL, state)
+        }
+    }
+
+
     init {
         getUser()
+        viewModelScope.launch {
+            settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(pauseNotification = it)
+                }
+
+            settings.getPreference(SettingsConstants.POSTS_COMMENTS, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(postAndComment = it)
+                }
+
+            settings.getPreference(SettingsConstants.EMAIL_NOTIFICATIONS, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(emailNotification = it)
+                }
+
+            settings.getPreference(SettingsConstants.MESSAGE, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(message = it)
+                }
+
+            settings.getPreference(SettingsConstants.PROPOSAL, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(proposal = it)
+                }
+
+            settings.getPreference(SettingsConstants.FOLLOWING_FOLLOWERS, false)
+                .asLiveData()
+                .observeForever {
+                    _notificationState.value = NotificationState(followingAndFollowers = it)
+                }
+        }
     }
 
 }
+
+
+data class NotificationState(
+    var pauseNotification: Boolean = false,
+    var postAndComment: Boolean = false,
+    var followingAndFollowers: Boolean = false,
+    var emailNotification: Boolean = false,
+    var message: Boolean = false,
+    var proposal: Boolean = false,
+)
