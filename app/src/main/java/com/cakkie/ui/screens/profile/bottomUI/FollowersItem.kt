@@ -1,4 +1,5 @@
 package com.cakkie.ui.screens.profile.bottomUI
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +41,7 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PostItem(
+fun FollowersItem(
     navigator: DestinationsNavigator
 ) {
     var processing by remember {
@@ -48,15 +49,16 @@ fun PostItem(
     }
     val radioButtons = remember {
         mutableStateListOf(
-            PostToggledInfo(
+            FollowersToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            PostToggledInfo(
+            FollowersToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
             )
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +82,7 @@ fun PostItem(
 
             )
             Text(
-                text = stringResource(id = R.string.post_and_comments),
+                text = stringResource(id = R.string.following_and_followers),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -88,7 +90,7 @@ fun PostItem(
             )
         }
         Text(
-            text = stringResource(id = R.string.post_message),
+            text = stringResource(id = R.string.followers_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
@@ -140,7 +142,7 @@ fun PostItem(
     }
 
 }
-data class PostToggledInfo(
+data class FollowersToggledInfo(
     val isChecked: Boolean,
     val text: String
 )

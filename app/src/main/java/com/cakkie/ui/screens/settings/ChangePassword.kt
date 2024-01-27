@@ -35,6 +35,7 @@ import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.destinations.ForgetPasswordDestination
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
@@ -45,20 +46,11 @@ import timber.log.Timber
 
 @Composable
 @Destination
-fun ChangePassword( navigator: DestinationsNavigator) {
-    val viewModel: AuthViewModel = koinViewModel()
+fun ChangePassword(email: String, navigator: DestinationsNavigator) {
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }
-
-
-
-    val context = LocalContext.current
-    var processing by remember {
-        mutableStateOf(false)
-    }
-
-    var newPassword by remember {
+      var newPassword by remember {
         mutableStateOf(TextFieldValue(""))
     }
 
@@ -149,13 +141,16 @@ fun ChangePassword( navigator: DestinationsNavigator) {
             CakkieButton(
                 Modifier
                     .height(50.dp)
-                    .width(328.dp)
-                   ,
-                processing = processing,
+                    .width(328.dp),
                 enabled = canProceed,
                 text = stringResource(id = R.string.submit)
             ) {
-
+                navigator.navigate(OtpScreenDestination(
+                    email = email,
+                    isNewDevice = false,
+                    isSignUp = false,
+                    isSavedChanges = true
+                ))
             }
 
             Spacer(modifier = Modifier.height(25.dp))

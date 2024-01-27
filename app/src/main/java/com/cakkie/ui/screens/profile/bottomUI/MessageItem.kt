@@ -40,7 +40,7 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PostItem(
+fun MessageItem(
     navigator: DestinationsNavigator
 ) {
     var processing by remember {
@@ -48,10 +48,10 @@ fun PostItem(
     }
     val radioButtons = remember {
         mutableStateListOf(
-            PostToggledInfo(
+            MessageToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            PostToggledInfo(
+            MessageToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
@@ -80,7 +80,7 @@ fun PostItem(
 
             )
             Text(
-                text = stringResource(id = R.string.post_and_comments),
+                text = stringResource(id = R.string.messages_notifications),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -88,7 +88,7 @@ fun PostItem(
             )
         }
         Text(
-            text = stringResource(id = R.string.post_message),
+            text = stringResource(id = R.string.message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
@@ -140,7 +140,7 @@ fun PostItem(
     }
 
 }
-data class PostToggledInfo(
+data class MessageToggledInfo(
     val isChecked: Boolean,
     val text: String
 )

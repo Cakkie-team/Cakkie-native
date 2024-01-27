@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.ChangeProfileDestination
+import com.cakkie.ui.screens.destinations.ChangeProfileItemDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
@@ -182,8 +185,19 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
                 textAlign = TextAlign.End,
                 color = CakkieBrown
             )
+            Spacer(modifier = Modifier.height(50.dp))
 
+            CakkieButton(
+                Modifier
+                    .width(328.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                text = stringResource(id = R.string.save_changes)
+            ) {
+                navigator.navigate(ChangeProfileItemDestination)
 
+            }
+            Spacer(modifier = Modifier.height(17.dp))
         }
 
     }

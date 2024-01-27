@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -213,11 +214,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.clickable {
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://www.cakkie.com/terms-and-conditions")
-                            )
-                            context.startActivity(intent)
+                      navigator.navigate(BrowserDestination("https://www.cakkie.com/terms-and-conditions"))
                         },
                         fontSize = 12.sp
                     )

@@ -35,6 +35,7 @@ import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.OtpItemDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
 import com.cakkie.ui.screens.destinations.SignUpScreenDestination
@@ -52,6 +53,7 @@ fun OtpScreen(
     email: String,
     isNewDevice: Boolean,
     isSignUp: Boolean = false,
+    isSavedChanges: Boolean = false,
     navigator: DestinationsNavigator
 ) {
     val viewModel: AuthViewModel = koinViewModel()
@@ -152,40 +154,49 @@ fun OtpScreen(
                         message = "Verification Successful",
                         image = R.drawable.logo
                     ).show()
-                    if (isNewDevice) {
-                        navigator.navigate(ExploreScreenDestination) {
-                            launchSingleTop = true
-                            popUpTo(EmailScreenDestination.route) {
-                                inclusive = true
-                            }
-                            popUpTo(LoginScreenDestination.route) {
-                                inclusive = true
-                            }
-                            popUpTo(OtpScreenDestination.route) {
-                                inclusive = true
-                            }
-                        }
-                    } else if (isSignUp) {
-                        navigator.navigate(ExploreScreenDestination) {
-                            launchSingleTop = true
-                            popUpTo(EmailScreenDestination.route) {
-                                inclusive = true
-                            }
-                            popUpTo(SignUpScreenDestination.route) {
-                                inclusive = true
-                            }
-                            popUpTo(OtpScreenDestination.route) {
-                                inclusive = true
+                    when {
+                        isNewDevice -> {
+                            navigator.navigate(ExploreScreenDestination) {
+                                launchSingleTop = true
+                                popUpTo(EmailScreenDestination.route) {
+                                    inclusive = true
+                                }
+                                popUpTo(LoginScreenDestination.route) {
+                                    inclusive = true
+                                }
+                                popUpTo(OtpScreenDestination.route) {
+                                    inclusive = true
+                                }
                             }
                         }
-                    } else {
-                        navigator.navigate(ResetPasswordDestination(email)) {
-                            launchSingleTop = true
-                            popUpTo(OtpScreenDestination.route) {
-                                inclusive = true
+                        isSignUp -> {
+                            navigator.navigate(ExploreScreenDestination) {
+                                launchSingleTop = true
+                                popUpTo(EmailScreenDestination.route) {
+                                    inclusive = true
+                                }
+                                popUpTo(SignUpScreenDestination.route) {
+                                    inclusive = true
+                                }
+                                popUpTo(OtpScreenDestination.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                        isSavedChanges -> {
+                            navigator.navigate(ResetPasswordDestination(email)) {
+                            }
+                        }
+                        else -> {
+                            navigator.navigate(ResetPasswordDestination(email)) {
+                                launchSingleTop = true
+                                popUpTo(OtpScreenDestination.route) {
+                                    inclusive = true
+                                }
                             }
                         }
                     }
+
                 }.addOnFailureListener {
                     processing = false
                     isError = true

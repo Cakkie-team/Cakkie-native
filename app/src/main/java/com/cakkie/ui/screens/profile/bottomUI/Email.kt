@@ -1,4 +1,5 @@
 package com.cakkie.ui.screens.profile.bottomUI
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,23 +41,24 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PostItem(
+fun Email(
     navigator: DestinationsNavigator
 ) {
-    var processing by remember {
-        mutableStateOf(false)
-    }
     val radioButtons = remember {
         mutableStateListOf(
-            PostToggledInfo(
+            EmailToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            PostToggledInfo(
+            EmailToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
             )
     }
+    var processing by remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +82,7 @@ fun PostItem(
 
             )
             Text(
-                text = stringResource(id = R.string.post_and_comments),
+                text = stringResource(id = R.string.email_notifications),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -88,12 +90,11 @@ fun PostItem(
             )
         }
         Text(
-            text = stringResource(id = R.string.post_message),
+            text = stringResource(id = R.string.email_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
         )
-
         Column(modifier = Modifier.fillMaxWidth()) {
             radioButtons.forEachIndexed { index, info ->
                 Row(verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +141,8 @@ fun PostItem(
     }
 
 }
-data class PostToggledInfo(
+
+data class EmailToggledInfo(
     val isChecked: Boolean,
     val text: String
 )

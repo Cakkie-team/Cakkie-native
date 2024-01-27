@@ -1,5 +1,5 @@
 package com.cakkie.ui.screens.profile.bottomUI
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -8,91 +8,63 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonColors
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PostItem(
-    navigator: DestinationsNavigator
-) {
-    var processing by remember {
-        mutableStateOf(false)
-    }
+fun LogOut() {
     val radioButtons = remember {
         mutableStateListOf(
-            PostToggledInfo(
-                isChecked = false, text = "YES"
+            LogOutInfo(
+                isChecked = false, text = "Yes"
             ),
-            PostToggledInfo(
-                isChecked = false, text = "NO"
-            ),
-
+            LogOutInfo(
+                isChecked = false, text = "No"
             )
+        )
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.Unspecified)
-            .padding(horizontal = 32.dp, vertical = 20.dp)
+            .padding(horizontal = 32.dp, vertical = 17.dp)
     ) {
 
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.edit),
-                contentDescription = "approved",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(20.dp)
-                    .padding(horizontal = 5.dp)
-
-
-            )
-            Text(
-                text = stringResource(id = R.string.post_and_comments),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
-            )
-        }
         Text(
-            text = stringResource(id = R.string.post_message),
+            text = stringResource(id = R.string.Logout),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
+
+        Text(
+            text = stringResource(id = R.string.logout_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
         )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
             radioButtons.forEachIndexed { index, info ->
@@ -125,22 +97,23 @@ fun PostItem(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
 
-        CakkieButton(
-            Modifier
-                .height(50.dp)
-                .width(328.dp),
-            processing = processing,
-            text = stringResource(id = R.string.sure)
-        ) {
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
     }
+    Spacer(modifier = Modifier.height(15.dp))
+
+    CakkieButton(
+        Modifier.height(50.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp),
+        text = stringResource(id = R.string.done)
+    ) {
+    }
+    Spacer(modifier = Modifier.height(17.dp))
 
 }
-data class PostToggledInfo(
+
+
+data class LogOutInfo(
     val isChecked: Boolean,
     val text: String
 )

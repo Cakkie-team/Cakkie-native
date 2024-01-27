@@ -204,8 +204,8 @@
     <string name="username">Username</string>
     <string name="phone_number">Phone Number</string>
     <string name="delete_account">Delete account</string>
-    <string name="delete_account_message">How are you sure you want to delete your account?</string>
-    <string name="change_password_delete_account">Change Password, Delete Account</string>
+    <string name="delete_account_message">Are you sure you want to delete your account?</string>
+    <string name="change_password_delete_account">Change Password, Delete Account, Logout</string>
     <string name="cakespiation">Cakespiration</string>
     <string name="search">Search</string>
     <string name="arrow">arrow</string>
@@ -229,6 +229,23 @@
     <string name="who_can_comment_on_your_posts">Who can comment on your posts?</string>
     <string name="manage_your_posts_and_comments">Manage your posts and comments</string>
     <string name="who_can_see_your_post_comment">Who can see your posts and comments?</string>
+    <string name="changes_saved">Changes Saved</string>
+    <string name="changes_message">Changes have been successfully made.</string>
+    <string name="sure">Sure</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="make_changes_saved">Make Changes?</string>
+    <string name="save_changes_message">Are you sure you want to change your email address?</string>
+    <string name="who_see_who_you_are_following">Who can see your followers and who you are following?</string>
+    <string name="who_see_your_email_notifications">Who can see yor email notifications?</string>
+    <string name="email_message">Are you sure you want to receive email notifications?</string>
+    <string name="followers_message">Are you sure you want to receive followers notifications?</string>
+    <string name="messages_notifications">Messages Notifications</string>
+    <string name="message">Are you sure you want to receive message notifications?</string>
+    <string name="proposal_message">Are youu sure you want to receive proposal notifications?</string>
+    <string name="post_message">Do you want to receive post and comments notifications?</string>
+    <string name="login_out">Log Out</string>
+    <string name="Logout">Log Out</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
 
 
 </resources>
