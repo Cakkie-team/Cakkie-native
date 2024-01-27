@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.profile.bottomUI
+package com.cakkie.ui.screens.settings.bottomUI
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +56,8 @@ fun ContactCakkie(navigator: DestinationsNavigator) {
           Spacer(modifier = Modifier.height(13.dp))
 
           CakkieButton(
-              Modifier.height(50.dp)
+              Modifier
+                  .height(50.dp)
                   .width(328.dp)
               ,
               processing = processing,
@@ -68,7 +68,8 @@ fun ContactCakkie(navigator: DestinationsNavigator) {
 
 
           CakkieButton(
-              Modifier.height(50.dp)
+              Modifier
+                  .height(50.dp)
                   .width(328.dp)
               ,
               processing = processing,
@@ -79,7 +80,8 @@ fun ContactCakkie(navigator: DestinationsNavigator) {
 
 
           CakkieButton(
-              Modifier.height(50.dp)
+              Modifier
+                  .height(50.dp)
                   .width(328.dp),
               processing = processing,
               text = stringResource(id = R.string.send_us_an_instagram_message)

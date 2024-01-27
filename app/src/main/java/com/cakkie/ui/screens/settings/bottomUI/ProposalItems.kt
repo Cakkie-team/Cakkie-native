@@ -1,5 +1,4 @@
-package com.cakkie.ui.screens.profile.bottomUI
-
+package com.cakkie.ui.screens.settings.bottomUI
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,12 +27,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -41,24 +38,23 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun Email(
+fun ProposalItem(
     navigator: DestinationsNavigator
 ) {
+    var processing by remember {
+        mutableStateOf(false)
+    }
     val radioButtons = remember {
         mutableStateListOf(
-            EmailToggledInfo(
+            ProposalToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            EmailToggledInfo(
+            ProposalToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
             )
     }
-    var processing by remember {
-        mutableStateOf(false)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,13 +72,14 @@ fun Email(
                 painter = painterResource(id = R.drawable.edit),
                 contentDescription = "approved",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .padding(horizontal = 5.dp)
 
 
             )
             Text(
-                text = stringResource(id = R.string.email_notifications),
+                text = stringResource(id = R.string.proposal),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -90,7 +87,7 @@ fun Email(
             )
         }
         Text(
-            text = stringResource(id = R.string.email_message),
+            text = stringResource(id = R.string.proposal_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
@@ -142,7 +139,7 @@ fun Email(
 
 }
 
-data class EmailToggledInfo(
+data class ProposalToggledInfo(
     val isChecked: Boolean,
     val text: String
 )
