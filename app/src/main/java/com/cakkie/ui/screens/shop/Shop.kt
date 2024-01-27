@@ -23,6 +23,7 @@ import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
 import com.cakkie.ui.screens.shop.contracts.Contracts
+import com.cakkie.ui.screens.shop.contracts.Listings
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -75,7 +76,12 @@ fun Shop(navigator: DestinationsNavigator) {
             )
         )
         HorizontalPager(state = pageState) {
-            Contracts()
+            when (it) {
+                0 -> Contracts()
+                1 -> Contracts()
+                2 -> Listings()
+                3 -> Listings()
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 
 @Composable
-fun Contracts() {
+fun Listings() {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             Modifier
@@ -43,7 +43,7 @@ fun Contracts() {
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = stringResource(id = R.string.get_started_now_by_checking_out_our_available_jobs),
+                text = stringResource(id = R.string.start_now_by_posting_a_listing_to_earn_requests),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -54,7 +54,7 @@ fun Contracts() {
         }
 
         CakkieButton(
-            text = stringResource(id = R.string.check_jobs),
+            text = stringResource(id = R.string.create_listing),
             modifier = Modifier
 //                .fillMaxWidth(0.8f)
                 .offset(y = (-100).dp)

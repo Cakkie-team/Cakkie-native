@@ -234,6 +234,9 @@
     <string name="listings">Listings</string>
     <string name="nothing_to_show">Nothing to show yet</string>
     <string name="get_started_now_by_checking_out_our_available_jobs">Get started now by checking out available jobs that just might be your first contract.</string>
+    <string name="check_jobs">Check Jobs</string>
+    <string name="create_listing">Create Listing</string>
+    <string name="start_now_by_posting_a_listing_to_earn_requests">Get started now by posting a listing to earn a request from a customer.</string>
 
 
 </resources>
