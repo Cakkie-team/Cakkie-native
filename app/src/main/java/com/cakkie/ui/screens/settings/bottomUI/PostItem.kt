@@ -1,4 +1,5 @@
 package com.cakkie.ui.screens.settings.bottomUI
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,16 +33,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun PostItem(
     navigator: DestinationsNavigator
 ) {
+    val viewModel: SettingsViewModel = koinViewModel()
+    val notificationState = viewModel.notificationState.collectAsState().value
     var processing by remember {
         mutableStateOf(false)
     }
@@ -97,20 +103,13 @@ fun PostItem(
             radioButtons.forEachIndexed { index, info ->
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
-                        radioButtons.replaceAll {
-                            it.copy(
-                                isChecked = it.text == info.text
-                            )
-                        }
-
+                        viewModel.setPostsAndComments((info.text == "YES"))
                     }
                 ) {
                     RadioButton(
-                        selected = info.isChecked,
+                        selected = notificationState.postAndComment == (info.text == "YES"),
                         onClick = {
-                            radioButtons[index] = info.copy(
-                                isChecked = info.isChecked
-                            )
+                            viewModel.setPostsAndComments((info.text == "YES"))
                         },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = CakkieBrown,
@@ -133,12 +132,14 @@ fun PostItem(
             processing = processing,
             text = stringResource(id = R.string.sure)
         ) {
+            navigator.popBackStack()
         }
 
         Spacer(modifier = Modifier.height(30.dp))
     }
 
 }
+
 data class PostToggledInfo(
     val isChecked: Boolean,
     val text: String
