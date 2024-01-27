@@ -79,8 +79,8 @@ fun Shop(navigator: DestinationsNavigator) {
             when (it) {
                 0 -> Contracts()
                 1 -> Contracts()
-                2 -> Listings()
-                3 -> Listings()
+                2 -> Listings(navigator)
+                3 -> Listings(navigator)
             }
         }
     }

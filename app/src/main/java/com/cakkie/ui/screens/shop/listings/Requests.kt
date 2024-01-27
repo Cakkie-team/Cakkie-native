@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.shop.contracts
+package com.cakkie.ui.screens.shop.listings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.CreateListingDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
-fun Requests() {
+fun Requests(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             Modifier
@@ -60,8 +62,7 @@ fun Requests() {
                 .offset(y = (-100).dp)
                 .align(Alignment.BottomCenter)
         ) {
-
-
+            navigator.navigate(CreateListingDestination)
         }
     }
 }
