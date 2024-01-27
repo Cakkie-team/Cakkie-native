@@ -12,6 +12,7 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,13 +23,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PauseNotification() {
+fun PauseNotification(navigator: DestinationsNavigator) {
+    val viewModel: SettingsViewModel = koinViewModel()
+    val notificationState = viewModel.notificationState.collectAsState().value
+
     val radioButtons = remember {
         mutableStateListOf(
             ToggledInfo(
@@ -73,35 +80,27 @@ fun PauseNotification() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
-                radioButtons.forEachIndexed { index, info ->
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                radioButtons.replaceAll {
-                                    it.copy(
-                                        isChecked = it.text == info.text
-                                    )
-                                }
-
-                            }
-                        ) {
-                            RadioButton(
-                                selected = info.isChecked,
-                                onClick = {
-                                    radioButtons[index] = info.copy(
-                                        isChecked = info.isChecked
-                                    )
-                                },
-                               colors = RadioButtonDefaults.colors(
-                                   selectedColor = CakkieBrown,
-                                   unselectedColor = CakkieBrown,
-                               )
-
-                                )
-
-                                Text(text = info.text)
-
-                            }
+            radioButtons.forEachIndexed { index, info ->
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        viewModel.setPauseNotification(info.text)
                     }
+                ) {
+                    RadioButton(
+                        selected = notificationState.pauseNotification == info.text,
+                        onClick = {
+                            viewModel.setPauseNotification(info.text)
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = CakkieBrown,
+                            unselectedColor = CakkieBrown,
+                        )
+
+                    )
+                    Text(text = info.text, style = MaterialTheme.typography.bodyLarge)
+
+                }
+            }
         }
 
     }
@@ -114,6 +113,7 @@ fun PauseNotification() {
             .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.done)
     ) {
+        navigator.popBackStack()
     }
     Spacer(modifier = Modifier.height(17.dp))
 

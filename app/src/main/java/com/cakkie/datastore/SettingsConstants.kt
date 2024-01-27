@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 object SettingsConstants {
     val TOKEN = stringPreferencesKey("TOKEN")
     val NOTIFICATION_TIP = booleanPreferencesKey("NOTIFICATION_TIP")
-    val PAUSE_NOTIFICATIONS = booleanPreferencesKey("PAUSE_NOTIFICATIONS")
+    val PAUSE_NOTIFICATIONS = stringPreferencesKey("PAUSE_NOTIFICATIONS")
     val POSTS_COMMENTS = booleanPreferencesKey("POSTS_AND_COMMENTS")
     val EMAIL_NOTIFICATIONS = booleanPreferencesKey("EMAIL_NOTIFICATION")
     val MESSAGE = booleanPreferencesKey("MESSAGE")

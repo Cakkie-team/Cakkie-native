@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,7 @@ fun Settings(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState().value
     val context = LocalContext.current
 
+    val notificationState = viewModel.notificationState.collectAsState().value
 
     Column {
         Box(
@@ -253,18 +255,23 @@ fun Settings(navigator: DestinationsNavigator) {
                                                 R.string.following_and_followers -> navigator.navigate(
                                                     FollowersItemDestination
                                                 )
+
                                                 R.string.messages -> navigator.navigate(
                                                     MessageItemDestination
                                                 )
+
                                                 R.string.proposal -> navigator.navigate(
                                                     ProposalItemDestination
                                                 )
+
                                                 R.string.email_notifications -> navigator.navigate(
                                                     EmailDestination
                                                 )
+
                                                 R.string.login_out -> navigator.navigate(
                                                     LogOutDestination
                                                 )
+
                                                 R.string.terms_and_conditions -> navigator.navigate(
                                                     BrowserDestination("https://www.cakkie.com/terms-and-conditions")
                                                 )
@@ -299,9 +306,8 @@ fun Settings(navigator: DestinationsNavigator) {
                                     if (it.text == R.string.pause_notification) {
                                         var switchState by remember { mutableStateOf(false) }
                                         Switch(
-                                            checked = switchState,
+                                            checked = notificationState.pauseNotification.isNotEmpty(),
                                             onCheckedChange = { isChecked ->
-                                                switchState = isChecked
                                                 navigator.navigate(PauseNotificationDestination)
                                             },
                                             colors = SwitchDefaults.colors(

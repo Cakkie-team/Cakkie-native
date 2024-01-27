@@ -28,7 +28,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
-    fun setPauseNotification(state: Boolean) {
+    fun setPauseNotification(state: String) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.PAUSE_NOTIFICATIONS, state)
         }
@@ -68,7 +68,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
     init {
         getUser()
         viewModelScope.launch {
-            settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, false)
+            settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, "")
                 .asLiveData()
                 .observeForever {
                     //update notification state
@@ -112,7 +112,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
 
 
 data class NotificationState(
-    var pauseNotification: Boolean = false,
+    var pauseNotification: String = "",
     var postAndComment: Boolean = false,
     var followingAndFollowers: Boolean = false,
     var emailNotification: Boolean = false,
