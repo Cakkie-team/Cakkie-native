@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -17,6 +18,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +45,7 @@ import timber.log.Timber
 fun CreateListing(navigator: DestinationsNavigator) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val files = remember {
-        mutableListOf<String>()
+        mutableStateListOf<String>()
     }
     Column(Modifier.fillMaxSize()) {
 //        Spacer(modifier = Modifier.height(20.dp))
@@ -67,6 +69,17 @@ fun CreateListing(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .align(Alignment.Center)
             )
+
+            Text(
+                stringResource(id = R.string.selected, files.size),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = CakkieBrown,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .align(Alignment.CenterEnd)
+            )
         }
         Box {
             LazyVerticalGrid(
@@ -79,7 +92,7 @@ fun CreateListing(navigator: DestinationsNavigator) {
                             contentDescription = "cake",
                             modifier = Modifier
                                 .clickable {
-                                    if (!files.contains(item.toString())) {
+                                    if (!files.contains(item.toString()) && files.size < 5) {
                                         files.add(item.toString())
                                     } else {
                                         files.remove(item.toString())
@@ -97,7 +110,7 @@ fun CreateListing(navigator: DestinationsNavigator) {
                         Checkbox(
                             checked = files.contains(item.toString()),
                             onCheckedChange = {
-                                if (!files.contains(item.toString())) {
+                                if (!files.contains(item.toString()) && files.size < 5) {
                                     files.add(item.toString())
                                 } else {
                                     files.remove(item.toString())
@@ -119,6 +132,7 @@ fun CreateListing(navigator: DestinationsNavigator) {
             }
             CakkieButton(
                 text = stringResource(id = R.string.done),
+                enabled = files.size > 0,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .align(Alignment.BottomCenter)

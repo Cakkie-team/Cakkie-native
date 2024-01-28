@@ -148,13 +148,13 @@ fun ExploreItem(navigator: DestinationsNavigator) {
         }
         HorizontalPager(state = pageState) {
             GlideImage(
-                model = "https://source.unsplash.com/600x400/?cakes",
+                model = "https://source.unsplash.com/600x1200/?cakes",
                 contentDescription = "cake",
                 modifier = Modifier
                     .clickable { expanded = !expanded }
                     .fillMaxWidth()
                     .height(240.dp),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillWidth
             )
         }
         Row(
