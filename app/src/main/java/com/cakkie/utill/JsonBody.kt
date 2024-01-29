@@ -1,6 +1,8 @@
 package com.cakkie.utill
 
+import com.google.gson.Gson
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 
@@ -42,4 +44,52 @@ fun JSONObject.toMap(): Map<String, *> = keys().asSequence().associateWith {
 fun String.toJson(): Map<String, *> {
     val json = JSONObject(this)
     return json.toMap()
+}
+
+fun String.toJsonArray(): List<Map<String, *>> {
+    val json = JSONArray(this)
+    val list = mutableListOf<Map<String, *>>()
+    for (i in 0 until json.length()) {
+        list.add(json.getJSONObject(i).toMap())
+    }
+    return list
+}
+
+fun String.toJsonObject(): Map<String, *> {
+    val json = JSONObject(this)
+    return json.toMap()
+}
+
+fun String.toJsonObjectList(): List<Map<String, *>> {
+    val json = JSONObject(this)
+    val list = mutableListOf<Map<String, *>>()
+    for (i in 0 until json.length()) {
+        list.add(json.getJSONObject(i.toString()).toMap())
+    }
+    return list
+}
+
+//json to object
+val gson = Gson()
+fun <T> String.toObject(clazz: Class<T>): T {
+    return gson.fromJson(this, clazz)
+}
+
+fun <T> String.toObjectList(clazz: Class<T>): List<T> {
+    val list = mutableListOf<T>()
+    try {
+        val json = JSONArray(this)
+        for (i in 0 until json.length()) {
+            list.add(gson.fromJson(json.getJSONObject(i).toString(), clazz))
+        }
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        // Handle the JSONException, log it, or throw a custom exception if needed.
+    }
+    return list
+}
+
+//to json string
+fun Any.toJson(): String {
+    return gson.toJson(this)
 }

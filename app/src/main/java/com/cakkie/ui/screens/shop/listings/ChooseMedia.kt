@@ -43,14 +43,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.CreateListingDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.toJson
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -170,7 +173,8 @@ fun ChooseMedia(navigator: DestinationsNavigator) {
                                 .padding(2.dp)
                                 .fillMaxWidth()
                         ) {
-                            GlideImage(model = item.uri,
+                            GlideImage(
+                                model = item.uri.toUri(),
                                 contentDescription = "cake",
                                 modifier = Modifier
                                     .clickable {
@@ -250,7 +254,12 @@ fun ChooseMedia(navigator: DestinationsNavigator) {
                     .fillMaxWidth(0.8f)
                     .align(Alignment.BottomCenter)
             ) {
-
+                //convert to json and send to next screen
+                navigator.navigate(
+                    CreateListingDestination(files = files.toList().toJson())
+                ) {
+                    launchSingleTop = true
+                }
             }
         }
     }

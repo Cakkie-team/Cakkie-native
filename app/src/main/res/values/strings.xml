@@ -245,6 +245,14 @@
     <string name="video">Video</string>
     <string name="videos">Videos</string>
     <string name="images">Images</string>
+    <string name="add_a_new_listing">Add a new listing</string>
+    <string name="please_fill_out_the_form_below_to_post_a_new_listing">Please fill out this form to post a new listing</string>
+    <string name="media">Media</string>
+    <string name="listing_name">Listing title *</string>
+    <string name="add_a_title">Add a title</string>
+    <string name="carefully_add_details_to_your_listing_to">Carefully add details to your listing to attract various buyers on cakkie</string>
+    <string name="flavour">Flavour</string>
+    <string name="quantity">Quantity</string>
 
 
 </resources>

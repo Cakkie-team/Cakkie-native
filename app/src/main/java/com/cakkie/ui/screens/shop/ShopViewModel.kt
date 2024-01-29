@@ -106,7 +106,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
                                 uri = Uri.withAppendedPath(
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                     cursorLoader.getString(media)
-                                ), dateAdded = cursorLoader.getLong(mediaDate),
+                                ).toString(), dateAdded = cursorLoader.getLong(mediaDate),
                                 isVideo = false
                             )
 
@@ -117,7 +117,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
                                 uri = Uri.withAppendedPath(
                                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                                     cursorLoader.getString(media)
-                                ), dateAdded = cursorLoader.getLong(mediaDate),
+                                ).toString(), dateAdded = cursorLoader.getLong(mediaDate),
                                 isVideo = true
                             )
                         )
@@ -139,7 +139,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
 }
 
 data class MediaModel(
-    val uri: Uri,
+    val uri: String,
     val dateAdded: Long,
     val isVideo: Boolean
 )
