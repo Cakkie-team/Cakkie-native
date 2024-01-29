@@ -239,6 +239,9 @@
     <string name="start_now_by_posting_a_listing_to_earn_requests">Get started now by posting a listing to earn a request from a customer.</string>
     <string name="get_started_now_by_checking_out_our_available_jobs_to_write">Get started now by checking out available jobs to write your first proposal.</string>
     <string name="selected">%s selected</string>
+    <string name="media_permission_denied">Media permision denied</string>
+    <string name="media_permission_required">Media permission required</string>
+    <string name="grant_permission">Grant permission</string>
 
 
 </resources>
