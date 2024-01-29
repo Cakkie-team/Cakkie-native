@@ -242,6 +242,9 @@
     <string name="media_permission_denied">Media permision denied</string>
     <string name="media_permission_required">Media permission required</string>
     <string name="grant_permission">Grant permission</string>
+    <string name="video">Video</string>
+    <string name="videos">Videos</string>
+    <string name="images">Images</string>
 
 
 </resources>
