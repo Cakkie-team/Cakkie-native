@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.CreateListingDestination
+import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -62,7 +62,9 @@ fun Listings(navigator: DestinationsNavigator) {
                 .offset(y = (-100).dp)
                 .align(Alignment.BottomCenter)
         ) {
-            navigator.navigate(CreateListingDestination)
+            navigator.navigate(ChooseMediaDestination) {
+                launchSingleTop = true
+            }
         }
     }
 }
