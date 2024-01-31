@@ -14,6 +14,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
+import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -82,7 +83,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 Pair("availablity", availability),
                 Pair("available", available),
                 Pair("shopId", shopId),
-                Pair("meta", meta),
+                Pair("meta", JsonBody.generate(meta)),
             )
         )
 

@@ -6,23 +6,56 @@ import org.json.JSONException
 import org.json.JSONObject
 
 
+//object JsonBody {
+//    fun generate(value: List<Pair<String, Any?>>): String {
+//        val newline = System.getProperty("line.separator")
+//        return value.associate {
+//            "\"${it.first}\"" to if (it.second is String) {
+//                if ((it.second as String).contains('{')) it.second else "\"${
+//                    newline?.let { it1 ->
+//                        (it.second as String).replace(
+//                            it1, "\\n"
+//                        )
+//                    }
+//                }\""
+//            } else it.second
+//
+//        }.filter { it.value != null }
+//            .toString().replace("=", ":")
+//            .trimIndent()
+//    }
+//}
+
 object JsonBody {
     fun generate(value: List<Pair<String, Any?>>): String {
         val newline = System.getProperty("line.separator")
-        return value.associate {
-            "\"${it.first}\"" to if (it.second is String) {
-                if ((it.second as String).contains('{')) it.second else "\"${
-                    newline?.let { it1 ->
-                        (it.second as String).replace(
-                            it1, "\\n"
-                        )
-                    }
-                }\""
-            } else it.second
 
-        }.filter { it.value != null }
-            .toString().replace("=", ":")
-            .trimIndent()
+        return value
+            .filter { it.second != null }
+            .map { entry ->
+                "\"${entry.first}\"" to when (val value = entry.second) {
+                    is String -> {
+                        if (value.contains('{')) {
+                            value
+                        } else {
+                            "\"${newline?.let { it1 -> value.replace(it1, "\\n") }}\""
+                        }
+                    }
+
+                    is List<*> -> {
+                        val listString = value.filterNotNull().joinToString(",", "[", "]") {
+                            when (it) {
+                                is String -> "\"$it\""
+                                else -> it.toString()
+                            }
+                        }
+                        listString
+                    }
+
+                    else -> value.toString()
+                }
+            }
+            .joinToString(",", "{", "}") { it.first + ":" + it.second }
     }
 }
 

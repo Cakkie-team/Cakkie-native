@@ -140,19 +140,15 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
     var flavour by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    val fileUrl = remember {
-        mutableStateListOf("")
-    }
+
 
     val coroutineScope = rememberCoroutineScope()
     val canProceed = name.text.isNotEmpty() && description.text.isNotEmpty()
             && prices.all { it.text.isNotEmpty() } && sizes.all { it.text.isNotEmpty() }
-            && quantity.text.isNotEmpty() && shape.text.isNotEmpty() && flavour.text.isNotEmpty()
 
     var processing by remember {
         mutableStateOf(false)
     }
-    Timber.d("CreateListing: $media")
 
     Column(
         Modifier
@@ -646,21 +642,25 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                 ) {
                     processing = true
                     if (shop != null) {
+                        val fileUrls = media.map {
+                            Endpoints.FILE_URL(
+                                "${
+                                    shop.name.lowercase(Locale.ROOT).replace(" ", "")
+                                }/${it.name.replace(" ", "")}.${
+                                    it.mediaMimeType.split("/").last()
+                                }"
+                            )
+                        }
                         media.forEach {
                             val file = context.createTmpFileFromUri(
                                 uri = it.uri.toUri(),
-                                fileName = it.name
+                                fileName = it.name.replace(" ", "")
                             )!!
                             viewModel.uploadImage(
                                 image = file,
-                                path = shop.name.lowercase(Locale.ROOT).replace(" ", "-"),
-                                fileName = file.name + it.mediaMimeType.split("/").last()
+                                path = shop.name.lowercase(Locale.ROOT).replace(" ", ""),
+                                fileName = "${file.name}.${it.mediaMimeType.split("/").last()}"
                             ).addOnSuccessListener { resp ->
-                                fileUrl.add(
-                                    Endpoints.FILE_URL(
-                                        file.name + it.mediaMimeType.split("/").last()
-                                    )
-                                )
                                 Timber.d(resp)
                                 file.delete()
                             }.addOnFailureListener { exception ->
@@ -674,7 +674,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             description = description.text,
                             prices = prices.map { it.text.toInt() },
                             sizes = sizes.map { it.text },
-                            media = fileUrl,
+                            media = fileUrls,
                             shopId = shop.id,
                             availability = availability.text,
                             meta = listOf(
@@ -695,8 +695,8 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             }
                         }.addOnFailureListener { exception ->
                             processing = false
-                            Timber.d(exception)
                             Toaster(context, exception, R.drawable.logo)
+                            Timber.d(exception)
                         }
                     } else {
                         Toaster(
