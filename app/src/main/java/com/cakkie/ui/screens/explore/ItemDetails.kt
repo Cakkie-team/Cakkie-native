@@ -87,7 +87,7 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                     spacing = 8.dp,
                     indicatorWidth = 5.dp,
                     indicatorHeight = 5.dp,
-                    pageCount = 3,
+                    pageCount = pageState.pageCount,
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))

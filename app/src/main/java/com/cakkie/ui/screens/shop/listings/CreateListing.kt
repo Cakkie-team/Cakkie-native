@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -31,8 +35,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,14 +72,19 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.text.NumberFormat
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -85,6 +97,10 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
     val media = files.toObjectList(MediaModel::class.java)
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    var pageCount by remember {
+        mutableIntStateOf(1)
+    }
+    val pageState = rememberPagerState(pageCount = { pageCount })
 
     var name by remember {
         mutableStateOf(TextFieldValue(""))
@@ -92,10 +108,26 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
     var description by remember {
         mutableStateOf(TextFieldValue(""))
     }
-
     var price by remember {
         mutableStateOf(TextFieldValue(""))
     }
+    val prices = remember {
+        mutableStateListOf(TextFieldValue(""))
+    }
+    val sizes = remember {
+        mutableStateListOf(TextFieldValue(""))
+    }
+    var quantity by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    var shape by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    var flavour by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+
+    val coroutineScope = rememberCoroutineScope()
 
 
     Column(
@@ -173,7 +205,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             .clip(MaterialTheme.shapes.medium)
                             .padding(horizontal = 8.dp)
                             .background(Color.Black.copy(alpha = 0.6f))
-                            .width(screenWidth * 0.8f)
+                            .width(screenWidth * if (media.size > 1) 0.8f else 0.9f)
                     ) {
                         GlideImage(
                             model = it.uri.toUri(),
@@ -292,58 +324,197 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                     modifier = Modifier.align(Alignment.End)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.price) + " *",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-
-                    BasicTextField(
-                        value = price,
-                        onValueChange = {
-                            price = it
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.width(screenWidth * 0.5f)
+                HorizontalPager(state = pageState) { page ->
+                    Row(
+                        Modifier
+                            .height(100.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
+                        Column {
+                            Row(
+                                Modifier.fillMaxWidth(0.9f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.price) + " *",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+
+                                BasicTextField(
+                                    value = prices[page],
+                                    onValueChange = {
+                                        prices[page] = it
+                                    },
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.width(screenWidth * 0.41f)
+                                ) {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .border(
+                                                width = 1.dp,
+                                                color = CakkieBrown,
+                                                shape = MaterialTheme.shapes.small
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            text = "NGN",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextColorInactive,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                        Text(
+                                            text = NumberFormat.getInstance().format(
+                                                prices[page].text.ifEmpty { "0" }.toInt()
+                                            ),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = if (sizes[page].text.isEmpty())
+                                                TextColorInactive else TextColorDark,
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Row(
+                                Modifier.fillMaxWidth(0.9f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.size) + " *",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+
+                                BasicTextField(
+                                    value = sizes[page],
+                                    onValueChange = {
+                                        sizes[page] = it
+                                    },
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.width(screenWidth * 0.41f)
+                                ) {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .border(
+                                                width = 1.dp,
+                                                color = CakkieBrown,
+                                                shape = MaterialTheme.shapes.small
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = sizes[page].text.ifEmpty { "0" },
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            modifier = Modifier.padding(8.dp),
+                                            color = if (sizes[page].text.isEmpty())
+                                                TextColorInactive else TextColorDark,
+                                        )
+
+                                        Text(
+                                            text = "Inches",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextColorInactive,
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        Column(
                             Modifier
-                                .fillMaxWidth()
-                                .border(
-                                    width = 1.dp,
-                                    color = CakkieBrown,
-                                    shape = MaterialTheme.shapes.small
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
+                                .width(28.dp)
+                                .height(80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Text(
-                                text = "NGN",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextColorInactive,
-                                modifier = Modifier.padding(8.dp)
-                            )
-                            Text(
-                                text = price.text,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
+                            if (page >= pageCount - 1) {
+                                Box(
+                                    Modifier
+                                        .clickable {
+                                            pageCount++
+                                            sizes.add(page + 1, TextFieldValue(""))
+                                            prices.add(page + 1, TextFieldValue(""))
+                                            coroutineScope.launch {
+                                                pageState.animateScrollToPage(pageState.currentPage + 1)
+                                            }
+                                        }
+                                        .weight(1f)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .background(CakkieBrown),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "+", fontSize = 30.sp,
+                                        color = CakkieBackground,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            if (pageCount > 1) {
+                                if (pageCount - 1 <= page) {
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                }
+                                Box(
+                                    Modifier
+                                        .clickable {
+                                            pageCount--
+                                            sizes.removeAt(page)
+                                            prices.removeAt(page)
+                                        }
+                                        .weight(1f)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .background(CakkieBrown),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "-", fontSize = 30.sp,
+                                        color = CakkieBackground,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-
+                Row(
+                    Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    HorizontalPagerIndicator(
+                        pagerState = pageState,
+                        activeColor = CakkieBrown,
+                        spacing = 8.dp,
+                        indicatorWidth = 5.dp,
+                        indicatorHeight = 5.dp,
+                        pageCount = pageState.pageCount,
+                    )
+                }
                 listOf(
-                    R.string.size,
                     R.string.quantity,
                     R.string.shape,
                     R.string.flavour,
@@ -356,19 +527,25 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = stringResource(id = prop) + when (prop) {
-                                R.string.size -> " *"
-                                else -> ""
-                            },
+                            text = stringResource(id = prop),
                             style = MaterialTheme.typography.bodyLarge,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
 
                         BasicTextField(
-                            value = price,
+                            value = when (prop) {
+                                R.string.quantity -> quantity
+                                R.string.shape -> shape
+                                R.string.flavour -> flavour
+                                else -> TextFieldValue("")
+                            },
                             onValueChange = {
-                                price = it
+                                when (prop) {
+                                    R.string.quantity -> quantity = it
+                                    R.string.shape -> shape = it
+                                    R.string.flavour -> flavour = it
+                                }
                             },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -386,23 +563,24 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = price.text,
+                                    text = when (prop) {
+                                        R.string.quantity -> quantity.text.ifEmpty { "0 pieces" }
+                                        R.string.shape -> shape.text.ifEmpty { "Round" }
+                                        R.string.flavour -> flavour.text.ifEmpty { "Vanilla" }
+                                        else -> ""
+                                    },
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(8.dp)
+                                    modifier = Modifier.padding(8.dp),
+                                    color = if (when (prop) {
+                                            R.string.quantity -> quantity.text.isEmpty()
+                                            R.string.shape -> shape.text.isEmpty()
+                                            R.string.flavour -> flavour.text.isEmpty()
+                                            else -> false
+                                        }
+                                    ) TextColorInactive else TextColorDark,
                                 )
-
-                                if (prop == R.string.size) {
-                                    Text(
-                                        text = "Inches",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = TextColorInactive,
-                                        modifier = Modifier.padding(end = 8.dp)
-                                    )
-                                }
                             }
                         }
                     }
