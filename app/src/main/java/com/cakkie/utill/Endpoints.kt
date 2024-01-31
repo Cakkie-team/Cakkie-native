@@ -47,6 +47,11 @@ object Endpoints {
      * */
     const val CREATE_SHOP = "$BASE_URL/shop" /* create shop  POST*/
 
+    /**
+     * Listing
+     * */
+    const val CREATE_LISTING = "$BASE_URL/listing" /* create listing  POST*/
+
 
     /**
      * Bunny
@@ -54,7 +59,7 @@ object Endpoints {
     val UPLOAD_IMAGE =
         { path: String, fileName: String -> "https://jh.storage.bunnycdn.com/cakkie-photos/$path/$fileName" } /* upload image  POST*/
     val FILE_URL =
-        { fileName: String -> "https://cdn.cakkie.com/${fileName}.png" } /* access image  GET*/
+        { fileName: String -> "https://cdn.cakkie.com/${fileName}" } /* access image  GET*/
 
 
     /**

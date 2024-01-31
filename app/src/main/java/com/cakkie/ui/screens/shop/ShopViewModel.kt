@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.loader.content.CursorLoader
+import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.LoginResponse
@@ -23,9 +24,10 @@ import java.io.File
 class ShopViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _user = MutableLiveData<User>()
+    private val _shop = MutableLiveData<ShopModel>()
 
     val user = _user
-
+    val shop = _shop
 
     private fun getUser() {
         viewModelScope.launch {
@@ -55,6 +57,32 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 Pair("longitude", location.longitude),
                 Pair("country", location.countryName),
                 Pair("image", imageUrl),
+            )
+        )
+
+    //create listings
+    fun createListing(
+        name: String,
+        description: String,
+        prices: List<Int>,
+        sizes: List<String>,
+        media: List<String>,
+        availability: String,
+        shopId: String,
+        meta: List<Pair<String, Any?>>,
+        available: Boolean = true,
+    ) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.CREATE_LISTING, body = listOf(
+                Pair("name", name),
+                Pair("description", description),
+                Pair("price", prices),
+                Pair("media", media),
+                Pair("sizes", sizes),
+                Pair("availablity", availability),
+                Pair("available", available),
+                Pair("shopId", shopId),
+                Pair("meta", meta),
             )
         )
 
@@ -99,6 +127,8 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 val media = cursorLoader.getColumnIndex(MediaStore.Files.FileColumns._ID)
                 val mediaDate = cursorLoader.getColumnIndex(MediaStore.Files.FileColumns.DATE_ADDED)
                 val mediaType = cursorLoader.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)
+                val mediaMime = cursorLoader.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                val mediaName = cursorLoader.getColumnIndex(MediaStore.Files.FileColumns.TITLE)
                 while (cursorLoader.moveToNext()) {
                     if (cursorLoader.getInt(mediaType) == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
                         files.add(
@@ -107,7 +137,9 @@ class ShopViewModel : ViewModel(), KoinComponent {
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                     cursorLoader.getString(media)
                                 ).toString(), dateAdded = cursorLoader.getLong(mediaDate),
-                                isVideo = false
+                                isVideo = false,
+                                mediaMimeType = cursorLoader.getString(mediaMime),
+                                name = cursorLoader.getString(mediaName)
                             )
 
                         )
@@ -118,7 +150,9 @@ class ShopViewModel : ViewModel(), KoinComponent {
                                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                                     cursorLoader.getString(media)
                                 ).toString(), dateAdded = cursorLoader.getLong(mediaDate),
-                                isVideo = true
+                                isVideo = true,
+                                mediaMimeType = cursorLoader.getString(mediaMime),
+                                name = cursorLoader.getString(mediaName)
                             )
                         )
                     }
@@ -133,13 +167,23 @@ class ShopViewModel : ViewModel(), KoinComponent {
         return files
     }
 
+    private fun getMyShop() = NetworkCalls.get<ShopModel>(
+        endpoint = Endpoints.CREATE_SHOP,
+        body = listOf()
+    ).addOnSuccessListener {
+        _shop.value = it
+    }
+
     init {
         getUser()
+        getMyShop()
     }
 }
 
 data class MediaModel(
     val uri: String,
     val dateAdded: Long,
-    val isVideo: Boolean
+    val isVideo: Boolean,
+    val mediaMimeType: String,
+    val name: String
 )

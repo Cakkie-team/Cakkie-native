@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -73,18 +74,27 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.CreateListingDestination
+import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Endpoints
+import com.cakkie.utill.Toaster
+import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 import java.text.NumberFormat
+import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -93,6 +103,7 @@ import java.text.NumberFormat
 fun CreateListing(files: String, navigator: DestinationsNavigator) {
     val viewModel: ShopViewModel = koinViewModel()
     val context = LocalContext.current
+    val shop = viewModel.shop.observeAsState().value
     //convert string to list of media
     val media = files.toObjectList(MediaModel::class.java)
     val listState = rememberLazyListState()
@@ -123,12 +134,25 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
     var shape by remember {
         mutableStateOf(TextFieldValue(""))
     }
+    var availability by remember {
+        mutableStateOf(TextFieldValue("Please note that under normal circumstances, this cake requires a minimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation."))
+    }
     var flavour by remember {
         mutableStateOf(TextFieldValue(""))
     }
+    val fileUrl = remember {
+        mutableStateListOf("")
+    }
 
     val coroutineScope = rememberCoroutineScope()
+    val canProceed = name.text.isNotEmpty() && description.text.isNotEmpty()
+            && prices.all { it.text.isNotEmpty() } && sizes.all { it.text.isNotEmpty() }
+            && quantity.text.isNotEmpty() && shape.text.isNotEmpty() && flavour.text.isNotEmpty()
 
+    var processing by remember {
+        mutableStateOf(false)
+    }
+    Timber.d("CreateListing: $media")
 
     Column(
         Modifier
@@ -324,6 +348,33 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                     modifier = Modifier.align(Alignment.End)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = stringResource(id = R.string.availability) + " *",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                CakkieInputField(
+                    value = availability,
+                    onValueChange = {
+                        //limit description to 500 characters
+                        if (it.text.length <= 500) {
+                            availability = it
+                        }
+                    },
+                    placeholder = stringResource(id = R.string.describ_the_availability_of_your_listing),
+                    keyboardType = KeyboardType.Text,
+                    singleLine = false,
+                    modifier = Modifier.height(100.dp)
+                )
+                Text(
+                    text = "${availability.text.length}/500",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp,
+                    modifier = Modifier.align(Alignment.End)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 HorizontalPager(state = pageState) { page ->
                     Row(
                         Modifier
@@ -379,7 +430,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = if (sizes[page].text.isEmpty())
+                                            color = if (prices[page].text.isEmpty())
                                                 TextColorInactive else TextColorDark,
                                         )
                                     }
@@ -548,7 +599,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                                 }
                             },
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             modifier = Modifier.width(screenWidth * 0.5f)
                         ) {
                             Row(
@@ -587,14 +638,74 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
-
                 CakkieButton(
                     text = stringResource(id = R.string.done),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = canProceed,
+                    processing = processing
                 ) {
-
+                    processing = true
+                    if (shop != null) {
+                        media.forEach {
+                            val file = context.createTmpFileFromUri(
+                                uri = it.uri.toUri(),
+                                fileName = it.name
+                            )!!
+                            viewModel.uploadImage(
+                                image = file,
+                                path = shop.name.lowercase(Locale.ROOT).replace(" ", "-"),
+                                fileName = file.name + it.mediaMimeType.split("/").last()
+                            ).addOnSuccessListener { resp ->
+                                fileUrl.add(
+                                    Endpoints.FILE_URL(
+                                        file.name + it.mediaMimeType.split("/").last()
+                                    )
+                                )
+                                Timber.d(resp)
+                                file.delete()
+                            }.addOnFailureListener { exception ->
+                                Timber.d(exception)
+                                Toaster(context, exception.message.toString(), R.drawable.logo)
+                                file.delete()
+                            }
+                        }
+                        viewModel.createListing(
+                            name = name.text,
+                            description = description.text,
+                            prices = prices.map { it.text.toInt() },
+                            sizes = sizes.map { it.text },
+                            media = fileUrl,
+                            shopId = shop.id,
+                            availability = availability.text,
+                            meta = listOf(
+                                Pair("quantity", quantity.text),
+                                Pair("shape", shape.text),
+                                Pair("flavour", flavour.text)
+                            )
+                        ).addOnSuccessListener {
+                            processing = false
+                            navigator.navigate(ShopDestination) {
+                                popUpTo(ChooseMediaDestination) {
+                                    inclusive = true
+                                }
+                                popUpTo(CreateListingDestination) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }.addOnFailureListener { exception ->
+                            processing = false
+                            Timber.d(exception)
+                            Toaster(context, exception, R.drawable.logo)
+                        }
+                    } else {
+                        Toaster(
+                            context,
+                            "Something went wrong, please restart app",
+                            R.drawable.logo
+                        )
+                    }
                 }
-
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
