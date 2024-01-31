@@ -87,7 +87,7 @@ fun Shop(navigator: DestinationsNavigator) {
                 .padding(horizontal = 16.dp)
         ) {
             AsyncImage(
-                model = "https://cakkie.b-cdn.net/shop-logos/shopLogo2217239886470337809.png",
+                model = shop.image,
                 contentDescription = shop?.name,
                 modifier = Modifier
                     .size(65.dp)
