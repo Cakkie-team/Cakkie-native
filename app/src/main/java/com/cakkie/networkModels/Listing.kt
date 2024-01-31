@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Listing(
     @SerialName("Comment")
-//    val comments: List<Any>,
+    val comments: List<String> = listOf(),
     val available: Boolean = false,
     val availablity: String = "",
     val commentCount: Int = 0,
@@ -30,7 +30,7 @@ data class Listing(
 
 @Serializable
 data class ListingResponse(
-    val data: Listing = Listing(),
+    val data: List<Listing> = listOf(),
     val meta: Pagination = Pagination(),
 )
 

@@ -12,6 +12,7 @@ import androidx.loader.content.CursorLoader
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.ListingResponse
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
@@ -26,9 +27,11 @@ class ShopViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _user = MutableLiveData<User>()
     private val _shop = MutableLiveData<ShopModel>()
+    private val _listings = MutableLiveData<ListingResponse>()
 
     val user = _user
     val shop = _shop
+    val listings = _listings
 
     private fun getUser() {
         viewModelScope.launch {
@@ -175,9 +178,17 @@ class ShopViewModel : ViewModel(), KoinComponent {
         _shop.value = it
     }
 
+    fun getMyListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
+        endpoint = Endpoints.GET_MY_LISTINGS(page, size),
+        body = listOf()
+    ).addOnSuccessListener {
+        _listings.value = it
+    }
+
     init {
         getUser()
         getMyShop()
+        getMyListings()
     }
 }
 

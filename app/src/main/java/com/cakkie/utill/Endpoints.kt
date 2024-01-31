@@ -51,6 +51,8 @@ object Endpoints {
      * Listing
      * */
     const val CREATE_LISTING = "$BASE_URL/listing" /* create listing  POST*/
+    val GET_MY_LISTINGS =
+        { page: Int, size: Int -> "$BASE_URL/listing/me?page=$page&pageSize=$size" }/* get my listings  GET*/
 
 
     /**

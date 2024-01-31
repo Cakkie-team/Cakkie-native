@@ -254,6 +254,7 @@
     <string name="flavour">Flavour</string>
     <string name="quantity">Quantity</string>
     <string name="describ_the_availability_of_your_listing">describe the availability of your listing</string>
+    <string name="edit">Edit</string>
 
 
 </resources>
