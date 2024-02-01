@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
@@ -49,6 +51,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
 
     val user = viewModel.user.observeAsState().value
+    val listings = viewModel.listings.observeAsState(ListingResponse()).value
 
     Column(
         modifier = Modifier
@@ -160,8 +163,10 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            items(10) {
-                ExploreItem(navigator = navigator)
+            items(
+                items = listings.data
+            ) { listing ->
+                ExploreItem(navigator = navigator, item = listing)
             }
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
