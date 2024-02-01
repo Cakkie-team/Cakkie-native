@@ -191,6 +191,11 @@ class ShopViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
+    fun setAvailability(id: String, available: Boolean) = NetworkCalls.put<Listing>(
+        endpoint = Endpoints.GET_LISTING(id),
+        body = listOf(Pair("available", available))
+    )
+
     init {
         getUser()
         getMyShop()

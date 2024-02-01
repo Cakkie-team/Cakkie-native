@@ -1,8 +1,11 @@
 package com.cakkie.data.db.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Parcelize
 data class ShopModel(
     val address: String = "",
     val city: String = "",
@@ -21,4 +24,4 @@ data class ShopModel(
     val updatedAt: String = "",
     val user: User = User(),
     val userId: String = ""
-)
+) : Parcelable

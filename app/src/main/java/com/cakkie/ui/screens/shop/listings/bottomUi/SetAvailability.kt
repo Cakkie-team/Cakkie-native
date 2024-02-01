@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,8 +30,9 @@ import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
@@ -38,8 +40,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SetAvailability(
     item: Listing,
-    navigator: DestinationsNavigator
+    onComplete: ResultBackNavigator<Listing>,
 ) {
+    val context = LocalContext.current
     val viewModel: ShopViewModel = koinViewModel()
     var processing by remember {
         mutableStateOf(false)
@@ -93,7 +96,7 @@ fun SetAvailability(
             ).forEach {
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
-
+                        available = it == R.string.availabile
                     }
                 ) {
                     RadioButton(
@@ -121,7 +124,14 @@ fun SetAvailability(
             processing = processing,
             text = stringResource(id = R.string.done)
         ) {
-            navigator.popBackStack()
+            viewModel.setAvailability(item.id, available).addOnSuccessListener {
+                processing = false
+                onComplete.navigateBack(result = it)
+            }
+                .addOnFailureListener {
+                    processing = false
+                    Toaster(context, it.localizedMessage, R.drawable.logo)
+                }
         }
 
         Spacer(modifier = Modifier.height(20.dp))

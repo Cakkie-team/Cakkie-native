@@ -45,23 +45,24 @@ import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
-import com.cakkie.utill.toJson
-import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @Composable
 fun PreviewListing(
     id: String,
-    item: String = "",
-    navigator: DestinationsNavigator
+    item: Listing = Listing(),
+    navigator: DestinationsNavigator,
+    resultRecipient: ResultRecipient<SetAvailabilityDestination, Listing>
 ) {
     val context = LocalContext.current
     val viewModel: ShopViewModel = koinViewModel()
     var listing by remember {
-        mutableStateOf(item.ifEmpty { Listing().toJson() }.toObject(Listing::class.java))
+        mutableStateOf(item)
     }
 
     LaunchedEffect(key1 = id) {
@@ -69,6 +70,15 @@ fun PreviewListing(
             listing = it
         }.addOnFailureListener {
             Toaster(context, it.localizedMessage ?: "Something went wrong", R.drawable.logo)
+        }
+    }
+
+    resultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                listing = result.value
+            }
         }
     }
 
