@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.screens.destinations.CommentDestination
@@ -62,7 +65,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
     ExperimentalFoundationApi::class, ExperimentalMaterialApi::class
 )
 @Composable
-fun ExploreItem(navigator: DestinationsNavigator) {
+fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
     var maxLines by remember {
         mutableIntStateOf(1)
     }
@@ -73,12 +76,13 @@ fun ExploreItem(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
     var isSponsored by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     var expanded by remember {
         mutableStateOf(false)
     }
     val pageState = rememberPagerState(pageCount = { 3 })
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Column {
         Spacer(modifier = Modifier.height(30.dp))
@@ -153,7 +157,7 @@ fun ExploreItem(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .clickable { expanded = !expanded }
                     .fillMaxWidth()
-                    .height(240.dp),
+                    .heightIn(max = screenWidth + 100.dp),
                 contentScale = ContentScale.FillWidth
             )
         }

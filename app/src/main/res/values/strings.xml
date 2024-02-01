@@ -256,6 +256,9 @@
     <string name="describ_the_availability_of_your_listing">describe the availability of your listing</string>
     <string name="edit">Edit</string>
     <string name="add_listing">Add Listing</string>
+    <string name="preview">Preview</string>
+    <string name="set_availability">Set Availabilty</string>
+    <string name="view_comments">View comments</string>
 
 
 </resources>

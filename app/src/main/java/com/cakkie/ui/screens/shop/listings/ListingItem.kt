@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.shop.listings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +29,10 @@ import com.cakkie.utill.formatDateTime
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ListingItem(item: Listing) {
+fun ListingItem(item: Listing, onClick: (() -> Unit)) {
     Box(
         Modifier
+            .clickable { onClick.invoke() }
             .fillMaxWidth()
             .padding(vertical = 5.dp)
             .background(Color.White)

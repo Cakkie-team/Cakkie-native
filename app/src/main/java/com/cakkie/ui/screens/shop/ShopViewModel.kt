@@ -12,6 +12,7 @@ import androidx.loader.content.CursorLoader
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
@@ -184,6 +185,11 @@ class ShopViewModel : ViewModel(), KoinComponent {
     ).addOnSuccessListener {
         _listings.value = it
     }
+
+    fun getListing(id: String) = NetworkCalls.get<Listing>(
+        endpoint = Endpoints.GET_LISTING(id),
+        body = listOf()
+    )
 
     init {
         getUser()

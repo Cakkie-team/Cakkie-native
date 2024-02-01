@@ -34,9 +34,11 @@ import com.cakkie.R
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.PreviewListingDestination
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.toJson
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
@@ -116,7 +118,14 @@ fun Listings(navigator: DestinationsNavigator) {
                 }
                 LazyColumn(Modifier.padding(vertical = 5.dp)) {
                     items(listings.data) { listing ->
-                        ListingItem(item = listing)
+                        ListingItem(item = listing) {
+                            navigator.navigate(
+                                PreviewListingDestination(
+                                    id = listing.id,
+                                    item = listing.toJson()
+                                )
+                            )
+                        }
                     }
                 }
             }
