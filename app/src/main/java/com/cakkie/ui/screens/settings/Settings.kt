@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +43,19 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.ContactCakkieDestination
 import com.cakkie.ui.screens.destinations.DeleteAccountDestination
+import com.cakkie.ui.screens.destinations.EmailDestination
+import com.cakkie.ui.screens.destinations.FollowersItemDestination
+import com.cakkie.ui.screens.destinations.LogOutDestination
+import com.cakkie.ui.screens.destinations.MessageItemDestination
 import com.cakkie.ui.screens.destinations.PauseNotificationDestination
+import com.cakkie.ui.screens.destinations.PostItemDestination
+import com.cakkie.ui.screens.destinations.ProposalItemDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
-import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -59,8 +67,11 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 @Composable
 fun Settings(navigator: DestinationsNavigator) {
-    val viewModel: ExploreViewModal = koinViewModel()
+    val viewModel: SettingsViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
+    val context = LocalContext.current
+
+    val notificationState = viewModel.notificationState.collectAsState().value
 
     Column {
         Box(
@@ -218,19 +229,62 @@ fun Settings(navigator: DestinationsNavigator) {
                                         .fillMaxWidth()
                                         .clickable {
                                             when (it.text) {
-                                                R.string.change_password -> navigator.navigate(
-                                                    ChangePasswordDestination
-                                                )
+                                                R.string.change_password -> if (user != null) {
+                                                    navigator.navigate(
+                                                        ChangePasswordDestination(user.email)
+                                                    )
+                                                }
+
                                                 R.string.report_a_problem -> navigator.navigate(
                                                     ReportProblemDestination
                                                 )
+
                                                 R.string.contact_us -> navigator.navigate(
                                                     ContactCakkieDestination
                                                 )
+
                                                 R.string.delete_account -> navigator.navigate(
                                                     DeleteAccountDestination
                                                 )
-                                                else -> { }
+
+                                                R.string.post_and_comments -> navigator.navigate(
+                                                    PostItemDestination
+                                                )
+
+
+                                                R.string.following_and_followers -> navigator.navigate(
+                                                    FollowersItemDestination
+                                                )
+
+                                                R.string.messages -> navigator.navigate(
+                                                    MessageItemDestination
+                                                )
+
+                                                R.string.proposal -> navigator.navigate(
+                                                    ProposalItemDestination
+                                                )
+
+                                                R.string.email_notifications -> navigator.navigate(
+                                                    EmailDestination
+                                                )
+
+                                                R.string.login_out -> navigator.navigate(
+                                                    LogOutDestination
+                                                )
+
+                                                R.string.terms_and_conditions -> navigator.navigate(
+                                                    BrowserDestination("https://www.cakkie.com/terms-and-conditions")
+                                                )
+
+                                                R.string.privacy_Policy -> navigator.navigate(
+                                                    BrowserDestination("https://www.cakkie.com/privacy-policy")
+                                                )
+
+                                                R.string.about_cakkie -> navigator.navigate(
+                                                    BrowserDestination("https://www.cakkie.com")
+                                                )
+
+                                                else -> {}
                                             }
                                         },
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -252,9 +306,8 @@ fun Settings(navigator: DestinationsNavigator) {
                                     if (it.text == R.string.pause_notification) {
                                         var switchState by remember { mutableStateOf(false) }
                                         Switch(
-                                            checked = switchState,
+                                            checked = notificationState.pauseNotification.isNotEmpty(),
                                             onCheckedChange = { isChecked ->
-                                                switchState = isChecked
                                                 navigator.navigate(PauseNotificationDestination)
                                             },
                                             colors = SwitchDefaults.colors(
@@ -326,6 +379,10 @@ val securityItem = listOf(
     SettingsItemData(
         image = R.drawable.problem,
         text = R.string.delete_account,
+    ),
+    SettingsItemData(
+        image = R.drawable.problem,
+        text = R.string.login_out,
     )
 )
 val helpItem = listOf(
