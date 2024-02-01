@@ -259,6 +259,9 @@
     <string name="preview">Preview</string>
     <string name="set_availability">Set Availabilty</string>
     <string name="view_comments">View comments</string>
+    <string name="availabile">Available</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="set_availability_desc">"Is this product available at the moment? "</string>
 
 
 </resources>

@@ -39,6 +39,7 @@ import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.CommentDestination
+import com.cakkie.ui.screens.destinations.SetAvailabilityDestination
 import com.cakkie.ui.screens.explore.ExploreItem
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
@@ -150,7 +151,7 @@ fun PreviewListing(
                 text = stringResource(id = R.string.set_availability), modifier = Modifier
                     .fillMaxWidth(0.9f)
             ) {
-
+                navigator.navigate(SetAvailabilityDestination(item = listing))
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
