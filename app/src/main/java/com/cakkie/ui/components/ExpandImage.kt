@@ -98,6 +98,15 @@ fun ExpandImage(
                     .background(CakkieBackground),
                 contentAlignment = Alignment.Center
             ) {
+                HorizontalPager(state = pageState) {
+                    GlideImage(
+                        model = "https://source.unsplash.com/600x1200/?cakes",
+                        contentDescription = "cake",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
                 AnimatedVisibility(
                     visible = !clear, modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -112,15 +121,6 @@ fun ExpandImage(
                             tint = CakkieBrown
                         )
                     }
-                }
-                HorizontalPager(state = pageState) {
-                    GlideImage(
-                        model = "https://source.unsplash.com/600x400/?cakes",
-                        contentDescription = "cake",
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth
-                    )
                 }
                 AnimatedVisibility(
                     visible = !clear && showDetails, Modifier

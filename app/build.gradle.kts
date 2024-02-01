@@ -157,4 +157,7 @@ dependencies {
 
     //file
     implementation(libs.commons.io)
+
+    //permission
+    implementation(libs.accompanist.permissions)
 }

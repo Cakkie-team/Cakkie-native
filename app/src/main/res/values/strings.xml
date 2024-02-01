@@ -259,6 +259,33 @@
     <string name="create_listing">Create Listing</string>
     <string name="start_now_by_posting_a_listing_to_earn_requests">Get started now by posting a listing to earn a request from a customer.</string>
     <string name="get_started_now_by_checking_out_our_available_jobs_to_write">Get started now by checking out available jobs to write your first proposal.</string>
+    <string name="selected">%s selected</string>
+    <string name="media_permission_denied">Media permision denied</string>
+    <string name="media_permission_required">Media permission required</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="video">Video</string>
+    <string name="videos">Videos</string>
+    <string name="images">Images</string>
+    <string name="add_a_new_listing">Add a new listing</string>
+    <string name="please_fill_out_the_form_below_to_post_a_new_listing">Please fill out this form to post a new listing</string>
+    <string name="media">Media</string>
+    <string name="listing_name">Listing title *</string>
+    <string name="add_a_title">Add a title</string>
+    <string name="carefully_add_details_to_your_listing_to">Carefully add details to your listing to attract various buyers on cakkie</string>
+    <string name="flavour">Flavour</string>
+    <string name="quantity">Quantity</string>
+    <string name="describ_the_availability_of_your_listing">describe the availability of your listing</string>
+    <string name="edit">Edit</string>
+    <string name="add_listing">Add Listing</string>
+    <string name="preview">Preview</string>
+    <string name="set_availability">Set Availabilty</string>
+    <string name="view_comments">View comments</string>
+    <string name="availabile">Available</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="set_availability_desc">"Is this product available at the moment? "</string>
+    <string name="delete_listing">Delete Listing?</string>
+    <string name="delete_listing_desc">Are you sure you want to delete this listing?</string>
+    <string name="sure">Sure</string>
 
 
 </resources>

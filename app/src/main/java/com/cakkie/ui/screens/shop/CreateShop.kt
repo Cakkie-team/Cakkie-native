@@ -106,7 +106,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 path = "shop-logos",
                 fileName = file.name + ".png"
             ).addOnSuccessListener { resp ->
-                fileUrl = Endpoints.FILE_URL(file.name)
+                fileUrl = Endpoints.FILE_URL(file.name + ".png")
                 Timber.d(resp)
                 uploadMessage = "Logo uploaded"
                 uploding = false
@@ -317,7 +317,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 viewModel.createShop(
                     name = name.text,
                     address = address.text,
-                    imageUrl = imageUri.toString(),
+                    imageUrl = fileUrl,
                     location = location!!,
                     description = description.text
                 ).addOnSuccessListener { resp ->
