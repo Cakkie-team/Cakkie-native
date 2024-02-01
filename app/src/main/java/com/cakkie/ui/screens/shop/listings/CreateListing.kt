@@ -93,6 +93,7 @@ import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.io.File
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -643,30 +644,34 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                     processing = true
                     if (shop != null) {
                         val fileUrls = media.map {
-                            Endpoints.FILE_URL(
-                                "${
-                                    shop.name.lowercase(Locale.ROOT).replace(" ", "")
-                                }/${it.name.replace(" ", "")}.${
-                                    it.mediaMimeType.split("/").last()
-                                }"
-                            )
-                        }
-                        media.forEach {
                             val file = context.createTmpFileFromUri(
                                 uri = it.uri.toUri(),
                                 fileName = it.name.replace(" ", "")
                             )!!
+                            FileModel(
+                                file = file,
+                                url = Endpoints.FILE_URL(
+                                    "${
+                                        shop.name.lowercase(Locale.ROOT).replace(" ", "")
+                                    }/${file.name.replace(" ", "")}.${
+                                        it.mediaMimeType.split("/").last()
+                                    }"
+                                ),
+                                mediaMimeType = it.mediaMimeType.split("/").last()
+                            )
+                        }
+                        fileUrls.forEach {
                             viewModel.uploadImage(
-                                image = file,
+                                image = it.file,
                                 path = shop.name.lowercase(Locale.ROOT).replace(" ", ""),
-                                fileName = "${file.name}.${it.mediaMimeType.split("/").last()}"
+                                fileName = "${it.file.name}.${it.mediaMimeType}"
                             ).addOnSuccessListener { resp ->
                                 Timber.d(resp)
-                                file.delete()
+                                it.file.delete()
                             }.addOnFailureListener { exception ->
                                 Timber.d(exception)
                                 Toaster(context, exception.message.toString(), R.drawable.logo)
-                                file.delete()
+                                it.file.delete()
                             }
                         }
                         viewModel.createListing(
@@ -674,7 +679,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             description = description.text,
                             prices = prices.map { it.text.toInt() },
                             sizes = sizes.map { it.text },
-                            media = fileUrls,
+                            media = fileUrls.map { it.url },
                             shopId = shop.id,
                             availability = availability.text,
                             meta = listOf(
@@ -712,3 +717,9 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
 
     }
 }
+
+data class FileModel(
+    val file: File,
+    val url: String,
+    val mediaMimeType: String = file.extension
+)

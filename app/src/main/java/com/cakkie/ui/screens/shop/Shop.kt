@@ -39,8 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.PageTabs
@@ -86,7 +86,7 @@ fun Shop(navigator: DestinationsNavigator) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            AsyncImage(
+            GlideImage(
                 model = shop.image,
                 contentDescription = shop?.name,
                 modifier = Modifier

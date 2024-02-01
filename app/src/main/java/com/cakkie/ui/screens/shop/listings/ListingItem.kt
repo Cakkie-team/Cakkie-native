@@ -19,12 +19,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.formatDateTime
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ListingItem(item: Listing) {
     Box(
@@ -39,7 +41,7 @@ fun ListingItem(item: Listing) {
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
+            GlideImage(
                 model = item.media.first(),
                 contentDescription = item.name,
                 modifier = Modifier
