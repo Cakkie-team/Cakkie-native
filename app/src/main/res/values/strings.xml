@@ -262,6 +262,9 @@
     <string name="availabile">Available</string>
     <string name="unavailable">Unavailable</string>
     <string name="set_availability_desc">"Is this product available at the moment? "</string>
+    <string name="delete_listing">Delete Listing?</string>
+    <string name="delete_listing_desc">Are you sure you want to delete this listing?</string>
+    <string name="sure">Sure</string>
 
 
 </resources>

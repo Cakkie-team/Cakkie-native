@@ -39,6 +39,7 @@ import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.CommentDestination
+import com.cakkie.ui.screens.destinations.DeleteListingDestination
 import com.cakkie.ui.screens.destinations.SetAvailabilityDestination
 import com.cakkie.ui.screens.explore.ExploreItem
 import com.cakkie.ui.screens.shop.ShopViewModel
@@ -143,7 +144,9 @@ fun PreviewListing(
                         )
                     }
 
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navigator.navigate(DeleteListingDestination(item = listing))
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.delete),
                             contentDescription = "share",
