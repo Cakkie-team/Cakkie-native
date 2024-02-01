@@ -75,12 +75,14 @@ fun PageTabs(
                 }
             }
         }
-        Box(
-            modifier = Modifier
-                .size(width = screenSize * 2, height = 2.dp)
-                .background(color = activeColor.copy(alpha = 0.4f))
-                .align(Alignment.BottomCenter)
-        )
+        if (pageCount < 3) {
+            Box(
+                modifier = Modifier
+                    .size(width = screenSize * 2, height = 2.dp)
+                    .background(color = activeColor.copy(alpha = 0.4f))
+                    .align(Alignment.BottomCenter)
+            )
+        }
         Box(Modifier
             .offset {
                 val position = pageIndexMapping(pagerState.currentPage)
@@ -95,12 +97,16 @@ fun PageTabs(
                     )
 
                 IntOffset(
-                    x = ((spacingPx + indicatorWidthPx) * scrollPosition).toInt(),
+                    x = ((spacingPx + indicatorWidthPx) * scrollPosition).toInt() - (spacingPx * pagerState.currentPage),
                     y = 66
                 )
             }
 //            .align(Alignment.BottomStart)
             .size(width = screenSize, height = 2.dp)
+            .then(
+                if (pageCount > 2) Modifier.padding(horizontal = 30.dp)
+                else Modifier
+            )
             .then(
                 if (pageCount > 0) Modifier.background(
                     color = activeColor,

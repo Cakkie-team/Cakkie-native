@@ -3,6 +3,7 @@ package com.cakkie.utill
 import android.content.Context
 import android.net.Uri
 import com.cakkie.R
+import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
@@ -18,6 +19,7 @@ import net.gotev.uploadservice.data.UploadNotificationConfig
 import net.gotev.uploadservice.data.UploadNotificationStatusConfig
 import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import timber.log.Timber
+import java.io.File
 
 object NetworkCalls {
     inline fun <reified T : Any> post(
@@ -165,6 +167,34 @@ object NetworkCalls {
                         networkResult.onFailure(it)
                     })
             }
+        return networkResult
+    }
+
+    //upload file
+    fun uploadFile(
+        media: File,
+        endpoint: String,
+    ): NetworkResult<String, FuelError> {
+        val networkResult = NetworkResult<String, FuelError>()
+        val request = Fuel.put(endpoint)
+            .body(media.readBytes())
+            .header("AccessKey", "94d7e08c-29df-4524-882a5d493902-4268-4286")
+//            .header("Content-Type", "image/${media.extension}")
+        //header
+        request.response { request, response, result ->
+            // Handle response here
+            result.fold(
+                {
+                    Timber.i(it.toString())
+                    networkResult.onSuccess("success")
+                }, { e ->
+                    Timber.e(e)
+                    Timber.d("request: $request")
+                    Timber.d("response: $response")
+                    networkResult.onFailure(e)
+                }
+            )
+        }
         return networkResult
     }
 
