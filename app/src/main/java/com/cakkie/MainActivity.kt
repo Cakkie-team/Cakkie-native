@@ -4,19 +4,27 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.SwipeableDefaults
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.Glide
 import com.cakkie.navigations.BottomNav
 import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.appCurrentDestinationAsState
@@ -31,9 +39,9 @@ import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieTheme
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 
@@ -52,7 +60,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val bottomSheetNavigator = rememberBottomSheetNavigator()
+            val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
 //            sheetState = bottomSheetNavigator.navigatorSheetState
             //current destination
@@ -122,21 +130,26 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Glide.get(this).clearMemory()
+    }
 }
 
-//@ExperimentalMaterialNavigationApi
-//@OptIn(ExperimentalMaterialApi::class)
-//@Composable
-//fun rememberBottomSheetNavigator(
-//    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-//    skipHalfExpanded: Boolean = false,
-//): BottomSheetNavigator {
-//    val sheetState = rememberModalBottomSheetState(
-//        initialValue = ModalBottomSheetValue.Hidden,
-//        animationSpec = animationSpec,
-//        skipHalfExpanded = skipHalfExpanded,
-//    )
-//    return remember(sheetState) {
-//        BottomSheetNavigator(sheetState = sheetState)
-//    }
-//}
+@ExperimentalMaterialNavigationApi
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun rememberBottomSheetNavigator(
+    animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
+    skipHalfExpanded: Boolean = false,
+): BottomSheetNavigator {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        animationSpec = animationSpec,
+        skipHalfExpanded = skipHalfExpanded,
+    )
+    return remember(sheetState) {
+        BottomSheetNavigator(sheetState = sheetState)
+    }
+}

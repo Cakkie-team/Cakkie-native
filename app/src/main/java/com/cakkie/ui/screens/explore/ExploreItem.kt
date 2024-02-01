@@ -21,7 +21,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,11 +57,12 @@ import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.formatDate
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(
     ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class, ExperimentalMaterialApi::class
+    ExperimentalFoundationApi::class
 )
 @Composable
 fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
@@ -70,10 +70,10 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
         mutableIntStateOf(1)
     }
     var isLiked by remember {
-        mutableStateOf(false)
+        mutableStateOf(item.isLiked)
     }
     var isStarred by remember {
-        mutableStateOf(false)
+        mutableStateOf(item.isStarred)
     }
     var isSponsored by remember {
         mutableStateOf(false)
@@ -81,7 +81,8 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
     var expanded by remember {
         mutableStateOf(false)
     }
-    val pageState = rememberPagerState(pageCount = { 3 })
+    val pageState =
+        rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Column {
@@ -96,7 +97,7 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
+                    model = item.shop.image,
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
@@ -108,12 +109,12 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Cake Paradise",
+                        text = item.shop.name,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (isSponsored) stringResource(id = R.string.sponsored) else "8 hours ago",
+                        text = if (isSponsored) stringResource(id = R.string.sponsored) else item.createdAt.formatDate(),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -152,7 +153,7 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
         }
         HorizontalPager(state = pageState) {
             GlideImage(
-                model = "https://source.unsplash.com/600x1200/?cakes",
+                model = item.media[it],
                 contentDescription = "cake",
                 modifier = Modifier
                     .clickable { expanded = !expanded }
@@ -232,13 +233,13 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
             }
         }
         Text(
-            text = "400 Likes",
+            text = "${item.totalLikes} Likes",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp),
             color = CakkieBrown
         )
         Text(
-            text = "Indulge in the best cakes in town with Cake Paradise and get 10% off on your first order!",
+            text = item.description,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
             maxLines = maxLines,
@@ -255,7 +256,7 @@ fun ExploreItem(item: Listing = Listing(), navigator: DestinationsNavigator) {
             )
         }
         Text(
-            text = "View all 20 comments",
+            text = "View all ${item.commentCount} comments",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .clickable { navigator.navigate(CommentDestination) }

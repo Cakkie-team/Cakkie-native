@@ -58,7 +58,7 @@ fun ListingItem(item: Listing, onClick: (() -> Unit)) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = formatDateTime(item.createdAt),
+                    text = item.createdAt.formatDateTime(),
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     color = TextColorInactive
