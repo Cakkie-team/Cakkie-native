@@ -44,7 +44,7 @@ fun VideoPlayer(
     exoPlayer: ExoPlayer,
     isPlaying: Boolean = false,
     showControls: Boolean = false,
-    mute: Boolean = true,
+    mute: Boolean = false,
     onMute: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
