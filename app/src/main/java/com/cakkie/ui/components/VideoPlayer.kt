@@ -3,25 +3,22 @@ package com.cakkie.ui.components
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -47,15 +44,13 @@ fun VideoPlayer(
     exoPlayer: ExoPlayer,
     isPlaying: Boolean = false,
     showControls: Boolean = false,
-    mute: Boolean = false,
+    mute: Boolean = true,
     onMute: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val lifecycleOwner = LocalLifecycleOwner.current
-    var isMuted by rememberSaveable {
-        mutableStateOf(mute)
-    }
+
     LaunchedEffect(isPlaying) {
         if (!isPlaying) {
             exoPlayer.pause()
@@ -63,8 +58,8 @@ fun VideoPlayer(
             exoPlayer.play()
         }
     }
-    LaunchedEffect(key1 = isMuted) {
-        if (isMuted) {
+    LaunchedEffect(key1 = mute) {
+        if (mute) {
             exoPlayer.volume = 0f
         } else {
             exoPlayer.volume = 1f
@@ -99,20 +94,25 @@ fun VideoPlayer(
         //mute and unmute
         IconButton(
             onClick = {
-                onMute.invoke(!isMuted)
-                isMuted = !isMuted
+                onMute.invoke(exoPlayer.volume > 0f)
             }, modifier = Modifier
                 .align(Alignment.TopEnd)
-                .background(Color.Black.copy(0.5f), CircleShape)
-                .clip(CircleShape)
         ) {
-            Icon(
-                painter =
-                painterResource(id = if (exoPlayer.volume > 0f) R.drawable.sound else R.drawable.mute),
-                contentDescription = "Speaker",
-                tint = CakkieBackground,
-                modifier = Modifier.size(20.dp)
-            )
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Black.copy(0.5f)
+                ), shape = CircleShape
+            ) {
+                Icon(
+                    painter =
+                    painterResource(id = if (exoPlayer.volume > 0f) R.drawable.sound else R.drawable.mute),
+                    contentDescription = "Speaker",
+                    tint = CakkieBackground,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(5.dp)
+                )
+            }
         }
     }
 

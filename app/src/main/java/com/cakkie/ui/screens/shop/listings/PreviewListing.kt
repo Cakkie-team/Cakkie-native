@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,7 +66,7 @@ fun PreviewListing(
     var listing by remember {
         mutableStateOf(item)
     }
-
+    var isMuted by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(key1 = id) {
         viewModel.getListing(id).addOnSuccessListener {
             listing = it
@@ -158,7 +159,13 @@ fun PreviewListing(
                 }
             }
 
-            ExploreItem(item = listing, navigator = navigator)
+            ExploreItem(
+                item = listing,
+                navigator = navigator,
+                shouldPlay = true,
+                isMuted = isMuted,
+                onMute = { isMuted = it }
+            )
             Spacer(modifier = Modifier.height(10.dp))
             CakkieButton(
                 text = stringResource(id = R.string.set_availability), modifier = Modifier
