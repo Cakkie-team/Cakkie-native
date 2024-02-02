@@ -3,6 +3,7 @@ package com.cakkie.ui.components
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -45,7 +46,8 @@ fun VideoPlayer(
     isPlaying: Boolean = false,
     showControls: Boolean = false,
     mute: Boolean = false,
-    onMute: (Boolean) -> Unit = {}
+    onMute: (Boolean) -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -69,7 +71,12 @@ fun VideoPlayer(
     exoPlayer.videoScalingMode =
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { onClick.invoke() },
+        contentAlignment = Alignment.Center
+    ) {
         AndroidView(factory = {
             PlayerView(context).apply {
                 hideController()

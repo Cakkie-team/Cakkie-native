@@ -175,7 +175,7 @@ fun ExploreItem(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { expanded = !expanded }
+//                    .clickable { expanded = !expanded }
 //                    .background(Color.Black.copy(alpha = 0.6f))
             ) {
                 GlideImage(
@@ -218,7 +218,8 @@ fun ExploreItem(
                         exoPlayer = exoPlayer,
                         isPlaying = shouldPlay,
                         mute = isMuted,
-                        onMute = onMute
+                        onMute = onMute,
+                        onClick = {}
                     )
                 }
             }
