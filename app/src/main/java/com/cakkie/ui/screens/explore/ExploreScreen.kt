@@ -16,13 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +55,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
 
     val user = viewModel.user.observeAsState().value
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
+    val listState = rememberLazyListState()
 
     Column(
         modifier = Modifier
@@ -112,7 +116,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             }
         }
 
-        LazyColumn {
+        LazyColumn(state = listState) {
             item {
                 Row(
                     Modifier
@@ -166,7 +170,14 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             items(
                 items = listings.data
             ) { listing ->
-                ExploreItem(navigator = navigator, item = listing)
+                val index = listings.data.indexOf(listing)
+                val isVisible =
+                    remember {
+                        derivedStateOf {
+                            listState.layoutInfo.visibleItemsInfo.any { it.index == index }
+                        }
+                    }
+                ExploreItem(navigator = navigator, item = listing, shouldPlay = isVisible.value)
             }
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
