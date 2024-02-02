@@ -33,7 +33,10 @@ fun String.formatDate(): String {
             diff < TimeUnit.MINUTES.toMillis(1) -> "just now"
             diff < TimeUnit.HOURS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toMinutes(diff)} mins ago"
             diff < TimeUnit.DAYS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toHours(diff)} hours ago"
-            diff < TimeUnit.DAYS.toMillis(7) -> "${TimeUnit.MILLISECONDS.toDays(diff)} days ago"
+            diff < TimeUnit.DAYS.toMillis(7) -> if (TimeUnit.MILLISECONDS.toDays(diff) > 1) {
+                "${TimeUnit.MILLISECONDS.toDays(diff)} days ago"
+            } else "${TimeUnit.MILLISECONDS.toDays(diff)} day ago"
+
             date.year == now.year -> SimpleDateFormat("d MMM, h:mm a", Locale.getDefault()).format(
                 date
             )

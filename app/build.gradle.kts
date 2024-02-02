@@ -160,4 +160,7 @@ dependencies {
 
     //permission
     implementation(libs.accompanist.permissions)
+
+    //glide with shimmer effect
+    implementation(libs.landscapist.glide)
 }

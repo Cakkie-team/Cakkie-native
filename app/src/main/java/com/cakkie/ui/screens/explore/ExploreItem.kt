@@ -1,7 +1,5 @@
 package com.cakkie.ui.screens.explore
 
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -52,22 +48,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
@@ -77,16 +68,20 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.isVideoUrl
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.skydoves.landscapist.ShimmerParams
+import com.skydoves.landscapist.glide.GlideImage
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
-    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class
 )
 @Composable
 fun ExploreItem(
     item: Listing = Listing(),
     shouldPlay: Boolean = false,
+    isMuted: Boolean = false,
+    onMute: (Boolean) -> Unit = {},
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
@@ -94,7 +89,7 @@ fun ExploreItem(
     var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
     var isStarred by rememberSaveable { mutableStateOf(item.isStarred) }
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var isSponsored by remember {
+    val isSponsored by remember {
         mutableStateOf(false)
     }
     val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
@@ -122,7 +117,7 @@ fun ExploreItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = item.shop.image,
+                    imageModel = item.shop.image,
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
@@ -181,10 +176,10 @@ fun ExploreItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .background(Color.Black.copy(alpha = 0.6f))
+//                    .background(Color.Black.copy(alpha = 0.6f))
             ) {
                 GlideImage(
-                    model = item.media[it],
+                    imageModel = item.media[it],
                     contentDescription = "cake",
                     modifier = Modifier
                         .clickable { expanded = !expanded }
@@ -193,7 +188,14 @@ fun ExploreItem(
                         .then(
                             if (item.media[it].isVideoUrl()) Modifier.blur(10.dp) else Modifier
                         ),
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.FillWidth,
+                    shimmerParams = ShimmerParams(
+                        baseColor = CakkieBrown.copy(0.4f),
+                        highlightColor = CakkieBrown.copy(0.8f),
+                        dropOff = 0.55f,
+                        tilt = 20f
+                    )
+
                 )
                 if (item.media[it].isVideoUrl()) {
                     val exoPlayer = remember {
@@ -207,24 +209,17 @@ fun ExploreItem(
                                 prepare()
                             }
                     }
-                    exoPlayer.playWhenReady = false
-                    exoPlayer.videoScalingMode =
-                        C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-                    AndroidView(factory = {
-                        PlayerView(context).apply {
-                            hideController()
-                            useController = false
-                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                            player = exoPlayer
-                            layoutParams = FrameLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                        }
-                    }, modifier = Modifier.heightIn(max = screenWidth + 100.dp))
-                    DisposableEffect(Unit) {
-                        onDispose { exoPlayer.release() }
-                    }
+
+//                    val source = progressiveMediaSource
+//                        .createMediaSource(MediaItem.fromUri(item.media[it]))
+//                    exoPlayer.setMediaSource(source)
+//                    exoPlayer.prepare()
+                    VideoPlayer(
+                        exoPlayer = exoPlayer,
+                        isPlaying = shouldPlay,
+                        mute = isMuted,
+                        onMute = onMute
+                    )
                 }
             }
         }
