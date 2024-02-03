@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
@@ -36,6 +37,12 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     ).addOnSuccessListener {
         _listings.value = it
     }
+
+    fun getListing(id: String) = NetworkCalls.get<Listing>(
+        endpoint = Endpoints.GET_LISTING(id),
+        body = listOf()
+    )
+
 
     init {
         getUser()

@@ -126,9 +126,16 @@ fun Description(item: Listing, navigator: DestinationsNavigator) {
 
                 Text(
                     text = when (it) {
-                        R.string.price -> "NGN ${NumberFormat.getInstance().format(item.price)}"
+                        R.string.price -> "NGN ${
+                            NumberFormat.getInstance()
+                                .format(item.price[sizes.indexOf(selectedSize)])
+                        }"
+
                         R.string.delivery_fee -> "NGN 1,000"
-                        else -> "NGN ${NumberFormat.getInstance().format(item.price.plus(1000))}"
+                        else -> "NGN ${
+                            NumberFormat.getInstance()
+                                .format(item.price[sizes.indexOf(selectedSize)].plus(1000))
+                        }"
                     },
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = if (it == R.string.total) 16.sp else 14.sp,

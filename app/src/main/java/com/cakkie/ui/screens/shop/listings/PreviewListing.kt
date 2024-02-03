@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,7 +62,7 @@ fun PreviewListing(
 ) {
     val context = LocalContext.current
     val viewModel: ShopViewModel = koinViewModel()
-    var listing by remember {
+    var listing by rememberSaveable {
         mutableStateOf(item)
     }
     var isMuted by rememberSaveable { mutableStateOf(true) }

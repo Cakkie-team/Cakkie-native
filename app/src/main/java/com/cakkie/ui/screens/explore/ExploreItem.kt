@@ -93,19 +93,19 @@ fun ExploreItem(
     val isSponsored by remember {
         mutableStateOf(false)
     }
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
+    val defaultDataSourceFactory = rememberSaveable { DefaultDataSource.Factory(context) }
     val dataSourceFactory: DataSource.Factory =
         DefaultDataSource.Factory(
             context,
             defaultDataSourceFactory
         )
-    val progressiveMediaSource = remember {
+    val progressiveMediaSource = rememberSaveable {
         ProgressiveMediaSource.Factory(dataSourceFactory)
     }
     val pageState =
         rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val isPlaying = remember {
+    val isPlaying = rememberSaveable {
         derivedStateOf { shouldPlay && !expanded }
     }.value
     Column {
