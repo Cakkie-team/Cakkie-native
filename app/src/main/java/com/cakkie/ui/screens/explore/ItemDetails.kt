@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -155,7 +156,7 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                             isPlaying = !expanded,
                             mute = isMuted,
                             onMute = { isMuted = it },
-                            onClick = {}
+                            modifier = Modifier.heightIn(max = screenWidth)
                         )
                     }
                 }
@@ -243,7 +244,7 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
 
 
     ExpandImage(
-        item = Listing(),
+        item = listing,
         expanded = expanded,
         onDismiss = { expanded = false },
         navigator = navigator,

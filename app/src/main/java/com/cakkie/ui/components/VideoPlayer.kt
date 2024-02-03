@@ -3,7 +3,6 @@ package com.cakkie.ui.components
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -43,11 +42,11 @@ import com.cakkie.ui.theme.CakkieBrown
 @Composable
 fun VideoPlayer(
     exoPlayer: ExoPlayer,
+    modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     showControls: Boolean = false,
-    mute: Boolean = false,
+    mute: Boolean = true,
     onMute: (Boolean) -> Unit = {},
-    onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -72,9 +71,8 @@ fun VideoPlayer(
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { onClick.invoke() },
+        modifier = modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         AndroidView(factory = {
@@ -112,7 +110,7 @@ fun VideoPlayer(
             ) {
                 Icon(
                     painter =
-                    painterResource(id = if (exoPlayer.volume > 0f) R.drawable.sound else R.drawable.mute),
+                    painterResource(id = if (!mute) R.drawable.sound else R.drawable.mute),
                     contentDescription = "Speaker",
                     tint = CakkieBackground,
                     modifier = Modifier

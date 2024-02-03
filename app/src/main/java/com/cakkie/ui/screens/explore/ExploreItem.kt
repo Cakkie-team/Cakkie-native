@@ -222,7 +222,7 @@ fun ExploreItem(
                         isPlaying = isPlaying,
                         mute = isMuted,
                         onMute = onMute,
-                        onClick = {}
+                        modifier = Modifier.heightIn(max = screenWidth + 100.dp)
                     )
                 }
             }
