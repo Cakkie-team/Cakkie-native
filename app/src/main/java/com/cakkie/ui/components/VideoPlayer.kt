@@ -46,6 +46,7 @@ fun VideoPlayer(
     isPlaying: Boolean = false,
     showControls: Boolean = false,
     mute: Boolean = true,
+    vResizeMode: Int = AspectRatioFrameLayout.RESIZE_MODE_FIT,
     onMute: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -79,7 +80,7 @@ fun VideoPlayer(
             PlayerView(context).apply {
                 hideController()
                 useController = showControls
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                resizeMode = vResizeMode
                 player = exoPlayer
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -135,7 +136,7 @@ fun VideoPlayer(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
-            exoPlayer.release()
+//            exoPlayer.release()
         }
     }
 }

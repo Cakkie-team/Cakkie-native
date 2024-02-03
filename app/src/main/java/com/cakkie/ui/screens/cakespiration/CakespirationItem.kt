@@ -1,7 +1,5 @@
 package com.cakkie.ui.screens.cakespiration
 
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,13 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,68 +37,83 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Listing
+import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieYellow
+import com.cakkie.utill.formatDate
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
-    var isLiked by remember { mutableStateOf(false) }
-    var isStarred by remember { mutableStateOf(false) }
-    var maxLines by remember { mutableIntStateOf(1) }
+fun CakespirationItem(
+    item: Listing,
+    navigator: DestinationsNavigator,
+    shouldPlay: Boolean,
+    isMuted: Boolean,
+    onMute: (Boolean) -> Unit,
+    progressiveMediaSource: ProgressiveMediaSource.Factory
+) {
+    var maxLines by rememberSaveable { mutableIntStateOf(1) }
+    var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
+    var isStarred by rememberSaveable { mutableStateOf(item.isStarred) }
 
     val context = LocalContext.current
 
+//    val exoPlayer = remember {
+//        ExoPlayer.Builder(context)
+//            .build()
+//            .apply {
+//                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+//                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+//                    context,
+//                    defaultDataSourceFactory
+//                )
+//                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+//                    .createMediaSource(MediaItem.fromUri(item.media.first()))
+//                setMediaSource(source)
+//                prepare()
+//            }
+//    }
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
             .build()
             .apply {
-                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-                    context,
-                    defaultDataSourceFactory
-                )
-                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"))
+
+                val source = progressiveMediaSource
+                    .createMediaSource(MediaItem.fromUri(item.media[0]))
                 setMediaSource(source)
                 prepare()
             }
     }
-    exoPlayer.playWhenReady = false
-    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-
-    val isPlaying = remember {
-        derivedStateOf {
-            exoPlayer.isPlaying
-        }
-    }
-    LaunchedEffect(key1 = shouldPlay) {
-        if (shouldPlay) {
-            exoPlayer.play()
-        } else {
-            exoPlayer.pause()
-        }
-    }
+//    exoPlayer.playWhenReady = false
+//    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+//    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+//
+//    val isPlaying = remember {
+//        derivedStateOf {
+//            exoPlayer.isPlaying
+//        }
+//    }
+//    LaunchedEffect(key1 = shouldPlay) {
+//        if (shouldPlay) {
+//            exoPlayer.play()
+//        } else {
+//            exoPlayer.pause()
+//        }
+//    }
 
     Box(
         modifier = Modifier
@@ -110,26 +121,37 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        AndroidView(factory = {
-            PlayerView(context).apply {
-                hideController()
-                useController = false
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                player = exoPlayer
-                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            }
-        })
-        DisposableEffect(Unit) {
-            onDispose { exoPlayer.release() }
-        }
-
-        Box(modifier = Modifier
-            .fillMaxSize()
-//            .background(Color.Black.copy(alpha = 0.5f))
-            .clickable {
-                if (isPlaying.value) exoPlayer.pause() else exoPlayer.play()
-            }
+//        AndroidView(factory = {
+//            PlayerView(context).apply {
+//                hideController()
+//                useController = false
+//                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+//                player = exoPlayer
+//                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+//            }
+//        })
+        VideoPlayer(
+            exoPlayer = exoPlayer,
+            isPlaying = shouldPlay,
+            mute = isMuted,
+            onMute = onMute,
+            vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
+            modifier = Modifier
+                .clickable {
+                    onMute.invoke(!isMuted)
+                }
         )
+//        DisposableEffect(Unit) {
+//            onDispose { exoPlayer.release() }
+//        }
+
+//        Box(modifier = Modifier
+//            .fillMaxSize()
+////            .background(Color.Black.copy(alpha = 0.5f))
+//            .clickable {
+//                if (isPlaying.value) exoPlayer.pause() else exoPlayer.play()
+//            }
+//        )
 
         Column(
             Modifier
@@ -152,7 +174,7 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
                     .padding(8.dp)
             )
             Text(
-                text = "1.2k",
+                text = item.totalLikes.toString(),
                 color = CakkieBackground,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -166,7 +188,7 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
                     .padding(8.dp)
             )
             Text(
-                text = "1.2k",
+                text = item.commentCount.toString(),
                 color = CakkieBackground,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -213,8 +235,8 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
-                    contentDescription = "profile pic",
+                    model = item.shop.name.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
+                    contentDescription = "shop logo",
                     modifier = Modifier
                         .size(38.dp)
                         .clip(shape = CircleShape)
@@ -225,14 +247,14 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Cake Paradise",
+                        text = item.shop.name.ifEmpty { "Cake Paradise" },
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
                         color = CakkieBackground
                     )
                     Text(
-                        text = "8 hours ago",
+                        text = item.createdAt.formatDate(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp,
                         color = CakkieBackground
@@ -241,7 +263,7 @@ fun CakespirationItem(navigator: DestinationsNavigator, shouldPlay: Boolean) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Indulge in the best cakes in town with Cake Paradise and get 10% off on your first order!",
+                text = item.description,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(0.8f),
                 maxLines = maxLines,

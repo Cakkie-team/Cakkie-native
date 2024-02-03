@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
@@ -23,8 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.screens.explore.ExploreViewModal
@@ -45,6 +54,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
@@ -114,24 +124,37 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
         }
     }
 
-
+    var isMuted by rememberSaveable { mutableStateOf(true) }
+    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
+    val dataSourceFactory: DataSource.Factory =
+        DefaultDataSource.Factory(
+            context,
+            defaultDataSourceFactory
+        )
+    val progressiveMediaSource = remember {
+        ProgressiveMediaSource.Factory(dataSourceFactory)
+    }
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
             Modifier.fillMaxSize(),
             state = listState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
-            items(10) {
+            items(items = cakespirations) {
                 Box(
                     modifier = Modifier
                         .background(Color.Black)
                         .fillParentMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     CakespirationItem(
-                        navigator,
-                        remember {
+                        progressiveMediaSource = progressiveMediaSource,
+                        isMuted = isMuted,
+                        onMute = { isMuted = it },
+                        item = it,
+                        navigator = navigator,
+                        shouldPlay = remember {
                             derivedStateOf { listState.firstVisibleItemIndex }
-                        }.value == it
+                        }.value == cakespirations.indexOf(it)
                     )
                 }
             }
@@ -189,7 +212,9 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
                 )
                 Spacer(modifier = Modifier.size(1.dp))
                 Text(
-                    text = "Chocolate cake",
+                    text = cakespirations[remember {
+                        derivedStateOf { listState.firstVisibleItemIndex }
+                    }.value].name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 16.sp,
                     color = CakkieBackground
