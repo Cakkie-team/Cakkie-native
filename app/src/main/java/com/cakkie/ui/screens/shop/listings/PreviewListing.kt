@@ -66,7 +66,7 @@ fun PreviewListing(
     var listing by remember {
         mutableStateOf(item)
     }
-    var isMuted by rememberSaveable { mutableStateOf(false) }
+    var isMuted by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(key1 = id) {
         viewModel.getListing(id).addOnSuccessListener {
             listing = it

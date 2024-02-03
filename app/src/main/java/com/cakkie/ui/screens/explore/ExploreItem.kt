@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -104,7 +105,9 @@ fun ExploreItem(
     val pageState =
         rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
+    val isPlaying = remember {
+        derivedStateOf { shouldPlay && !expanded }
+    }.value
     Column {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -216,7 +219,7 @@ fun ExploreItem(
 //                    exoPlayer.prepare()
                     VideoPlayer(
                         exoPlayer = exoPlayer,
-                        isPlaying = shouldPlay,
+                        isPlaying = isPlaying,
                         mute = isMuted,
                         onMute = onMute,
                         onClick = {}
@@ -329,6 +332,7 @@ fun ExploreItem(
     }
 
     ExpandImage(
+        item = item,
         expanded = expanded,
         onDismiss = { expanded = false },
         navigator = navigator,

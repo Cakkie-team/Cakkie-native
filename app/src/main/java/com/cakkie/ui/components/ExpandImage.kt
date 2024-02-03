@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,36 +45,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Listing
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.skydoves.landscapist.ShimmerParams
+import com.skydoves.landscapist.glide.GlideImage
 
 @OptIn(
-    ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
 )
 @Composable
 fun ExpandImage(
+    item: Listing,
     expanded: Boolean,
     onDismiss: () -> Unit,
     pageState: PagerState = rememberPagerState(pageCount = { 1 }),
     showDetails: Boolean = false,
     navigator: DestinationsNavigator
 ) {
-    var maxLines by remember {
-        mutableIntStateOf(1)
-    }
-    var isLiked by remember {
-        mutableStateOf(false)
-    }
-    var isStarred by remember {
-        mutableStateOf(false)
-    }
+    var maxLines by rememberSaveable { mutableIntStateOf(1) }
+    var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
+    var isStarred by rememberSaveable { mutableStateOf(item.isStarred) }
 
     //close on back press
     BackHandler(expanded) {
@@ -100,11 +97,17 @@ fun ExpandImage(
             ) {
                 HorizontalPager(state = pageState) {
                     GlideImage(
-                        model = "https://source.unsplash.com/600x1200/?cakes",
+                        imageModel = item.media[it],
                         contentDescription = "cake",
                         modifier = Modifier
                             .fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth
+                        contentScale = ContentScale.FillWidth,
+                        shimmerParams = ShimmerParams(
+                            baseColor = CakkieBrown.copy(0.4f),
+                            highlightColor = CakkieBrown.copy(0.8f),
+                            dropOff = 0.55f,
+                            tilt = 20f
+                        )
                     )
                 }
                 AnimatedVisibility(
@@ -209,13 +212,13 @@ fun ExpandImage(
                             }
                         }
                         Text(
-                            text = "400 Likes",
+                            text = "${item.totalLikes} Likes",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(start = 16.dp),
                             color = CakkieBrown
                         )
                         Text(
-                            text = "Indulge in the best cakes in town with Cake Paradise and get 10% off on your first order!",
+                            text = item.description,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(
                                 start = 16.dp,
@@ -236,7 +239,7 @@ fun ExpandImage(
                             )
                         }
                         Text(
-                            text = "View all 20 comments",
+                            text = "View all ${item.commentCount} comments",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier
                                 .clickable {

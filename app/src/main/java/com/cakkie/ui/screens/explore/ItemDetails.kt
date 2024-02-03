@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
@@ -149,6 +150,7 @@ fun ItemDetails(navigator: DestinationsNavigator) {
 
 
     ExpandImage(
+        item = Listing(),
         expanded = expanded,
         onDismiss = { expanded = false },
         navigator = navigator,

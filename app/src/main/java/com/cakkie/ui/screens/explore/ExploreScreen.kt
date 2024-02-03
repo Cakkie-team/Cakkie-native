@@ -61,7 +61,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState().value
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
     val listState = rememberLazyListState()
-    var isMuted by rememberSaveable { mutableStateOf(false) }
+    var isMuted by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .fillMaxSize()
