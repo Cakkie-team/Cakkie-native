@@ -58,6 +58,7 @@ import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.VideoPlayer
+import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
@@ -212,7 +213,13 @@ fun ExploreItem(
                         isPlaying = isPlaying,
                         mute = isMuted,
                         onMute = onMute,
-                        modifier = Modifier.heightIn(max = screenWidth + 100.dp)
+                        modifier = Modifier
+                            .heightIn(max = screenWidth + 100.dp)
+                            .clickable {
+                                navigator.navigate(
+                                    CakespirationDestination(id = item.id, item = item)
+                                )
+                            }
                     )
                 }
             }

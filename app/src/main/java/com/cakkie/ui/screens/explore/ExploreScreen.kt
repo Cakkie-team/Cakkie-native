@@ -152,7 +152,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { navigator.navigate(CakespirationDestination()) }
+                        modifier = Modifier.clickable {
+                            navigator.navigate(
+                                CakespirationDestination(
+                                    ""
+                                )
+                            )
+                        }
                     ) {
                         Text(
                             text = stringResource(id = R.string.watch_all),
@@ -180,7 +186,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                 .clip(shape = RoundedCornerShape(8.dp))
                                 .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
                                 .clickable {
-                                    navigator.navigate(CakespirationDestination(index = it))
+                                    navigator.navigate(CakespirationDestination(id = it.toString()))
                                 }
                         )
                     }

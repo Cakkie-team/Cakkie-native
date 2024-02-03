@@ -53,6 +53,7 @@ import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.components.VideoPlayer
+import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Toaster
@@ -156,7 +157,13 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                             isPlaying = !expanded,
                             mute = isMuted,
                             onMute = { isMuted = it },
-                            modifier = Modifier.heightIn(max = screenWidth)
+                            modifier = Modifier
+                                .heightIn(max = screenWidth)
+                                .clickable {
+                                    navigator.navigate(
+                                        CakespirationDestination(id = item.id, item = item)
+                                    )
+                                }
                         )
                     }
                 }
