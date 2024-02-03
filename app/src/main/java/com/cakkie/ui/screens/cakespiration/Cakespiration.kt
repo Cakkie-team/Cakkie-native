@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +43,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
+import com.cakkie.di.CakkieApp
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
@@ -62,7 +65,18 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val video = viewModel.videos.observeAsState(listOf()).value
+    val httpDataSourceFactory = remember {
+        DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+    }
+    val cacheDataSourceFactory = CacheDataSource.Factory()
+        .setCache(CakkieApp.simpleCache)
+        .setUpstreamDataSourceFactory(httpDataSourceFactory)
+        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+    val progressiveMediaSource = remember {
+        ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+    }
+//    val video = viewModel.videos.observeAsState(listOf()).value
     val cakespirations = remember {
         mutableStateListOf(
             Listing(
@@ -104,9 +118,9 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
     }
     val listState =
         rememberLazyListState(0)
-    LaunchedEffect(key1 = Unit) {
-        viewModel.updateVideos(context, cakespirations)
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        viewModel.updateVideos(context, cakespirations)
+//    }
 
 
     LaunchedEffect(key1 = id) {
@@ -142,21 +156,21 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
             state = listState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
-            items(items = video, key = { it.listings.id }) { listing ->
+            items(items = cakespirations, key = { it.id }) { listing ->
                 Box(
                     modifier = Modifier
                         .background(Color.Black)
                         .fillParentMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     CakespirationItem(
-                        exoPlayer = video[video.indexOfFirst { it.listings.id == listing.listings.id }].exoPlayer,
+                        progressiveMediaSource = progressiveMediaSource,
                         isMuted = isMuted,
                         onMute = { isMuted = it },
-                        item = listing.listings,
+                        item = listing,
                         navigator = navigator,
                         shouldPlay = remember {
                             derivedStateOf { listState.firstVisibleItemIndex }
-                        }.value == video.indexOf(listing)
+                        }.value == cakespirations.indexOf(listing)
                     )
                 }
             }

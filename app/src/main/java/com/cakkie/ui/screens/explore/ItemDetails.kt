@@ -43,11 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
+import com.cakkie.di.CakkieApp
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
@@ -83,14 +83,16 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
         rememberPagerState(pageCount = { if (listing.media.isEmpty()) 1 else listing.media.size })
     val pageState = rememberPagerState(pageCount = { 2 })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
-    val dataSourceFactory: DataSource.Factory =
-        DefaultDataSource.Factory(
-            context,
-            defaultDataSourceFactory
-        )
+    val httpDataSourceFactory = remember {
+        DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+    }
+    val cacheDataSourceFactory = CacheDataSource.Factory()
+        .setCache(CakkieApp.simpleCache)
+        .setUpstreamDataSourceFactory(httpDataSourceFactory)
+        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
-        ProgressiveMediaSource.Factory(dataSourceFactory)
+        ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
 
 
@@ -136,24 +138,25 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                         )
                     )
                     if (item.media[it].isVideoUrl()) {
-                        val exoPlayer = remember {
-                            ExoPlayer.Builder(context)
-                                .build()
-                                .apply {
-
-                                    val source = progressiveMediaSource
-                                        .createMediaSource(MediaItem.fromUri(item.media[it]))
-                                    setMediaSource(source)
-                                    prepare()
-                                }
-                        }
+//                        val exoPlayer = remember {
+//                            ExoPlayer.Builder(context)
+//                                .build()
+//                                .apply {
+//
+//                                    val source = progressiveMediaSource
+//                                        .createMediaSource(MediaItem.fromUri(item.media[it]))
+//                                    setMediaSource(source)
+//                                    prepare()
+//                                }
+//                        }
 
 //                    val source = progressiveMediaSource
 //                        .createMediaSource(MediaItem.fromUri(item.media[it]))
 //                    exoPlayer.setMediaSource(source)
 //                    exoPlayer.prepare()
                         VideoPlayer(
-                            exoPlayer = exoPlayer,
+                            progressiveMediaSource
+                                .createMediaSource(MediaItem.fromUri(item.media[it])),
                             isPlaying = !expanded,
                             mute = isMuted,
                             onMute = { isMuted = it },

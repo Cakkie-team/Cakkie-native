@@ -36,8 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -61,7 +62,7 @@ fun CakespirationItem(
     shouldPlay: Boolean,
     isMuted: Boolean,
     onMute: (Boolean) -> Unit,
-    exoPlayer: ExoPlayer
+    progressiveMediaSource: ProgressiveMediaSource.Factory
 ) {
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
     var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
@@ -128,7 +129,8 @@ fun CakespirationItem(
 //            }
 //        })
         VideoPlayer(
-            exoPlayer = exoPlayer,
+            progressiveMediaSource
+                .createMediaSource(MediaItem.fromUri(item.media[0])),
             isPlaying = shouldPlay,
             mute = isMuted,
             onMute = onMute,

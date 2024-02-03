@@ -41,7 +41,7 @@ class SplashViewModel(private val settings: Settings) : ViewModel(), KoinCompone
 
     init {
         viewModelScope.launch {
-            delay(2000)
+            delay(500)
             settings.getPreference(SettingsConstants.TOKEN, "").asLiveData()
                 .observeForever {
                     _isLoggedIn.value = it.isNotEmpty()
