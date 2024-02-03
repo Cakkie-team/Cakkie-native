@@ -1,6 +1,7 @@
 package com.cakkie.networkModels
 
 import android.os.Parcelable
+import androidx.compose.runtime.Stable
 import com.cakkie.data.db.models.ShopModel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
@@ -8,6 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
+@Stable
 data class Listing(
     @SerialName("Comment")
     val comments: List<String> = listOf(),

@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.shop.listings
 
+import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,6 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
@@ -52,6 +58,7 @@ import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(UnstableApi::class)
 @Destination
 @Composable
 fun PreviewListing(
@@ -82,7 +89,15 @@ fun PreviewListing(
             }
         }
     }
-
+    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
+    val dataSourceFactory: DataSource.Factory =
+        DefaultDataSource.Factory(
+            context,
+            defaultDataSourceFactory
+        )
+    val progressiveMediaSource = remember {
+        ProgressiveMediaSource.Factory(dataSourceFactory)
+    }
     Column(
         Modifier
             .fillMaxSize()
@@ -163,7 +178,8 @@ fun PreviewListing(
                 navigator = navigator,
                 shouldPlay = true,
                 isMuted = isMuted,
-                onMute = { isMuted = it }
+                onMute = { isMuted = it },
+                progressiveMediaSource = progressiveMediaSource
             )
             Spacer(modifier = Modifier.height(10.dp))
             CakkieButton(

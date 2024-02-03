@@ -34,10 +34,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
@@ -52,16 +57,26 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun ExploreScreen(navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
-
+    val context = LocalContext.current
     val user = viewModel.user.observeAsState().value
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
+    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
+    val dataSourceFactory: DataSource.Factory =
+        DefaultDataSource.Factory(
+            context,
+            defaultDataSourceFactory
+        )
+    val progressiveMediaSource = remember {
+        ProgressiveMediaSource.Factory(dataSourceFactory)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -185,7 +200,9 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     item = listing,
                     shouldPlay = index == visibleItem,
                     isMuted = isMuted,
-                    onMute = { isMuted = it })
+                    onMute = { isMuted = it },
+                    progressiveMediaSource = progressiveMediaSource
+                )
             }
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }

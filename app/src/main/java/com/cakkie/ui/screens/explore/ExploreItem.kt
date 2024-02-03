@@ -51,8 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
@@ -83,6 +81,7 @@ fun ExploreItem(
     shouldPlay: Boolean = false,
     isMuted: Boolean = false,
     onMute: (Boolean) -> Unit = {},
+    progressiveMediaSource: ProgressiveMediaSource.Factory,
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
@@ -93,15 +92,7 @@ fun ExploreItem(
     val isSponsored by remember {
         mutableStateOf(false)
     }
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
-    val dataSourceFactory: DataSource.Factory =
-        DefaultDataSource.Factory(
-            context,
-            defaultDataSourceFactory
-        )
-    val progressiveMediaSource = remember {
-        ProgressiveMediaSource.Factory(dataSourceFactory)
-    }
+
     val pageState =
         rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -198,7 +189,6 @@ fun ExploreItem(
                         dropOff = 0.55f,
                         tilt = 20f
                     )
-
                 )
                 if (item.media[it].isVideoUrl()) {
                     val exoPlayer = remember {
