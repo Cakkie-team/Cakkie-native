@@ -105,7 +105,7 @@ fun ExploreItem(
     val pageState =
         rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val isPlaying = rememberSaveable {
+    val isPlaying = remember {
         derivedStateOf { shouldPlay && !expanded }
     }.value
     Column {
