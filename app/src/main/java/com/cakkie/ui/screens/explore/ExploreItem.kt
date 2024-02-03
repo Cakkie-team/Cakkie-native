@@ -93,13 +93,13 @@ fun ExploreItem(
     val isSponsored by remember {
         mutableStateOf(false)
     }
-    val defaultDataSourceFactory = rememberSaveable { DefaultDataSource.Factory(context) }
+    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
     val dataSourceFactory: DataSource.Factory =
         DefaultDataSource.Factory(
             context,
             defaultDataSourceFactory
         )
-    val progressiveMediaSource = rememberSaveable {
+    val progressiveMediaSource = remember {
         ProgressiveMediaSource.Factory(dataSourceFactory)
     }
     val pageState =

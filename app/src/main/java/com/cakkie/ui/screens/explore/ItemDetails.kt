@@ -81,13 +81,13 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
         rememberPagerState(pageCount = { if (listing.media.isEmpty()) 1 else listing.media.size })
     val pageState = rememberPagerState(pageCount = { 2 })
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val defaultDataSourceFactory = rememberSaveable { DefaultDataSource.Factory(context) }
+    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
     val dataSourceFactory: DataSource.Factory =
         DefaultDataSource.Factory(
             context,
             defaultDataSourceFactory
         )
-    val progressiveMediaSource = rememberSaveable {
+    val progressiveMediaSource = remember {
         ProgressiveMediaSource.Factory(dataSourceFactory)
     }
 
