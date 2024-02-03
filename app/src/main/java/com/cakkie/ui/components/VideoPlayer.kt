@@ -16,7 +16,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +31,6 @@ import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.cakkie.R
@@ -42,7 +40,7 @@ import com.cakkie.ui.theme.CakkieBrown
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
-    progressiveMediaSource: ProgressiveMediaSource,
+    exoPlayer: ExoPlayer,
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     showControls: Boolean = false,
@@ -53,14 +51,7 @@ fun VideoPlayer(
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val lifecycleOwner = LocalLifecycleOwner.current
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build()
-            .apply {
-                setMediaSource(progressiveMediaSource, true)
-                prepare()
-            }
-    }
+
     LaunchedEffect(isPlaying) {
         if (!isPlaying) {
             exoPlayer.pause()
@@ -79,6 +70,8 @@ fun VideoPlayer(
     exoPlayer.videoScalingMode =
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+    exoPlayer.volume = if (mute) 0f else 1f
+    exoPlayer.prepare()
     Box(
         modifier = modifier
             .fillMaxSize(),

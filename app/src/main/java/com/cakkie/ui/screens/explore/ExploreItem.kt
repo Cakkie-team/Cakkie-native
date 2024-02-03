@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
@@ -191,13 +192,17 @@ fun ExploreItem(
                     )
                 )
                 if (item.media[it].isVideoUrl()) {
-//                    val source = progressiveMediaSource
-//                        .createMediaSource(MediaItem.fromUri(item.media[it]))
-//                    exoPlayer.setMediaSource(source)
-//                    exoPlayer.prepare()
+                    val exoPlayer = remember {
+                        ExoPlayer.Builder(context).build().apply {
+                            playWhenReady = shouldPlay
+                            val source = progressiveMediaSource
+                                .createMediaSource(MediaItem.fromUri(item.media[it]))
+                            setMediaSource(source)
+                        }
+                    }
+
                     VideoPlayer(
-                        progressiveMediaSource = progressiveMediaSource
-                            .createMediaSource(MediaItem.fromUri(item.media[it])),
+                        exoPlayer = exoPlayer,
                         isPlaying = isPlaying,
                         mute = isMuted,
                         onMute = onMute,

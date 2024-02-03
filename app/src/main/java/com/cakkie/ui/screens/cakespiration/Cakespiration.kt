@@ -28,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,7 +53,7 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -64,7 +63,6 @@ import org.koin.androidx.compose.koinViewModel
 fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val httpDataSourceFactory = remember {
         DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
@@ -76,7 +74,6 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
     val progressiveMediaSource = remember {
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
-//    val video = viewModel.videos.observeAsState(listOf()).value
     val cakespirations = remember {
         mutableStateListOf(
             Listing(
@@ -118,9 +115,7 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
     }
     val listState =
         rememberLazyListState(0)
-//    LaunchedEffect(key1 = Unit) {
-//        viewModel.updateVideos(context, cakespirations)
-//    }
+
 
 
     LaunchedEffect(key1 = id) {
@@ -128,9 +123,7 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
             if (cakespirations.find { it.id == id } == null) {
                 if (item == null) {
                     viewModel.getListing(id).addOnSuccessListener {
-                        cakespirations.add(it)
-                        scope.launch { listState.scrollToItem(cakespirations.indexOf(it)) }
-//                        viewModel.updateVideos(context, listOf(it))
+                        cakespirations.add(0, it)
                     }.addOnFailureListener {
                         Toaster(
                             context,
@@ -139,9 +132,10 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
                         )
                     }
                 } else {
-                    cakespirations.add(item)
-//                    viewModel.updateVideos(context, listOf(item))
+                    cakespirations.add(0, item)
                 }
+                delay(500)
+                listState.scrollToItem(0)
             } else {
                 listState.scrollToItem(cakespirations.indexOf(cakespirations.find { it.id == id }))
             }

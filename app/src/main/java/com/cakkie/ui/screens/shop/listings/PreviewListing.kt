@@ -38,10 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
+import com.cakkie.di.CakkieApp
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.CommentDestination
@@ -89,14 +90,17 @@ fun PreviewListing(
             }
         }
     }
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
-    val dataSourceFactory: DataSource.Factory =
-        DefaultDataSource.Factory(
-            context,
-            defaultDataSourceFactory
-        )
+    val httpDataSourceFactory = remember {
+        DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+    }
+
+    val cacheDataSourceFactory = CacheDataSource.Factory()
+        .setCache(CakkieApp.simpleCache)
+        .setUpstreamDataSourceFactory(httpDataSourceFactory)
+        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
-        ProgressiveMediaSource.Factory(dataSourceFactory)
+        ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     Column(
         Modifier

@@ -45,6 +45,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.di.CakkieApp
@@ -150,13 +151,12 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
 //                                }
 //                        }
 
-//                    val source = progressiveMediaSource
-//                        .createMediaSource(MediaItem.fromUri(item.media[it]))
-//                    exoPlayer.setMediaSource(source)
-//                    exoPlayer.prepare()
+                        val exoPlayer = remember { ExoPlayer.Builder(context).build() }
+                        val source = progressiveMediaSource
+                            .createMediaSource(MediaItem.fromUri(item.media[it]))
+                        exoPlayer.setMediaSource(source)
                         VideoPlayer(
-                            progressiveMediaSource
-                                .createMediaSource(MediaItem.fromUri(item.media[it])),
+                            exoPlayer = exoPlayer,
                             isPlaying = !expanded,
                             mute = isMuted,
                             onMute = { isMuted = it },

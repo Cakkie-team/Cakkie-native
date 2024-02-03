@@ -24,6 +24,7 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
+import java.io.File
 
 class CakkieApp : Application() {
     @OptIn(UnstableApi::class)
@@ -83,10 +84,12 @@ class CakkieApp : Application() {
                     }
                 }
         }
-
+        // Change the cache directory for ExoPlayer
+        val cacheDirectory = File(getExternalFilesDir(null), "exo_cache_cakkie")
         leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
         exoDatabaseProvider = ExoDatabaseProvider(this)
-        simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
+        simpleCache =
+            SimpleCache(cacheDirectory, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
 
     }
 

@@ -73,14 +73,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
     }
-//    val defaultDataSourceFactory =
-//        remember { DefaultDataSource.Factory(context, httpDataSourceFactory) }
 
-//    val dataSourceFactory: DataSource.Factory =
-//        DefaultDataSource.Factory(
-//            context,
-//            defaultDataSourceFactory
-//        )
     val cacheDataSourceFactory = CacheDataSource.Factory()
         .setCache(simpleCache)
         .setUpstreamDataSourceFactory(httpDataSourceFactory)

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -70,35 +72,28 @@ fun CakespirationItem(
 
     val context = LocalContext.current
 
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context)
+            .build()
+            .apply {
+                val source =
+                    progressiveMediaSource
+                        .createMediaSource(MediaItem.fromUri(item.media[0]))
+                setMediaSource(source)
+            }
+    }
 //    val exoPlayer = remember {
-//        ExoPlayer.Builder(context)
-//            .build()
-//            .apply {
-//                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-//                val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
-//                    context,
-//                    defaultDataSourceFactory
-//                )
-//                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-//                    .createMediaSource(MediaItem.fromUri(item.media.first()))
-//                setMediaSource(source)
-//                prepare()
-//            }
-//    }
-//    val exoPlayer = remember {
-//        ExoPlayer.Builder(context)
-//            .build()
-//            .apply {
+//        ExoPlayer.Builder(context).build().apply {
 //
-//                val source = progressiveMediaSource
-//                    .createMediaSource(MediaItem.fromUri(item.media[0]))
-//                setMediaSource(source)
-//                prepare()
-//            }
-//    }
+//        } }
 //    exoPlayer.playWhenReady = false
 //    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 //    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+//    exoPlayer.setMediaSource(
+//        progressiveMediaSource
+//            .createMediaSource(MediaItem.fromUri(item.media[0]))
+//    )
+//    exoPlayer.prepare()
 //
 //    val isPlaying = remember {
 //        derivedStateOf {
@@ -129,8 +124,7 @@ fun CakespirationItem(
 //            }
 //        })
         VideoPlayer(
-            progressiveMediaSource
-                .createMediaSource(MediaItem.fromUri(item.media[0])),
+            exoPlayer = exoPlayer,
             isPlaying = shouldPlay,
             mute = isMuted,
             onMute = onMute,
