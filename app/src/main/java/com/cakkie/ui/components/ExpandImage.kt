@@ -190,7 +190,14 @@ fun ExpandImage(
                                 modifier = Modifier.offset(x = (-24).dp)
                             )
                             Card(
-                                onClick = { navigator.navigate(ItemDetailsDestination) },
+                                onClick = {
+                                    navigator.navigate(
+                                        ItemDetailsDestination(
+                                            id = item.id,
+                                            item = item
+                                        )
+                                    )
+                                },
                                 modifier = Modifier
                                     .width(64.dp)
                                     .height(24.dp),

@@ -29,21 +29,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Description(navigator: DestinationsNavigator) {
-    val sizes = listOf("6 in", "8 in", "10 in")
+fun Description(item: Listing, navigator: DestinationsNavigator) {
+    val sizes = item.sizes.map { "$it in" }
     var selectedSize by remember { mutableStateOf(sizes.first()) }
     Column {
         Text(
-            text = "Indulge in the heavenly delight of our signature cake. Fluffy layers, creamy goodness, and fresh fruits combine for a slice of paradise. Join us and savor the sweetness! \uD83C\uDF70✨ \n" +
-                    "\n" +
-                    "#CakeLove #DessertParadise",
+            text = item.description,
             style = MaterialTheme.typography.bodyLarge,
             fontSize = 13.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -99,7 +99,7 @@ fun Description(navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Please note that under normal circumstances, this cake requires a minimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation.",
+            text = item.availablity,
             style = MaterialTheme.typography.bodyLarge,
             fontSize = 13.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -126,9 +126,9 @@ fun Description(navigator: DestinationsNavigator) {
 
                 Text(
                     text = when (it) {
-                        R.string.price -> "NGN 20,000"
+                        R.string.price -> "NGN ${NumberFormat.getInstance().format(item.price)}"
                         R.string.delivery_fee -> "NGN 1,000"
-                        else -> "NGN 21,000"
+                        else -> "NGN ${NumberFormat.getInstance().format(item.price.plus(1000))}"
                     },
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = if (it == R.string.total) 16.sp else 14.sp,

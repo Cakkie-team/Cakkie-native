@@ -29,13 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
@@ -43,19 +42,23 @@ import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.formatDate
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.skydoves.landscapist.ShimmerParams
+import com.skydoves.landscapist.glide.GlideImage
 
 @OptIn(
-    ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class
 )
 @Destination
 @Composable
-fun ItemDetails(navigator: DestinationsNavigator) {
+fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNavigator) {
     var expanded by remember { mutableStateOf(false) }
-    val imagePageState = rememberPagerState(pageCount = { 3 })
+    val imagePageState =
+        rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
     val pageState = rememberPagerState(pageCount = { 2 })
-
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     Column {
         IconButton(onClick = { navigator.popBackStack() }) {
             Image(
@@ -66,13 +69,21 @@ fun ItemDetails(navigator: DestinationsNavigator) {
         }
         Column(Modifier.verticalScroll(rememberScrollState())) {
             HorizontalPager(state = imagePageState) {
-                GlideImage(model = "https://source.unsplash.com/600x400/?cakes",
+                GlideImage(
+                    imageModel = item.media[it],
                     contentDescription = "cake",
                     modifier = Modifier
                         .clickable { expanded = !expanded }
                         .fillMaxWidth()
-                        .height(240.dp),
-                    contentScale = ContentScale.FillBounds)
+                        .height(screenWidth),
+                    contentScale = ContentScale.Crop,
+                    shimmerParams = ShimmerParams(
+                        baseColor = CakkieBrown.copy(0.4f),
+                        highlightColor = CakkieBrown.copy(0.8f),
+                        dropOff = 0.55f,
+                        tilt = 20f
+                    )
+                )
             }
 
             Row(
@@ -93,7 +104,7 @@ fun ItemDetails(navigator: DestinationsNavigator) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Strawberry Sponge cake",
+                text = item.name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -104,24 +115,31 @@ fun ItemDetails(navigator: DestinationsNavigator) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                GlideImage(model = "https://source.unsplash.com/60x60/?profile",
-                    contentDescription = "profile pic",
+                GlideImage(
+                    imageModel = item.shop.image,
+                    contentDescription = "shop logo",
                     modifier = Modifier
                         .size(32.dp)
                         .clip(shape = CircleShape)
                         .clickable {
                             navigator.navigate(ProfileDestination)
-                        })
+                        }, shimmerParams = ShimmerParams(
+                        baseColor = CakkieBrown.copy(0.4f),
+                        highlightColor = CakkieBrown.copy(0.8f),
+                        dropOff = 0.55f,
+                        tilt = 20f
+                    )
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Cake Paradise",
+                        text = item.shop.name,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "8 hours ago",
+                        text = item.createdAt.formatDate(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp
                     )
@@ -141,7 +159,7 @@ fun ItemDetails(navigator: DestinationsNavigator) {
             //page
             HorizontalPager(state = pageState) {
                 when (it) {
-                    0 -> Description(navigator)
+                    0 -> Description(item, navigator)
                     1 -> Reviews()
                 }
             }
