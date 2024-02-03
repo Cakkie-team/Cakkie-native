@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,9 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.screens.explore.ExploreViewModal
@@ -52,6 +51,7 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -61,53 +61,62 @@ import org.koin.androidx.compose.koinViewModel
 fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val video = viewModel.videos.observeAsState(listOf()).value
     val cakespirations = remember {
         mutableStateListOf(
             Listing(
                 id = "0",
                 name = "Chocolate cake",
                 description = "Chocolate cake, a cake with chocolate flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"),
+                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
                 createdAt = "2021-05-01T00:00:00Z"
             ),
             Listing(
                 id = "1",
                 name = "Vanilla cake",
                 description = "Vanilla cake, a cake with vanilla flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"),
+                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
                 createdAt = "2021-05-01T00:00:00Z"
             ),
             Listing(
                 id = "2",
                 name = "Strawberry cake",
                 description = "Strawberry cake, a cake with strawberry flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"),
+                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
                 createdAt = "2021-05-01T00:00:00Z"
             ),
             Listing(
                 id = "3",
                 name = "Red velvet cake",
                 description = "Red velvet cake, a cake with red velvet flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"),
+                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
                 createdAt = "2021-05-01T00:00:00Z"
             ),
             Listing(
                 id = "4",
                 name = "Carrot cake",
                 description = "Carrot cake, a cake with carrot flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://player.vimeo.com/external/537472004.sd.mp4?s=472545a4df65d461c962d882b793453960aee4b9&profile_id=165&oauth2_token_id=57447761"),
+                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
                 createdAt = "2021-05-01T00:00:00Z"
             ),
         )
     }
     val listState =
         rememberLazyListState(0)
+    LaunchedEffect(key1 = Unit) {
+        viewModel.updateVideos(context, cakespirations)
+    }
+
+
     LaunchedEffect(key1 = id) {
         if (id.isNotEmpty()) {
             if (cakespirations.find { it.id == id } == null) {
                 if (item == null) {
                     viewModel.getListing(id).addOnSuccessListener {
-                        cakespirations.add(0, it)
+                        cakespirations.add(it)
+                        scope.launch { listState.scrollToItem(cakespirations.indexOf(it)) }
+//                        viewModel.updateVideos(context, listOf(it))
                     }.addOnFailureListener {
                         Toaster(
                             context,
@@ -116,7 +125,8 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
                         )
                     }
                 } else {
-                    cakespirations.add(0, item)
+                    cakespirations.add(item)
+//                    viewModel.updateVideos(context, listOf(item))
                 }
             } else {
                 listState.scrollToItem(cakespirations.indexOf(cakespirations.find { it.id == id }))
@@ -125,36 +135,28 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
     }
 
     var isMuted by rememberSaveable { mutableStateOf(true) }
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
-    val dataSourceFactory: DataSource.Factory =
-        DefaultDataSource.Factory(
-            context,
-            defaultDataSourceFactory
-        )
-    val progressiveMediaSource = remember {
-        ProgressiveMediaSource.Factory(dataSourceFactory)
-    }
+
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
             Modifier.fillMaxSize(),
             state = listState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
-            items(items = cakespirations) {
+            items(items = video, key = { it.listings.id }) { listing ->
                 Box(
                     modifier = Modifier
                         .background(Color.Black)
                         .fillParentMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     CakespirationItem(
-                        progressiveMediaSource = progressiveMediaSource,
+                        exoPlayer = video[video.indexOfFirst { it.listings.id == listing.listings.id }].exoPlayer,
                         isMuted = isMuted,
                         onMute = { isMuted = it },
-                        item = it,
+                        item = listing.listings,
                         navigator = navigator,
                         shouldPlay = remember {
                             derivedStateOf { listState.firstVisibleItemIndex }
-                        }.value == cakespirations.indexOf(it)
+                        }.value == video.indexOf(listing)
                     )
                 }
             }

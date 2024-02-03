@@ -5,7 +5,6 @@ import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -87,7 +86,7 @@ fun VideoPlayer(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
-        }, modifier = Modifier.heightIn(max = screenWidth + 100.dp))
+        })
         if (exoPlayer.isLoading && exoPlayer.isPlaying.not()) {
             CircularProgressIndicator(
                 strokeWidth = 2.dp,
@@ -122,13 +121,14 @@ fun VideoPlayer(
         }
     }
 
-    DisposableEffect(exoPlayer) {
+    DisposableEffect(Unit) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
 //            if (!isPlaying) return@LifecycleEventObserver
             when (event) {
                 Lifecycle.Event.ON_START -> exoPlayer.play()
                 Lifecycle.Event.ON_STOP -> exoPlayer.pause()
-                else -> {}
+                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+                else -> exoPlayer.pause()
             }
         }
 
@@ -136,7 +136,7 @@ fun VideoPlayer(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
-//            exoPlayer.release()
+            exoPlayer.release()
         }
     }
 }

@@ -199,7 +199,7 @@ fun ExploreItem(
 
                                 val source = progressiveMediaSource
                                     .createMediaSource(MediaItem.fromUri(item.media[it]))
-                                setMediaSource(source)
+                                setMediaSource(source, true)
                                 prepare()
                             }
                     }

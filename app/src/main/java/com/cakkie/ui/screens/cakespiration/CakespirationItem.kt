@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,10 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -64,7 +61,7 @@ fun CakespirationItem(
     shouldPlay: Boolean,
     isMuted: Boolean,
     onMute: (Boolean) -> Unit,
-    progressiveMediaSource: ProgressiveMediaSource.Factory
+    exoPlayer: ExoPlayer
 ) {
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
     var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
@@ -87,17 +84,17 @@ fun CakespirationItem(
 //                prepare()
 //            }
 //    }
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build()
-            .apply {
-
-                val source = progressiveMediaSource
-                    .createMediaSource(MediaItem.fromUri(item.media[0]))
-                setMediaSource(source)
-                prepare()
-            }
-    }
+//    val exoPlayer = remember {
+//        ExoPlayer.Builder(context)
+//            .build()
+//            .apply {
+//
+//                val source = progressiveMediaSource
+//                    .createMediaSource(MediaItem.fromUri(item.media[0]))
+//                setMediaSource(source)
+//                prepare()
+//            }
+//    }
 //    exoPlayer.playWhenReady = false
 //    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 //    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
@@ -137,10 +134,12 @@ fun CakespirationItem(
             onMute = onMute,
             vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
             modifier = Modifier
+                .fillMaxSize()
                 .clickable {
                     onMute.invoke(!isMuted)
                 }
         )
+
 //        DisposableEffect(Unit) {
 //            onDispose { exoPlayer.release() }
 //        }

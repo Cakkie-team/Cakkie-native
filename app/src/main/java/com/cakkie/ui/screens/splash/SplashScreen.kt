@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.splash
 
+import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,9 @@ import com.cakkie.R
 import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.utill.Constants
+import com.cakkie.utill.VideoPreLoadingService
+import com.cakkie.utill.isVideoUrl
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -45,15 +49,35 @@ fun SplashScreen(navigator: DestinationsNavigator) {
             }
         }
         .build()
+
     //navigate to the next screen after 2 seconds
     LaunchedEffect(key1 = isReady) {
         if (isReady) {
             if (isLoggedIn) {
-                navigator.navigate(ExploreScreenDestination) {
-                    popUpTo(SplashScreenDestination.route) {
-                        inclusive = true
+                viewModel.getListings()
+                    .addOnSuccessListener {
+                        val videoList = it.data.filter {
+                            it.media.any { it.isVideoUrl() }
+                        }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
+                            .joinToString(",")
+//                        Timber.d("Video list: ${videoList.split(",")}")
+                        val array = arrayListOf<String>()
+                        array.addAll(videoList.split(","))
+
+                        //create intent
+                        val preloadingServiceIntent =
+                            Intent(context, VideoPreLoadingService::class.java)
+                        preloadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, array)
+
+                        //start intent
+                        context.startService(preloadingServiceIntent)
+                        //navigate to home
+                        navigator.navigate(ExploreScreenDestination) {
+                            popUpTo(SplashScreenDestination.route) {
+                                inclusive = true
+                            }
+                        }
                     }
-                }
             } else {
                 navigator.navigate(EmailScreenDestination) {
                     popUpTo(SplashScreenDestination.route) {

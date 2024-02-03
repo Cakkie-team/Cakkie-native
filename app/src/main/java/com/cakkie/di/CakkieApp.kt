@@ -5,7 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.annotation.OptIn
 import androidx.lifecycle.asLiveData
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.database.ExoDatabaseProvider
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
 import com.github.kittinunf.fuel.core.FuelManager
@@ -21,6 +26,7 @@ import org.koin.core.context.startKoin
 import timber.log.Timber
 
 class CakkieApp : Application() {
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
         // Start Timber logging
@@ -78,6 +84,10 @@ class CakkieApp : Application() {
                 }
         }
 
+        leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
+        exoDatabaseProvider = ExoDatabaseProvider(this)
+        simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
+
     }
 
 
@@ -100,5 +110,10 @@ class CakkieApp : Application() {
         // but you have to always specify it even if targeting lower versions, because it's handled
         // by AndroidX AppCompat library automatically
         const val NOTIFICATION_CHANNEL_ID = "Cakkie"
+
+        lateinit var simpleCache: SimpleCache
+        const val exoPlayerCacheSize: Long = 90 * 1024 * 1024
+        lateinit var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor
+        lateinit var exoDatabaseProvider: ExoDatabaseProvider
     }
 }

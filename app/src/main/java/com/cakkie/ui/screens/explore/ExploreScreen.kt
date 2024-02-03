@@ -40,12 +40,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
@@ -68,14 +69,24 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
-    val defaultDataSourceFactory = remember { DefaultDataSource.Factory(context) }
-    val dataSourceFactory: DataSource.Factory =
-        DefaultDataSource.Factory(
-            context,
-            defaultDataSourceFactory
-        )
+    val httpDataSourceFactory = remember {
+        DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+    }
+//    val defaultDataSourceFactory =
+//        remember { DefaultDataSource.Factory(context, httpDataSourceFactory) }
+
+//    val dataSourceFactory: DataSource.Factory =
+//        DefaultDataSource.Factory(
+//            context,
+//            defaultDataSourceFactory
+//        )
+    val cacheDataSourceFactory = CacheDataSource.Factory()
+        .setCache(simpleCache)
+        .setUpstreamDataSourceFactory(httpDataSourceFactory)
+        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
-        ProgressiveMediaSource.Factory(dataSourceFactory)
+        ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     Column(
         modifier = Modifier
