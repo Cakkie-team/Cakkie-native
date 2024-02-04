@@ -69,16 +69,14 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
-    val httpDataSourceFactory = remember {
-        DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-    }
 
-    val cacheDataSourceFactory = CacheDataSource.Factory()
-        .setCache(simpleCache)
-        .setUpstreamDataSourceFactory(httpDataSourceFactory)
-        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
+        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+        val cacheDataSourceFactory = CacheDataSource.Factory()
+            .setCache(simpleCache)
+            .setUpstreamDataSourceFactory(httpDataSourceFactory)
+            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     Column(

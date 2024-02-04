@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.cakkie.data.db.DB
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
+import com.cakkie.socket.SocketClient
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.screens.notification.NotificationViewModel
@@ -18,6 +19,10 @@ val appModule = module {
 
     single {
         Settings(androidApplication())
+    }
+
+    single {
+        SocketClient()
     }
 
     //inject SplashViewModel
@@ -46,9 +51,9 @@ val appModule = module {
     }
 
     //inject SettingsViewModel
-     viewModel {
-         SettingsViewModel(get())
-     }
+    viewModel {
+        SettingsViewModel(get())
+    }
 
 //    //inject OrderViewModel
 //    viewModel {

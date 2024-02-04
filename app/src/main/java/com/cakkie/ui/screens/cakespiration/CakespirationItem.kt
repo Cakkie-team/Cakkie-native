@@ -123,6 +123,11 @@ fun CakespirationItem(
 //                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 //            }
 //        })
+        if (!shouldPlay) {
+            exoPlayer.pause()
+        } else {
+            exoPlayer.play()
+        }
         VideoPlayer(
             exoPlayer = exoPlayer,
             isPlaying = shouldPlay,

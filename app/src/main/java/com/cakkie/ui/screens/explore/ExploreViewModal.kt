@@ -16,15 +16,19 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
+import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import io.socket.client.Socket
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class ExploreViewModal : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
+    private val socketClient: SocketClient by inject()
     private val _user = MutableLiveData<User>()
     private val _listings = MutableLiveData<ListingResponse>()
     private val _videos = MutableLiveData<List<VideoModel>>()
@@ -102,6 +106,9 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     init {
         getUser()
         getListings()
+        socketClient.socket.on(Socket.EVENT_CONNECT) {
+            Timber.d("socket connected")
+        }
     }
 }
 

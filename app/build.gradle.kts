@@ -168,6 +168,8 @@ dependencies {
     implementation(libs.landscapist.glide)
 
     //socket.io
-    implementation(libs.socket.io.client)
-    implementation(libs.engine.io.client)
+    implementation("io.socket:socket.io-client:2.0.0") {
+        exclude("org.json", "json")
+    }
+//    implementation(libs.engine.io.client)
 }

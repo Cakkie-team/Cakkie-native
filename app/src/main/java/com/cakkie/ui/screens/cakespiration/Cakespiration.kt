@@ -63,15 +63,13 @@ import org.koin.androidx.compose.koinViewModel
 fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
-    val httpDataSourceFactory = remember {
-        DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-    }
-    val cacheDataSourceFactory = CacheDataSource.Factory()
-        .setCache(CakkieApp.simpleCache)
-        .setUpstreamDataSourceFactory(httpDataSourceFactory)
-        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
+        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+        val cacheDataSourceFactory = CacheDataSource.Factory()
+            .setCache(CakkieApp.simpleCache)
+            .setUpstreamDataSourceFactory(httpDataSourceFactory)
+            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     val cakespirations = remember {

@@ -90,16 +90,13 @@ fun PreviewListing(
             }
         }
     }
-    val httpDataSourceFactory = remember {
-        DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-    }
-
-    val cacheDataSourceFactory = CacheDataSource.Factory()
-        .setCache(CakkieApp.simpleCache)
-        .setUpstreamDataSourceFactory(httpDataSourceFactory)
-        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     val progressiveMediaSource = remember {
+        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+        val cacheDataSourceFactory = CacheDataSource.Factory()
+            .setCache(CakkieApp.simpleCache)
+            .setUpstreamDataSourceFactory(httpDataSourceFactory)
+            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     Column(

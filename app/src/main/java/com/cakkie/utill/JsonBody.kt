@@ -3,7 +3,6 @@ package com.cakkie.utill
 import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 
 
 //object JsonBody {
@@ -59,48 +58,48 @@ object JsonBody {
     }
 }
 
-fun JSONObject.toMap(): Map<String, *> = keys().asSequence().associateWith {
-    when (val value = this[it]) {
-        is JSONArray -> {
-            val map = (0 until value.length()).associate {
-                Pair(it.toString(), value[it])
-            }
-            JSONObject(map).toMap().values.toList()
-        }
-
-        is JSONObject -> value.toMap()
-        JSONObject.NULL -> null
-        else -> value
-    }
-}
-
-fun String.toJson(): Map<String, *> {
-    val json = JSONObject(this)
-    return json.toMap()
-}
-
-fun String.toJsonArray(): List<Map<String, *>> {
-    val json = JSONArray(this)
-    val list = mutableListOf<Map<String, *>>()
-    for (i in 0 until json.length()) {
-        list.add(json.getJSONObject(i).toMap())
-    }
-    return list
-}
-
-fun String.toJsonObject(): Map<String, *> {
-    val json = JSONObject(this)
-    return json.toMap()
-}
-
-fun String.toJsonObjectList(): List<Map<String, *>> {
-    val json = JSONObject(this)
-    val list = mutableListOf<Map<String, *>>()
-    for (i in 0 until json.length()) {
-        list.add(json.getJSONObject(i.toString()).toMap())
-    }
-    return list
-}
+//fun JSONObject.toMap(): Map<String, *> = keys().asSequence().associateWith {
+//    when (val value = this[it]) {
+//        is JSONArray -> {
+//            val map = (0 until value.length()).associate {
+//                Pair(it.toString(), value[it])
+//            }
+//            JSONObject(map).toMap().values.toList()
+//        }
+//
+//        is JSONObject -> value.toMap()
+//        JSONObject.NULL -> null
+//        else -> value
+//    }
+//}
+//
+//fun String.toJson(): Map<String, *> {
+//    val json = JSONObject(this)
+//    return json.toMap()
+//}
+//
+//fun String.toJsonArray(): List<Map<String, *>> {
+//    val json = JSONArray(this)
+//    val list = mutableListOf<Map<String, *>>()
+//    for (i in 0 until json.length()) {
+//        list.add(json.getJSONObject(i).toMap())
+//    }
+//    return list
+//}
+//
+//fun String.toJsonObject(): Map<String, *> {
+//    val json = JSONObject(this)
+//    return json.toMap()
+//}
+//
+//fun String.toJsonObjectList(): List<Map<String, *>> {
+//    val json = JSONObject(this)
+//    val list = mutableListOf<Map<String, *>>()
+//    for (i in 0 until json.length()) {
+//        list.add(json.getJSONObject(i.toString()).toMap())
+//    }
+//    return list
+//}
 
 //json to object
 val gson = Gson()

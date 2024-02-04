@@ -52,13 +52,6 @@ fun VideoPlayer(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(isPlaying) {
-        if (!isPlaying) {
-            exoPlayer.pause()
-        } else {
-            exoPlayer.play()
-        }
-    }
     LaunchedEffect(key1 = mute) {
         if (mute) {
             exoPlayer.volume = 0f
@@ -66,7 +59,7 @@ fun VideoPlayer(
             exoPlayer.volume = 1f
         }
     }
-    exoPlayer.playWhenReady = isPlaying
+    exoPlayer.playWhenReady = false
     exoPlayer.videoScalingMode =
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE

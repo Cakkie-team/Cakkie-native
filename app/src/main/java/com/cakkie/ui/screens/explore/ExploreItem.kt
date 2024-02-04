@@ -178,11 +178,16 @@ fun ExploreItem(
                 if (item.media[it].isVideoUrl()) {
                     val exoPlayer = remember {
                         ExoPlayer.Builder(context).build().apply {
-                            playWhenReady = shouldPlay
+                            playWhenReady = false
                             val source = progressiveMediaSource
                                 .createMediaSource(MediaItem.fromUri(item.media[it]))
                             setMediaSource(source)
                         }
+                    }
+                    if (!isPlaying) {
+                        exoPlayer.pause()
+                    } else {
+                        exoPlayer.play()
                     }
 
                     VideoPlayer(

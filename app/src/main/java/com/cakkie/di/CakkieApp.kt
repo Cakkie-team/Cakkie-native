@@ -13,6 +13,7 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
+import com.cakkie.socket.SocketClient
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Headers
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.io.File
+import java.net.URISyntaxException
 
 class CakkieApp : Application() {
     @OptIn(UnstableApi::class)
@@ -81,6 +83,14 @@ class CakkieApp : Application() {
                                 Headers.AUTHORIZATION to "Bearer $it"
                             )
                         }
+                    }
+                    try {
+                        if (it.isNullOrBlank().not()) {
+                            val socketClient: SocketClient by inject()
+                            socketClient.connect(it)
+                        }
+                    } catch (e: URISyntaxException) {
+                        Timber.e(e)
                     }
                 }
         }
