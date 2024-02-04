@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,6 +55,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.cakkie.R
+import com.cakkie.data.db.models.User
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
@@ -67,9 +69,12 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.isVideoUrl
+import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
@@ -78,6 +83,7 @@ import com.skydoves.landscapist.glide.GlideImage
 )
 @Composable
 fun ExploreItem(
+    user: User,
     item: Listing = Listing(),
     shouldPlay: Boolean = false,
     isMuted: Boolean = false,
@@ -85,6 +91,7 @@ fun ExploreItem(
     progressiveMediaSource: ProgressiveMediaSource.Factory,
     navigator: DestinationsNavigator
 ) {
+    val viewModal: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
     var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
@@ -100,6 +107,15 @@ fun ExploreItem(
     val isPlaying = remember {
         derivedStateOf { shouldPlay && !expanded }
     }.value
+
+    DisposableEffect(Unit) {
+        viewModal.socket.on("like-${item.id}") {
+            Timber.d("like ${it[0]}")
+            val listing = it[0].toString().toObject(Listing::class.java)
+            viewModal.updateListing(listing.id, listing)
+        }
+        onDispose { }
+    }
     Column {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -241,6 +257,7 @@ fun ExploreItem(
                     contentDescription = "heart",
                     modifier = Modifier
                         .clickable {
+                            viewModal.likeListing(item.id, user.id)
                             isLiked = !isLiked
                         }
                         .padding(8.dp)

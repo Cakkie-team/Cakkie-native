@@ -19,11 +19,10 @@ import com.cakkie.networkModels.ListingResponse
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
-import io.socket.client.Socket
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class ExploreViewModal : ViewModel(), KoinComponent {
@@ -31,13 +30,11 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val socketClient: SocketClient by inject()
     private val _user = MutableLiveData<User>()
     private val _listings = MutableLiveData<ListingResponse>()
-    private val _videos = MutableLiveData<List<VideoModel>>()
 
 
     val listings = _listings
     val user = _user
-    val videos = _videos
-
+    val socket = socketClient.socket
 
     private fun getUser() {
         viewModelScope.launch {
@@ -74,41 +71,28 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         prepare()
     }
 
-    fun updateVideos(context: Context, listings: List<Listing>) {
-        val list = mutableListOf<VideoModel>()
-        _videos.value?.let { list.addAll(it.toList()) }
-        val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-        val dataSourceFactory: DataSource.Factory =
-            DefaultDataSource.Factory(
-                context,
-                defaultDataSourceFactory
-            )
-        val progressiveMediaSource =
-            ProgressiveMediaSource.Factory(dataSourceFactory)
+    fun likeListing(id: String, userId: String) {
+        val data = JSONObject()
+        data.put("listingId", id)
+        data.put("userId", userId)
+        socketClient.socket.emit("like-listing", data)
+    }
 
-        val videos = listings.map {
-            val exoPlayer =
-                ExoPlayer.Builder(context)
-                    .build()
-                    .apply {
-
-                        val source = progressiveMediaSource
-                            .createMediaSource(MediaItem.fromUri(it.media[0]))
-                        setMediaSource(source)
-                        prepare()
-                    }
-            VideoModel(exoPlayer, it)
-        }
-        list.addAll(videos)
-        _videos.value = list
+    fun updateListing(id: String, listing: Listing) {
+        val newListing = _listings.value?.copy(
+            data = _listings.value!!.data.map {
+                if (listing.id == id) {
+                    listing
+                } else {
+                    it
+                }
+            }
+        )
     }
 
     init {
         getUser()
         getListings()
-        socketClient.socket.on(Socket.EVENT_CONNECT) {
-            Timber.d("socket connected")
-        }
     }
 }
 

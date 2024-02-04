@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,6 +43,7 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
+import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CakkieButton
@@ -70,6 +72,7 @@ fun PreviewListing(
 ) {
     val context = LocalContext.current
     val viewModel: ShopViewModel = koinViewModel()
+    val user = viewModel.user.observeAsState(User()).value
     var listing by rememberSaveable {
         mutableStateOf(item)
     }
@@ -175,6 +178,7 @@ fun PreviewListing(
             }
 
             ExploreItem(
+                user = user,
                 item = listing,
                 navigator = navigator,
                 shouldPlay = true,
