@@ -166,4 +166,8 @@ dependencies {
 
     //glide with shimmer effect
     implementation(libs.landscapist.glide)
+
+    //socket.io
+    implementation(libs.socket.io.client)
+    implementation(libs.engine.io.client)
 }

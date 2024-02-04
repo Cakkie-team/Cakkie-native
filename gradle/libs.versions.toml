@@ -3,6 +3,7 @@ accompanistPermissionsVersion = "0.19.0"
 agp = "8.2.1"
 coilGif = "2.1.0"
 commonsIoVersion = "2.13.0"
+engineIoClientVersion = "1.0.0"
 fuelVersion = "2.3.1"
 gsonVersion = "2.10.1"
 kotlin = "1.9.0"
@@ -46,6 +47,7 @@ lifecycle-runtime = "1.5.4"
 room = "2.6.0"
 
 # Timber
+socketIoClientVersion = "1.0.0"
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
 toolbarComposeVersion = "2.3.5"
@@ -73,6 +75,7 @@ androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "medi
 androidx-ui-v154 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIoVersion" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+engine-io-client = { module = "io.socket:engine.io-client", version.ref = "engineIoClientVersion" }
 fuel = { module = "com.github.kittinunf.fuel:fuel", version.ref = "fuelVersion" }
 fuel-android = { module = "com.github.kittinunf.fuel:fuel-android", version.ref = "fuelVersion" }
 fuel-coroutines = { module = "com.github.kittinunf.fuel:fuel-coroutines", version.ref = "fuelVersion" }
@@ -89,6 +92,7 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "compose" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClientVersion" }
 toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
