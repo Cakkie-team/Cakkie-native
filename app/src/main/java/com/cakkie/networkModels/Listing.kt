@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Stable
 data class Listing(
     @SerialName("Comment")
-    val comments: List<String> = listOf(),
+    val comments: List<Comment> = listOf(),
     val available: Boolean = false,
     val availablity: String = "",
     val commentCount: Int = 0,

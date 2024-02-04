@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination(style = DestinationStyleBottomSheet::class)
@@ -45,6 +47,17 @@ fun Comment(item: Listing = Listing(), navigator: DestinationsNavigator) {
 
     //get screen height
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
+    DisposableEffect(Unit) {
+        viewModal.socket.on("comment-${item.id}") {
+            Timber.d("comment ${it[0]}")
+//            val newListing = it[0].toString().toObject(Listing::class.java)
+//            listing = newListing
+        }
+        onDispose {
+            viewModal.socket.off("comment-${item.id}")
+        }
+    }
     Column(
         modifier = Modifier
 //            .padding(horizontal = 16.dp)
@@ -85,7 +98,7 @@ fun Comment(item: Listing = Listing(), navigator: DestinationsNavigator) {
                     .fillMaxWidth()
             ) {
                 GlideImage(
-                    model = user.profileImage.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
+                    model = user.profileImage.replace("http", "https"),
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
