@@ -274,7 +274,7 @@ fun ExploreItem(
                     painter = painterResource(id = R.drawable.comment),
                     contentDescription = "comment",
                     modifier = Modifier
-                        .clickable { navigator.navigate(CommentDestination) }
+                        .clickable { navigator.navigate(CommentDestination(item = listing)) }
                         .padding(8.dp)
                 )
                 Image(
@@ -353,7 +353,7 @@ fun ExploreItem(
             text = "View all ${listing.commentCount} comments",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
-                .clickable { navigator.navigate(CommentDestination) }
+                .clickable { navigator.navigate(CommentDestination(item)) }
                 .padding(start = 16.dp, end = 16.dp, top = 5.dp),
             color = CakkieBrown
         )

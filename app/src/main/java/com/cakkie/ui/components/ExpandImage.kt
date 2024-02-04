@@ -163,7 +163,7 @@ fun ExpandImage(
                                     modifier = Modifier
                                         .clickable {
                                             onDismiss.invoke()
-                                            navigator.navigate(CommentDestination)
+                                            navigator.navigate(CommentDestination(item = item))
                                         }
                                         .padding(8.dp)
                                 )
@@ -251,7 +251,7 @@ fun ExpandImage(
                             modifier = Modifier
                                 .clickable {
                                     onDismiss.invoke()
-                                    navigator.navigate(CommentDestination)
+                                    navigator.navigate(CommentDestination(item = item))
                                 }
                                 .padding(start = 16.dp, end = 16.dp, top = 5.dp),
                             color = CakkieBrown

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,15 +23,26 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CommentInput
+import com.cakkie.ui.screens.destinations.CommentDestination
+import com.cakkie.ui.screens.destinations.MyProfileDestination
+import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun Comment() {
+fun Comment(item: Listing = Listing(), navigator: DestinationsNavigator) {
+    val viewModal: ExploreViewModal = koinViewModel()
+    val user = viewModal.user.observeAsState(User()).value
+
     //get screen height
     val screenHeight = LocalConfiguration.current.screenHeightDp
     Column(
@@ -73,17 +85,23 @@ fun Comment() {
                     .fillMaxWidth()
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
+                    model = user.profileImage.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-
+                            navigator.navigate(MyProfileDestination) {
+                                popUpTo(CommentDestination) {
+                                    inclusive = true
+                                }
+                            }
                         }
                 )
 //            Spacer(modifier = Modifier.width(8.dp))
-                CommentInput()
+                CommentInput {
+                    viewModal.commentListing(item.id, user.id, it)
+                }
             }
         }
     }

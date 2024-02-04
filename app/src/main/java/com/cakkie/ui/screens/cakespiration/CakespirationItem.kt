@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,10 +51,14 @@ import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
+import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieYellow
 import com.cakkie.utill.formatDate
+import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -66,9 +71,11 @@ fun CakespirationItem(
     onMute: (Boolean) -> Unit,
     progressiveMediaSource: ProgressiveMediaSource.Factory
 ) {
+    val viewModal: ExploreViewModal = koinViewModel()
+    var listing by rememberSaveable { mutableStateOf(item) }
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
-    var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
-    var isStarred by rememberSaveable { mutableStateOf(item.isStarred) }
+    var isLiked by rememberSaveable { mutableStateOf(listing.isLiked) }
+    var isStarred by rememberSaveable { mutableStateOf(listing.isStarred) }
 
     val context = LocalContext.current
 
@@ -78,35 +85,34 @@ fun CakespirationItem(
             .apply {
                 val source =
                     progressiveMediaSource
-                        .createMediaSource(MediaItem.fromUri(item.media[0]))
+                        .createMediaSource(MediaItem.fromUri(listing.media[0]))
                 setMediaSource(source)
             }
     }
-//    val exoPlayer = remember {
-//        ExoPlayer.Builder(context).build().apply {
-//
-//        } }
-//    exoPlayer.playWhenReady = false
-//    exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-//    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-//    exoPlayer.setMediaSource(
-//        progressiveMediaSource
-//            .createMediaSource(MediaItem.fromUri(item.media[0]))
-//    )
-//    exoPlayer.prepare()
-//
-//    val isPlaying = remember {
-//        derivedStateOf {
-//            exoPlayer.isPlaying
-//        }
-//    }
-//    LaunchedEffect(key1 = shouldPlay) {
-//        if (shouldPlay) {
-//            exoPlayer.play()
-//        } else {
-//            exoPlayer.pause()
-//        }
-//    }
+
+    DisposableEffect(Unit) {
+        viewModal.socket.on("like-${listing.id}") {
+//            Timber.d("like ${it[0]}")
+            val newListing = it[0].toString().toObject(Listing::class.java)
+            listing = newListing
+        }
+        viewModal.socket.on("star-${listing.id}") {
+//            Timber.d("like ${it[0]}")
+            val newListing = it[0].toString().toObject(Listing::class.java)
+            listing = newListing
+        }
+        viewModal.socket.on("comment-${listing.id}") {
+            Timber.d("like ${it[0]}")
+//            val newListing = it[0].toString().toObject(Listing::class.java)
+//            listing = newListing
+        }
+        onDispose {
+            viewModal.socket.off("like-${listing.id}")
+            viewModal.socket.off("star-${listing.id}")
+            viewModal.socket.off("comment-${listing.id}")
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -170,7 +176,7 @@ fun CakespirationItem(
                     .padding(8.dp)
             )
             Text(
-                text = item.totalLikes.toString(),
+                text = listing.totalLikes.toString(),
                 color = CakkieBackground,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -180,11 +186,11 @@ fun CakespirationItem(
                 contentDescription = "comment",
                 tint = CakkieBackground,
                 modifier = Modifier
-                    .clickable { navigator.navigate(CommentDestination) }
+                    .clickable { navigator.navigate(CommentDestination(listing)) }
                     .padding(8.dp)
             )
             Text(
-                text = item.commentCount.toString(),
+                text = listing.commentCount.toString(),
                 color = CakkieBackground,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -231,7 +237,7 @@ fun CakespirationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = item.shop.name.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
+                    model = listing.shop.name.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
                     contentDescription = "shop logo",
                     modifier = Modifier
                         .size(38.dp)
@@ -243,14 +249,14 @@ fun CakespirationItem(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = item.shop.name.ifEmpty { "Cake Paradise" },
+                        text = listing.shop.name.ifEmpty { "Cake Paradise" },
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
                         color = CakkieBackground
                     )
                     Text(
-                        text = item.createdAt.formatDate(),
+                        text = listing.createdAt.formatDate(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp,
                         color = CakkieBackground
@@ -259,7 +265,7 @@ fun CakespirationItem(
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = item.description,
+                text = listing.description,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(0.8f),
                 maxLines = maxLines,

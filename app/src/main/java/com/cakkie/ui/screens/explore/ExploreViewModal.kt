@@ -85,6 +85,14 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         socketClient.socket.emit("star-listing", data)
     }
 
+    fun commentListing(id: String, userId: String, comment: String) {
+        val data = JSONObject()
+        data.put("listingId", id)
+        data.put("userId", userId)
+        data.put("comment", comment)
+        socketClient.socket.emit("comment-listing", data)
+    }
+
     init {
         getUser()
         getListings()
