@@ -203,7 +203,7 @@ fun PreviewListing(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
-                    .clickable { navigator.navigate(CommentDestination) }
+                    .clickable { navigator.navigate(CommentDestination(item)) }
             )
             Spacer(modifier = Modifier.height(80.dp))
         }
