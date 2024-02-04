@@ -208,7 +208,9 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 ExploreItem(
                     navigator = navigator,
                     item = listing,
-                    shouldPlay = index == visibleItem,
+                    shouldPlay = remember {
+                        derivedStateOf { index == visibleItem }
+                    }.value,
                     isMuted = isMuted,
                     onMute = { isMuted = it },
                     progressiveMediaSource = progressiveMediaSource
