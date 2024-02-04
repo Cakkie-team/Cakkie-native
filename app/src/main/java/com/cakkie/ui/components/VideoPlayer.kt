@@ -59,12 +59,20 @@ fun VideoPlayer(
             exoPlayer.volume = 1f
         }
     }
-    exoPlayer.playWhenReady = false
+
+    exoPlayer.playWhenReady = isPlaying
     exoPlayer.videoScalingMode =
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
     exoPlayer.volume = if (mute) 0f else 1f
     exoPlayer.prepare()
+    LaunchedEffect(isPlaying) {
+        if (!isPlaying) {
+            exoPlayer.pause()
+        } else {
+            exoPlayer.play()
+        }
+    }
     Box(
         modifier = modifier
             .fillMaxSize(),
@@ -118,7 +126,7 @@ fun VideoPlayer(
 
     DisposableEffect(exoPlayer) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
-//            if (!isPlaying) return@LifecycleEventObserver
+            if (!isPlaying) return@LifecycleEventObserver
             when (event) {
                 Lifecycle.Event.ON_START -> exoPlayer.play()
                 Lifecycle.Event.ON_STOP -> exoPlayer.pause()

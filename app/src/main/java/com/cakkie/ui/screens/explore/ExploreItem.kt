@@ -213,11 +213,6 @@ fun ExploreItem(
                             setMediaSource(source)
                         }
                     }
-                    if (!isPlaying) {
-                        exoPlayer.pause()
-                    } else {
-                        exoPlayer.play()
-                    }
 
                     VideoPlayer(
                         exoPlayer = exoPlayer,
@@ -290,6 +285,7 @@ fun ExploreItem(
                     contentDescription = "star",
                     modifier = Modifier
                         .clickable {
+                            viewModal.starListing(listing.id, user.id)
                             isStarred = !isStarred
                         }
                         .padding(8.dp)

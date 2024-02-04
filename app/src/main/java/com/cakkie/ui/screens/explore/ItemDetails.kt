@@ -155,11 +155,7 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                         val source = progressiveMediaSource
                             .createMediaSource(MediaItem.fromUri(item.media[it]))
                         exoPlayer.setMediaSource(source)
-                        if (!expanded) {
-                            exoPlayer.pause()
-                        } else {
-                            exoPlayer.play()
-                        }
+
                         VideoPlayer(
                             exoPlayer = exoPlayer,
                             isPlaying = !expanded,
