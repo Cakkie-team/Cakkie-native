@@ -78,16 +78,11 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         socketClient.socket.emit("like-listing", data)
     }
 
-    fun updateListing(id: String, listing: Listing) {
-        val newListing = _listings.value?.copy(
-            data = _listings.value!!.data.map {
-                if (listing.id == id) {
-                    listing
-                } else {
-                    it
-                }
-            }
-        )
+    fun starListing(id: String, userId: String) {
+        val data = JSONObject()
+        data.put("listingId", id)
+        data.put("userId", userId)
+        socketClient.socket.emit("star-listing", data)
     }
 
     init {

@@ -93,28 +93,41 @@ fun ExploreItem(
 ) {
     val viewModal: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
+    var listing by rememberSaveable { mutableStateOf(item) }
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
-    var isLiked by rememberSaveable { mutableStateOf(item.isLiked) }
-    var isStarred by rememberSaveable { mutableStateOf(item.isStarred) }
+    var isLiked by rememberSaveable { mutableStateOf(listing.isLiked) }
+    var isStarred by rememberSaveable { mutableStateOf(listing.isStarred) }
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val isSponsored by remember {
-        mutableStateOf(false)
-    }
+    val isSponsored by remember { mutableStateOf(false) }
 
     val pageState =
-        rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
+        rememberPagerState(pageCount = { if (listing.media.isEmpty()) 1 else listing.media.size })
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val isPlaying = remember {
         derivedStateOf { shouldPlay && !expanded }
     }.value
 
     DisposableEffect(Unit) {
-        viewModal.socket.on("like-${item.id}") {
-            Timber.d("like ${it[0]}")
-            val listing = it[0].toString().toObject(Listing::class.java)
-            viewModal.updateListing(listing.id, listing)
+        viewModal.socket.on("like-${listing.id}") {
+//            Timber.d("like ${it[0]}")
+            val newListing = it[0].toString().toObject(Listing::class.java)
+            listing = newListing
         }
-        onDispose { }
+        viewModal.socket.on("star-${listing.id}") {
+//            Timber.d("like ${it[0]}")
+            val newListing = it[0].toString().toObject(Listing::class.java)
+            listing = newListing
+        }
+        viewModal.socket.on("comment-${listing.id}") {
+            Timber.d("like ${it[0]}")
+//            val newListing = it[0].toString().toObject(Listing::class.java)
+//            listing = newListing
+        }
+        onDispose {
+            viewModal.socket.off("like-${listing.id}")
+            viewModal.socket.off("star-${listing.id}")
+            viewModal.socket.off("comment-${listing.id}")
+        }
     }
     Column {
         Spacer(modifier = Modifier.height(30.dp))
@@ -128,7 +141,7 @@ fun ExploreItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    imageModel = item.shop.image,
+                    imageModel = listing.shop.image,
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
@@ -140,12 +153,12 @@ fun ExploreItem(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = item.shop.name,
+                        text = listing.shop.name,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (isSponsored) stringResource(id = R.string.sponsored) else item.createdAt.formatDate(),
+                        text = if (isSponsored) stringResource(id = R.string.sponsored) else listing.createdAt.formatDate(),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -191,12 +204,12 @@ fun ExploreItem(
 //                    .background(Color.Black.copy(alpha = 0.6f))
             ) {
 
-                if (item.media[it].isVideoUrl()) {
+                if (listing.media[it].isVideoUrl()) {
                     val exoPlayer = remember {
                         ExoPlayer.Builder(context).build().apply {
                             playWhenReady = false
                             val source = progressiveMediaSource
-                                .createMediaSource(MediaItem.fromUri(item.media[it]))
+                                .createMediaSource(MediaItem.fromUri(listing.media[it]))
                             setMediaSource(source)
                         }
                     }
@@ -216,13 +229,13 @@ fun ExploreItem(
                             .heightIn(max = screenHeight * 0.7f)
                             .clickable {
                                 navigator.navigate(
-                                    CakespirationDestination(id = item.id, item = item)
+                                    CakespirationDestination(id = listing.id, item = listing)
                                 )
                             }
                     )
                 } else {
                     GlideImage(
-                        imageModel = item.media[it],
+                        imageModel = listing.media[it],
                         contentDescription = "cake",
                         modifier = Modifier
                             .clickable { expanded = !expanded }
@@ -257,7 +270,7 @@ fun ExploreItem(
                     contentDescription = "heart",
                     modifier = Modifier
                         .clickable {
-                            viewModal.likeListing(item.id, user.id)
+                            viewModal.likeListing(listing.id, user.id)
                             isLiked = !isLiked
                         }
                         .padding(8.dp)
@@ -295,8 +308,8 @@ fun ExploreItem(
                 onClick = {
                     navigator.navigate(
                         ItemDetailsDestination(
-                            id = item.id,
-                            item = item
+                            id = listing.id,
+                            item = listing
                         )
                     )
                 },
@@ -318,13 +331,13 @@ fun ExploreItem(
             }
         }
         Text(
-            text = "${item.totalLikes} Likes",
+            text = "${listing.totalLikes} Likes",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp),
             color = CakkieBrown
         )
         Text(
-            text = item.description,
+            text = listing.description,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
             maxLines = maxLines,
@@ -341,7 +354,7 @@ fun ExploreItem(
             )
         }
         Text(
-            text = "View all ${item.commentCount} comments",
+            text = "View all ${listing.commentCount} comments",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .clickable { navigator.navigate(CommentDestination) }
@@ -352,7 +365,7 @@ fun ExploreItem(
     }
 
     ExpandImage(
-        item = item,
+        item = listing,
         expanded = expanded,
         onDismiss = { expanded = false },
         navigator = navigator,
