@@ -38,7 +38,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
@@ -53,6 +52,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
 import com.cakkie.R
 import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.ExpandImage
@@ -96,7 +96,7 @@ fun ExploreItem(
 
     val pageState =
         rememberPagerState(pageCount = { if (item.media.isEmpty()) 1 else item.media.size })
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val isPlaying = remember {
         derivedStateOf { shouldPlay && !expanded }
     }.value
@@ -170,27 +170,11 @@ fun ExploreItem(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+//                    .height(screenHeight - 100.dp)
 //                    .clickable { expanded = !expanded }
 //                    .background(Color.Black.copy(alpha = 0.6f))
             ) {
-                GlideImage(
-                    imageModel = item.media[it],
-                    contentDescription = "cake",
-                    modifier = Modifier
-                        .clickable { expanded = !expanded }
-                        .heightIn(max = screenWidth + 100.dp)
-                        .fillMaxWidth()
-                        .then(
-                            if (item.media[it].isVideoUrl()) Modifier.blur(10.dp) else Modifier
-                        ),
-                    contentScale = ContentScale.FillWidth,
-                    shimmerParams = ShimmerParams(
-                        baseColor = CakkieBrown.copy(0.4f),
-                        highlightColor = CakkieBrown.copy(0.8f),
-                        dropOff = 0.55f,
-                        tilt = 20f
-                    )
-                )
+
                 if (item.media[it].isVideoUrl()) {
                     val exoPlayer = remember {
                         ExoPlayer.Builder(context).build().apply {
@@ -206,13 +190,30 @@ fun ExploreItem(
                         isPlaying = isPlaying,
                         mute = isMuted,
                         onMute = onMute,
+                        vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL,
                         modifier = Modifier
-                            .heightIn(max = screenWidth + 100.dp)
+                            .heightIn(max = screenHeight * 0.7f)
                             .clickable {
                                 navigator.navigate(
                                     CakespirationDestination(id = item.id, item = item)
                                 )
                             }
+                    )
+                } else {
+                    GlideImage(
+                        imageModel = item.media[it],
+                        contentDescription = "cake",
+                        modifier = Modifier
+                            .clickable { expanded = !expanded }
+                            .heightIn(max = screenHeight * 0.65f)
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth,
+                        shimmerParams = ShimmerParams(
+                            baseColor = CakkieBrown.copy(0.4f),
+                            highlightColor = CakkieBrown.copy(0.8f),
+                            dropOff = 0.55f,
+                            tilt = 20f
+                        )
                     )
                 }
             }
