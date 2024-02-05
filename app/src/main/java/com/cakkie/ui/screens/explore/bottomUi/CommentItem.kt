@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +30,30 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Comment
+import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.utill.formatDate
+import com.cakkie.utill.toObject
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CommentItem(item: Comment) {
+fun CommentItem(item: Comment, userId: String, viewModal: ExploreViewModal) {
+
     var comment by remember {
         mutableStateOf(item)
     }
     var isLiked by remember {
         mutableStateOf(comment.isLiked)
     }
+    DisposableEffect(Unit) {
+        viewModal.socket.on("like-${item.id}") {
+            val newComment = it[0].toString().toObject(Comment::class.java)
+            comment = newComment
+        }
+        onDispose {
+            viewModal.socket.off("like-${item.id}")
+        }
+    }
+
     Column(
         Modifier.padding(horizontal = 16.dp)
     ) {
@@ -96,6 +110,7 @@ fun CommentItem(item: Comment) {
                     modifier = Modifier
                         .size(24.dp)
                         .clickable {
+                            viewModal.likeComment(item.id, userId)
                             isLiked = !isLiked
                         }
                 )

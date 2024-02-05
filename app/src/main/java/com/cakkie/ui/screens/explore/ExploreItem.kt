@@ -108,17 +108,14 @@ fun ExploreItem(
 
     DisposableEffect(Unit) {
         viewModal.socket.on("like-${listing.id}") {
-//            Timber.d("like ${it[0]}")
             val newListing = it[0].toString().toObject(Listing::class.java)
             listing = newListing
         }
         viewModal.socket.on("star-${listing.id}") {
-//            Timber.d("like ${it[0]}")
             val newListing = it[0].toString().toObject(Listing::class.java)
             listing = newListing
         }
         viewModal.socket.on("comment-${listing.id}") {
-//            Timber.d("like ${it[0]}")
             val newListing = listing.copy(commentCount = listing.commentCount + 1)
             listing = newListing
         }

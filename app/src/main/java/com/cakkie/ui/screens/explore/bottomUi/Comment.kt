@@ -113,7 +113,7 @@ fun Comment(item: Listing = Listing(), navigator: DestinationsNavigator) {
             )
         ) {
             items(items = comments, key = { it.id }) {
-                CommentItem(it)
+                CommentItem(it, user.id, viewModal)
             }
             if (comments.isEmpty()) item {
                 Spacer(modifier = Modifier.height(16.dp))
