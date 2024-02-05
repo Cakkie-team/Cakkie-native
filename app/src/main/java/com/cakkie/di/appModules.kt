@@ -8,6 +8,7 @@ import com.cakkie.socket.SocketClient
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.screens.notification.NotificationViewModel
+import com.cakkie.ui.screens.profile.ProfileViewModel
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
@@ -53,6 +54,11 @@ val appModule = module {
     //inject SettingsViewModel
     viewModel {
         SettingsViewModel(get())
+    }
+
+    //inject ProfileViewModel
+    viewModel {
+        ProfileViewModel()
     }
 
 //    //inject OrderViewModel

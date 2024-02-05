@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -27,14 +28,15 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,16 +46,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.data.db.models.ShopModel
+import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -65,22 +70,25 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
-import timber.log.Timber
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
-    //screen size
-    val configuration = LocalConfiguration.current
-    val height = configuration.screenHeightDp.dp
+    val viewModel: ProfileViewModel = koinViewModel()
+    val user = viewModel.user.observeAsState(User()).value
+    val post = viewModel.listings.observeAsState(ListingResponse()).value
+    val shop = viewModel.shop.observeAsState(ShopModel()).value
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
+    var activeTab by rememberSaveable {
+        mutableStateOf("posts")
+    }
     val state = rememberCollapsingToolbarScaffoldState()
     val offsetY = state.offsetY // y offset of the layout
-    val progress = state.toolbarState.progress
-    Timber.d("offsetY: $offsetY progress: $progress")
+//    Timber.d("offsetY: $offsetY progress: $progress")
     val gradient = Brush.linearGradient(
         0.0f to Color.Transparent,
         500.0f to Color.Black,
@@ -129,7 +137,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         contentAlignment = Alignment.TopCenter
                     ) {
                         GlideImage(
-                            model = "https://source.unsplash.com/600x400/?cakes,cover",
+                            model = user.coverImage[0].replace("http", "https"),
                             contentDescription = "cover",
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
@@ -137,7 +145,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                 .height(150.dp)
                         )
                         GlideImage(
-                            model = "https://source.unsplash.com/100x100/?profile,cute",
+                            model = user.profileImage.replace("http", "https"),
                             contentDescription = "profile pic",
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
@@ -152,16 +160,19 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         )
                     }
                     Text(
-                        text = "Jennifer Victor",
+                        text = user.name,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp
                     )
                     Text(
-                        text = "   Uyo Nwaniba",
+                        text = user.address,
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .align(Alignment.CenterHorizontally)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
@@ -174,6 +185,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         CakkieButton(
                             text = stringResource(id = R.string.edit_profile),
                         ) {
+//                            navigator.navigate()
                         }
                         OutlinedButton(
                             onClick = {},
@@ -223,7 +235,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "870",
+                                text = post.data.size.toString(),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = CakkieBrown
                             )
@@ -240,7 +252,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "120k",
+                                text = shop.followingCount.toString(),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = CakkieBrown
                             )
@@ -257,7 +269,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "354k",
+                                text = shop.followers.toString(),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = CakkieBrown
                             )
@@ -280,12 +292,12 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 OutlinedButton(
-                                    onClick = {},
+                                    onClick = { activeTab = "posts" },
                                     modifier = Modifier
                                         .size(width = 90.dp, height = 34.dp),
                                     border = BorderStroke(1.dp, color = CakkieLightBrown),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = CakkieBackground,
+                                        containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
                                     shape = RoundedCornerShape(60)
@@ -297,12 +309,12 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                     )
                                 }
                                 Button(
-                                    onClick = {},
+                                    onClick = { activeTab = "favourite" },
                                     modifier = Modifier
                                         .size(width = 200.dp, height = 34.dp)
                                         .padding(start = 20.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = CakkieOrange,
+                                        containerColor = if (activeTab == "favourite") CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
                                     shape = RoundedCornerShape(60)
@@ -324,7 +336,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
 //                    .nestedScroll(nestedScroll)
                     .padding(horizontal = 2.dp, vertical = 10.dp)
             ) {
-                items(50) {
+                items(items = post.data, key = { it.id }) { item ->
                     Box(
                         modifier = Modifier
                             .padding(2.dp)
@@ -332,8 +344,8 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         contentAlignment = Alignment.BottomEnd
                     ) {
                         GlideImage(
-                            model = "https://source.unsplash.com/300x300/?cakes",
-                            contentDescription = "",
+                            model = item.media[0],
+                            contentDescription = "post image",
                             modifier = Modifier
                                 .padding(end = 3.dp, bottom = 4.dp)
                                 .onGloballyPositioned {
@@ -356,7 +368,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                 modifier = Modifier.size(12.dp)
                             )
                             Text(
-                                text = "100",
+                                text = item.totalLikes.toString(),
                                 style = MaterialTheme.typography.displaySmall,
                                 modifier = Modifier.padding(start = 2.dp)
                             )
