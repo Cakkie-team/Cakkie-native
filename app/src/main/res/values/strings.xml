@@ -285,6 +285,8 @@
     <string name="set_availability_desc">"Is this product available at the moment? "</string>
     <string name="delete_listing">Delete Listing?</string>
     <string name="delete_listing_desc">Are you sure you want to delete this listing?</string>
+    <string name="no_comments">No Commets</string>
+    <string name="be_the_first_to_comment">Be the first to comment</string>
 
 
 </resources>

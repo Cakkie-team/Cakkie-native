@@ -25,12 +25,14 @@ fun String.formatDateTime(): String {
 fun String.formatDate(): String {
     return try {
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
         val date = formatter.parse(this) ?: Date()
         val now = Date()
         val diff = now.time - date.time
 
         when {
-            diff < TimeUnit.MINUTES.toMillis(1) -> "just now"
+            diff < TimeUnit.SECONDS.toMillis(1) -> "just now"
+            diff < TimeUnit.MINUTES.toMillis(1) -> "${TimeUnit.MILLISECONDS.toSeconds(diff)} secs ago"
             diff < TimeUnit.HOURS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toMinutes(diff)} mins ago"
             diff < TimeUnit.DAYS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toHours(diff)} hours ago"
             diff < TimeUnit.DAYS.toMillis(7) -> if (TimeUnit.MILLISECONDS.toDays(diff) > 1) {
