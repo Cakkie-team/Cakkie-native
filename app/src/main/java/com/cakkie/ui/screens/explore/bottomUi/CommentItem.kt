@@ -37,7 +37,6 @@ import com.cakkie.utill.toObject
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CommentItem(item: Comment, userId: String, viewModal: ExploreViewModal) {
-
     var comment by remember {
         mutableStateOf(item)
     }
