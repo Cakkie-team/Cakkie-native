@@ -378,6 +378,14 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         items(items = post.data, key = { it.id }) { item ->
                             Box(
                                 modifier = Modifier
+                                    .clickable {
+                                        navigator.navigate(
+                                            ItemDetailsDestination(
+                                                id = item.id,
+                                                item
+                                            )
+                                        )
+                                    }
                                     .padding(2.dp)
                                     .size(width = 118.dp, height = 116.dp),
                                 contentAlignment = Alignment.BottomEnd
