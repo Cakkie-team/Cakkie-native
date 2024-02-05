@@ -67,6 +67,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -425,6 +426,14 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         items(items = favourites, key = { it.id }) { item ->
                             Box(
                                 modifier = Modifier
+                                    .clickable {
+                                        navigator.navigate(
+                                            ItemDetailsDestination(
+                                                id = item.id,
+                                                item
+                                            )
+                                        )
+                                    }
                                     .padding(2.dp)
                                     .size(width = 118.dp, height = 116.dp),
                                 contentAlignment = Alignment.BottomEnd
