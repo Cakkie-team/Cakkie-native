@@ -114,6 +114,14 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 favourites.addAll(it.data.filter { it.isStarred })
             }
     }
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage == 0) {
+            activeTab = "posts"
+        } else {
+            activeTab = "favourite"
+        }
+    }
     Column {
         Spacer(modifier = Modifier.height(10.dp))
         Box(
@@ -312,7 +320,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        activeTab = "posts"
                                         scope.launch {
                                             pagerState.animateScrollToPage(0)
                                         }
@@ -321,7 +328,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                         .size(width = 90.dp, height = 34.dp),
                                     border = BorderStroke(1.dp, color = CakkieLightBrown),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "posts" || pagerState.currentPage == 0) CakkieOrange else CakkieBackground,
+                                        containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
                                     shape = RoundedCornerShape(60)
@@ -333,16 +340,15 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                 }
                                 OutlinedButton(
                                     onClick = {
-                                        activeTab = "favourite"
                                         scope.launch {
-                                            pagerState.animateScrollToPage(0)
+                                            pagerState.animateScrollToPage(1)
                                         }
                                     },
                                     modifier = Modifier
                                         .height(34.dp)
                                         .padding(start = 20.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "favourite" || pagerState.currentPage == 1) CakkieOrange else CakkieBackground,
+                                        containerColor = if (activeTab == "favourite") CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
                                     border = BorderStroke(1.dp, color = CakkieLightBrown),
