@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,22 +22,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +64,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.SettingsDestination
@@ -67,12 +74,13 @@ import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
@@ -80,6 +88,9 @@ fun MyProfile(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState(User()).value
     val post = viewModel.listings.observeAsState(ListingResponse()).value
     val shop = viewModel.shop.observeAsState(ShopModel()).value
+    val favourites = remember {
+        mutableStateListOf<Listing>()
+    }
     var sizeImage by remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -95,6 +106,14 @@ fun MyProfile(navigator: DestinationsNavigator) {
         start = Offset.Zero,
         end = Offset.Infinite,
     )
+    val pagerState = rememberPagerState { 2 }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        viewModel.getListings()
+            .addOnSuccessListener {
+                favourites.addAll(it.data.filter { it.isStarred })
+            }
+    }
     Column {
         Spacer(modifier = Modifier.height(10.dp))
         Box(
@@ -292,12 +311,17 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 OutlinedButton(
-                                    onClick = { activeTab = "posts" },
+                                    onClick = {
+                                        activeTab = "posts"
+                                        scope.launch {
+                                            pagerState.animateScrollToPage(0)
+                                        }
+                                    },
                                     modifier = Modifier
                                         .size(width = 90.dp, height = 34.dp),
                                     border = BorderStroke(1.dp, color = CakkieLightBrown),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
+                                        containerColor = if (activeTab == "posts" || pagerState.currentPage == 0) CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
                                     shape = RoundedCornerShape(60)
@@ -305,18 +329,23 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                     Text(
                                         text = stringResource(id = R.string.posts),
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = CakkieLightBrown
                                     )
                                 }
-                                Button(
-                                    onClick = { activeTab = "favourite" },
+                                OutlinedButton(
+                                    onClick = {
+                                        activeTab = "favourite"
+                                        scope.launch {
+                                            pagerState.animateScrollToPage(0)
+                                        }
+                                    },
                                     modifier = Modifier
-                                        .size(width = 200.dp, height = 34.dp)
+                                        .height(34.dp)
                                         .padding(start = 20.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "favourite") CakkieOrange else CakkieBackground,
+                                        containerColor = if (activeTab == "favourite" || pagerState.currentPage == 1) CakkieOrange else CakkieBackground,
                                         contentColor = CakkieBrown
                                     ),
+                                    border = BorderStroke(1.dp, color = CakkieLightBrown),
                                     shape = RoundedCornerShape(60)
                                 ) {
                                     Text(
@@ -330,48 +359,101 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 }
             },
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier
-//                    .nestedScroll(nestedScroll)
-                    .padding(horizontal = 2.dp, vertical = 10.dp)
-            ) {
-                items(items = post.data, key = { it.id }) { item ->
-                    Box(
+            HorizontalPager(state = pagerState) {
+                if (it == 0) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
                         modifier = Modifier
-                            .padding(2.dp)
-                            .size(width = 118.dp, height = 116.dp),
-                        contentAlignment = Alignment.BottomEnd
+                            .fillMaxSize()
+//                    .nestedScroll(nestedScroll)
+                            .padding(horizontal = 2.dp, vertical = 10.dp)
                     ) {
-                        GlideImage(
-                            model = item.media[0],
-                            contentDescription = "post image",
-                            modifier = Modifier
-                                .padding(end = 3.dp, bottom = 4.dp)
-                                .onGloballyPositioned {
-                                    sizeImage = it.size
-                                },
-                            contentScale = ContentScale.FillBounds
-                        )
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .background(gradient)
-                        )
-                        Row(
-                            modifier = Modifier.padding(end = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.gridicons_heart),
-                                contentDescription = "",
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Text(
-                                text = item.totalLikes.toString(),
-                                style = MaterialTheme.typography.displaySmall,
-                                modifier = Modifier.padding(start = 2.dp)
-                            )
+                        items(items = post.data, key = { it.id }) { item ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(width = 118.dp, height = 116.dp),
+                                contentAlignment = Alignment.BottomEnd
+                            ) {
+                                GlideImage(
+                                    model = item.media[0],
+                                    contentDescription = "post image",
+                                    modifier = Modifier
+                                        .padding(end = 3.dp, bottom = 4.dp)
+                                        .onGloballyPositioned {
+                                            sizeImage = it.size
+                                        },
+                                    contentScale = ContentScale.FillBounds
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .matchParentSize()
+                                        .background(gradient)
+                                )
+                                Row(
+                                    modifier = Modifier.padding(end = 10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.gridicons_heart),
+                                        contentDescription = "",
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Text(
+                                        text = item.totalLikes.toString(),
+                                        style = MaterialTheme.typography.displaySmall,
+                                        modifier = Modifier.padding(start = 2.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier
+                            .fillMaxSize()
+//                    .nestedScroll(nestedScroll)
+                            .padding(horizontal = 2.dp, vertical = 10.dp)
+                    ) {
+                        items(items = favourites, key = { it.id }) { item ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(width = 118.dp, height = 116.dp),
+                                contentAlignment = Alignment.BottomEnd
+                            ) {
+                                GlideImage(
+                                    model = item.media[0],
+                                    contentDescription = "post image",
+                                    modifier = Modifier
+                                        .padding(end = 3.dp, bottom = 4.dp)
+                                        .onGloballyPositioned {
+                                            sizeImage = it.size
+                                        },
+                                    contentScale = ContentScale.FillBounds
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .matchParentSize()
+                                        .background(gradient)
+                                )
+                                Row(
+                                    modifier = Modifier.padding(end = 10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.gridicons_heart),
+                                        contentDescription = "",
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Text(
+                                        text = item.totalLikes.toString(),
+                                        style = MaterialTheme.typography.displaySmall,
+                                        modifier = Modifier.padding(start = 2.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }

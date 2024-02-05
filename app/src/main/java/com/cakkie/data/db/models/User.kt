@@ -14,7 +14,7 @@ data class User(
     val bio: String? = null,
     val city: String = "",
     val country: String = "",
-    val coverImage: List<String> = listOf(),
+    val coverImage: List<String> = listOf(""),
     val createdAt: String = "",
     val dateOfBirth: String? = null,
     val email: String = "",

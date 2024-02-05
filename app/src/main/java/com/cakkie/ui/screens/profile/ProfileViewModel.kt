@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
-import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
@@ -47,8 +46,8 @@ class ProfileViewModel : ViewModel(), KoinComponent {
         _shop.value = it
     }
 
-    fun getListing(id: String) = NetworkCalls.get<Listing>(
-        endpoint = Endpoints.GET_LISTING(id),
+    fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
+        endpoint = Endpoints.GET_LISTINGS(page, size),
         body = listOf()
     )
 
