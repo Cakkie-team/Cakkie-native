@@ -18,3 +18,9 @@ data class Comment(
     val user: User,
     val userId: String
 ) : Parcelable
+
+@Serializable
+data class CommentResponse(
+    val data: List<Comment> = listOf(),
+    val meta: Pagination = Pagination(),
+)

@@ -74,7 +74,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
@@ -119,9 +118,9 @@ fun ExploreItem(
             listing = newListing
         }
         viewModal.socket.on("comment-${listing.id}") {
-            Timber.d("like ${it[0]}")
-//            val newListing = it[0].toString().toObject(Listing::class.java)
-//            listing = newListing
+//            Timber.d("like ${it[0]}")
+            val newListing = listing.copy(commentCount = listing.commentCount + 1)
+            listing = newListing
         }
         onDispose {
             viewModal.socket.off("like-${listing.id}")

@@ -1,19 +1,15 @@
 package com.cakkie.ui.screens.explore
 
-import android.content.Context
 import androidx.annotation.OptIn
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.CommentResponse
 import com.cakkie.networkModels.Listing
 import com.cakkie.networkModels.ListingResponse
 import com.cakkie.socket.SocketClient
@@ -51,25 +47,16 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         _listings.value = it
     }
 
+    fun getComments(listingId: String, page: Int = 0, size: Int = 20) =
+        NetworkCalls.get<CommentResponse>(
+            endpoint = Endpoints.GET_COMMENTS(listingId, page, size),
+            body = listOf()
+        )
+
     fun getListing(id: String) = NetworkCalls.get<Listing>(
         endpoint = Endpoints.GET_LISTING(id),
         body = listOf()
     )
-
-    fun getPlayer(url: String, context: Context) = ExoPlayer.Builder(context).build().apply {
-        val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-        val dataSourceFactory: DataSource.Factory =
-            DefaultDataSource.Factory(
-                context,
-                defaultDataSourceFactory
-            )
-        val progressiveMediaSource =
-            ProgressiveMediaSource.Factory(dataSourceFactory)
-        val source = progressiveMediaSource
-            .createMediaSource(MediaItem.fromUri(url))
-        setMediaSource(source)
-        prepare()
-    }
 
     fun likeListing(id: String, userId: String) {
         val data = JSONObject()

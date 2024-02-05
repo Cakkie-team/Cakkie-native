@@ -28,12 +28,17 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Comment
+import com.cakkie.utill.formatDate
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CommentItem() {
+fun CommentItem(item: Comment) {
+    var comment by remember {
+        mutableStateOf(item)
+    }
     var isLiked by remember {
-        mutableStateOf(false)
+        mutableStateOf(comment.isLiked)
     }
     Column(
         Modifier.padding(horizontal = 16.dp)
@@ -47,7 +52,7 @@ fun CommentItem() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
+                    model = comment.user.profileImage.replace("http", "https"),
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)
@@ -62,18 +67,18 @@ fun CommentItem() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Cake Paradise",
+                            text = comment.user.name,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "8 h",
+                            text = comment.createdAt.formatDate(),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     Text(
-                        text = "This is so lovely",
+                        text = comment.content,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -95,7 +100,7 @@ fun CommentItem() {
                         }
                 )
                 Text(
-                    text = "1.2k",
+                    text = comment.totalLikes.toString(),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
