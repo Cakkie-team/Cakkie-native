@@ -99,8 +99,12 @@ class ExploreViewModal : ViewModel(), KoinComponent {
 //        getListings()
         viewModelScope.launch {
             listingRepository.getListings().asLiveData().observeForever {
-                _pagination.observeForever { pagination ->
-                    _listings.value = ListingResponse(data = it, meta = pagination)
+                if (it.isNotEmpty()) {
+                    _pagination.observeForever { pagination ->
+                        _listings.value = ListingResponse(data = it, meta = pagination)
+                    }
+                } else {
+                    getListings()
                 }
             }
         }
