@@ -7,11 +7,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.CommentResponse
-import com.cakkie.networkModels.Listing
-import com.cakkie.networkModels.ListingResponse
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls

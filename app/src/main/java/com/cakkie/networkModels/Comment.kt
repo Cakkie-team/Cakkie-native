@@ -1,6 +1,7 @@
 package com.cakkie.networkModels
 
 import android.os.Parcelable
+import androidx.room.Embedded
 import com.cakkie.data.db.models.User
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -15,6 +16,7 @@ data class Comment(
     val listingId: String,
     val totalLikes: Int,
     val updatedAt: String,
+    @Embedded(prefix = "user_")
     val user: User,
     val userId: String
 ) : Parcelable

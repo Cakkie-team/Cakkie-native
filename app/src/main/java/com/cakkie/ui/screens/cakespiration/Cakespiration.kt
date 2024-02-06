@@ -46,8 +46,8 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
 import com.cakkie.di.CakkieApp
-import com.cakkie.networkModels.Listing
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.utill.Toaster

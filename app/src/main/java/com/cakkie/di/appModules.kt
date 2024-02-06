@@ -2,6 +2,7 @@ package com.cakkie.di
 
 import androidx.room.Room
 import com.cakkie.data.db.DB
+import com.cakkie.data.repositories.ListingRepository
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.socket.SocketClient
@@ -80,7 +81,11 @@ val appModule = module {
 
     // DAOs
     single { get<DB>().userDao() }
+    single { get<DB>().listingDao() }
 
     // Repositories
     single { UserRepository(get()) }
+    single { ListingRepository(get()) }
+
+
 }

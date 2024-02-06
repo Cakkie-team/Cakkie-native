@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.loader.content.CursorLoader
+import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
-import com.cakkie.networkModels.Listing
-import com.cakkie.networkModels.ListingResponse
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody

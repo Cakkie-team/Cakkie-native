@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.networkModels.Listing
+import com.cakkie.data.db.models.Listing
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown

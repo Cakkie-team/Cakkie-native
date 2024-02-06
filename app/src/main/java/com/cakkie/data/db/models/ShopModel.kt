@@ -1,6 +1,7 @@
 package com.cakkie.data.db.models
 
 import android.os.Parcelable
+import androidx.room.Embedded
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -22,6 +23,7 @@ data class ShopModel(
     val name: String = "",
     val state: String = "",
     val updatedAt: String = "",
+    @Embedded(prefix = "user_")
     val user: User = User(),
     val userId: String = ""
 ) : Parcelable

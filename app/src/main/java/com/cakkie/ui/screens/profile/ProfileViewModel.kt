@@ -4,10 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
-import com.cakkie.networkModels.ListingResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch

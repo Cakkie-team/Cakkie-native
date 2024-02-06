@@ -46,7 +46,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.networkModels.Listing
+import com.cakkie.data.db.models.Listing
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination

@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
 import com.cakkie.networkModels.Comment
-import com.cakkie.networkModels.Listing
 import com.cakkie.ui.components.CommentInput
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination

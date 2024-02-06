@@ -46,9 +46,9 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
-import com.cakkie.networkModels.ListingResponse
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination

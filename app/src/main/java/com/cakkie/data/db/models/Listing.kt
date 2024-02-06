@@ -1,12 +1,18 @@
-package com.cakkie.networkModels
+package com.cakkie.data.db.models
 
 import android.os.Parcelable
 import androidx.compose.runtime.Stable
-import com.cakkie.data.db.models.ShopModel
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.cakkie.networkModels.Comment
+import com.cakkie.networkModels.Meta
+import com.cakkie.networkModels.Pagination
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Entity(tableName = "listing")
 @Serializable
 @Parcelize
 @Stable
@@ -18,13 +24,16 @@ data class Listing(
     val commentCount: Int = 0,
     val createdAt: String = "",
     val description: String = "",
+    @PrimaryKey
     val id: String = "",
     val isLiked: Boolean = false,
     val isStarred: Boolean = false,
     val media: List<String> = listOf(""),
+    @Embedded(prefix = "meta_")
     val meta: Meta = Meta(),
     val name: String = "",
     val price: List<Int> = listOf(0),
+    @Embedded(prefix = "shop_")
     val shop: ShopModel = ShopModel(),
     val shopId: String = "",
     val sizes: List<String> = listOf(),
@@ -32,17 +41,8 @@ data class Listing(
     val updatedAt: String = "",
 ) : Parcelable
 
-
 @Serializable
 data class ListingResponse(
     val data: List<Listing> = listOf(),
     val meta: Pagination = Pagination(),
-)
-
-@Serializable
-data class Pagination(
-    val currentPage: Int = 0,
-    val nextPage: Int = 0,
-    val previousPage: Int = 0,
-    val pageSize: Int = 0,
 )

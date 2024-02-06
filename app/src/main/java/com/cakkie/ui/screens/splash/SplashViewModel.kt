@@ -3,11 +3,11 @@ package com.cakkie.ui.screens.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
-import com.cakkie.networkModels.ListingResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.delay

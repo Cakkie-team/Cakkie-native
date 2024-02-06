@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.cakkie.R
-import com.cakkie.networkModels.Listing
+import com.cakkie.data.db.models.Listing
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.theme.CakkieBackground
