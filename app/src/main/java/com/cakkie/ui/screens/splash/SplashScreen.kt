@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -49,7 +50,7 @@ fun SplashScreen(navigator: DestinationsNavigator) {
             }
         }
         .build()
-
+    val listings = viewModel.retrieveListings().observeAsState().value
     //navigate to the next screen after 2 seconds
     LaunchedEffect(key1 = isReady) {
         if (isReady) {
@@ -58,8 +59,9 @@ fun SplashScreen(navigator: DestinationsNavigator) {
                     .addOnSuccessListener {
                         val videoList = it.data.filter {
                             it.media.any { it.isVideoUrl() }
-                        }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
-                            .joinToString(",")
+                        }.joinToString(",") {
+                            it.media.filter { it.isVideoUrl() }.joinToString(",")
+                        }
 //                        Timber.d("Video list: ${videoList.split(",")}")
                         val array = arrayListOf<String>()
                         array.addAll(videoList.split(","))
@@ -75,6 +77,35 @@ fun SplashScreen(navigator: DestinationsNavigator) {
                         navigator.navigate(ExploreScreenDestination) {
                             popUpTo(SplashScreenDestination.route) {
                                 inclusive = true
+                            }
+                        }
+                    }
+                    .addOnFailureListener {
+                        if (listings != null) {
+                            val videoList = listings.filter {
+                                it.media.any { it.isVideoUrl() }
+                            }.joinToString(",") {
+                                it.media.filter { it.isVideoUrl() }.joinToString(",")
+                            }
+//                        Timber.d("Video list: ${videoList.split(",")}")
+                            val array = arrayListOf<String>()
+                            array.addAll(videoList.split(","))
+
+                            //create intent
+                            val preloadingServiceIntent =
+                                Intent(context, VideoPreLoadingService::class.java)
+                            preloadingServiceIntent.putStringArrayListExtra(
+                                Constants.VIDEO_LIST,
+                                array
+                            )
+
+                            //start intent
+                            context.startService(preloadingServiceIntent)
+                            //navigate to home
+                            navigator.navigate(ExploreScreenDestination) {
+                                popUpTo(SplashScreenDestination.route) {
+                                    inclusive = true
+                                }
                             }
                         }
                     }

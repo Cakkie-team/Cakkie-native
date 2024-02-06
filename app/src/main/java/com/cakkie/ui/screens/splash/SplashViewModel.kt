@@ -5,6 +5,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
+import com.cakkie.data.repositories.ListingRepository
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
@@ -23,6 +24,7 @@ class SplashViewModel(private val settings: Settings) : ViewModel(), KoinCompone
     val isLoggedIn = _isLoggedIn.asStateFlow()
     val isReady = _isReady.asStateFlow()
     private val userRepository: UserRepository by inject()
+    private val listingRepository: ListingRepository by inject()
 
     private fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
@@ -37,7 +39,13 @@ class SplashViewModel(private val settings: Settings) : ViewModel(), KoinCompone
     fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
         endpoint = Endpoints.GET_LISTINGS(page, size),
         body = listOf()
-    )
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            listingRepository.addListings(it.data)
+        }
+    }
+
+    fun retrieveListings() = listingRepository.getListings().asLiveData()
 
     init {
         viewModelScope.launch {

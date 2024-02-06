@@ -10,8 +10,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
+import com.cakkie.data.repositories.ListingRepository
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.CommentResponse
+import com.cakkie.networkModels.Pagination
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
@@ -26,6 +28,8 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val socketClient: SocketClient by inject()
     private val _user = MutableLiveData<User>()
     private val _listings = MutableLiveData<ListingResponse>()
+    private val listingRepository: ListingRepository by inject()
+    private val _pagination = MutableLiveData<Pagination>()
 
 
     val listings = _listings
@@ -44,7 +48,10 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         endpoint = Endpoints.GET_LISTINGS(page, size),
         body = listOf()
     ).addOnSuccessListener {
-        _listings.value = it
+        viewModelScope.launch {
+            listingRepository.addListings(it.data)
+            _pagination.value = it.meta
+        }
     }
 
     fun getComments(listingId: String, page: Int = 0, size: Int = 20) =
@@ -89,7 +96,14 @@ class ExploreViewModal : ViewModel(), KoinComponent {
 
     init {
         getUser()
-        getListings()
+//        getListings()
+        viewModelScope.launch {
+            listingRepository.getListings().asLiveData().observeForever {
+                _pagination.observeForever { pagination ->
+                    _listings.value = ListingResponse(data = it, meta = pagination)
+                }
+            }
+        }
     }
 }
 
