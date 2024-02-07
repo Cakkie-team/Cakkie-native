@@ -29,7 +29,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val _user = MutableLiveData<User>()
     private val _listings = MutableLiveData<ListingResponse>()
     private val listingRepository: ListingRepository by inject()
-    private val _pagination = MutableLiveData<Pagination>()
+    private val _pagination = MutableLiveData(Pagination())
 
 
     val listings = _listings

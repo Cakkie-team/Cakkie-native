@@ -57,11 +57,11 @@ fun SplashScreen(navigator: DestinationsNavigator) {
             if (isLoggedIn) {
                 viewModel.getListings()
                     .addOnSuccessListener {
+                        viewModel.updateListings(it)
                         val videoList = it.data.filter {
                             it.media.any { it.isVideoUrl() }
-                        }.joinToString(",") {
-                            it.media.filter { it.isVideoUrl() }.joinToString(",")
-                        }
+                        }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
+                            .joinToString(",")
 //                        Timber.d("Video list: ${videoList.split(",")}")
                         val array = arrayListOf<String>()
                         array.addAll(videoList.split(","))
@@ -84,9 +84,8 @@ fun SplashScreen(navigator: DestinationsNavigator) {
                         if (listings != null) {
                             val videoList = listings.filter {
                                 it.media.any { it.isVideoUrl() }
-                            }.joinToString(",") {
-                                it.media.filter { it.isVideoUrl() }.joinToString(",")
-                            }
+                            }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
+                                .joinToString(",")
 //                        Timber.d("Video list: ${videoList.split(",")}")
                             val array = arrayListOf<String>()
                             array.addAll(videoList.split(","))

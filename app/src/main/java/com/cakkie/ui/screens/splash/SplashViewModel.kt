@@ -39,9 +39,11 @@ class SplashViewModel(private val settings: Settings) : ViewModel(), KoinCompone
     fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
         endpoint = Endpoints.GET_LISTINGS(page, size),
         body = listOf()
-    ).addOnSuccessListener {
+    )
+
+    fun updateListings(listings: ListingResponse) {
         viewModelScope.launch {
-            listingRepository.addListings(it.data)
+            listingRepository.addListings(listings.data)
         }
     }
 
