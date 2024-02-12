@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissValue
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.cakkie.R
+import com.cakkie.networkModels.NotificationResponse
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
@@ -43,10 +46,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun Notification(navigator: DestinationsNavigator) {
     val viewModel: NotificationViewModel = koinViewModel()
+    val notifications = viewModel.notifications.observeAsState(NotificationResponse()).value
 
     val showTip = viewModel.isNotificationTipShown.collectAsState(true).value
-    val itemList =
-        mutableListOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7")
+
 
     Column {
         Box(
@@ -75,25 +78,44 @@ fun Notification(navigator: DestinationsNavigator) {
         }
         Spacer(modifier = Modifier.height(18.dp))
 
+        if (notifications.data.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(TextColorDark, RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
+                    .height(70.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.hurray_no_notification),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = CakkieBackground,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
         LazyColumn(
             state = rememberLazyListState()
         ) {
-            items(7) { index ->
+            items(items = notifications.data, key = { it.id }) { notification ->
                 val state = rememberDismissState(
                     confirmStateChange = {
                         if (it == DismissValue.DismissedToEnd) {
-                           itemList.removeAt(index)
+
                         }
                         true
                     }
                 )
-                SwipeToDismiss(state = state, background =
-                {
-                    NotificationItem(isBackground = true, navigator = navigator)
+                SwipeToDismiss(
+                    state = state, background =
+                    {
+                        NotificationItem(notification, isBackground = true, navigator = navigator)
 
                 }, dismissContent =
                 {
-                    NotificationItem(isBackground = false, navigator = navigator)
+                    NotificationItem(notification, isBackground = false, navigator = navigator)
                 })
                 Spacer(modifier = Modifier.height(8.dp))
             }

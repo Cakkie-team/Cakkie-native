@@ -21,17 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
-import com.cakkie.ui.screens.destinations.AuthNotificationDestination
+import com.cakkie.networkModels.Notification
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.formatDate
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @Composable
-fun NotificationItem(isBackground: Boolean, navigator: DestinationsNavigator) {
+fun NotificationItem(item: Notification, isBackground: Boolean, navigator: DestinationsNavigator) {
     Row {
         if (isBackground) {
             Box(
@@ -56,9 +56,9 @@ fun NotificationItem(isBackground: Boolean, navigator: DestinationsNavigator) {
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .height(65.dp)
                 .clickable {
-                    navigator.navigate(
-                        AuthNotificationDestination
-                    )
+//                    navigator.navigate(
+//                        AuthNotificationDestination
+//                    )
                 }
 
         ) {
@@ -69,20 +69,20 @@ fun NotificationItem(isBackground: Boolean, navigator: DestinationsNavigator) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = R.string.Special_Offer),
+                    text = item.title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                 )
 
                 Text(
-                    text = stringResource(id = R.string.time),
+                    text = item.createdAt.formatDate(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextColorDark.copy(alpha = 0.5f),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = stringResource(id = R.string.Limited_Time_Offer_Enjoy_),
+                text = item.message,
                 style = MaterialTheme.typography.bodyLarge,
                 color = TextColorDark.copy(alpha = 0.5f),
             )

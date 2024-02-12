@@ -77,6 +77,7 @@ object Endpoints {
     /**
      * Notification
      */
-
+    val GET_NOTIFICATIONS =
+        { page: Int, size: Int -> "$BASE_URL/notification?page=$page" }/* get notifications  GET*/ /*todo:  fix page size*/
 
 }
