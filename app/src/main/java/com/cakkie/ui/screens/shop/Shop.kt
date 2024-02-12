@@ -48,6 +48,7 @@ import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
 import com.cakkie.ui.screens.shop.contracts.Contracts
 import com.cakkie.ui.screens.shop.listings.Listings
+import com.cakkie.ui.screens.shop.listings.Requests
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -212,7 +213,7 @@ fun Shop(navigator: DestinationsNavigator) {
             when (it) {
                 1 -> Contracts()
                 2 -> Contracts()
-                3 -> Listings(navigator)
+                3 -> Requests(navigator)
                 0 -> Listings(navigator)
             }
         }
