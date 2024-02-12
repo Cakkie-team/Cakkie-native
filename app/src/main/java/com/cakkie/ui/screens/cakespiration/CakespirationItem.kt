@@ -243,7 +243,12 @@ fun CakespirationItem(
                         .size(38.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-                            navigator.navigate(ProfileDestination)
+                            navigator.navigate(
+                                ProfileDestination(
+                                    id = listing.shopId,
+                                    shop = listing.shop
+                                )
+                            )
                         }
                 )
                 Spacer(modifier = Modifier.width(8.dp))

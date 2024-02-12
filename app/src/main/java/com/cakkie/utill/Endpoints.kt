@@ -48,6 +48,7 @@ object Endpoints {
      * Shop
      * */
     const val CREATE_SHOP = "$BASE_URL/shop" /* create shop  POST*/
+    val GET_SHOP = { id: String -> "$BASE_URL/shop/$id" } /* get shop  GET*/
 
     /**
      * Listing
@@ -60,6 +61,8 @@ object Endpoints {
     val GET_COMMENTS =
         { id: String, page: Int, size: Int -> "$BASE_URL/listing/comments/$id?page=$page&pageSize=$size" }/* get listings  GET*/
     val GET_LISTING = { id: String -> "$BASE_URL/listing/$id" } /* get listing*/
+    val GET_SHOP_LISTINGS =
+        { id: String, page: Int, size: Int -> "$BASE_URL/listing/shop/$id?page=$page&pageSize=$size" }/* get shop listings  GET*/
 
 
     /**

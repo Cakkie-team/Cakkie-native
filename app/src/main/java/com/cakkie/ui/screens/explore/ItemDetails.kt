@@ -209,7 +209,12 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                         .size(32.dp)
                         .clip(shape = CircleShape)
                         .clickable {
-                            navigator.navigate(ProfileDestination)
+                            navigator.navigate(
+                                ProfileDestination(
+                                    id = listing.shopId,
+                                    shop = listing.shop
+                                )
+                            )
                         }, shimmerParams = ShimmerParams(
                         baseColor = CakkieBrown.copy(0.4f),
                         highlightColor = CakkieBrown.copy(0.8f),

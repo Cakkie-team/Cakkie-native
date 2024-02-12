@@ -39,6 +39,12 @@ class ProfileViewModel : ViewModel(), KoinComponent {
         _listings.value = it
     }
 
+    fun getShopListings(id: String, page: Int = 0, size: Int = 20) =
+        NetworkCalls.get<ListingResponse>(
+            endpoint = Endpoints.GET_SHOP_LISTINGS(id, page, size),
+            body = listOf()
+        )
+
     private fun getMyShop() = NetworkCalls.get<ShopModel>(
         endpoint = Endpoints.CREATE_SHOP,
         body = listOf()
@@ -48,6 +54,11 @@ class ProfileViewModel : ViewModel(), KoinComponent {
 
     fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
         endpoint = Endpoints.GET_LISTINGS(page, size),
+        body = listOf()
+    )
+
+    fun getShop(id: String) = NetworkCalls.get<ShopModel>(
+        endpoint = Endpoints.GET_SHOP(id),
         body = listOf()
     )
 

@@ -1,7 +1,9 @@
 package com.cakkie.ui.screens.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,48 +19,104 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
+import com.cakkie.utill.formatDate
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Destination
 @Composable
-fun Profile(navigator: DestinationsNavigator) {
-    val msg = painterResource(id = R.drawable.msg)
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        Spacer(modifier = Modifier.height(36.dp))
+fun Profile(id: String, shop: ShopModel = ShopModel(), navigator: DestinationsNavigator) {
+    val viewModel: ProfileViewModel = koinViewModel()
+    var item by rememberSaveable {
+        mutableStateOf(shop)
+    }
+    val listings = remember {
+        mutableStateListOf<Listing>()
+    }
+    var activeTab by rememberSaveable {
+        mutableStateOf("posts")
+    }
+    var sizeImage by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+    val pagerState = rememberPagerState { 2 }
+    val scope = rememberCoroutineScope()
+    val gradient = Brush.linearGradient(
+        0.0f to Color.Transparent,
+        500.0f to Color.Black,
+        start = Offset.Zero,
+        end = Offset.Infinite,
+    )
+    LaunchedEffect(Unit) {
+        viewModel.getShop(id)
+            .addOnSuccessListener {
+                item = it
+            }
+
+        viewModel.getShopListings(id)
+            .addOnSuccessListener {
+                listings.addAll(it.data)
+            }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage == 0) {
+            activeTab = "posts"
+        } else {
+            activeTab = "about"
+        }
+    }
+    Column {
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,31 +134,33 @@ fun Profile(navigator: DestinationsNavigator) {
             )
             Text(
                 text = stringResource(id = R.string.profile),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(start = 119.dp)
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .align(Alignment.Center)
             )
         }
-        Spacer(modifier = Modifier.height(7.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
+                .padding(horizontal = 16.dp)
+                .height(150.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             GlideImage(
-                model = "https://source.unsplash.com/600x400/?cakes,cover",
+                model = item.image,
                 contentDescription = "cover",
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-                    .height(150.dp)
+                    .height(100.dp)
             )
             GlideImage(
-                model = "https://source.unsplash.com/100x100/?profile,cute",
+                model = item.image,
                 contentDescription = "profile pic",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
-                    .padding(top = 100.dp)
+                    .padding(top = 50.dp)
                     .size(100.dp)
                     .clip(RoundedCornerShape(100))
                     .border(
@@ -111,12 +171,12 @@ fun Profile(navigator: DestinationsNavigator) {
             )
         }
         Text(
-            text = "Jennifer Victor",
+            text = item.name,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "   Uyo Nwaniba",
+            text = item.address,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -144,7 +204,7 @@ fun Profile(navigator: DestinationsNavigator) {
                 shape = RoundedCornerShape(20)
             ) {
                 Icon(
-                    painter = msg, contentDescription = "",
+                    painter = painterResource(id = R.drawable.msg), contentDescription = "",
                     modifier = Modifier,
                     tint = CakkieBrown
                 )
@@ -176,9 +236,9 @@ fun Profile(navigator: DestinationsNavigator) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "870",
+                    text = listings.size.toString(),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -192,9 +252,9 @@ fun Profile(navigator: DestinationsNavigator) {
                     .fillMaxHeight()
                     .width(1.dp)
             )
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "120k",
+                    text = item.followingCount.toString(),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -208,9 +268,9 @@ fun Profile(navigator: DestinationsNavigator) {
                     .fillMaxHeight()
                     .width(1.dp)
             )
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "354k",
+                    text = item.followers.toString(),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -222,43 +282,137 @@ fun Profile(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                onClick = {},
+            OutlinedButton(
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+                },
                 modifier = Modifier
-                    .size(width = 100.dp, height = 34.dp)
-                    .padding(start = 20.dp),
+                    .size(width = 90.dp, height = 34.dp),
+                border = BorderStroke(1.dp, color = CakkieLightBrown),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = CakkieOrange,
+                    containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
                     contentColor = CakkieBrown
                 ),
                 shape = RoundedCornerShape(60)
             ) {
                 Text(
                     text = stringResource(id = R.string.posts),
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
             OutlinedButton(
-                onClick = {},
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                },
                 modifier = Modifier
-                    .size(width = 140.dp, height = 34.dp)
+                    .height(34.dp)
                     .padding(start = 20.dp),
-                border = BorderStroke(1.dp, color = CakkieLightBrown),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = CakkieBackground,
+                    containerColor = if (activeTab == "about") CakkieOrange else CakkieBackground,
                     contentColor = CakkieBrown
                 ),
+                border = BorderStroke(1.dp, color = CakkieLightBrown),
                 shape = RoundedCornerShape(60)
             ) {
                 Text(
                     text = stringResource(id = R.string.about),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = CakkieLightBrown
+                    style = MaterialTheme.typography.labelSmall
                 )
+            }
+        }
+
+
+        HorizontalPager(state = pagerState) {
+            if (it == 0) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxSize()
+//                    .nestedScroll(nestedScroll)
+                        .padding(horizontal = 2.dp, vertical = 10.dp)
+                ) {
+                    items(items = listings, key = { it.id }) { item ->
+                        Box(
+                            modifier = Modifier
+                                .clickable {
+                                    navigator.navigate(
+                                        ItemDetailsDestination(
+                                            id = item.id,
+                                            item
+                                        )
+                                    )
+                                }
+                                .padding(2.dp)
+                                .size(width = 118.dp, height = 116.dp),
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            GlideImage(
+                                model = item.media[0],
+                                contentDescription = "post image",
+                                modifier = Modifier
+                                    .padding(end = 3.dp, bottom = 4.dp)
+                                    .onGloballyPositioned {
+                                        sizeImage = it.size
+                                    },
+                                contentScale = ContentScale.FillBounds
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .background(gradient)
+                            )
+                            Row(
+                                modifier = Modifier.padding(end = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.gridicons_heart),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Text(
+                                    text = item.totalLikes.toString(),
+                                    style = MaterialTheme.typography.displaySmall,
+                                    modifier = Modifier.padding(start = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    Text(
+                        text = item.description,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Text(
+                        text = "Joined since ${item.createdAt.formatDate()}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Text(
+                        text = "Owned by ${item.user.name}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Text(
+                        text = "Total orders ${0}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+
+
+                }
             }
         }
     }
