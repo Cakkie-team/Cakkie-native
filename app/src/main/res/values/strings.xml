@@ -290,6 +290,8 @@
     <string name="oh_oh">Oh oh!</string>
     <string name="sorry_no_reviews_yet">Sorry, no reviews yet</string>
     <string name="hurray_no_notification">Hurray! No notifications</string>
+    <string name="under_construction">Under Construction</string>
+    <string name="something_is_baking_here">Something is baking here, anticipate the sweet teaste.</string>
 
 
 </resources>
