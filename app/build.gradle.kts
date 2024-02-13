@@ -172,4 +172,7 @@ dependencies {
         exclude("org.json", "json")
     }
 //    implementation(libs.engine.io.client)
+
+    //shimmer
+    implementation(libs.accompanist.placeholder.material)
 }

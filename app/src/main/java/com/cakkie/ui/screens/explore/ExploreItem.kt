@@ -54,6 +54,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
@@ -70,8 +72,10 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.isVideoUrl
 import com.cakkie.utill.toObject
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
 
@@ -230,20 +234,32 @@ fun ExploreItem(
                             }
                     )
                 } else {
-                    GlideImage(
-                        imageModel = listing.media[it],
+                    var isLoading by remember {
+                        mutableStateOf(false)
+                    }
+                    AsyncImage(
+                        model = listing.media[it],
                         contentDescription = "cake",
+                        onState = {
+                            //update isLoaded
+                            isLoading = it is AsyncImagePainter.State.Loading
+                        },
                         modifier = Modifier
                             .clickable { expanded = !expanded }
                             .heightIn(max = screenHeight * 0.65f)
+                            .placeholder(
+                                visible = isLoading,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            )
                             .fillMaxWidth(),
                         contentScale = ContentScale.FillWidth,
-                        shimmerParams = ShimmerParams(
-                            baseColor = CakkieBrown.copy(0.4f),
-                            highlightColor = CakkieBrown.copy(0.8f),
-                            dropOff = 0.55f,
-                            tilt = 20f
-                        )
+//                        shimmerParams = ShimmerParams(
+//                            baseColor = CakkieBrown.copy(0.4f),
+//                            highlightColor = CakkieBrown.copy(0.8f),
+//                            dropOff = 0.55f,
+//                            tilt = 20f
+//                        )
                     )
                 }
             }
