@@ -35,6 +35,9 @@ class SplashViewModel(private val settings: Settings) : ViewModel(), KoinCompone
             _isReady.value = true
         }
     }
+        .addOnFailureListener {
+            _isReady.value = true
+        }
 
     fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
         endpoint = Endpoints.GET_LISTINGS(page, size),
