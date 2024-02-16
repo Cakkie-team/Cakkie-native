@@ -1,5 +1,7 @@
 package com.cakkie.ui.screens.explore
 
+import android.content.Context
+import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,8 +17,11 @@ import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.CommentResponse
 import com.cakkie.networkModels.Pagination
 import com.cakkie.socket.SocketClient
+import com.cakkie.utill.Constants
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import com.cakkie.utill.VideoPreLoadingService
+import com.cakkie.utill.isVideoUrl
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinComponent
@@ -44,15 +49,34 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         }
     }
 
-    fun getListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
-        endpoint = Endpoints.GET_LISTINGS(page, size),
-        body = listOf()
-    ).addOnSuccessListener {
-        viewModelScope.launch {
-            listingRepository.addListings(it.data)
-            _pagination.value = it.meta
+    fun getListings(context: Context, page: Int = 0, size: Int = 20) =
+        NetworkCalls.get<ListingResponse>(
+            endpoint = Endpoints.GET_LISTINGS(page, size),
+            body = listOf()
+        ).addOnSuccessListener {
+            viewModelScope.launch {
+                listingRepository.addListings(it.data)
+                _pagination.value = it.meta
+                val videoList = it.data.filter {
+                    it.media.any { it.isVideoUrl() }
+                }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
+                    .joinToString(",")
+//                        Timber.d("Video list: ${videoList.split(",")}")
+                val array = arrayListOf<String>()
+                array.addAll(videoList.split(","))
+
+                //create intent
+                val preloadingServiceIntent =
+                    Intent(context, VideoPreLoadingService::class.java)
+                preloadingServiceIntent.putStringArrayListExtra(
+                    Constants.VIDEO_LIST,
+                    array
+                )
+
+                //start intent
+                context.startService(preloadingServiceIntent)
+            }
         }
-    }
 
     fun getComments(listingId: String, page: Int = 0, size: Int = 20) =
         NetworkCalls.get<CommentResponse>(
@@ -103,8 +127,6 @@ class ExploreViewModal : ViewModel(), KoinComponent {
                     _pagination.observeForever { pagination ->
                         _listings.value = ListingResponse(data = it, meta = pagination)
                     }
-                } else {
-                    getListings()
                 }
             }
         }

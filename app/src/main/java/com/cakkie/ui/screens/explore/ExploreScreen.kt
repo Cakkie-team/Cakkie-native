@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -79,6 +80,12 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             .setUpstreamDataSourceFactory(httpDataSourceFactory)
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+    }
+
+    LaunchedEffect(Unit) {
+        if (listings.data.isEmpty()) {
+            viewModel.getListings(context)
+        }
     }
     Column(
         modifier = Modifier

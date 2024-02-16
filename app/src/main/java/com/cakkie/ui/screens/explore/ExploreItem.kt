@@ -172,7 +172,8 @@ fun ExploreItem(
             IconButton(onClick = { navigator.navigate(MoreOptionsDestination) }) {
                 Image(
                     painter = painterResource(id = R.drawable.options),
-                    contentDescription = "notification"
+                    contentDescription = "notification",
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -190,11 +191,12 @@ fun ExploreItem(
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
                     color = CakkieBackground
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_back),
                     contentDescription = "arrow back",
                     modifier = Modifier
-                        .padding(end = 16.dp)
+                        .size(24.dp)
                         .rotate(180f),
                     tint = CakkieBackground
                 )
@@ -272,8 +274,10 @@ fun ExploreItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 8.dp)
             ) {
+                Spacer(modifier = Modifier.width(8.dp))
                 Image(
                     painter = painterResource(
                         id =
@@ -281,19 +285,21 @@ fun ExploreItem(
                     ),
                     contentDescription = "heart",
                     modifier = Modifier
+                        .size(24.dp)
                         .clickable {
                             viewModal.likeListing(listing.id, user.id)
                             isLiked = !isLiked
                         }
-                        .padding(8.dp)
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Image(
                     painter = painterResource(id = R.drawable.comment),
                     contentDescription = "comment",
                     modifier = Modifier
                         .clickable { navigator.navigate(CommentDestination(item = listing)) }
-                        .padding(8.dp)
+                        .size(24.dp)
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Image(
                     painter = painterResource(
                         id =
@@ -305,7 +311,7 @@ fun ExploreItem(
                             viewModal.starListing(listing.id, user.id)
                             isStarred = !isStarred
                         }
-                        .padding(8.dp)
+                        .size(24.dp)
                 )
             }
             HorizontalPagerIndicator(
