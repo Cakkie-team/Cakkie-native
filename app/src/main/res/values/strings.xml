@@ -98,7 +98,7 @@
     <string name="deposit">Deposit</string>
     <string name="buy_icing">Buy Icing</string>
     <string name="icing_purchase">Icing Purchase</string>
-    <string name="icing_purchase_successful">Icing Purchase Sucessful</string>
+    <string name="icing_purchase_successful">Icing Purchase Successful</string>
     <string name="icing_purchase_failed">Icing Purchase Failed</string>
     <string name="model">iPhone 33 Pro X</string>
     <string name="duration">Time:</string>
@@ -113,16 +113,16 @@
     <string name="proposed_price">Proposed Price:</string>
     <string name="location">Location:</string>
     <string name="icing">Icing:</string>
-    <string name="see_reciept">See Reciept</string>
+    <string name="see_reciept">See Receipt</string>
     <string name="see_all">See All</string>
-    <string name="reciept">Reciept</string>
+    <string name="reciept">Receipt</string>
     <string name="rounded_shape">Rounded Shape</string>
     <string name="medium_sized_pan">Medium-sized pan</string>
     <string name="availability">Availability</string>
     <string name="transaction_id">Transaction ID:</string>
     <string name="transaction_date">Transaction Date:</string>
     <string name="transatcion_time">Transaction Time:</string>
-    <string name="name_of_reciepient">Name of Reciepient:</string>
+    <string name="name_of_reciepient">Name of Recipient:</string>
     <string name="amount">Amount:</string>
     <string name="item_purchased">Item(s) Purchased:</string>
     <string name="narration">Narration:</string>
@@ -223,7 +223,7 @@
     <string name="become_a_seller">Become a seller</string>
     <string name="create_shop">Create Shop</string>
     <string name="business_name">Business Name</string>
-    <string name="fill_out_this_form_to_get_your_shop">Please fill out this form to get  your shop up and runnung on Cakkie.</string>
+    <string name="fill_out_this_form_to_get_your_shop">Please fill out this form to get  your shop up and running on Cakkie.</string>
     <string name="upload_a_business_logo">Upload a Business Logo</string>
     <string name="who_can_see_your_post">Who can see your posts?</string>
     <string name="who_can_comment_on_your_posts">Who can comment on your posts?</string>
@@ -241,7 +241,7 @@
     <string name="followers_message">Are you sure you want to receive followers notifications?</string>
     <string name="messages_notifications">Messages Notifications</string>
     <string name="message">Are you sure you want to receive message notifications?</string>
-    <string name="proposal_message">Are youu sure you want to receive proposal notifications?</string>
+    <string name="proposal_message">Are you sure you want to receive proposal notifications?</string>
     <string name="post_message">Do you want to receive post and comments notifications?</string>
     <string name="login_out">Log Out</string>
     <string name="Logout">Log Out</string>
@@ -278,20 +278,20 @@
     <string name="edit">Edit</string>
     <string name="add_listing">Add Listing</string>
     <string name="preview">Preview</string>
-    <string name="set_availability">Set Availabilty</string>
+    <string name="set_availability">Set Availability</string>
     <string name="view_comments">View comments</string>
     <string name="availabile">Available</string>
     <string name="unavailable">Unavailable</string>
     <string name="set_availability_desc">"Is this product available at the moment? "</string>
     <string name="delete_listing">Delete Listing?</string>
     <string name="delete_listing_desc">Are you sure you want to delete this listing?</string>
-    <string name="no_comments">No Commets</string>
+    <string name="no_comments">No Comments</string>
     <string name="be_the_first_to_comment">Be the first to comment</string>
-    <string name="oh_oh">Oh oh!</string>
+    <stringTaste name="oh_oh">Oh oh!</stringTaste>
     <string name="sorry_no_reviews_yet">Sorry, no reviews yet</string>
     <string name="hurray_no_notification">Hurray! No notifications</string>
     <string name="under_construction">Under Construction</string>
-    <string name="something_is_baking_here">Something is baking here, anticipate the sweet teaste.</string>
+    <string name="something_is_baking_here">Something is baking here, anticipate the sweet taste.</string>
 
 
 </resources>
