@@ -1,4 +1,5 @@
-package com.cakkie.ui.screens.profile.bottomUI
+package com.cakkie.ui.screens.settings.bottomUI
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,31 +29,33 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
+import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun ProposalItem(
+fun PostItem(
     navigator: DestinationsNavigator
 ) {
+    val viewModel: SettingsViewModel = koinViewModel()
+    val notificationState = viewModel.notificationState.collectAsState().value
     var processing by remember {
         mutableStateOf(false)
     }
     val radioButtons = remember {
         mutableStateListOf(
-            ProposalToggledInfo(
+            PostToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            ProposalToggledInfo(
+            PostToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
@@ -74,13 +78,14 @@ fun ProposalItem(
                 painter = painterResource(id = R.drawable.edit),
                 contentDescription = "approved",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .padding(horizontal = 5.dp)
 
 
             )
             Text(
-                text = stringResource(id = R.string.proposal),
+                text = stringResource(id = R.string.post_and_comments),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -88,29 +93,23 @@ fun ProposalItem(
             )
         }
         Text(
-            text = stringResource(id = R.string.proposal_message),
+            text = stringResource(id = R.string.post_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
         )
+
         Column(modifier = Modifier.fillMaxWidth()) {
             radioButtons.forEachIndexed { index, info ->
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
-                        radioButtons.replaceAll {
-                            it.copy(
-                                isChecked = it.text == info.text
-                            )
-                        }
-
+                        viewModel.setPostsAndComments((info.text == "YES"))
                     }
                 ) {
                     RadioButton(
-                        selected = info.isChecked,
+                        selected = notificationState.postAndComment == (info.text == "YES"),
                         onClick = {
-                            radioButtons[index] = info.copy(
-                                isChecked = info.isChecked
-                            )
+                            viewModel.setPostsAndComments((info.text == "YES"))
                         },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = CakkieBrown,
@@ -133,6 +132,7 @@ fun ProposalItem(
             processing = processing,
             text = stringResource(id = R.string.sure)
         ) {
+            navigator.popBackStack()
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -140,7 +140,7 @@ fun ProposalItem(
 
 }
 
-data class ProposalToggledInfo(
+data class PostToggledInfo(
     val isChecked: Boolean,
     val text: String
 )

@@ -13,6 +13,7 @@ import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.File
 
 class ShopViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
@@ -33,13 +34,15 @@ class ShopViewModel : ViewModel(), KoinComponent {
     //create shop
     fun createShop(
         name: String,
+        description: String,
         address: String,
         imageUrl: String,
         location: Address,
     ) =
         NetworkCalls.post<LoginResponse>(
-            endpoint = Endpoints.SIGNUP, body = listOf(
+            endpoint = Endpoints.CREATE_SHOP, body = listOf(
                 Pair("name", name),
+                Pair("description", description),
                 Pair("address", address),
                 Pair("city", location.subAdminArea),
                 Pair("state", location.adminArea),
@@ -48,6 +51,12 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 Pair("country", location.countryName),
                 Pair("image", imageUrl),
             )
+        )
+
+
+    fun uploadImage(image: File, path: String, fileName: String) =
+        NetworkCalls.uploadFile(
+            endpoint = Endpoints.UPLOAD_IMAGE(path, fileName), media = image
         )
 
     init {

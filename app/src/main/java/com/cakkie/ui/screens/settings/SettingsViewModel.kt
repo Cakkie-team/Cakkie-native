@@ -28,26 +28,30 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
-    fun setPauseNotification(state: Boolean) {
+    fun setPauseNotification(state: String) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.PAUSE_NOTIFICATIONS, state)
         }
     }
+
     fun setPostsAndComments(state: Boolean) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.POSTS_COMMENTS, state)
         }
     }
+
     fun setFollowingsAndFollowers(state: Boolean) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.FOLLOWING_FOLLOWERS, state)
         }
     }
+
     fun setEmailNotifications(state: Boolean) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.EMAIL_NOTIFICATIONS, state)
         }
     }
+
     fun setMessages(state: Boolean) {
         viewModelScope.launch {
             settings.putPreference(SettingsConstants.MESSAGE, state)
@@ -64,40 +68,42 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
     init {
         getUser()
         viewModelScope.launch {
-            settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, false)
+            settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, "")
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(pauseNotification = it)
+                    //update notification state
+                    _notificationState.value = _notificationState.value.copy(pauseNotification = it)
                 }
 
             settings.getPreference(SettingsConstants.POSTS_COMMENTS, false)
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(postAndComment = it)
+                    _notificationState.value = _notificationState.value.copy(postAndComment = it)
                 }
 
             settings.getPreference(SettingsConstants.EMAIL_NOTIFICATIONS, false)
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(emailNotification = it)
+                    _notificationState.value = _notificationState.value.copy(emailNotification = it)
                 }
 
             settings.getPreference(SettingsConstants.MESSAGE, false)
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(message = it)
+                    _notificationState.value = _notificationState.value.copy(message = it)
                 }
 
             settings.getPreference(SettingsConstants.PROPOSAL, false)
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(proposal = it)
+                    _notificationState.value = _notificationState.value.copy(proposal = it)
                 }
 
             settings.getPreference(SettingsConstants.FOLLOWING_FOLLOWERS, false)
                 .asLiveData()
                 .observeForever {
-                    _notificationState.value = NotificationState(followingAndFollowers = it)
+                    _notificationState.value =
+                        _notificationState.value.copy(followingAndFollowers = it)
                 }
         }
     }
@@ -106,7 +112,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
 
 
 data class NotificationState(
-    var pauseNotification: Boolean = false,
+    var pauseNotification: String = "",
     var postAndComment: Boolean = false,
     var followingAndFollowers: Boolean = false,
     var emailNotification: Boolean = false,

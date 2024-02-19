@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.profile.bottomUI
+package com.cakkie.ui.screens.settings.bottomUI
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,13 +32,10 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun ChangeProfileItem(
-    navigator: DestinationsNavigator
-) {
+fun OtpItem(navigator: DestinationsNavigator) {
     var processing by remember {
         mutableStateOf(false)
     }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,37 +47,36 @@ fun ChangeProfileItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.edit),
+                painter = painterResource(id = R.drawable.approved),
                 contentDescription = "approved",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(20.dp)
-                    .padding(horizontal = 5.dp)
-
 
             )
             Text(
-                text = stringResource(id = R.string.make_changes_saved),
+                text = stringResource(id = R.string.changes_saved),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
         }
         Text(
-            text = stringResource(id = R.string.save_changes_message),
+            text = stringResource(id = R.string.changes_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
         )
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(13.dp))
 
         CakkieButton(
             Modifier
                 .height(50.dp)
-                .width(328.dp),
+                .width(328.dp)
+            ,
             processing = processing,
             text = stringResource(id = R.string.sure)
         ) {

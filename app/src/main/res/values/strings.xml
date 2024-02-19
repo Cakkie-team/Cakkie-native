@@ -246,6 +246,19 @@
     <string name="login_out">Log Out</string>
     <string name="Logout">Log Out</string>
     <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="about_business">a brief description about your business</string>
+    <string name="uploading">Uploading</string>
+    <string name="logo_uploaded">Logo uploaded</string>
+    <string name="contracts">Contracts</string>
+    <string name="proposals">Proposals</string>
+    <string name="requests">Requests</string>
+    <string name="listings">Listings</string>
+    <string name="nothing_to_show">Nothing to show yet</string>
+    <string name="get_started_now_by_checking_out_our_available_jobs">Get started now by checking out available jobs that just might be your first contract.</string>
+    <string name="check_jobs">Check Jobs</string>
+    <string name="create_listing">Create Listing</string>
+    <string name="start_now_by_posting_a_listing_to_earn_requests">Get started now by posting a listing to earn a request from a customer.</string>
+    <string name="get_started_now_by_checking_out_our_available_jobs_to_write">Get started now by checking out available jobs to write your first proposal.</string>
 
 
 </resources>

@@ -1,4 +1,5 @@
-package com.cakkie.ui.screens.profile.bottomUI
+package com.cakkie.ui.screens.settings.bottomUI
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,12 +28,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -40,7 +39,7 @@ import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun PostItem(
+fun FollowersItem(
     navigator: DestinationsNavigator
 ) {
     var processing by remember {
@@ -48,15 +47,16 @@ fun PostItem(
     }
     val radioButtons = remember {
         mutableStateListOf(
-            PostToggledInfo(
+            FollowersToggledInfo(
                 isChecked = false, text = "YES"
             ),
-            PostToggledInfo(
+            FollowersToggledInfo(
                 isChecked = false, text = "NO"
             ),
 
             )
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,13 +74,14 @@ fun PostItem(
                 painter = painterResource(id = R.drawable.edit),
                 contentDescription = "approved",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .padding(horizontal = 5.dp)
 
 
             )
             Text(
-                text = stringResource(id = R.string.post_and_comments),
+                text = stringResource(id = R.string.following_and_followers),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
@@ -88,7 +89,7 @@ fun PostItem(
             )
         }
         Text(
-            text = stringResource(id = R.string.post_message),
+            text = stringResource(id = R.string.followers_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontSize = 10.sp
@@ -140,7 +141,7 @@ fun PostItem(
     }
 
 }
-data class PostToggledInfo(
+data class FollowersToggledInfo(
     val isChecked: Boolean,
     val text: String
 )
