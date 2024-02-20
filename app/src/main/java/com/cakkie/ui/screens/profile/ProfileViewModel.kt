@@ -62,7 +62,17 @@ class ProfileViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
+    private fun getProfile() = NetworkCalls.get<User>(
+        endpoint = Endpoints.ACCOUNT,
+        body = listOf()
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.updateUser(it)
+        }
+    }
+
     init {
+        getProfile()
         getUser()
         getMyListings()
         getMyShop()

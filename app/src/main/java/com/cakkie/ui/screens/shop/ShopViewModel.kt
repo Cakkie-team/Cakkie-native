@@ -196,7 +196,17 @@ class ShopViewModel : ViewModel(), KoinComponent {
         body = listOf(Pair("available", available))
     )
 
+    private fun getProfile() = NetworkCalls.get<User>(
+        endpoint = Endpoints.ACCOUNT,
+        body = listOf()
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.updateUser(it)
+        }
+    }
+
     init {
+        getProfile()
         getUser()
         getMyShop()
         getMyListings()

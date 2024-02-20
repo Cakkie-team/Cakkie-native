@@ -8,6 +8,8 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
+import com.cakkie.utill.Endpoints
+import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -71,8 +73,17 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
+    private fun getProfile() = NetworkCalls.get<User>(
+        endpoint = Endpoints.ACCOUNT,
+        body = listOf()
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.updateUser(it)
+        }
+    }
 
     init {
+        getProfile()
         getUser()
         viewModelScope.launch {
             settings.getPreference(SettingsConstants.PAUSE_NOTIFICATIONS, "")
