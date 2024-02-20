@@ -59,6 +59,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
@@ -73,8 +75,12 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.skydoves.landscapist.ShimmerParams
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -164,26 +170,50 @@ fun MyProfile(navigator: DestinationsNavigator) {
                             .height(200.dp),
                         contentAlignment = Alignment.TopCenter
                     ) {
-                        GlideImage(
+                        var isLoading by remember {
+                            mutableStateOf(true)
+                        }
+                        AsyncImage(
                             model = user.coverImage[0].replace("http", "https"),
                             contentDescription = "cover",
-                            contentScale = ContentScale.FillBounds,
+                            contentScale = ContentScale.Crop,
+                            onState = {
+                                //update isLoaded
+                                isLoading = it is AsyncImagePainter.State.Loading
+                            },
                             modifier = Modifier
                                 .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-                                .height(150.dp)
+                                .height(100.dp)
+                                .placeholder(
+                                    visible = isLoading,
+                                    highlight = PlaceholderHighlight.shimmer(),
+                                    color = CakkieBrown.copy(0.8f)
+                                )
                         )
-                        GlideImage(
+                        var loading by remember {
+                            mutableStateOf(true)
+                        }
+                        AsyncImage(
                             model = user.profileImage.replace("http", "https"),
                             contentDescription = "profile pic",
-                            contentScale = ContentScale.FillBounds,
+                            contentScale = ContentScale.Crop,
+                            onState = {
+                                //update isLoaded
+                                loading = it is AsyncImagePainter.State.Loading
+                            },
                             modifier = Modifier
-                                .padding(top = 100.dp)
+                                .padding(top = 50.dp)
                                 .size(100.dp)
                                 .clip(RoundedCornerShape(100))
                                 .border(
                                     width = 3.dp,
                                     color = CakkieBackground,
                                     shape = RoundedCornerShape(100)
+                                )
+                                .placeholder(
+                                    visible = loading,
+                                    highlight = PlaceholderHighlight.shimmer(),
+                                    color = CakkieBrown.copy(0.8f)
                                 )
                         )
                     }
@@ -390,15 +420,22 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                     .size(width = 118.dp, height = 116.dp),
                                 contentAlignment = Alignment.BottomEnd
                             ) {
-                                GlideImage(
-                                    model = item.media[0],
+                                com.skydoves.landscapist.glide.GlideImage(
+                                    imageModel = item.media[0],
                                     contentDescription = "post image",
                                     modifier = Modifier
                                         .padding(end = 3.dp, bottom = 4.dp)
                                         .onGloballyPositioned {
                                             sizeImage = it.size
                                         },
-                                    contentScale = ContentScale.FillBounds
+                                    contentScale = ContentScale.FillBounds,
+                                    shimmerParams = ShimmerParams(
+                                        baseColor = CakkieBrown.copy(0.8f),
+                                        highlightColor = CakkieBackground,
+                                        durationMillis = 1000,
+                                        dropOff = 0.5f,
+                                        tilt = 20f
+                                    ),
                                 )
                                 Box(
                                     modifier = Modifier
