@@ -47,7 +47,6 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
@@ -68,7 +67,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     val user = viewModel.user.observeAsState(User()).value
-    val listings = viewModel.listings.observeAsState(ListingResponse()).value
+    val listings = viewModel.listings.observeAsState().value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
 
@@ -83,9 +82,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(Unit) {
-        if (listings.data.isEmpty()) {
+        if (listings?.data.isNullOrEmpty()) {
             viewModel.getListings(context)
         }
+    }
+
+    LaunchedEffect(listings) {
+        Timber.d("Listings: ${listings?.data}")
     }
     Column(
         modifier = Modifier
@@ -203,25 +206,27 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            items(
-                items = listings.data,
-                key = { it.id }
-            ) { listing ->
-                val index = listings.data.indexOf(listing).plus(1)
-                val visibleItem =
-                    remember { derivedStateOf { listState.firstVisibleItemIndex } }.value
-                Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
-                ExploreItem(
-                    user = user,
-                    navigator = navigator,
-                    item = listing,
-                    shouldPlay = remember {
-                        derivedStateOf { index == visibleItem }
-                    }.value,
-                    isMuted = isMuted,
-                    onMute = { isMuted = it },
-                    progressiveMediaSource = progressiveMediaSource
-                )
+            if (listings != null) {
+                items(
+                    items = listings.data,
+                    key = { it.id }
+                ) { listing ->
+                    val index = listings.data.indexOf(listing).plus(1)
+                    val visibleItem =
+                        remember { derivedStateOf { listState.firstVisibleItemIndex } }.value
+                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
+                    ExploreItem(
+//                       user = user,
+                        navigator = navigator,
+                        item = listing,
+                        shouldPlay = remember {
+                            derivedStateOf { index == visibleItem }
+                        }.value,
+                        isMuted = isMuted,
+                        onMute = { isMuted = it },
+                        progressiveMediaSource = progressiveMediaSource
+                    )
+                }
             }
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }

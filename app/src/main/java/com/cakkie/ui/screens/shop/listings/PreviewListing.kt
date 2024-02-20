@@ -178,7 +178,6 @@ fun PreviewListing(
             }
 
             ExploreItem(
-                user = user,
                 item = listing,
                 navigator = navigator,
                 shouldPlay = true,

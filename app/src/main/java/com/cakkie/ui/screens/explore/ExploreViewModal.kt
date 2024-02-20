@@ -22,10 +22,12 @@ import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import com.cakkie.utill.VideoPreLoadingService
 import com.cakkie.utill.isVideoUrl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class ExploreViewModal : ViewModel(), KoinComponent {
@@ -54,7 +56,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             endpoint = Endpoints.GET_LISTINGS(page, size),
             body = listOf()
         ).addOnSuccessListener {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.Main) {
                 listingRepository.addListings(it.data)
                 _pagination.value = it.meta
                 val videoList = it.data.filter {
@@ -125,7 +127,10 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             listingRepository.getListings().asLiveData().observeForever {
                 if (it.isNotEmpty()) {
                     _pagination.observeForever { pagination ->
-                        _listings.value = ListingResponse(data = it, meta = pagination)
+                        if (pagination != null) {
+                            Timber.d("Pagination: $pagination and data: ${it}")
+                            _listings.value = ListingResponse(data = it, meta = pagination)
+                        }
                     }
                 }
             }

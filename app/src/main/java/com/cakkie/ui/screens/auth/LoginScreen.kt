@@ -157,10 +157,10 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                             image = R.drawable.logo
                         ).show()
                         navigator.navigate(ExploreScreenDestination) {
-                            popUpTo(EmailScreenDestination.route) {
+                            popUpTo(LoginScreenDestination.route) {
                                 inclusive = true
                             }
-                            popUpTo(LoginScreenDestination.route) {
+                            popUpTo(EmailScreenDestination.route) {
                                 inclusive = true
                             }
                             launchSingleTop = true

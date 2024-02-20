@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -86,7 +87,6 @@ import org.koin.androidx.compose.koinViewModel
 )
 @Composable
 fun ExploreItem(
-    user: User,
     item: Listing = Listing(),
     shouldPlay: Boolean = false,
     isMuted: Boolean = false,
@@ -95,6 +95,7 @@ fun ExploreItem(
     navigator: DestinationsNavigator
 ) {
     val viewModal: ExploreViewModal = koinViewModel()
+    val user = viewModal.user.observeAsState(User()).value
     val context = LocalContext.current
     var listing by rememberSaveable { mutableStateOf(item) }
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
@@ -256,12 +257,6 @@ fun ExploreItem(
                             )
                             .fillMaxWidth(),
                         contentScale = ContentScale.FillWidth,
-//                        shimmerParams = ShimmerParams(
-//                            baseColor = CakkieBrown.copy(0.4f),
-//                            highlightColor = CakkieBrown.copy(0.8f),
-//                            dropOff = 0.55f,
-//                            tilt = 20f
-//                        )
                     )
                 }
             }
