@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,8 +45,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
@@ -54,6 +56,9 @@ import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBrown
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -103,15 +108,29 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                GlideImage(
+                var isLoading by remember {
+                    mutableStateOf(false)
+                }
+                AsyncImage(
                     model = user?.profileImage?.replace("http", "https") ?: "",
                     contentDescription = "profile pic",
+                    onState = {
+                        //update isLoaded
+                        isLoading = it is AsyncImagePainter.State.Loading
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .clip(shape = CircleShape)
                         .clickable {
                             navigator.navigate(MyProfileDestination)
                         }
+                        .placeholder(
+                            visible = isLoading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
@@ -189,9 +208,16 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     Modifier.padding(horizontal = 16.dp)
                 ) {
                     items(10) {
-                        GlideImage(
+                        var isLoading by remember {
+                            mutableStateOf(false)
+                        }
+                        AsyncImage(
                             model = "https://source.unsplash.com/100x150/?cake?video",
                             contentDescription = "cake",
+                            onState = {
+                                //update isLoaded
+                                isLoading = it is AsyncImagePainter.State.Loading
+                            },
                             modifier = Modifier
                                 .width(85.dp)
                                 .height(120.dp)
@@ -201,6 +227,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                 .clickable {
                                     navigator.navigate(CakespirationDestination(id = it.toString()))
                                 }
+                                .placeholder(
+                                    visible = isLoading,
+                                    highlight = PlaceholderHighlight.shimmer(),
+                                    color = CakkieBrown.copy(0.8f)
+                                )
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth,
                         )
                     }
                 }

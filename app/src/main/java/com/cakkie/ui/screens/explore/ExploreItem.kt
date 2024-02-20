@@ -77,7 +77,6 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -141,9 +140,16 @@ fun ExploreItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                GlideImage(
-                    imageModel = listing.shop.image,
+                var isLoading by remember {
+                    mutableStateOf(false)
+                }
+                AsyncImage(
+                    model = listing.shop.image,
                     contentDescription = "profile pic",
+                    onState = {
+                        //update isLoaded
+                        isLoading = it is AsyncImagePainter.State.Loading
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .clip(shape = CircleShape)
@@ -155,6 +161,13 @@ fun ExploreItem(
                                 )
                             )
                         }
+                        .placeholder(
+                            visible = isLoading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
