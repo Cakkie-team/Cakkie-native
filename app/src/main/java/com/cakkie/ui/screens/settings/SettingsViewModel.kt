@@ -64,6 +64,13 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
+    fun logOut() {
+        viewModelScope.launch {
+            userRepository.clear()
+            settings.clearAllPreference()
+        }
+    }
+
 
     init {
         getUser()

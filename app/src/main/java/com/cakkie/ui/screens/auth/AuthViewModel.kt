@@ -35,11 +35,11 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("deviceToken", deviceID),
                 Pair("os", os)
             )
-        ).addOnSuccessListener {
-            if (it.user.id.isNotEmpty())
-                viewModelScope.launch(Dispatchers.IO) {
-                    userRepository.createUser(it.user)
-                }
+        )
+
+    fun saveUser(user: User) =
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.createUser(user)
         }
 
     //login

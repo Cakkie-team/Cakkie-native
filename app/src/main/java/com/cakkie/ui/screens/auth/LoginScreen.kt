@@ -129,6 +129,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                     processing = false
                     if (it.token.isNotEmpty()) {
                         viewModel.saveToken(it.token)
+                        viewModel.saveUser(it.user)
                     }
                     if (it.isNewDevice) {
                         Toaster(

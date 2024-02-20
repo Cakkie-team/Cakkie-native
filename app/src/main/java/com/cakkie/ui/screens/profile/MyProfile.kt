@@ -67,7 +67,6 @@ import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
-import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.SettingsDestination
@@ -92,7 +91,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MyProfile(navigator: DestinationsNavigator) {
     val viewModel: ProfileViewModel = koinViewModel()
-    val user = viewModel.user.observeAsState(User()).value
+    val user = viewModel.user.observeAsState().value
     val post = viewModel.listings.observeAsState(ListingResponse()).value
     val shop = viewModel.shop.observeAsState(ShopModel()).value
     val favourites = remember {
@@ -167,14 +166,14 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
-                            .height(200.dp),
+                            .height(150.dp),
                         contentAlignment = Alignment.TopCenter
                     ) {
                         var isLoading by remember {
                             mutableStateOf(true)
                         }
                         AsyncImage(
-                            model = user.coverImage[0].replace("http", "https"),
+                            model = user?.coverImage?.get(0)?.replace("http", "https"),
                             contentDescription = "cover",
                             contentScale = ContentScale.Crop,
                             onState = {
@@ -194,7 +193,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                             mutableStateOf(true)
                         }
                         AsyncImage(
-                            model = user.profileImage.replace("http", "https"),
+                            model = user?.profileImage?.replace("http", "https"),
                             contentDescription = "profile pic",
                             contentScale = ContentScale.Crop,
                             onState = {
@@ -218,18 +217,29 @@ fun MyProfile(navigator: DestinationsNavigator) {
                         )
                     }
                     Text(
-                        text = user.name,
+                        text = user?.name ?: "",
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        modifier = Modifier
+                            .placeholder(
+                                visible = user == null,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            )
+                            .align(Alignment.CenterHorizontally),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp
                     )
                     Text(
-                        text = user.address,
+                        text = user?.address ?: "",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
+                            .placeholder(
+                                visible = user == null,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            )
                             .align(Alignment.CenterHorizontally)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
