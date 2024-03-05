@@ -9,6 +9,8 @@ import android.location.Address
 import android.location.Location
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import com.cakkie.utill.locationModels.LocationResult
+import com.cakkie.utill.locationModels.Place
 
 
 fun Activity.isLocationPermissionGranted(): Boolean {
@@ -81,4 +83,29 @@ fun Context.searchAddressFromLocation(location: Location, query: String): List<A
     )
 //    Timber.d("address: $addresses")
     return addresses ?: listOf()
+}
+
+
+fun getCurrentAddress(lat: Double, lng: Double): LocationResult? {
+    var _locationResult: LocationResult? = null
+    NetworkCalls.get<Place>(
+        endpoint = Endpoints.GET_LOCATION(lat, lng),
+        body = listOf()
+    ).addOnSuccessListener { locationResult ->
+        _locationResult = locationResult.results.first()
+    }
+
+    return _locationResult
+}
+
+fun getNearbyAddress(lat: Double, lng: Double): List<LocationResult> {
+    var _locationResult: List<LocationResult> = listOf()
+    NetworkCalls.get<Place>(
+        endpoint = Endpoints.GET_LOCATION(lat, lng),
+        body = listOf()
+    ).addOnSuccessListener { locationResult ->
+        _locationResult = locationResult.results
+    }
+
+    return _locationResult
 }

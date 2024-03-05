@@ -10,6 +10,7 @@ object Endpoints {
     private const val BASE_URL = "https://api.cakkie.com" /*val live base url*/
     const val SOCKET_URL =
         BASE_URL /*val live base url*/
+    private const val KEY = "AIzaSyDu70nrGBsZTGWdxGm0rLPvAzDwlwMy_B8"
 
     /**
      * Authentication
@@ -80,4 +81,12 @@ object Endpoints {
     val GET_NOTIFICATIONS =
         { page: Int, size: Int -> "$BASE_URL/notification?page=$page" }/* get notifications  GET*/ /*todo:  fix page size*/
 
+
+    /**
+     * Location
+     * */
+    val GET_LOCATION =
+        { lat: Double, lng: Double -> "https://maps.googleapis.com/maps/api/geocode/json?address=$lat,$lng&key=$KEY" } /* get location  GET*/
+    val SEARCH_LOCATION =
+        { query: String, lat: Double, lng: Double -> "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&location=$lat%2C$lng&radius=500&key=$KEY" } /* search location  GET*/
 }

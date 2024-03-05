@@ -1,6 +1,5 @@
 package com.cakkie.ui.components
 
-import android.location.Address
 import android.location.Location
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,8 +46,9 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
-import com.cakkie.utill.getAddressFromLocation
-import com.cakkie.utill.getNearbyAddressFromLocation
+import com.cakkie.utill.getCurrentAddress
+import com.cakkie.utill.getNearbyAddress
+import com.cakkie.utill.locationModels.LocationResult
 import com.cakkie.utill.searchAddressFromLocation
 
 @Composable
@@ -60,12 +60,12 @@ fun CakkieInputField(
     keyboardType: KeyboardType,
     isError: Boolean = false,
     isAddress: Boolean = false,
-    onLocationClick: (Address) -> Unit = {},
+    onLocationClick: (LocationResult) -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
     isEditable: Boolean = true,
     showEditIcon: Boolean = false,
     location: Location? = null,
-    singleLine:Boolean = true
+    singleLine: Boolean = true
 ) {
     val context = LocalContext.current
     var visible by remember {
@@ -82,14 +82,14 @@ fun CakkieInputField(
     }
     var addressList by remember {
         mutableStateOf(
-            listOf<Address>()
+            listOf<LocationResult>()
         )
     }
 
     LaunchedEffect(key1 = searchQuery, key2 = location) {
         if (isAddress && searchQuery.text.isEmpty()) {
             if (location != null) {
-                addressList = context.getNearbyAddressFromLocation(location)
+                addressList = getNearbyAddress(location.latitude, location.longitude)
             }
         }
         if (searchQuery.text.isNotEmpty() && location != null) {
@@ -174,20 +174,18 @@ fun CakkieInputField(
                         modifier = Modifier.clickable {
                             if (location != null) {
 //                                Timber.d("address is: "+context.getAddressFromLocation(location))
-                                context.getAddressFromLocation(
-                                    location
-                                )?.let {
+                                val address = getCurrentAddress(
+                                    location.latitude, location.longitude
+                                )
+                                onValueChange.invoke(
                                     TextFieldValue(
-                                        it.getAddressLine(0)
+                                        address?.formattedAddress ?: ""
                                     )
-                                }?.let {
-                                    onValueChange.invoke(
-                                        it
-                                    )
+                                )
+
+                                if (address != null) {
+                                    onLocationClick.invoke(address)
                                 }
-                                context.getAddressFromLocation(
-                                    location
-                                )?.let { onLocationClick.invoke(it) }
                             }
                         }
                     )
@@ -213,7 +211,9 @@ fun CakkieInputField(
                 .fillMaxWidth(0.9f)
                 .align(CenterHorizontally)
         ) {
-           Box(modifier = Modifier.height(60.dp).fillMaxWidth()){
+           Box(modifier = Modifier
+               .height(60.dp)
+               .fillMaxWidth()){
                CakkieInputField(
                    value = searchQuery,
                    onValueChange = { searchQuery = it },
@@ -225,7 +225,9 @@ fun CakkieInputField(
                            contentDescription = "search",
                        )
                    },
-                   modifier = Modifier.padding(6.dp).height(60.dp)
+                   modifier = Modifier
+                       .padding(6.dp)
+                       .height(60.dp)
                )
            }
             addressList.forEach { address ->

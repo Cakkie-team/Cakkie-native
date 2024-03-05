@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.SettingsDestination
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -62,7 +62,7 @@ fun LogOut(navigator: DestinationsNavigator) {
     ) {
         viewModel.logOut()
         navigator.navigate(SplashScreenDestination) {
-            popUpTo(SettingsDestination.route) {
+            popUpTo(LoginScreenDestination.route) {
                 inclusive = true
             }
         }
