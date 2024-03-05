@@ -89,4 +89,6 @@ object Endpoints {
         { lat: Double, lng: Double -> "https://maps.googleapis.com/maps/api/geocode/json?address=$lat,$lng&key=$KEY" } /* get location  GET*/
     val SEARCH_LOCATION =
         { query: String, lat: Double, lng: Double -> "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&location=$lat%2C$lng&radius=500&key=$KEY" } /* search location  GET*/
+    val GET_ADDRESS =
+        { address: String -> "https://maps.googleapis.com/maps/api/geocode/json?address=$address&sensor=true&key=$KEY" } /* get address  GET*/
 }

@@ -2,7 +2,6 @@ package com.cakkie.ui.screens.shop
 
 import android.app.Activity
 import android.content.Intent
-import android.location.Address
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,6 +57,7 @@ import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.getCurrentLocation
+import com.cakkie.utill.locationModels.LocationResult
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
@@ -133,7 +133,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
     var location by remember {
-        mutableStateOf<Address?>(null)
+        mutableStateOf<LocationResult?>(null)
     }
     val activity = context as Activity
     val currentLocation = activity.getCurrentLocation()

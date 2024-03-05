@@ -12,6 +12,9 @@ import androidx.core.app.ActivityCompat
 import com.cakkie.utill.locationModels.LocationResult
 import com.cakkie.utill.locationModels.Place
 import com.cakkie.utill.locationModels.SearchResults
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 fun Activity.isLocationPermissionGranted(): Boolean {
@@ -87,44 +90,68 @@ fun Context.searchAddressFromLocation(location: Location, query: String): List<A
 }
 
 
-fun getCurrentAddress(lat: Double, lng: Double): LocationResult? {
-    var _locationResult: LocationResult? = null
-    NetworkCalls.get<Place>(
-        endpoint = Endpoints.GET_LOCATION(lat, lng),
-        body = listOf()
-    ).addOnSuccessListener { locationResult ->
-        _locationResult = locationResult.results.first()
-    }
-
-    return _locationResult
-}
-
-fun getNearbyAddress(lat: Double, lng: Double): List<LocationResult> {
-    var _locationResult: List<LocationResult> = listOf()
-    NetworkCalls.get<Place>(
-        endpoint = Endpoints.GET_LOCATION(lat, lng),
-        body = listOf()
-    ).addOnSuccessListener { locationResult ->
-        _locationResult = locationResult.results
-    }
-
-    return _locationResult
-}
-
-fun searchAddress(lat: Double, lng: Double, query: String): List<LocationResult> {
-    var _locationResult: List<LocationResult> = listOf()
-    NetworkCalls.get<SearchResults>(
-        endpoint = Endpoints.SEARCH_LOCATION(query, lat, lng),
-        body = listOf()
-    ).addOnSuccessListener { locationResult ->
-        _locationResult = locationResult.predictions.map {
-            LocationResult(
-                formattedAddress = it.description,
-                placeId = it.placeId,
-                geometry = null,
-            )
+suspend fun getCurrentAddress(lat: Double, lng: Double): LocationResult? {
+    return suspendCoroutine { continuation ->
+        NetworkCalls.get<Place>(
+            endpoint = Endpoints.GET_LOCATION(lat, lng),
+            body = listOf()
+        ).addOnSuccessListener { place ->
+            val locationResult = place.results.firstOrNull()
+            continuation.resume(locationResult)
+        }.addOnFailureListener { exception ->
+            // Handle failure, maybe log the error or return null
+            continuation.resume(null)
         }
     }
+}
 
-    return _locationResult
+suspend fun getNearbyAddress(lat: Double, lng: Double): List<LocationResult> {
+    return suspendCoroutine { continuation ->
+        NetworkCalls.get<Place>(
+            endpoint = Endpoints.GET_LOCATION(lat, lng),
+            body = listOf()
+        ).addOnSuccessListener { place ->
+            val locationResults = place.results
+            continuation.resume(locationResults)
+        }.addOnFailureListener { exception ->
+            // Handle failure, maybe log the error or return an empty list
+            continuation.resumeWithException(exception)
+        }
+    }
+}
+
+suspend fun searchAddress(lat: Double, lng: Double, query: String): List<LocationResult> {
+    return suspendCoroutine { continuation ->
+        NetworkCalls.get<SearchResults>(
+            endpoint = Endpoints.SEARCH_LOCATION(query, lat, lng),
+            body = listOf()
+        ).addOnSuccessListener { locationResult ->
+            val locationResults = locationResult.predictions.map {
+                LocationResult(
+                    formattedAddress = it.description,
+                    placeId = it.placeId,
+                    geometry = null
+                )
+            }
+            continuation.resume(locationResults)
+        }.addOnFailureListener { exception ->
+            // Handle failure, maybe log the error or return an empty list
+            continuation.resumeWithException(exception)
+        }
+    }
+}
+
+suspend fun getPlaceDetails(address: String): LocationResult? {
+    return suspendCoroutine { continuation ->
+        NetworkCalls.get<Place>(
+            endpoint = Endpoints.GET_ADDRESS(address),
+            body = listOf()
+        ).addOnSuccessListener { place ->
+            val locationResult = place.results.firstOrNull()
+            continuation.resume(locationResult)
+        }.addOnFailureListener { exception ->
+            // Handle failure, maybe log the error or return null
+            continuation.resume(null)
+        }
+    }
 }

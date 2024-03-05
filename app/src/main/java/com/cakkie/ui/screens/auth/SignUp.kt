@@ -68,6 +68,10 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
     var address by remember {
         mutableStateOf(TextFieldValue(""))
     }
+
+    var referralCode by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
     var password by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -187,6 +191,14 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 placeholder = stringResource(id = R.string.password),
                 keyboardType = KeyboardType.Password,
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            CakkieInputField(
+                value = referralCode,
+                onValueChange = { referralCode = it },
+                placeholder = stringResource(id = R.string.refferal_code),
+                keyboardType = KeyboardType.Text,
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(

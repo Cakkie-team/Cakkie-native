@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -47,8 +48,11 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.getCurrentAddress
 import com.cakkie.utill.getNearbyAddress
+import com.cakkie.utill.getPlaceDetails
 import com.cakkie.utill.locationModels.LocationResult
 import com.cakkie.utill.searchAddress
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun CakkieInputField(
@@ -66,6 +70,7 @@ fun CakkieInputField(
     location: Location? = null,
     singleLine: Boolean = true
 ) {
+    val scope = rememberCoroutineScope()
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
     }
@@ -172,17 +177,19 @@ fun CakkieInputField(
                         modifier = Modifier.clickable {
                             if (location != null) {
 //                                Timber.d("address is: "+context.getAddressFromLocation(location))
-                                val address = getCurrentAddress(
-                                    location.latitude, location.longitude
-                                )
-                                onValueChange.invoke(
-                                    TextFieldValue(
-                                        address?.formattedAddress ?: ""
+                                scope.launch(Dispatchers.IO) {
+                                    val address = getCurrentAddress(
+                                        location.latitude, location.longitude
                                     )
-                                )
+                                    onValueChange.invoke(
+                                        TextFieldValue(
+                                            address?.formattedAddress ?: ""
+                                        )
+                                    )
 
-                                if (address != null) {
-                                    onLocationClick.invoke(address)
+                                    if (address != null) {
+                                        onLocationClick.invoke(address)
+                                    }
                                 }
                             }
                         }
@@ -205,14 +212,16 @@ fun CakkieInputField(
             modifier = Modifier
                 .background(CakkieBackground, RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
-                .padding(horizontal = 10.dp, vertical = 5.dp)
+                .padding(vertical = 5.dp)
                 .fillMaxWidth(0.9f)
+                .height(300.dp)
                 .align(CenterHorizontally)
         ) {
             Box(
                 modifier = Modifier
                     .height(60.dp)
                     .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             ) {
                 CakkieInputField(
                     value = searchQuery,
@@ -231,13 +240,20 @@ fun CakkieInputField(
                 )
             }
             addressList.forEach { address ->
+                Spacer(modifier = Modifier.height(10.dp))
+//                Timber.d("address: ${address.formattedAddress}")
                 DropdownMenuItem(onClick = {
                     // Handle item selection
                     onValueChange.invoke(TextFieldValue(address.formattedAddress))
-                    onLocationClick.invoke(address)
+                    scope.launch {
+                        val place = getPlaceDetails(address.formattedAddress)
+                        if (place != null) {
+                            onLocationClick.invoke(place)
+                        }
+                    }
                     showSearch = false
                 }) {
-                    Spacer(modifier = Modifier.height(10.dp))
+
                     Text(
                         text = address.formattedAddress,
                         style = MaterialTheme.typography.bodyLarge,
@@ -247,6 +263,7 @@ fun CakkieInputField(
                             .shadow(1.dp, RoundedCornerShape(8.dp))
                             .background(CakkieBackground)
                             .fillMaxWidth()
+                            .padding(5.dp)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                 }
