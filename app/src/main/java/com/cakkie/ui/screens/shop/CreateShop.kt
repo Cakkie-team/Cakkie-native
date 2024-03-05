@@ -321,15 +321,33 @@ fun CreateShop(navigator: DestinationsNavigator) {
                     location = location!!,
                     description = description.text
                 ).addOnSuccessListener { resp ->
-                    processing = false
                     Timber.d(resp.toString())
-                    //navigate to shop screen
-                    navigator.navigate(ShopDestination) {
-                        launchSingleTop = true
-                        popUpTo(CreateShopDestination) {
-                            inclusive = true
+                    viewModel.getProfile().addOnSuccessListener {
+                        processing = false
+                        //navigate to shop screen
+                        navigator.navigate(ShopDestination) {
+                            launchSingleTop = true
+                            popUpTo(CreateShopDestination) {
+                                inclusive = true
+                            }
                         }
                     }
+                        .addOnFailureListener { exception ->
+                            //show toast
+                            Toaster(
+                                context = context,
+                                message = exception.localizedMessage ?: "Failed to get user",
+                                image = R.drawable.logo
+                            ).show()
+                            processing = false
+                            Timber.d(exception)
+                            navigator.navigate(ShopDestination) {
+                                launchSingleTop = true
+                                popUpTo(CreateShopDestination) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                 }.addOnFailureListener { exception ->
                     //show toast
                     Toaster(
