@@ -11,6 +11,7 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.cakkie.utill.locationModels.LocationResult
 import com.cakkie.utill.locationModels.Place
+import com.cakkie.utill.locationModels.SearchResults
 
 
 fun Activity.isLocationPermissionGranted(): Boolean {
@@ -105,6 +106,24 @@ fun getNearbyAddress(lat: Double, lng: Double): List<LocationResult> {
         body = listOf()
     ).addOnSuccessListener { locationResult ->
         _locationResult = locationResult.results
+    }
+
+    return _locationResult
+}
+
+fun searchAddress(lat: Double, lng: Double, query: String): List<LocationResult> {
+    var _locationResult: List<LocationResult> = listOf()
+    NetworkCalls.get<SearchResults>(
+        endpoint = Endpoints.SEARCH_LOCATION(query, lat, lng),
+        body = listOf()
+    ).addOnSuccessListener { locationResult ->
+        _locationResult = locationResult.predictions.map {
+            LocationResult(
+                formattedAddress = it.description,
+                placeId = it.placeId,
+                geometry = null,
+            )
+        }
     }
 
     return _locationResult

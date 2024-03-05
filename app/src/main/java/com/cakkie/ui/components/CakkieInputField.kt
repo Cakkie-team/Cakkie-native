@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +48,7 @@ import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.getCurrentAddress
 import com.cakkie.utill.getNearbyAddress
 import com.cakkie.utill.locationModels.LocationResult
-import com.cakkie.utill.searchAddressFromLocation
+import com.cakkie.utill.searchAddress
 
 @Composable
 fun CakkieInputField(
@@ -67,7 +66,6 @@ fun CakkieInputField(
     location: Location? = null,
     singleLine: Boolean = true
 ) {
-    val context = LocalContext.current
     var visible by remember {
         mutableStateOf(keyboardType != KeyboardType.Password)
     }
@@ -93,7 +91,7 @@ fun CakkieInputField(
             }
         }
         if (searchQuery.text.isNotEmpty() && location != null) {
-            addressList = context.searchAddressFromLocation(location, searchQuery.text)
+            addressList = searchAddress(location.latitude, location.longitude, searchQuery.text)
         }
     }
     Column {
@@ -107,7 +105,7 @@ fun CakkieInputField(
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextColorDark.copy(alpha = 0.5f),
 
-                )
+                    )
             },
             textStyle = MaterialTheme.typography.bodyLarge,
             singleLine = singleLine,
@@ -211,35 +209,37 @@ fun CakkieInputField(
                 .fillMaxWidth(0.9f)
                 .align(CenterHorizontally)
         ) {
-           Box(modifier = Modifier
-               .height(60.dp)
-               .fillMaxWidth()){
-               CakkieInputField(
-                   value = searchQuery,
-                   onValueChange = { searchQuery = it },
-                   placeholder = stringResource(id = R.string.search_address_city_state),
-                   keyboardType = KeyboardType.Text,
-                   leadingIcon = {
-                       Image(
-                           painter = painterResource(id = R.drawable.search),
-                           contentDescription = "search",
-                       )
-                   },
-                   modifier = Modifier
-                       .padding(6.dp)
-                       .height(60.dp)
-               )
-           }
+            Box(
+                modifier = Modifier
+                    .height(60.dp)
+                    .fillMaxWidth()
+            ) {
+                CakkieInputField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = stringResource(id = R.string.search_address_city_state),
+                    keyboardType = KeyboardType.Text,
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(id = R.drawable.search),
+                            contentDescription = "search",
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .height(60.dp)
+                )
+            }
             addressList.forEach { address ->
                 DropdownMenuItem(onClick = {
                     // Handle item selection
-                    onValueChange.invoke(TextFieldValue(address.getAddressLine(0)))
+                    onValueChange.invoke(TextFieldValue(address.formattedAddress))
                     onLocationClick.invoke(address)
                     showSearch = false
                 }) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = address.getAddressLine(0),
+                        text = address.formattedAddress,
                         style = MaterialTheme.typography.bodyLarge,
                         color = Black,
                         fontWeight = FontWeight.Medium,
