@@ -2,7 +2,6 @@ package com.cakkie.ui.screens.auth
 
 import android.app.Activity
 import android.content.Intent
-import android.location.Address
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -46,6 +45,7 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.getCurrentLocation
+import com.cakkie.utill.locationModels.LocationResult
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -73,7 +73,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
     }
 
     var location by remember {
-        mutableStateOf<Address?>(null)
+        mutableStateOf<LocationResult?>(null)
     }
 
     val context = LocalContext.current

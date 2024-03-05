@@ -1,6 +1,5 @@
 package com.cakkie.ui.screens.auth
 
-import android.location.Address
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import com.cakkie.datastore.SettingsConstants
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import com.cakkie.utill.locationModels.LocationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -50,7 +50,7 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
         lastName: String,
         userName: String,
         address: String,
-        location: Address,
+        location: LocationResult,
         referralCode: String? = null
     ) =
         NetworkCalls.post<LoginResponse>(
@@ -61,11 +61,20 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
                 Pair("lastName", lastName),
                 Pair("userName", userName),
                 Pair("address", address),
-                Pair("city", location.subAdminArea),
-                Pair("state", location.adminArea),
-                Pair("latitude", location.latitude),
-                Pair("longitude", location.longitude),
-                Pair("country", location.countryName),
+                Pair("city",
+                    location.addressComponents.firstOrNull { it.types.contains("locality") }?.longName
+                        ?: ""
+                ),
+                Pair("state",
+                    location.addressComponents.firstOrNull { it.types.contains("administrative_area_level_1") }?.longName
+                        ?: ""
+                ),
+                Pair("latitude", location.geometry?.location?.lat ?: 0.0),
+                Pair("longitude", location.geometry?.location?.lng ?: 0.0),
+                Pair("country",
+                    location.addressComponents.firstOrNull { it.types.contains("country") }?.longName
+                        ?: ""
+                ),
                 Pair("referralCode", referralCode),
             )
         )
