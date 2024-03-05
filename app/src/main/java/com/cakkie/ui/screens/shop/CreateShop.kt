@@ -106,7 +106,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 path = "shop-logos",
                 fileName = file.name + ".png"
             ).addOnSuccessListener { resp ->
-                fileUrl = Endpoints.FILE_URL(file.name + ".png")
+                fileUrl = Endpoints.FILE_URL("shop-logos/" + file.name + ".png")
                 Timber.d(resp)
                 uploadMessage = "Logo uploaded"
                 uploding = false
