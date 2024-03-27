@@ -281,7 +281,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     )
                 }
             }
-            item { Spacer(modifier = Modifier.height(140.dp)) }
+            item { Spacer(modifier = Modifier.height(180.dp)) }
         }
     }
 }
