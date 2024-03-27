@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.explore
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,7 +49,7 @@ import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.cakkie.BottomState.hideNav
 import com.cakkie.R
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
@@ -65,7 +67,6 @@ import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun ExploreScreen(navigator: DestinationsNavigator) {
@@ -75,6 +76,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val listings = viewModel.listings.observeAsState().value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
+    var visible by remember { mutableStateOf(true) }
 
     val progressiveMediaSource = remember {
         val httpDataSourceFactory = DefaultHttpDataSource.Factory()
@@ -85,6 +87,22 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
+    var prevScroll by remember { mutableIntStateOf(0) }
+    val scrollFraction =
+        remember { derivedStateOf { listState.firstVisibleItemScrollOffset } }.value
+
+
+    LaunchedEffect(scrollFraction) {
+        visible = scrollFraction <= prevScroll
+        hideNav.value = scrollFraction > prevScroll
+        if (scrollFraction > 20) {
+            prevScroll = scrollFraction
+        }
+
+    }
+
+    //note scroll offset
+
 
     LaunchedEffect(Unit) {
         if (listings?.data.isNullOrEmpty()) {
@@ -99,71 +117,73 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Row(
-            Modifier
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        AnimatedVisibility(visible = visible) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                Modifier
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                var isLoading by remember {
-                    mutableStateOf(false)
-                }
-                AsyncImage(
-                    model = user?.profileImage?.replace("http", "https") ?: "",
-                    contentDescription = "profile pic",
-                    onState = {
-                        //update isLoaded
-                        isLoading = it is AsyncImagePainter.State.Loading
-                    },
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(shape = CircleShape)
-                        .clickable {
-                            navigator.navigate(MyProfileDestination)
-                        }
-                        .placeholder(
-                            visible = isLoading,
-                            highlight = PlaceholderHighlight.shimmer(),
-                            color = CakkieBrown.copy(0.8f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    var isLoading by remember {
+                        mutableStateOf(false)
+                    }
+                    AsyncImage(
+                        model = user?.profileImage?.replace("http", "https") ?: "",
+                        contentDescription = "profile pic",
+                        onState = {
+                            //update isLoaded
+                            isLoading = it is AsyncImagePainter.State.Loading
+                        },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(shape = CircleShape)
+                            .clickable {
+                                navigator.navigate(MyProfileDestination)
+                            }
+                            .placeholder(
+                                visible = isLoading,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            )
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = "Welcome \uD83D\uDC4B",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
                         )
-                        .fillMaxWidth(),
-                    contentScale = ContentScale.FillWidth,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = "Welcome \uD83D\uDC4B",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = user?.name ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "notification",
-                        modifier = Modifier.size(24.dp)
-                    )
+                        Text(
+                            text = user?.name ?: "",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
 
-                IconButton(onClick = { navigator.navigate(WalletDestination) }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.wallet),
-                        contentDescription = "wallet",
-                        modifier = Modifier.size(24.dp)
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.notification),
+                            contentDescription = "notification",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    IconButton(onClick = { navigator.navigate(WalletDestination) }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.wallet),
+                            contentDescription = "wallet",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }
@@ -261,7 +281,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     )
                 }
             }
-            item { Spacer(modifier = Modifier.height(80.dp)) }
+            item { Spacer(modifier = Modifier.height(140.dp)) }
         }
     }
 }

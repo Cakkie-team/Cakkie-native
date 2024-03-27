@@ -18,6 +18,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
+import com.cakkie.BottomState.hideNav
 import com.cakkie.navigations.BottomNav
 import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.appCurrentDestinationAsState
@@ -88,6 +90,7 @@ class MainActivity : ComponentActivity() {
                                     top = when (currentDestination) {
                                         SplashScreenDestination -> 0.dp
                                         CakespirationDestination -> 16.dp
+                                        ExploreScreenDestination -> 20.dp
                                         else -> 26.dp
                                     }
                                 )
@@ -99,7 +102,6 @@ class MainActivity : ComponentActivity() {
                                         .padding(
                                             bottom =
                                             when (currentDestination) {
-                                                ExploreScreenDestination -> 50.dp
                                                 JobsDestination -> 50.dp
                                                 ShopDestination -> 50.dp
                                                 ChatDestination -> 50.dp
@@ -112,7 +114,7 @@ class MainActivity : ComponentActivity() {
                                 )
                                 BottomNav(
                                     navController = navController,
-                                    state = when (currentDestination) {
+                                    state = !hideNav.value && when (currentDestination) {
                                         ExploreScreenDestination -> true
                                         JobsDestination -> true
                                         ShopDestination -> true
@@ -135,6 +137,10 @@ class MainActivity : ComponentActivity() {
         super.onLowMemory()
         Glide.get(this).clearMemory()
     }
+}
+
+object BottomState {
+    var hideNav = mutableStateOf(false)
 }
 
 @ExperimentalMaterialNavigationApi
