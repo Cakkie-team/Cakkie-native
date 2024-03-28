@@ -37,6 +37,7 @@ import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieTheme
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
                             Box(
                                 Modifier.padding(
                                     top = when (currentDestination) {
+                                        WalletDestination -> 0.dp
                                         SplashScreenDestination -> 0.dp
                                         CakespirationDestination -> 16.dp
                                         ExploreScreenDestination -> 20.dp
