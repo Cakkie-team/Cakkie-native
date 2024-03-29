@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
+import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -102,7 +103,8 @@ fun Wallet(navigator: DestinationsNavigator) {
                     }
                     IconButton(modifier = Modifier
                         .padding(start = 10.dp)
-                        .align(Alignment.TopStart), onClick = { /*TODO*/ }) {
+                        .align(Alignment.TopStart),
+                        onClick = { navigator.navigate(EarnDestination) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.earn),
                             contentDescription = "earnings",

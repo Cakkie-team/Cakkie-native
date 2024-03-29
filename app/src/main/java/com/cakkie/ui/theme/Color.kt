@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.cakkie.R
 
 val CakkieBrown = Color(0xFF8B4513)
+val CakkieBrown002 = Color(0xFF5C2E0C)
 val CakkieBlue = Color(0xFF0E9DBC)
 val CakkieYellow = Color(0xFFFFA500)
 val CakkieGreen = Color(0xFF45BA45)
