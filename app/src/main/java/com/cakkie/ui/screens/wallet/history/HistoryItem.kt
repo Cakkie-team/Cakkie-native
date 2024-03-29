@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
+import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.TextColorDark
 
 @Composable
@@ -72,7 +73,7 @@ fun HistoryItem() {
             Text(
                 text = stringResource(id = R.string.successful),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Green
+                color = CakkieGreen
             )
         }
     }

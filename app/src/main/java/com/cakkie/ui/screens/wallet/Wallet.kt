@@ -36,6 +36,7 @@ import com.cakkie.R
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -272,7 +273,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                         Text(
                             text = stringResource(id = R.string.successful),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Green
+                            color = CakkieGreen
                         )
                     }
                 }
