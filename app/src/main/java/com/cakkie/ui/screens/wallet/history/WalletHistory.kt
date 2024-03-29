@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +33,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun WalletHistory() {
     var filter by remember { mutableStateOf("All") }
+    val history = listOf<String>()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,12 +59,26 @@ fun WalletHistory() {
             filter = it
         }
         Spacer(modifier = Modifier.height(10.dp))
-        LazyColumn {
-            items(
-                items = (0..10).toList(),
-            ) {
-                HistoryItem()
-                Spacer(modifier = Modifier.height(10.dp))
+        if (history.isNotEmpty()) {
+            LazyColumn {
+                items(
+                    items = history,
+                ) {
+                    HistoryItem()
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+        } else {
+            Box(modifier = Modifier
+                .fillMaxHeight(0.6f)
+                .fillMaxWidth()) {
+                Text(
+                    text = "No history found",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center),
+                )
             }
         }
     }
