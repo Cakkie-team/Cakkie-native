@@ -90,7 +90,7 @@ fun AssetDetails(navigator: DestinationsNavigator) {
                         Image(
                             painter = painterResource(id = R.drawable.log),
                             contentDescription = "asset logo",
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .background(CakkieBackground, CircleShape)
                                 .clip(CircleShape)
