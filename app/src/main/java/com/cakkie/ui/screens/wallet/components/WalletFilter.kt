@@ -88,8 +88,7 @@ fun WalletFilter(value: String, onValueChange: (String) -> Unit) {
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .width(width = 120.dp)
-                .background(CakkieBackground, RoundedCornerShape(8))
-                .clip(RoundedCornerShape(8))
+                .background(CakkieBackground)
         ) {
             options.forEach { option ->
                 Divider(
