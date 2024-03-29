@@ -92,6 +92,7 @@ fun AssetDetails(navigator: DestinationsNavigator) {
                             contentDescription = "asset logo",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .background(CakkieBackground)
                                 .clip(CircleShape)
                                 .size(40.dp),
                         )
