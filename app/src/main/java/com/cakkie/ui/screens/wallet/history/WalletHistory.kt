@@ -52,11 +52,11 @@ fun WalletHistory() {
                 fontSize = 18.sp
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         WalletFilter(filter) {
             filter = it
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         LazyColumn {
             items(
                 items = (0..10).toList(),
