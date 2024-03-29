@@ -3,7 +3,6 @@ package com.cakkie.ui.screens.wallet
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,16 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,31 +31,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.ui.screens.destinations.AssetDetailsDestination
-import com.cakkie.ui.screens.destinations.WalletHistoryDestination
+import com.cakkie.ui.screens.wallet.history.HistoryItem
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
-import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun Wallet(navigator: DestinationsNavigator) {
-
+fun AssetDetails(navigator: DestinationsNavigator) {
+    val history = (0..10).toList()
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .padding(vertical = 32.dp)
 
     ) {
         Box(
             modifier = Modifier
                 .background(TextColorDark)
-//                .height(40.dp)
                 .fillMaxWidth(),
-//            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.arrow_back_fill),
@@ -71,7 +64,7 @@ fun Wallet(navigator: DestinationsNavigator) {
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(id = R.string.wallet),
+                text = "ICING",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.Center),
                 color = CakkieBackground,
@@ -87,43 +80,24 @@ fun Wallet(navigator: DestinationsNavigator) {
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(160.dp),
+                            .height(165.dp),
                     )
-                    IconButton(modifier = Modifier
-                        .padding(end = 10.dp)
-                        .align(Alignment.TopEnd),
-                        onClick = { navigator.navigate(WalletHistoryDestination) }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.recent),
-                            contentDescription = "recent",
-                            modifier = Modifier.size(24.dp),
-                            tint = CakkieBackground
-                        )
-                    }
-                    IconButton(modifier = Modifier
-                        .padding(start = 10.dp)
-                        .align(Alignment.TopStart), onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.earn),
-                            contentDescription = "earnings",
-                            modifier = Modifier.size(24.dp),
-                            tint = CakkieBackground
-                        )
-                    }
                     Column(
                         modifier = Modifier
-                            .padding(20.dp)
                             .align(Alignment.TopCenter),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "Total Balance",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CakkieBackground,
-                            fontSize = 16.sp
+                        Image(
+                            painter = painterResource(id = R.drawable.log),
+                            contentDescription = "asset logo",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .size(40.dp),
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "200,000 NGN",
+                            text = "200,000 ICING",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontWeight = FontWeight.Bold,
@@ -202,7 +176,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                                 ) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.withdraw),
-                                        contentDescription = "Withdrawal",
+                                        contentDescription = "Withdraw",
                                         modifier = Modifier.size(24.dp),
                                         tint = CakkieBrown
                                     )
@@ -220,7 +194,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(id = R.string.assets),
+                    text = stringResource(id = R.string.history),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp),
                     color = TextColorDark,
@@ -230,58 +204,29 @@ fun Wallet(navigator: DestinationsNavigator) {
             }
 
             items(
-                items = (1..3).toList()
+                items = history
             ) {
-                Row(
-                    modifier = Modifier
-                        .clickable { navigator.navigate((AssetDetailsDestination)) }
-                        .fillMaxWidth()
-                        .background(Color.White)
-                        .height(65.dp)
-                        .padding(start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cakkie_icon),
-                        contentDescription = "",
-                        modifier = Modifier.background(CakkieBackground, RoundedCornerShape(50))
-                    )
-                    Column(
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.proposal_fee),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "20 May, 10:50 am",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextColorDark.copy(0.5f)
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Column(
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "50 Icing",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
+                HistoryItem()
+                Spacer(modifier = Modifier.height(10.dp))
+            }
 
-                        )
+            if (history.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .fillMaxWidth()
+                    ) {
                         Text(
-                            text = stringResource(id = R.string.successful),
+                            text = "No history found",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CakkieGreen
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.Center),
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
             }
         }
-
     }
 }
