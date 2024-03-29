@@ -37,7 +37,7 @@ import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.TextColorDark
 
 @Composable
-fun WalletFilter(value: String = "All", onValueChange: (String) -> Unit) {
+fun WalletFilter(value: String, onValueChange: (String) -> Unit) {
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -89,7 +89,7 @@ fun WalletFilter(value: String = "All", onValueChange: (String) -> Unit) {
             modifier = Modifier
                 .width(width = 120.dp)
                 .background(CakkieBackground, RoundedCornerShape(8))
-                .clip(RoundedCornerShape(0, 0, 8, 8))
+                .clip(RoundedCornerShape(8))
         ) {
             options.forEach { option ->
                 Divider(
@@ -99,7 +99,7 @@ fun WalletFilter(value: String = "All", onValueChange: (String) -> Unit) {
                 DropdownMenuItem(text = {
                     Text(
                         text = option,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 },
                     colors = MenuDefaults.itemColors(
@@ -112,6 +112,10 @@ fun WalletFilter(value: String = "All", onValueChange: (String) -> Unit) {
                 )
 
             }
+            Divider(
+                thickness = 1.dp,
+                color = CakkieLightBrown
+            )
         }
     }
 }

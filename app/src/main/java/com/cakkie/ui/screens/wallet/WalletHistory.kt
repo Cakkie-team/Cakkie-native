@@ -17,6 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,26 +37,31 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
 @Composable
-fun WalletHistory (){
-    Column (
+fun WalletHistory() {
+    var filter by remember { mutableStateOf("All") }
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp),
-    ){
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
             contentAlignment = Alignment.CenterStart
-        ){
+        ) {
             Image(painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "", modifier = Modifier.clickable {  })
-            Text(text = stringResource(id = R.string.transaction_history),
+                contentDescription = "", modifier = Modifier.clickable { })
+            Text(
+                text = stringResource(id = R.string.transaction_history),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.Center)
-                )
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
-      WalletFilter()
+        WalletFilter(filter) {
+            filter = it
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
@@ -118,7 +127,8 @@ fun WalletHistory (){
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -167,7 +177,8 @@ fun WalletHistory (){
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -216,7 +227,8 @@ fun WalletHistory (){
             Image(
                 painter = painterResource(id = R.drawable.cakicon),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -265,7 +277,8 @@ fun WalletHistory (){
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
@@ -314,7 +327,8 @@ fun WalletHistory (){
             Image(
                 painter = painterResource(id = R.drawable.group),
                 contentDescription = "",
-                modifier = Modifier.background(color = CakkieBackground,
+                modifier = Modifier.background(
+                    color = CakkieBackground,
                     shape = RoundedCornerShape(50)
                 )
             )
