@@ -26,20 +26,26 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun DeleteAccount() {
+fun DeleteAccount(navigator: DestinationsNavigator) {
     val viewModel: SettingsViewModel = koinViewModel()
     var reason by remember {
         mutableStateOf(TextFieldValue(""))
     }
     val context = LocalContext.current
+    var processing by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,16 +97,32 @@ fun DeleteAccount() {
             .height(50.dp)
             .fillMaxWidth()
             .padding(horizontal = 32.dp),
-        text = stringResource(id = R.string.delete_account)
+        text = stringResource(id = R.string.delete_account),
+        processing = processing
     ) {
+        processing = true
         viewModel.deleteAccount(reason.text)
             .addOnSuccessListener {
+                processing = false
                 Toaster(
                     context = context,
                     message = "Account Deleted Successfully!",
                     image = R.drawable.logo
                 ).show()
                 viewModel.logOut()
+                navigator.navigate(SplashScreenDestination) {
+                    popUpTo(LoginScreenDestination.route) {
+                        inclusive = true
+                    }
+                }
+            }
+            .addOnFailureListener {
+                processing = false
+                Toaster(
+                    context = context,
+                    message = "Failed to delete account, please contact support!",
+                    image = R.drawable.logo
+                ).show()
             }
     }
     Spacer(modifier = Modifier.height(17.dp))
