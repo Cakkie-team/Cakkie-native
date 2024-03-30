@@ -43,6 +43,7 @@ object Endpoints {
     const val ACCOUNT = "$BASE_URL/account/profile" /* Get request */
     const val UPDATE_PROFILE_IMAGE = "$BASE_URL/account/update-profile-image" /* Put request */
     const val VERIFY_USERNAME = "$BASE_URL/verify-username?username=" /* verify tag */
+    val DELETE_ACCOUNT = { reason: String -> "$BASE_URL/account/$reason" } /* delete account */
 
 
     /**

@@ -5,6 +5,7 @@ import android.net.Uri
 import com.cakkie.R
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.httpPut
@@ -91,6 +92,29 @@ object NetworkCalls {
     ): NetworkResult<T, FuelError> {
         val networkResult = NetworkResult<T, FuelError>()
         endpoint.httpPut().body(JsonBody.generate(body))
+            .responseObject<T>(json = Json {
+                ignoreUnknownKeys = true
+                coerceInputValues = true
+            }) { request, response, result ->
+                result.fold(
+                    {
+                        Timber.i(it.toString())
+                        networkResult.onSuccess(it)
+                    }, { e ->
+                        Timber.e(e)
+                        networkResult.onFailure(e)
+                    }
+                )
+            }
+        return networkResult
+    }
+
+    inline fun <reified T : Any> delete(
+        endpoint: String,
+        body: List<Pair<String, Any>>
+    ): NetworkResult<T, FuelError> {
+        val networkResult = NetworkResult<T, FuelError>()
+        endpoint.httpDelete().body(JsonBody.generate(body))
             .responseObject<T>(json = Json {
                 ignoreUnknownKeys = true
                 coerceInputValues = true

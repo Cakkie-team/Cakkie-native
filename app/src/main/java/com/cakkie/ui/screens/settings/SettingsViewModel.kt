@@ -82,6 +82,12 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
+    //delete account
+    fun deleteAccount(reason: String) = NetworkCalls.delete<User>(
+        endpoint = Endpoints.DELETE_ACCOUNT(reason),
+        body = listOf()
+    )
+
     init {
         getProfile()
         getUser()
