@@ -4,7 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,16 +21,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun ReactivateAccount() {
+fun ReactivateAccount(navigator: DestinationsNavigator) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -56,27 +58,40 @@ fun ReactivateAccount() {
         Spacer(modifier = Modifier.height(80.dp))
         Column(
             Modifier
-                .fillMaxSize()
+                .fillMaxHeight(0.7f)
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+//            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
                 painter = painterResource(id = R.drawable.reactivate),
                 contentDescription = "under construction",
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier
+                    .size(250.dp)
+                    .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = stringResource(id = R.string.under_construction),
-                style = MaterialTheme.typography.titleLarge
+                text = stringResource(id = R.string.reactivate_account),
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                text = stringResource(id = R.string.something_is_baking_here),
+                text = stringResource(id = R.string.we_are_glad),
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
             )
-
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+        CakkieButton(
+            text = stringResource(id = R.string.reactivate_account),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+//                navigator.navigate(CreateShopDestination) {
+//                    popUpTo(ShopOnboardingDestination) {
+//                        inclusive = true
+//                    }
+//                    launchSingleTop = true
+//                }
         }
     }
 }
