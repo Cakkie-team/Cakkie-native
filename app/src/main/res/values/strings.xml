@@ -297,6 +297,7 @@
     <string name="history">History</string>
     <string name="reason_for_deletion">Reason for deletion</string>
     <string name="if_you_delete_account">If you choose to delete your account, we will deactivate your account immediately and delete your data permanently after 30 days. You can reactivate your account within 30 days by logging in.</string>
+    <string name="account">Account</string>
 
 
 </resources>

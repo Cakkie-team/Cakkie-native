@@ -22,6 +22,8 @@ data class User(
     val firstName: String = "",
     val gender: String = "",
     val hasShop: Boolean = false,
+    val isDeleted: Boolean = false,
+    val isOnline: Boolean = false,
     @PrimaryKey
     val id: String = "",
     val isDriver: Boolean = false,

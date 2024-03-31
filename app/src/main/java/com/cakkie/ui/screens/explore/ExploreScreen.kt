@@ -54,8 +54,10 @@ import com.cakkie.R
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
+import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
+import com.cakkie.ui.screens.destinations.ReactivateAccountDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -63,6 +65,7 @@ import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -113,6 +116,20 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     LaunchedEffect(listings) {
         Timber.d("Listings: ${listings?.data}")
     }
+
+    //check if user is has a shop
+    LaunchedEffect(key1 = user) {
+        if (user?.isDeleted == true) {
+            //navigate to create shop screen
+            navigator.navigate(ReactivateAccountDestination) {
+                popUpTo(ExploreScreenDestination) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
