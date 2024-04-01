@@ -56,22 +56,57 @@ import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.destinations.PostItemDestination
 import com.cakkie.ui.screens.destinations.ProposalItemDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
+import com.cakkie.ui.screens.destinations.SettingsDestination
+import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
-fun Settings(navigator: DestinationsNavigator) {
+fun Settings(
+    deleteResultRecipient: ResultRecipient<DeleteAccountDestination, Boolean>,
+    logoutResultRecipient: ResultRecipient<DeleteAccountDestination, Boolean>,
+    navigator: DestinationsNavigator
+) {
     val viewModel: SettingsViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
     val context = LocalContext.current
 
     val notificationState = viewModel.notificationState.collectAsState().value
+    deleteResultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.logOut()
+                navigator.navigate(SplashScreenDestination) {
+                    popUpTo(SettingsDestination.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+    }
+
+    logoutResultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.logOut()
+                navigator.navigate(SplashScreenDestination) {
+                    popUpTo(SettingsDestination.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+    }
 
     Column {
         Box(

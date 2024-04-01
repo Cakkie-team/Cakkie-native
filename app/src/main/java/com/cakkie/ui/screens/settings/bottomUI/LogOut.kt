@@ -15,18 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.LoginScreenDestination
-import com.cakkie.ui.screens.destinations.SplashScreenDestination
-import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
-import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun LogOut(navigator: DestinationsNavigator) {
-    val viewModel: SettingsViewModel = koinViewModel()
+fun LogOut(onComplete: ResultBackNavigator<Boolean>) {
 
     Column(
         modifier = Modifier
@@ -60,12 +55,7 @@ fun LogOut(navigator: DestinationsNavigator) {
             .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.login_out),
     ) {
-        viewModel.logOut()
-        navigator.navigate(SplashScreenDestination) {
-            popUpTo(LoginScreenDestination.route) {
-                inclusive = true
-            }
-        }
+        onComplete.navigateBack(result = true)
     }
     Spacer(modifier = Modifier.height(17.dp))
 

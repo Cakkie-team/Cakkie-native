@@ -26,19 +26,16 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.ExploreScreenDestination
-import com.cakkie.ui.screens.destinations.SettingsDestination
-import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
-fun DeleteAccount(navigator: DestinationsNavigator) {
+fun DeleteAccount(onComplete: ResultBackNavigator<Boolean>) {
     val viewModel: SettingsViewModel = koinViewModel()
     var reason by remember {
         mutableStateOf(TextFieldValue(""))
@@ -110,13 +107,7 @@ fun DeleteAccount(navigator: DestinationsNavigator) {
                     message = "Account Deleted Successfully!",
                     image = R.drawable.logo
                 ).show()
-                viewModel.logOut()
-                navigator.popBackStack(ExploreScreenDestination.route, true)
-                navigator.navigate(SplashScreenDestination) {
-                    popUpTo(SettingsDestination.route) {
-                        inclusive = true
-                    }
-                }
+                onComplete.navigateBack(result = true)
             }
             .addOnFailureListener {
                 processing = false
