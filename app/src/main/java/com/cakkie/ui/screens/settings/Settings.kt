@@ -43,6 +43,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.ChangePasswordDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileDestination
@@ -56,13 +57,13 @@ import com.cakkie.ui.screens.destinations.PauseNotificationDestination
 import com.cakkie.ui.screens.destinations.PostItemDestination
 import com.cakkie.ui.screens.destinations.ProposalItemDestination
 import com.cakkie.ui.screens.destinations.ReportProblemDestination
-import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
@@ -86,7 +87,7 @@ fun Settings(
             is NavResult.Value -> {
                 viewModel.logOut()
                 navigator.navigate(SplashScreenDestination) {
-                    popUpTo(SettingsDestination.route) {
+                    popUpTo(NavGraphs.root) {
                         inclusive = true
                     }
                 }
@@ -99,7 +100,11 @@ fun Settings(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 viewModel.logOut()
-                navigator.navigate(SplashScreenDestination)
+                navigator.navigate(SplashScreenDestination) {
+                    popUpTo(NavGraphs.root) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }
