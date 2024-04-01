@@ -72,7 +72,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun Settings(
     deleteResultRecipient: ResultRecipient<DeleteAccountDestination, Boolean>,
-    logoutResultRecipient: ResultRecipient<DeleteAccountDestination, Boolean>,
+    logoutResultRecipient: ResultRecipient<LogOutDestination, Boolean>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
@@ -99,11 +99,7 @@ fun Settings(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 viewModel.logOut()
-                navigator.navigate(SplashScreenDestination) {
-                    popUpTo(SettingsDestination.route) {
-                        inclusive = true
-                    }
-                }
+                navigator.navigate(SplashScreenDestination)
             }
         }
     }

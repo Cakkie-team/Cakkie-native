@@ -22,6 +22,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.cakkie.R
+import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.destinations.EmailScreenDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
@@ -53,6 +54,7 @@ fun SplashScreen(navigator: DestinationsNavigator) {
     val listings = viewModel.retrieveListings().observeAsState().value
     //navigate to the next screen after 2 seconds
     LaunchedEffect(key1 = isReady) {
+        navigator.popBackStack(NavGraphs.root.startRoute, inclusive = false)
         if (isReady) {
             if (isLoggedIn) {
                 viewModel.getListings()
