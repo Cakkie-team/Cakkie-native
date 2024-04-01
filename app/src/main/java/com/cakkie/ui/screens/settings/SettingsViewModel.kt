@@ -88,6 +88,21 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         body = listOf()
     )
 
+    //delete account
+    fun reactivateAccount(onSuccess: (Boolean) -> Unit) {
+        NetworkCalls.put<User>(
+            endpoint = Endpoints.REACTIVATE_ACCOUNT,
+            body = listOf()
+        ).addOnSuccessListener {
+            onSuccess(true)
+            viewModelScope.launch {
+                userRepository.updateUser(it)
+            }
+        }.addOnFailureListener {
+            onSuccess(false)
+        }
+    }
+
     init {
         getProfile()
         getUser()

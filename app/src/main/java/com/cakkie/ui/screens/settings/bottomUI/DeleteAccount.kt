@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.LoginScreenDestination
+import com.cakkie.ui.screens.destinations.ExploreScreenDestination
+import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.utill.Toaster
@@ -110,8 +111,9 @@ fun DeleteAccount(navigator: DestinationsNavigator) {
                     image = R.drawable.logo
                 ).show()
                 viewModel.logOut()
+                navigator.popBackStack(ExploreScreenDestination.route, true)
                 navigator.navigate(SplashScreenDestination) {
-                    popUpTo(LoginScreenDestination.route) {
+                    popUpTo(SettingsDestination.route) {
                         inclusive = true
                     }
                 }

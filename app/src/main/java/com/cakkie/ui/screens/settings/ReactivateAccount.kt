@@ -15,9 +15,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,13 +30,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ExploreScreenDestination
+import com.cakkie.ui.screens.destinations.ReactivateAccountDestination
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
+import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @Composable
 fun ReactivateAccount(navigator: DestinationsNavigator) {
+    val viewModel: SettingsViewModel = koinViewModel()
+    val context = LocalContext.current
+    var processing by remember {
+        mutableStateOf(false)
+    }
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -84,14 +99,27 @@ fun ReactivateAccount(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.fillMaxHeight(0.2f))
         CakkieButton(
             text = stringResource(id = R.string.reactivate_account),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            processing = processing,
         ) {
-//                navigator.navigate(CreateShopDestination) {
-//                    popUpTo(ShopOnboardingDestination) {
-//                        inclusive = true
-//                    }
-//                    launchSingleTop = true
-//                }
+            processing = true
+            viewModel.reactivateAccount {
+                processing = false
+                if (it) {
+                    navigator.navigate(ExploreScreenDestination) {
+                        popUpTo(ReactivateAccountDestination) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                } else {
+                    Toaster(
+                        context = context,
+                        message = "Failed to reactivate account, please contact support!",
+                        image = R.drawable.logo
+                    ).show()
+                }
+            }
         }
     }
 }
