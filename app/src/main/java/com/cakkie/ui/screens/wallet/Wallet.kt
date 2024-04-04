@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
+import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -120,17 +121,17 @@ fun Wallet(navigator: DestinationsNavigator) {
                             tint = CakkieBackground
                         )
                     }
-//                    IconButton(modifier = Modifier
-//                        .padding(start = 10.dp)
-//                        .align(Alignment.TopStart),
-//                        onClick = { navigator.navigate(EarnDestination) }) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.earn),
-//                            contentDescription = "earnings",
-//                            modifier = Modifier.size(24.dp),
-//                            tint = CakkieBackground
-//                        )
-//                    }
+                    IconButton(modifier = Modifier
+                        .padding(start = 10.dp)
+                        .align(Alignment.TopStart),
+                        onClick = { navigator.navigate(EarnDestination) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.earn),
+                            contentDescription = "earnings",
+                            modifier = Modifier.size(24.dp),
+                            tint = CakkieBackground
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
@@ -146,7 +147,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                         Text(
                             text = dec.format(
                                 balance.find { it.symbol == "NGN" }?.balance ?: 0.0
-                            ),
+                            ) + " NGN",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontWeight = FontWeight.Bold,
@@ -257,7 +258,7 @@ fun Wallet(navigator: DestinationsNavigator) {
             ) {
                 Row(
                     modifier = Modifier
-                        .clickable { navigator.navigate((AssetDetailsDestination)) }
+                        .clickable { navigator.navigate((AssetDetailsDestination(it))) }
                         .fillMaxWidth()
                         .background(Color.White)
                         .height(65.dp)
@@ -271,12 +272,10 @@ fun Wallet(navigator: DestinationsNavigator) {
                     AsyncImage(
                         model = it.icon,
                         contentDescription = "currency icon",
-                        onState = {
-                            //update isLoaded
-                            isLoading = it is AsyncImagePainter.State.Loading
-                        },
                         modifier = Modifier
-                            .size(30.dp)
+                            .background(CakkieBackground, CircleShape)
+                            .size(35.dp)
+                            .padding(5.dp)
                             .clip(shape = CircleShape)
                             .clickable {
                                 navigator.navigate(MyProfileDestination)
@@ -286,6 +285,10 @@ fun Wallet(navigator: DestinationsNavigator) {
                                 highlight = PlaceholderHighlight.shimmer(),
                                 color = CakkieBrown.copy(0.8f)
                             ),
+                        onState = {
+                            //update isLoaded
+                            isLoading = it is AsyncImagePainter.State.Loading
+                        },
                         contentScale = ContentScale.Fit,
                     )
                     Spacer(modifier = Modifier.width(4.dp))
