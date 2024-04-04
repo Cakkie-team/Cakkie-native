@@ -83,7 +83,9 @@ object Endpoints {
     const val GET_BALANCE = "$BASE_URL/wallet/balance" /* get balance  GET*/
     const val DEPOSIT = "$BASE_URL/wallet/fund-wallet" /* deposit  POST*/
     val GET_TRANSACTION =
-        { currencyId: String?, page: Int, size: Int -> "$BASE_URL/wallet/transactions" } /* get transaction  GET*/
+        { currencyId: String?, page: Int, size: Int ->
+            "$BASE_URL/wallet/transactions?page=$page&pageSize=$size"
+        } /* get transaction  GET*/
 
     /**
      * Location
