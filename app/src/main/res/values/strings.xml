@@ -300,6 +300,7 @@
     <string name="account">Account</string>
     <string name="reactivate_account">Reactivate Account</string>
     <string name="we_are_glad">We’re glad you’re back. Reactivate your account to terminate the deletion.</string>
+    <string name="earning">Earnings</string>
 
 
 </resources>
