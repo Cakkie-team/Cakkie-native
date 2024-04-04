@@ -28,6 +28,6 @@ data class Balance(
 @Parcelize
 data class DepositResponse(
     val status: Boolean = true,
-    val message: String?,
-    val url: String?
+    val message: String = "",
+    val url: String = ""
 ) : Parcelable

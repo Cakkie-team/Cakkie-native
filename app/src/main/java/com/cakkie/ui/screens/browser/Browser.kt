@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ fun Browser(
     onComplete: ResultBackNavigator<Boolean>
 ) {
     var backEnabled by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) } // Add loading state
     var webView: WebView? = null
     AndroidView(
         modifier = Modifier.fillMaxSize(),
@@ -34,64 +36,34 @@ fun Browser(
                 )
                 webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                        if (url?.contains("https://api.cakkie.com/wallet/notify") == true) {
-                            onComplete.navigateBack(result = true)
-                        }
+                        isLoading = true // Set loading state to true when page starts loading
                         backEnabled = view.canGoBack()
+                    }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        isLoading = false // Set loading state to false when page finishes loading
                     }
                 }
                 settings.javaScriptEnabled = true
-
-                //allow redirect
-                settings.javaScriptCanOpenWindowsAutomatically = true
-                settings.setSupportMultipleWindows(true)
-                settings.domStorageEnabled = true
-                settings.loadWithOverviewMode = true
-                settings.useWideViewPort = true
-                settings.setSupportZoom(true)
-                settings.builtInZoomControls = true
-                settings.displayZoomControls = false
-                settings.allowContentAccess = true
-                settings.allowFileAccess = true
-                settings.allowFileAccessFromFileURLs = true
-                settings.allowUniversalAccessFromFileURLs = true
-                settings.loadsImagesAutomatically = true
-                settings.cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
-                settings.mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-
-                //allow chrome client
-                webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(
-                        view: WebView?,
-                        url: String?
-                    ): Boolean {
-                        view?.loadUrl(url!!)
-                        return true
-                    }
-                }
-                webChromeClient = object : android.webkit.WebChromeClient() {
-                    override fun onCreateWindow(
-                        view: WebView?,
-                        isDialog: Boolean,
-                        isUserGesture: Boolean,
-                        resultMsg: android.os.Message?
-                    ): Boolean {
-                        val newWebView = WebView(context)
-                        val transport = resultMsg?.obj as WebView.WebViewTransport
-                        transport.webView = newWebView
-                        resultMsg.sendToTarget()
-                        return true
-                    }
-                }
+                // Other settings...
 
                 loadUrl(url)
                 webView = this
             }
         }, update = {
+            if (it.url?.contains("https://cakkie.com?verify=true") == true) {
+                onComplete.navigateBack(result = true)
+            }
             webView = it
         })
 
     BackHandler(enabled = backEnabled) {
         webView?.goBack()
+    }
+
+    if (isLoading) {
+        // Show loading indicator while the page is loading
+        // You can replace this with your custom loading indicator
+        CircularProgressIndicator(Modifier.fillMaxSize(0.6f))
     }
 }
