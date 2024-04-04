@@ -18,11 +18,11 @@ import com.cakkie.data.db.models.typeConverters.Converters
 //    autoMigrations = [
 //        /**
 //         * Migration from version 1 to version 2
-//         * Added new Table [Transaction]
+//         *
 //         */
-//        AutoMigration (from = 1, to = 2),
+//        AutoMigration (from = 1, to = 2)
 //    ],
-    version = 1,
+    version = 2, // Updated version to 2
     exportSchema = false
 )
 @TypeConverters(Converters::class)

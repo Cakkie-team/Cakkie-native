@@ -80,6 +80,7 @@ val appModule = module {
             DB::class.java,
             "cakkie.db",
         )
+            .fallbackToDestructiveMigration()
 //            .openHelperFactory(get()) //TODO: enable this when we're going live
             .build()
     }
