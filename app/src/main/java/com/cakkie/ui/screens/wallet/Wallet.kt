@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,7 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,12 +39,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
+import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -254,11 +265,30 @@ fun Wallet(navigator: DestinationsNavigator) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cakkie_icon),
-                        contentDescription = "",
-                        modifier = Modifier.background(CakkieBackground, RoundedCornerShape(50))
+                    var isLoading by remember {
+                        mutableStateOf(false)
+                    }
+                    AsyncImage(
+                        model = it.icon,
+                        contentDescription = "currency icon",
+                        onState = {
+                            //update isLoaded
+                            isLoading = it is AsyncImagePainter.State.Loading
+                        },
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(shape = CircleShape)
+                            .clickable {
+                                navigator.navigate(MyProfileDestination)
+                            }
+                            .placeholder(
+                                visible = isLoading,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            ),
+                        contentScale = ContentScale.Fit,
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Column(
                         verticalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.padding(8.dp)
@@ -269,7 +299,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = dec.format(it.exchangeRate),
+                            text = "₦" + dec.format(it.exchangeRate),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
@@ -285,7 +315,7 @@ fun Wallet(navigator: DestinationsNavigator) {
 
                         )
                         Text(
-                            text = dec.format(
+                            text = "₦" + dec.format(
                                 it.exchangeRate * it.balance
                             ),
                             style = MaterialTheme.typography.bodyMedium,

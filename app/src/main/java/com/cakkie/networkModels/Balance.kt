@@ -15,6 +15,7 @@ data class Balance(
     val id: String,
     val isActive: Boolean,
     val name: String,
+    val icon: String,
     val symbol: String,
     val type: String,
     val updatedAt: String,
