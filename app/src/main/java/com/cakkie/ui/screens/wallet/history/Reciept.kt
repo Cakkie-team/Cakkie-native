@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,10 +31,13 @@ import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.formatDate
+import com.cakkie.utill.formatDateTime
+import java.text.DecimalFormat
 
 @Composable
 fun Receipt(item: Transaction, onCancel: () -> Unit) {
-
+    val dec = DecimalFormat("#,##0.00")
     Box(
         modifier = Modifier
             .background(CakkieBackground, MaterialTheme.shapes.medium)
@@ -80,22 +82,22 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.item_purchased),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "Icing",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = TextColorDark.copy(alpha = 0.5f)
-                )
-            }
+//            Spacer(modifier = Modifier.height(20.dp))
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//            ) {
+//                Text(
+//                    text = stringResource(id = R.string.item_purchased),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                )
+//                Spacer(modifier = Modifier.weight(1f))
+//                Text(
+//                    text = "Icing",
+//                    style = MaterialTheme.typography.labelMedium,
+//                    color = TextColorDark.copy(alpha = 0.5f)
+//                )
+//            }
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier
@@ -107,7 +109,7 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "987654321",
+                    text = item.id.take(10),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextColorDark.copy(alpha = 0.5f)
                 )
@@ -123,7 +125,7 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Wed, 19th June 2023",
+                    text = item.createdAt.formatDate(),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextColorDark.copy(alpha = 0.5f)
                 )
@@ -139,7 +141,7 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "1 : 07PM",
+                    text = item.createdAt.formatDateTime().split(",")[1],
                     style = MaterialTheme.typography.labelMedium,
                     color = TextColorDark.copy(alpha = 0.5f)
                 )
@@ -155,7 +157,7 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Donald John",
+                    text = item.user.name,
                     style = MaterialTheme.typography.labelMedium,
                     color = TextColorDark.copy(alpha = 0.5f)
                 )
@@ -171,7 +173,7 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "NGN 20,000",
+                    text = dec.format(item.amount) + " " + item.currency.symbol,
                     style = MaterialTheme.typography.labelMedium,
                     color = TextColorDark.copy(alpha = 0.5f)
                 )
@@ -187,9 +189,9 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = stringResource(id = R.string.success),
+                    text = item.status,
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.Green.copy(0.7f)
+                    color = if (item.status == "SUCCESS") CakkieBrown else CakkieBrown.copy(alpha = 0.5f)
                 )
             }
 
@@ -206,14 +208,14 @@ fun Receipt(item: Transaction, onCancel: () -> Unit) {
                         onCancel.invoke()
                     }
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(id = R.string.download),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = CakkieBrown,
-                    modifier = Modifier.clickable { }
-                )
+//                Spacer(modifier = Modifier.weight(1f))
+//                Text(
+//                    text = stringResource(id = R.string.download),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontWeight = FontWeight.Bold,
+//                    color = CakkieBrown,
+//                    modifier = Modifier.clickable { }
+//                )
             }
         }
     }

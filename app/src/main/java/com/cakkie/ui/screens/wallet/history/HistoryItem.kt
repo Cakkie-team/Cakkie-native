@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.cakkie.R
@@ -95,6 +96,7 @@ fun HistoryItem(item: Transaction) {
     if (showReceipt) {
         Popup(
             alignment = Alignment.Center,
+            offset = IntOffset(0, -100),
             onDismissRequest = { showReceipt = false },
         ) {
             Receipt(item) {
