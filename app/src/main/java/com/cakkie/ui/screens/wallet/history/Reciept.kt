@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.networkModels.Transaction
 import com.cakkie.ui.screens.orders.DashDivider
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
@@ -33,7 +34,7 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 
 @Composable
-fun Receipt(onCancel: () -> Unit) {
+fun Receipt(item: Transaction, onCancel: () -> Unit) {
 
     Box(
         modifier = Modifier

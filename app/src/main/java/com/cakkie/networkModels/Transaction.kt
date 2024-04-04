@@ -21,6 +21,7 @@ data class Transaction(
     val updatedAt: String = "",
     val user: User = User(),
     val userId: String = "",
+    val currency: Balance = Balance()
 ) : Parcelable
 
 @Serializable

@@ -22,17 +22,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.cakkie.R
+import com.cakkie.networkModels.Transaction
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.CakkieYellow
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.formatDateTime
+import java.text.DecimalFormat
 
 @Composable
-fun HistoryItem() {
+fun HistoryItem(item: Transaction) {
+    val dec = DecimalFormat("#,##0.00")
     var showReceipt by remember {
         mutableStateOf(false)
     }
@@ -59,12 +63,12 @@ fun HistoryItem() {
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.proposal_fee),
+                text = item.description,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "20 May, 10:50 am",
+                text = item.createdAt.formatDateTime(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextColorDark.copy(0.5f)
             )
@@ -75,15 +79,15 @@ fun HistoryItem() {
             horizontalAlignment = Alignment.End,
         ) {
             Text(
-                text = "50 Icing",
+                text = dec.format(item.amount) + " " + item.currency.symbol,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
 
             )
             Text(
-                text = stringResource(id = R.string.successful),
+                text = item.status,
                 style = MaterialTheme.typography.bodyMedium,
-                color = CakkieGreen
+                color = if (item.status == "SUCCESS") CakkieGreen else CakkieYellow
             )
         }
     }
@@ -93,7 +97,7 @@ fun HistoryItem() {
             alignment = Alignment.Center,
             onDismissRequest = { showReceipt = false },
         ) {
-            Receipt {
+            Receipt(item) {
                 showReceipt = false
             }
         }

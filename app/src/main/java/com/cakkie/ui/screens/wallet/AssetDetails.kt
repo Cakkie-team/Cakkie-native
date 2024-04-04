@@ -21,7 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +40,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.networkModels.Balance
+import com.cakkie.networkModels.TransactionResponse
 import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.wallet.history.HistoryItem
@@ -49,13 +52,20 @@ import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
 import java.text.DecimalFormat
 
 @Destination
 @Composable
 fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
     val dec = DecimalFormat("#,##0.00")
-    val history = (0..10).toList()
+    val viewModel: WalletViewModel = koinViewModel()
+    val history = viewModel.transaction.observeAsState(TransactionResponse()).value
+
+    LaunchedEffect(key1 = item) {
+        viewModel.getTransactions(item.id)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -261,13 +271,13 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
             }
 
             items(
-                items = history
+                items = history?.data ?: listOf(),
             ) {
-                HistoryItem()
+                HistoryItem(it)
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-            if (history.isEmpty()) {
+            if (history.data.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier

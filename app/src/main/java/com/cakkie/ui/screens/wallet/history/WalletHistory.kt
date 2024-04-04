@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.networkModels.Transaction
 import com.cakkie.ui.screens.wallet.components.WalletFilter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,7 +36,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun WalletHistory(navigator: DestinationsNavigator) {
     var filter by remember { mutableStateOf("All") }
-    val history = listOf<String>()
+    val history = listOf<Transaction>()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +71,7 @@ fun WalletHistory(navigator: DestinationsNavigator) {
                 items(
                     items = history,
                 ) {
-                    HistoryItem()
+                    HistoryItem(it)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
