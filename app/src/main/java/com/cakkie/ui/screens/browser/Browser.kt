@@ -14,11 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 
 @Composable
 @Destination
 fun Browser(
     url: String,
+    onComplete: ResultBackNavigator<Boolean>
 ) {
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
@@ -32,6 +34,9 @@ fun Browser(
                 )
                 webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
+                        if (url?.contains("https://api.cakkie.com/wallet/notify") == true) {
+                            onComplete.navigateBack(result = true)
+                        }
                         backEnabled = view.canGoBack()
                     }
                 }

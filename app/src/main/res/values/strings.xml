@@ -301,6 +301,7 @@
     <string name="reactivate_account">Reactivate Account</string>
     <string name="we_are_glad">We’re glad you’re back. Reactivate your account to terminate the deletion.</string>
     <string name="earning">Earnings</string>
+    <string name="deposit_message">Enter an amount in naira that you like to deposit into your wallet</string>
 
 
 </resources>

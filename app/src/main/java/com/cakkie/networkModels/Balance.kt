@@ -21,3 +21,13 @@ data class Balance(
     val updatedAt: String = "",
     val withdrawalFee: Double = 0.0,
 ) : Parcelable
+
+
+//deposit response
+@Serializable
+@Parcelize
+data class DepositResponse(
+    val status: Boolean = true,
+    val message: String?,
+    val url: String?
+) : Parcelable

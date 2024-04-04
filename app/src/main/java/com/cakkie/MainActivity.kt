@@ -33,6 +33,7 @@ import com.cakkie.ui.screens.appCurrentDestinationAsState
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
@@ -91,6 +92,7 @@ class MainActivity : ComponentActivity() {
                                 Modifier.padding(
                                     top = when (currentDestination) {
                                         WalletDestination -> 0.dp
+                                        DepositDestination -> 0.dp
                                         AssetDetailsDestination -> 0.dp
                                         SplashScreenDestination -> 0.dp
                                         CakespirationDestination -> 16.dp

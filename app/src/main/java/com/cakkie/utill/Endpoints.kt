@@ -88,6 +88,7 @@ object Endpoints {
      * Wallet
      */
     const val GET_BALANCE = "$BASE_URL/wallet/balance" /* get balance  GET*/
+    const val DEPOSIT = "$BASE_URL/wallet/fund-wallet" /* deposit  POST*/
 
     /**
      * Location

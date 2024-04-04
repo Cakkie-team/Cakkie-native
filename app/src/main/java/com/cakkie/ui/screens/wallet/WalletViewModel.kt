@@ -3,6 +3,7 @@ package com.cakkie.ui.screens.wallet
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cakkie.networkModels.Balance
+import com.cakkie.networkModels.DepositResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import org.koin.core.component.KoinComponent
@@ -19,6 +20,13 @@ class WalletViewModel : ViewModel(), KoinComponent {
             _balance.value = it
         }
     }
+
+    fun deposit(amount: Double) = NetworkCalls.post<DepositResponse>(
+        endpoint = Endpoints.DEPOSIT,
+        body = listOf(
+            Pair("amount", amount)
+        )
+    )
 
 
 }

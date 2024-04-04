@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
+import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
@@ -157,7 +158,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(
                                 modifier = Modifier
-                                    .clickable { }
+                                    .clickable { navigator.navigate(DepositDestination) }
                                     .width(90.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
