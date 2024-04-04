@@ -13,6 +13,7 @@ import com.cakkie.ui.screens.profile.ProfileViewModel
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
+import com.cakkie.ui.screens.wallet.WalletViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -67,6 +68,10 @@ val appModule = module {
 //        OrderViewModel(get())
 //    }
 
+    //inject WalletViewModel
+    viewModel {
+        WalletViewModel()
+    }
     // Database
     single {
 

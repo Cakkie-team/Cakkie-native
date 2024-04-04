@@ -22,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,18 +36,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
-import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.WalletHistoryDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
-import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
+import java.text.DecimalFormat
 
 @Destination
 @Composable
 fun Wallet(navigator: DestinationsNavigator) {
+    val viewModel: WalletViewModel = koinViewModel()
+    val balance = viewModel.balance.observeAsState(listOf()).value
+    val dec = DecimalFormat("#,##0.00")
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getBalance()
+    }
 
     Column(
         modifier = Modifier
@@ -101,17 +109,17 @@ fun Wallet(navigator: DestinationsNavigator) {
                             tint = CakkieBackground
                         )
                     }
-                    IconButton(modifier = Modifier
-                        .padding(start = 10.dp)
-                        .align(Alignment.TopStart),
-                        onClick = { navigator.navigate(EarnDestination) }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.earn),
-                            contentDescription = "earnings",
-                            modifier = Modifier.size(24.dp),
-                            tint = CakkieBackground
-                        )
-                    }
+//                    IconButton(modifier = Modifier
+//                        .padding(start = 10.dp)
+//                        .align(Alignment.TopStart),
+//                        onClick = { navigator.navigate(EarnDestination) }) {
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.earn),
+//                            contentDescription = "earnings",
+//                            modifier = Modifier.size(24.dp),
+//                            tint = CakkieBackground
+//                        )
+//                    }
                     Column(
                         modifier = Modifier
                             .padding(20.dp)
@@ -125,7 +133,9 @@ fun Wallet(navigator: DestinationsNavigator) {
                             fontSize = 16.sp
                         )
                         Text(
-                            text = "200,000 NGN",
+                            text = dec.format(
+                                balance.find { it.symbol == "NGN" }?.balance ?: 0.0
+                            ),
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontWeight = FontWeight.Bold,
@@ -232,7 +242,7 @@ fun Wallet(navigator: DestinationsNavigator) {
             }
 
             items(
-                items = (1..3).toList()
+                items = balance
             ) {
                 Row(
                     modifier = Modifier
@@ -254,12 +264,12 @@ fun Wallet(navigator: DestinationsNavigator) {
                         modifier = Modifier.padding(8.dp)
                     ) {
                         Text(
-                            text = stringResource(id = R.string.proposal_fee),
+                            text = it.name,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "20 May, 10:50 am",
+                            text = dec.format(it.exchangeRate),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
@@ -269,15 +279,17 @@ fun Wallet(navigator: DestinationsNavigator) {
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "50 Icing",
+                            text = dec.format(it.balance) + " " + it.symbol,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
 
                         )
                         Text(
-                            text = stringResource(id = R.string.successful),
+                            text = dec.format(
+                                it.exchangeRate * it.balance
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CakkieGreen
+                            color = TextColorDark.copy(0.5f)
                         )
                     }
                 }

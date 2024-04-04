@@ -85,6 +85,11 @@ object Endpoints {
 
 
     /**
+     * Wallet
+     */
+    const val GET_BALANCE = "$BASE_URL/wallet/balance" /* get balance  GET*/
+
+    /**
      * Location
      * */
     val GET_LOCATION =
