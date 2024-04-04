@@ -30,13 +30,6 @@ object Endpoints {
 
 
     /**
-     * Transactions
-     */
-    const val GET_WALLET_BALANCE = "$BASE_URL/account/wallet/balance" /* get wallet balance */
-    const val GET_TRANSACTIONS = "$BASE_URL/account/wallet/transactions" /* get transactions */
-
-
-    /**
      *User
      **/
     val VERIFY_EMAIL = { email: String -> "$BASE_URL/verify-email?email=$email" }  /*get all users*/
@@ -89,6 +82,8 @@ object Endpoints {
      */
     const val GET_BALANCE = "$BASE_URL/wallet/balance" /* get balance  GET*/
     const val DEPOSIT = "$BASE_URL/wallet/fund-wallet" /* deposit  POST*/
+    val GET_TRANSACTION =
+        { currencyId: String?, page: Int, size: Int -> "$BASE_URL/wallet/transactions?currencyId=$currencyId?page=$page&pageSize=$size" } /* get transaction  GET*/
 
     /**
      * Location
