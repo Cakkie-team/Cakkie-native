@@ -96,7 +96,7 @@ fun HistoryItem(item: Transaction) {
     if (showReceipt) {
         Popup(
             alignment = Alignment.Center,
-            offset = IntOffset(0, -100),
+            offset = IntOffset(0, 300),
             onDismissRequest = { showReceipt = false },
         ) {
             Receipt(item) {
