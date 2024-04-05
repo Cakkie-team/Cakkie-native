@@ -17,8 +17,8 @@ android {
         applicationId = "com.cakkie"
         minSdk = 24
         targetSdk = 34
-        versionCode = 9
-        versionName = "1.02.6"
+        versionCode = 11
+        versionName = "1.02.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -176,6 +176,4 @@ dependencies {
     //shimmer
     implementation(libs.accompanist.placeholder.material)
 
-    //start.io
-    implementation(libs.inapp.sdk)
 }
