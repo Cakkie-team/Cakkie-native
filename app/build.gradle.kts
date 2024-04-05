@@ -175,4 +175,7 @@ dependencies {
 
     //shimmer
     implementation(libs.accompanist.placeholder.material)
+
+    //start.io
+    implementation(libs.inapp.sdk)
 }

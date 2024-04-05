@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +53,7 @@ import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.startapp.sdk.adsbase.StartAppAd
 import org.koin.androidx.compose.koinViewModel
 import java.text.DecimalFormat
 
@@ -61,7 +63,13 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
     val dec = DecimalFormat("#,##0.00")
     val viewModel: WalletViewModel = koinViewModel()
     val history = viewModel.transaction.observeAsState(TransactionResponse()).value
+    val context = LocalContext.current
+    val startAppAd = StartAppAd(context)
 
+    startAppAd.setVideoListener {
+        // Grant user with the reward
+        navigator.navigate(EarnDestination)
+    }
     LaunchedEffect(key1 = item) {
         viewModel.getTransactions(item.id)
     }
@@ -148,7 +156,10 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
                         if (item.symbol == "SPK") {
                             Row(
                                 modifier = Modifier
-                                    .clickable { navigator.navigate(EarnDestination) }
+                                    .clickable {
+                                        startAppAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO)
+//                                        navigator.navigate(EarnDestination)
+                                    }
                                     .background(CakkieBackground, RoundedCornerShape(8.dp))
                                     .padding(vertical = 5.dp, horizontal = 10.dp)
                                     .clip(RoundedCornerShape(8.dp)),

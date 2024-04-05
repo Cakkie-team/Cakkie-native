@@ -49,6 +49,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.startapp.sdk.adsbase.StartAppSDK
 
 
 //@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
@@ -64,6 +65,11 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        StartAppSDK.init(this, "203151235", false)
+        StartAppSDK.getExtras(this)
+            .edit()
+            .putString("IABUSPrivacy_String", "1---")
+            .apply()
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
