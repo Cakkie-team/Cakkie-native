@@ -303,7 +303,8 @@ fun Wallet(navigator: DestinationsNavigator) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "₦" + dec.format(it.exchangeRate),
+                            text = "₦" + dec.format(it.exchangeRate)
+                                .replace("0.00", "*.**"),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
@@ -321,7 +322,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                         Text(
                             text = "₦" + dec.format(
                                 it.exchangeRate * it.balance
-                            ),
+                            ).replace("0.00", "*.**"),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
