@@ -8,6 +8,7 @@ import com.cakkie.networkModels.TransactionResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import org.koin.core.component.KoinComponent
+import timber.log.Timber
 
 class WalletViewModel : ViewModel(), KoinComponent {
     private val _balance = MutableLiveData<List<Balance>>()
@@ -32,6 +33,7 @@ class WalletViewModel : ViewModel(), KoinComponent {
     )
 
     fun getTransactions(currencyId: String? = null, page: Int = 0, pageSize: Int = 10) {
+        Timber.d("getTransactions: currencyId: $currencyId, page: $page, pageSize: $pageSize")
         NetworkCalls.get<TransactionResponse>(
             endpoint = Endpoints.GET_TRANSACTION(currencyId, page, pageSize),
             listOf()
