@@ -147,9 +147,9 @@ fun Earn(navigator: DestinationsNavigator) {
 
         //current data time in iso
         val currentDateTime =
-            LocalDateTime.now().minusHours(2).format(DateTimeFormatter.ISO_DATE_TIME)
+            LocalDateTime.now().minusHours(3).format(DateTimeFormatter.ISO_DATE_TIME)
         val targetDateTime = LocalDateTime.parse(
-            user?.lastMine ?: currentDateTime,
+            user?.lastMine?.ifEmpty { currentDateTime } ?: currentDateTime,
             DateTimeFormatter.ISO_DATE_TIME
         )
 
