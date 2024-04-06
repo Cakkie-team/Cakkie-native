@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,12 +45,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.BrowserDestination
+import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Toaster
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -57,7 +62,9 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -114,11 +121,20 @@ fun Earn(navigator: DestinationsNavigator) {
      }*/
 
 //    return
+    val viewModal: WalletViewModel = koinViewModel()
+    val dec = DecimalFormat("#,##0.00")
+    val user = viewModal.user.observeAsState().value
+    val balance = viewModal.balance.observeAsState(listOf()).value
     val context = LocalContext.current as Activity
+    val spkBalance = dec.format(
+        balance.find { it.symbol == "SPK" }?.balance ?: 0.0
+    ).split(".")
     var rewardedAd by remember {
         mutableStateOf<RewardedAd?>(null)
     }
-
+    var gettingAd by remember {
+        mutableStateOf(false)
+    }
     rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdClicked() {
             // Called when a click is recorded for an ad.
@@ -149,6 +165,8 @@ fun Earn(navigator: DestinationsNavigator) {
         }
     }
     LaunchedEffect(key1 = Unit) {
+        viewModal.getBalance()
+
         if (rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
@@ -222,14 +240,14 @@ fun Earn(navigator: DestinationsNavigator) {
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            text = "5,000.",
+                            text = spkBalance[0] + ".",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "50",
+                            text = spkBalance[1],
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontSize = 26.sp,
@@ -238,7 +256,7 @@ fun Earn(navigator: DestinationsNavigator) {
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = "ICING",
+                            text = "SPK",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontSize = 24.sp,
@@ -266,7 +284,7 @@ fun Earn(navigator: DestinationsNavigator) {
                             .padding(horizontal = 16.dp, vertical = 5.dp)
                     ) {
                         Text(
-                            text = "+50.20",
+                            text = "+" + dec.format(user?.earningRate ?: 0.0),
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieOrange,
                             fontSize = 16.sp,
@@ -274,7 +292,7 @@ fun Earn(navigator: DestinationsNavigator) {
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = "icing/hr",
+                            text = "SPK/hr",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontSize = 16.sp,
@@ -332,6 +350,9 @@ fun Earn(navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     Modifier
+                        .clickable {
+                            navigator.navigate(BrowserDestination("https://cakkie.com/whitepaper"))
+                        }
                         .clip(RoundedCornerShape(10))
                         .background(Color.White, RoundedCornerShape(8))
                         .padding(10.dp)
@@ -430,17 +451,27 @@ fun Earn(navigator: DestinationsNavigator) {
         }
         Card(
             onClick = {
+                gettingAd = true
                 rewardedAd?.let { ad ->
                     ad.show(context) { rewardItem ->
+                        gettingAd = false
                         // Handle the reward.
 //                        val rewardAmount = rewardItem.amount
 //                        val rewardType = rewardItem.type
+                        viewModal.mine()
+                            .addOnSuccessListener {
+                                viewModal.getProfile()
+                                viewModal.getBalance()
+                            }
                         Timber.d("User earned the reward.")
                     }
                 } ?: run {
+                    gettingAd = false
+                    Toaster(context, "Ad wasn't ready yet. try again", R.drawable.logo)
                     Timber.d("The rewarded ad wasn't ready yet.")
                 }
             },
+            enabled = !gettingAd,
             shape = RoundedCornerShape(50),
             modifier = Modifier
                 .padding(20.dp)
@@ -457,6 +488,43 @@ fun Earn(navigator: DestinationsNavigator) {
                     .padding(10.dp)
                     .align(Alignment.CenterHorizontally)
             )
+        }
+    }
+
+    //please wait popup
+    if (gettingAd) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .clip(RoundedCornerShape(20)),
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBrown002
+                )
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Please wait",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBackground,
+                        fontSize = 18.sp
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "We are getting your ad ready",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextColorDark,
+                    )
+                }
+            }
         }
     }
 

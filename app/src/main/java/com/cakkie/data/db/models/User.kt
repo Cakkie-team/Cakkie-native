@@ -24,6 +24,8 @@ data class User(
     val hasShop: Boolean = false,
     val isDeleted: Boolean = false,
     val isOnline: Boolean = false,
+    val earningRate: Double = 0.0,
+    val lastMine: String = "",
     @PrimaryKey
     val id: String = "",
     val isDriver: Boolean = false,

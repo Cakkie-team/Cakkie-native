@@ -17,12 +17,12 @@ import com.cakkie.data.db.models.typeConverters.Converters
     ],
 //    autoMigrations = [
 //        /**
-//         * Migration from version 1 to version 2
+//         * Migration from version 2 to version 3
 //         *
 //         */
-//        AutoMigration (from = 1, to = 2)
+//        AutoMigration (from = 2, to = 3)
 //    ],
-    version = 2, // Updated version to 2
+    version = 3, // Updated version to 3
     exportSchema = false
 )
 @TypeConverters(Converters::class)
