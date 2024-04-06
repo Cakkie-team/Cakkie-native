@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.wallet
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,9 +52,16 @@ import com.cakkie.ui.theme.TextColorDark
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 import java.text.DecimalFormat
 
 @Destination
@@ -61,9 +70,61 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
     val dec = DecimalFormat("#,##0.00")
     val viewModel: WalletViewModel = koinViewModel()
     val history = viewModel.transaction.observeAsState(TransactionResponse()).value
+    val context = LocalContext.current as Activity
+    var rewardedAd by remember {
+        mutableStateOf<RewardedAd?>(null)
+    }
 
+    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdClicked() {
+            // Called when a click is recorded for an ad.
+            Timber.d("Ad was clicked.")
+        }
+
+        override fun onAdDismissedFullScreenContent() {
+            // Called when ad is dismissed.
+            // Set the ad reference to null so you don't show the ad a second time.
+            Timber.d("Ad dismissed fullscreen content.")
+            rewardedAd = null
+        }
+
+        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+            // Called when ad fails to show.
+            Timber.e("Ad failed to show fullscreen content.")
+            rewardedAd = null
+        }
+
+        override fun onAdImpression() {
+            // Called when an impression is recorded for an ad.
+            Timber.d("Ad recorded an impression.")
+        }
+
+        override fun onAdShowedFullScreenContent() {
+            // Called when ad is shown.
+            Timber.d("Ad showed fullscreen content.")
+        }
+    }
     LaunchedEffect(key1 = item) {
         viewModel.getTransactions(item.id)
+
+        if (rewardedAd == null) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                context,
+                "ca-app-pub-8613748949810587/1943587076",
+                adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Timber.d(adError.toString())
+                        rewardedAd = null
+                    }
+
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        Timber.d("Ad was loaded.")
+                        rewardedAd = ad
+                    }
+                })
+        }
     }
 
     Column(
@@ -148,7 +209,19 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
                         if (item.symbol == "SPK") {
                             Row(
                                 modifier = Modifier
-                                    .clickable { navigator.navigate(EarnDestination) }
+                                    .clickable {
+                                        rewardedAd?.let { ad ->
+                                            ad.show(context) { rewardItem ->
+                                                // Handle the reward.
+                                                val rewardAmount = rewardItem.amount
+                                                val rewardType = rewardItem.type
+                                                navigator.navigate(EarnDestination)
+                                                Timber.d("User earned the reward.")
+                                            }
+                                        } ?: run {
+                                            Timber.d("The rewarded ad wasn't ready yet.")
+                                        }
+                                    }
                                     .background(CakkieBackground, RoundedCornerShape(8.dp))
                                     .padding(vertical = 5.dp, horizontal = 10.dp)
                                     .clip(RoundedCornerShape(8.dp)),
