@@ -1,6 +1,8 @@
 package com.cakkie.ui.screens.wallet.earn
 
 import android.app.Activity
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,6 +52,7 @@ import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
+import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
@@ -62,10 +65,16 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.text.DecimalFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
@@ -129,12 +138,48 @@ fun Earn(navigator: DestinationsNavigator) {
     val spkBalance = dec.format(
         balance.find { it.symbol == "SPK" }?.balance ?: 0.0
     ).split(".")
+    var couldMine by remember { mutableStateOf(false) }
+
+    var remainingTime by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = user) {
+        couldMine = false
+
+        //current data time in iso
+        val currentDateTime =
+            LocalDateTime.now().minusHours(2).format(DateTimeFormatter.ISO_DATE_TIME)
+        val targetDateTime = LocalDateTime.parse(
+            user?.lastMine ?: currentDateTime,
+            DateTimeFormatter.ISO_DATE_TIME
+        )
+
+        // Add 2 hours to the target time
+        val targetMillis =
+            targetDateTime.plusHours(3).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        while (Instant.now().toEpochMilli() < targetMillis) {
+            val currentTime = Instant.now().toEpochMilli()
+            val remainingMillis = targetMillis - currentTime
+
+            val hours = remainingMillis / (1000 * 60 * 60)
+            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
+            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+
+            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+            delay(1000) // Delay for 1 second
+        }
+
+        // Countdown finished
+        couldMine = true
+    }
     var rewardedAd by remember {
         mutableStateOf<RewardedAd?>(null)
     }
     var gettingAd by remember {
         mutableStateOf(false)
     }
+
     rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdClicked() {
             // Called when a click is recorded for an ad.
@@ -307,7 +352,10 @@ fun Earn(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
-                .background(CakkieBrown002.copy(0.8f), RoundedCornerShape(50))
+                .background(
+                    (if (couldMine) CakkieGreen else CakkieBrown002).copy(0.8f),
+                    RoundedCornerShape(50)
+                )
                 .clip(RoundedCornerShape(50)),
             contentAlignment = Alignment.Center
         ) {
@@ -325,7 +373,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = "00:23:04",
+                    text = remainingTime,
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieOrange,
                     fontSize = 16.sp,
@@ -406,9 +454,6 @@ fun Earn(navigator: DestinationsNavigator) {
             items(
                 items = listOf(
                     "Invite a friend",
-                    "Complete a survey",
-                    "Watch a video",
-                    "Bake a cake"
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -428,7 +473,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                     Image(
-                        painter = painterResource(id = R.drawable.x),
+                        painter = painterResource(id = R.drawable.invite),
                         contentDescription = "task Icon",
                         modifier = Modifier.size(20.dp)
                     )
@@ -471,7 +516,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     Timber.d("The rewarded ad wasn't ready yet.")
                 }
             },
-            enabled = !gettingAd,
+            enabled = !gettingAd && couldMine,
             shape = RoundedCornerShape(50),
             modifier = Modifier
                 .padding(20.dp)
