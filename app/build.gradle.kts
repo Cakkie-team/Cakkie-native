@@ -176,4 +176,7 @@ dependencies {
     //shimmer
     implementation(libs.accompanist.placeholder.material)
 
+    //admob
+    implementation(libs.play.services.ads)
+
 }
