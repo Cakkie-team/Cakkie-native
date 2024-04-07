@@ -41,7 +41,7 @@ fun WalletFilter(value: String, onValueChange: (String) -> Unit) {
     var expanded by remember {
         mutableStateOf(false)
     }
-    val options = listOf("All", "Pending", "In Progress", "Completed", "Declined")
+    val options = listOf("All", "Pending", "Success", "Failed")
     Box(
         modifier = Modifier
             .padding(start = 20.dp)

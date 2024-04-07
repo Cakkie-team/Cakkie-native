@@ -16,7 +16,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,16 +29,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.networkModels.Transaction
+import com.cakkie.networkModels.TransactionResponse
+import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.screens.wallet.components.WalletFilter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @Destination
 @Composable
 fun WalletHistory(navigator: DestinationsNavigator) {
     var filter by remember { mutableStateOf("All") }
-    val history = listOf<Transaction>()
+    val viewModel: WalletViewModel = koinViewModel()
+    val history = viewModel.transaction.observeAsState(TransactionResponse()).value
+    val filtered = history.data.filter {
+        val status = it.status.lowercase(Locale.ROOT)
+        when (filter.lowercase(Locale.ROOT)) {
+            "all" -> true
+            "pending" -> status == "pending"
+            "success" -> status == "success"
+            "failed" -> status == "failed"
+            else -> true
+        }
+    }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getAllTransactions()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,10 +86,10 @@ fun WalletHistory(navigator: DestinationsNavigator) {
             filter = it
         }
         Spacer(modifier = Modifier.height(10.dp))
-        if (history.isNotEmpty()) {
+        if (filtered.isNotEmpty()) {
             LazyColumn {
                 items(
-                    items = history,
+                    items = filtered,
                 ) {
                     HistoryItem(it)
                     Spacer(modifier = Modifier.height(10.dp))

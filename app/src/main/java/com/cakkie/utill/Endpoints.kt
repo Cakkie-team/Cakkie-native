@@ -86,6 +86,10 @@ object Endpoints {
         { currencyId: String?, page: Int, size: Int ->
             "$BASE_URL/wallet/transactions?page=$page&pageSize=$size&currencyId=$currencyId"
         } /* get transaction  GET*/
+    val GET_ALL_TRANSACTION =
+        { page: Int, size: Int ->
+            "$BASE_URL/wallet/transactions?page=$page&pageSize=$size"
+        } /* get transaction  GET*/
     const val MINE = "$BASE_URL/wallet/mine" /* mine  POST*/
 
     /**

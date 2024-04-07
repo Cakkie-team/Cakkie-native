@@ -15,7 +15,6 @@ import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
 class WalletViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
@@ -51,9 +50,17 @@ class WalletViewModel : ViewModel(), KoinComponent {
     )
 
     fun getTransactions(currencyId: String? = null, page: Int = 0, pageSize: Int = 10) {
-        Timber.d("getTransactions: currencyId: $currencyId, page: $page, pageSize: $pageSize")
         NetworkCalls.get<TransactionResponse>(
             endpoint = Endpoints.GET_TRANSACTION(currencyId, page, pageSize),
+            listOf()
+        ).addOnSuccessListener {
+            _transaction.value = it
+        }
+    }
+
+    fun getAllTransactions(page: Int = 0, pageSize: Int = 10) {
+        NetworkCalls.get<TransactionResponse>(
+            endpoint = Endpoints.GET_ALL_TRANSACTION(page, pageSize),
             listOf()
         ).addOnSuccessListener {
             _transaction.value = it
