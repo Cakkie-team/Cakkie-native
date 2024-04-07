@@ -49,7 +49,7 @@ class WalletViewModel : ViewModel(), KoinComponent {
         )
     )
 
-    fun getTransactions(currencyId: String? = null, page: Int = 0, pageSize: Int = 10) {
+    fun getTransactions(currencyId: String? = null, page: Int = 0, pageSize: Int = 30) {
         NetworkCalls.get<TransactionResponse>(
             endpoint = Endpoints.GET_TRANSACTION(currencyId, page, pageSize),
             listOf()
@@ -58,7 +58,7 @@ class WalletViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun getAllTransactions(page: Int = 0, pageSize: Int = 10) {
+    fun getAllTransactions(page: Int = 0, pageSize: Int = 30) {
         NetworkCalls.get<TransactionResponse>(
             endpoint = Endpoints.GET_ALL_TRANSACTION(page, pageSize),
             listOf()
