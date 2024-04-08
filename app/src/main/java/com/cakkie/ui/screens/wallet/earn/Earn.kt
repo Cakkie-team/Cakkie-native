@@ -147,7 +147,7 @@ fun Earn(navigator: DestinationsNavigator) {
 
         //current data time in iso
         val currentDateTime =
-            LocalDateTime.now().minusHours(3).format(DateTimeFormatter.ISO_DATE_TIME)
+            LocalDateTime.now().minusHours(2).format(DateTimeFormatter.ISO_DATE_TIME)
         val targetDateTime = LocalDateTime.parse(
             user?.lastMine?.ifEmpty { currentDateTime } ?: currentDateTime,
             DateTimeFormatter.ISO_DATE_TIME
@@ -155,7 +155,7 @@ fun Earn(navigator: DestinationsNavigator) {
 
         // Add 2 hours to the target time
         val targetMillis =
-            targetDateTime.plusHours(3).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            targetDateTime.plusHours(2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         while (Instant.now().toEpochMilli() < targetMillis) {
             val currentTime = Instant.now().toEpochMilli()
@@ -512,7 +512,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     }
                 } ?: run {
                     gettingAd = false
-                    Toaster(context, "Ad wasn't ready yet. try again", R.drawable.logo)
+                    Toaster(context, "Ad wasn't ready yet. try again", R.drawable.logo).show()
                     Timber.d("The rewarded ad wasn't ready yet.")
                 }
             },
@@ -525,14 +525,27 @@ fun Earn(navigator: DestinationsNavigator) {
                 containerColor = CakkieBrown002
             )
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.bake),
-                contentDescription = "Mine",
-                modifier = Modifier
-                    .size(50.dp)
+            Row(
+                Modifier
                     .padding(10.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+                    .align(Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Mine",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = CakkieBackground,
+                    fontSize = 24.sp
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.bake),
+                    contentDescription = "Mine",
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+            }
         }
     }
 
@@ -566,7 +579,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     Text(
                         text = "We are getting your ad ready",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextColorDark,
+                        color = CakkieBackground,
                     )
                 }
             }
