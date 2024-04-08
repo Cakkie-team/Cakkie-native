@@ -512,7 +512,11 @@ fun Earn(navigator: DestinationsNavigator) {
                     }
                 } ?: run {
                     gettingAd = false
-                    Toaster(context, "Ad wasn't ready yet. try again", R.drawable.logo).show()
+                    Toaster(
+                        context,
+                        "Ad wasn't ready yet, wait for 3secs and try again",
+                        R.drawable.logo
+                    ).show()
                     Timber.d("The rewarded ad wasn't ready yet.")
                 }
             },
