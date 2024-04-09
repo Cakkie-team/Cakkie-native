@@ -104,9 +104,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             address.text.isNotBlank() &&
             password.text.isNotBlank() && isChecked
 
-    var referrerUrl by remember {
-        mutableStateOf("")
-    }
+
     LaunchedEffect(key1 = Unit) {
         val referrerClient = InstallReferrerClient.newBuilder(context).build()
         referrerClient.startConnection(object : InstallReferrerStateListener {
@@ -116,6 +114,36 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     InstallReferrerClient.InstallReferrerResponse.OK -> {
                         // Connection established.
                         Timber.d("Connection established")
+
+                        val response: ReferrerDetails = referrerClient.installReferrer
+                        val referrerUrl: String = response.installReferrer
+                        Timber.d("referrerUrl - $referrerUrl")//referrerUrl - utm_source=google-play&utm_medium=organic //it's default value only
+
+                        if (referrerUrl.isNotEmpty()) {
+                            val referrerParts = referrerUrl.split("&")//split with &
+                            Timber.d(
+                                "referrerParts - %s",
+                                referrerParts
+                            )//divided in 2 parts utm_source,utm_content
+
+                            val utmSource = referrerParts.find {
+                                it.contains("utm_source")
+                            }?.split("=")?.get(1)//get the value of utm_source
+                            Timber.d("utmSource - $utmSource")
+
+                            if (utmSource != null && utmSource == "refer") {
+                                val utmContent = referrerParts.find {
+                                    it.contains("utm_content")
+                                }?.split("=")?.get(1)//get the value of utm_content
+                                Timber.d("utmContent - $utmContent")
+
+                                if (utmContent != null) {
+                                    Timber.d("refCode - $utmContent")
+                                    referralCode = TextFieldValue(utmContent)
+                                }
+                            }
+                        }
+                        referrerClient.endConnection()
                     }
 
                     InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
@@ -136,10 +164,6 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                 Timber.d("Try to restart the connection on the next request to Google Play by calling the startConnection() method.")
             }
         })
-
-        val response: ReferrerDetails = referrerClient.installReferrer
-        referrerUrl = response.installReferrer
-        Timber.d("Referrer Url: $referrerUrl")
     }
 
     Column(
