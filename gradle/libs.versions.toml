@@ -7,6 +7,7 @@ commonsIoVersion = "2.13.0"
 engineIoClientVersion = "1.0.0"
 fuelVersion = "2.3.1"
 gsonVersion = "2.10.1"
+installreferrerVersion = "2.2"
 kotlin = "1.9.0"
 core-ktx = "1.12.0"
 junit = "4.13.2"
@@ -85,6 +86,7 @@ fuel-coroutines = { module = "com.github.kittinunf.fuel:fuel-coroutines", versio
 fuel-kotlinx-serialization = { module = "com.github.kittinunf.fuel:fuel-kotlinx-serialization", version.ref = "fuelVersion" }
 fuel-livedata = { module = "com.github.kittinunf.fuel:fuel-livedata", version.ref = "fuelVersion" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
+installreferrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installreferrerVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }

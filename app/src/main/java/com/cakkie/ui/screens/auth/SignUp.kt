@@ -23,6 +23,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
+import com.android.installreferrer.api.ReferrerDetails
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
@@ -99,6 +103,44 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             userName.text.isNotBlank() &&
             address.text.isNotBlank() &&
             password.text.isNotBlank() && isChecked
+
+    var referrerUrl by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = Unit) {
+        val referrerClient = InstallReferrerClient.newBuilder(context).build()
+        referrerClient.startConnection(object : InstallReferrerStateListener {
+
+            override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                when (responseCode) {
+                    InstallReferrerClient.InstallReferrerResponse.OK -> {
+                        // Connection established.
+                        Timber.d("Connection established")
+                    }
+
+                    InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
+                        // API not available on the current Play Store app.
+                        Timber.d("API not available on the current Play Store app.")
+                    }
+
+                    InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE -> {
+                        // Connection couldn't be established.
+                        Timber.d("Connection couldn't be established.")
+                    }
+                }
+            }
+
+            override fun onInstallReferrerServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+                Timber.d("Try to restart the connection on the next request to Google Play by calling the startConnection() method.")
+            }
+        })
+
+        val response: ReferrerDetails = referrerClient.installReferrer
+        referrerUrl = response.installReferrer
+        Timber.d("Referrer Url: $referrerUrl")
+    }
 
     Column(
         Modifier
@@ -226,7 +268,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.clickable {
-                      navigator.navigate(BrowserDestination("https://www.cakkie.com/terms-and-conditions"))
+                            navigator.navigate(BrowserDestination("https://www.cakkie.com/terms-and-conditions"))
                         },
                         fontSize = 12.sp
                     )

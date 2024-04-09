@@ -56,7 +56,6 @@ import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
-import com.cakkie.utill.Toaster
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -79,57 +78,6 @@ import java.time.format.DateTimeFormatter
 @Destination
 @Composable
 fun Earn(navigator: DestinationsNavigator) {
-    /* Column(Modifier.padding(horizontal = 16.dp)) {
-         Spacer(modifier = Modifier.height(30.dp))
-         Row(
-             verticalAlignment = Alignment.CenterVertically
-         ) {
-             Image(
-                 painter = painterResource(id = R.drawable.logo),
-                 contentDescription = stringResource(
-                     id = R.string.cakkie_logo
-                 ),
-                 modifier = Modifier
-                     .size(27.dp),
-                 contentScale = ContentScale.FillWidth
-             )
-             Spacer(modifier = Modifier.width(6.dp))
-             androidx.compose.material.Text(
-                 text = stringResource(id = R.string.earning),
-                 style = MaterialTheme.typography.bodyLarge,
-                 fontSize = 16.sp,
-                 color = CakkieBrown,
-                 fontWeight = FontWeight.SemiBold
-             )
-         }
-         Spacer(modifier = Modifier.height(80.dp))
-         Column(
-             Modifier
-                 .fillMaxSize()
-                 .verticalScroll(rememberScrollState()),
-             horizontalAlignment = Alignment.CenterHorizontally
-         ) {
-             Image(
-                 painter = painterResource(id = R.drawable.construct),
-                 contentDescription = "under construction",
-                 modifier = Modifier.size(250.dp)
-             )
-             Spacer(modifier = Modifier.height(28.dp))
-
-             Text(
-                 text = stringResource(id = R.string.under_construction),
-                 style = MaterialTheme.typography.titleLarge
-             )
-             Text(
-                 text = stringResource(id = R.string.something_is_baking_here),
-                 style = MaterialTheme.typography.bodyLarge,
-                 textAlign = TextAlign.Center
-             )
-
-         }
-     }*/
-
-//    return
     val viewModal: WalletViewModel = koinViewModel()
     val dec = DecimalFormat("#,##0.00")
     val user = viewModal.user.observeAsState().value
@@ -227,6 +175,20 @@ fun Earn(navigator: DestinationsNavigator) {
                     override fun onAdLoaded(ad: RewardedAd) {
                         Timber.d("Ad was loaded.")
                         rewardedAd = ad
+                        if (gettingAd) {
+                            ad.show(context) { rewardItem ->
+                                gettingAd = false
+                                // Handle the reward.
+//                        val rewardAmount = rewardItem.amount
+//                        val rewardType = rewardItem.type
+                                viewModal.mine()
+                                    .addOnSuccessListener {
+                                        viewModal.getProfile()
+                                        viewModal.getBalance()
+                                    }
+                                Timber.d("User earned the reward.")
+                            }
+                        }
                     }
                 })
         }
@@ -511,12 +473,12 @@ fun Earn(navigator: DestinationsNavigator) {
                         Timber.d("User earned the reward.")
                     }
                 } ?: run {
-                    gettingAd = false
-                    Toaster(
-                        context,
-                        "Ad wasn't ready yet, wait for 3secs and try again",
-                        R.drawable.logo
-                    ).show()
+//                    gettingAd = false
+//                    Toaster(
+//                        context,
+//                        "Ad wasn't ready yet, wait for 3secs and try again",
+//                        R.drawable.logo
+//                    ).show()
                     Timber.d("The rewarded ad wasn't ready yet.")
                 }
             },

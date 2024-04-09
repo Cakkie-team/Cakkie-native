@@ -179,4 +179,7 @@ dependencies {
     //admob
     implementation(libs.play.services.ads)
 
+    //referrer
+    implementation(libs.installreferrer)
+
 }

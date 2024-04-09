@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.auth
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +14,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,6 +33,7 @@ import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.LoginScreenDestination
 import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.Error
+import com.cakkie.utill.getCurrentLocation
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -39,6 +43,10 @@ import timber.log.Timber
 @Destination
 fun EmailScreen(navigator: DestinationsNavigator) {
     val viewModel: AuthViewModel = koinViewModel()
+    val context = LocalContext.current as Activity
+    LaunchedEffect(key1 = context) {
+        context.getCurrentLocation()
+    }
     var email by remember {
         mutableStateOf(TextFieldValue(""))
     }
