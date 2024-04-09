@@ -145,17 +145,21 @@ fun CakkieInputField(
                         Image(
                             painter = painterResource(id = R.drawable.eye_closed),
                             contentDescription = "eye closed",
-                            modifier = Modifier.clickable {
-                                visible = !visible
-                            }
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    visible = !visible
+                                }
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.eye_open),
                             contentDescription = "eye closed",
-                            modifier = Modifier.clickable {
-                                visible = !visible
-                            }
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    visible = !visible
+                                }
                         )
                     }
                 }
@@ -174,25 +178,27 @@ fun CakkieInputField(
                     Image(
                         painter = painterResource(id = R.drawable.location),
                         contentDescription = "eye closed",
-                        modifier = Modifier.clickable {
-                            if (location != null) {
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                if (location != null) {
 //                                Timber.d("address is: "+context.getAddressFromLocation(location))
-                                scope.launch(Dispatchers.IO) {
-                                    val address = getCurrentAddress(
-                                        location.latitude, location.longitude
-                                    )
-                                    onValueChange.invoke(
-                                        TextFieldValue(
-                                            address?.formattedAddress ?: ""
+                                    scope.launch(Dispatchers.IO) {
+                                        val address = getCurrentAddress(
+                                            location.latitude, location.longitude
                                         )
-                                    )
+                                        onValueChange.invoke(
+                                            TextFieldValue(
+                                                address?.formattedAddress ?: ""
+                                            )
+                                        )
 
-                                    if (address != null) {
-                                        onLocationClick.invoke(address)
+                                        if (address != null) {
+                                            onLocationClick.invoke(address)
+                                        }
                                     }
                                 }
                             }
-                        }
                     )
                 }
             },
@@ -232,6 +238,7 @@ fun CakkieInputField(
                         Image(
                             painter = painterResource(id = R.drawable.search),
                             contentDescription = "search",
+                            modifier = Modifier.size(24.dp)
                         )
                     },
                     modifier = Modifier
