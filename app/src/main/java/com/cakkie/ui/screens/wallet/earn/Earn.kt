@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
+import com.cakkie.ui.screens.destinations.ReferralDestination
 import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -418,7 +419,12 @@ fun Earn(navigator: DestinationsNavigator) {
                     "Invite a friend",
                 )
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.clickable {
+                    when (it) {
+                        "Invite a friend" -> navigator.navigate(ReferralDestination)
+                        else -> {}
+                    }
+                }, verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
