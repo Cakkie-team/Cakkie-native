@@ -50,11 +50,13 @@ lifecycle-runtime = "1.5.4"
 room = "2.6.0"
 
 # Timber
+shimmerVersion = "0.5.0"
 socketIoClientVersion = "1.0.0"
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
 toolbarComposeVersion = "2.3.5"
 uiVersion = "1.5.4"
+uiViewbindingVersion = "1.6.5"
 uploadserviceVersion = "4.7.0"
 
 # googleServices
@@ -65,6 +67,7 @@ firebase-bom = "32.7.1"
 
 #crashlytics
 firebaseCrashlyticsVersion = "2.9.9"
+constraintlayoutVersion = "2.1.4"
 
 
 
@@ -77,6 +80,7 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3ExoplayerVersion" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3ExoplayerVersion" }
 androidx-ui-v154 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
+androidx-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", version.ref = "uiViewbindingVersion" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIoVersion" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 engine-io-client = { module = "io.socket:engine.io-client", version.ref = "engineIoClientVersion" }
@@ -98,6 +102,7 @@ compose-material = { group = "androidx.compose.material", name = "material", ver
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "compose" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmerVersion" }
 socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClientVersion" }
 toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
@@ -160,6 +165,7 @@ kotlin-stdlib-jdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayoutVersion" }
 
 
 [plugins]
