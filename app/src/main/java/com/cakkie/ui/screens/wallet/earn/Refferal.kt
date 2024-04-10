@@ -61,7 +61,7 @@ fun Referral(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState().value
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    val history = listOf<String>()
+    val history = viewModel.referrals.observeAsState().value ?: emptyList()
 
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
         putExtra(
@@ -123,7 +123,7 @@ fun Referral(navigator: DestinationsNavigator) {
                     items = history,
                 ) {
                     Text(
-                        text = "${history.indexOf(it) + 1}. $it",
+                        text = "${history.indexOf(it) + 1}. ${it.name}",
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 18.sp
                     )

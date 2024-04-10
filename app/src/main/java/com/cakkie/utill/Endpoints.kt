@@ -38,6 +38,7 @@ object Endpoints {
     const val VERIFY_USERNAME = "$BASE_URL/verify-username?username=" /* verify tag */
     val DELETE_ACCOUNT = { reason: String -> "$BASE_URL/account/$reason" } /* delete account */
     const val REACTIVATE_ACCOUNT = "$BASE_URL/account/reactivate" /* reactivate account */
+    const val GET_REFERRALS = "$BASE_URL/account/referrals" /* get referrals */
 
 
     /**

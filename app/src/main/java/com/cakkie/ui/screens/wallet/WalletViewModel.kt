@@ -21,10 +21,12 @@ class WalletViewModel : ViewModel(), KoinComponent {
     private val _balance = MutableLiveData<List<Balance>>()
     private val _transaction = MutableLiveData<TransactionResponse>()
     private val _user = MutableLiveData<User>()
+    private val _referrals = MutableLiveData<List<User>>()
 
     val user = _user
     val balance = _balance
     val transaction = _transaction
+    val referrals = _referrals
 
     fun getBalance() {
         NetworkCalls.getObjectList<Balance>(
@@ -81,9 +83,18 @@ class WalletViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
+    private fun getReferrals() {
+        NetworkCalls.getObjectList<User>(
+            endpoint = Endpoints.GET_REFERRALS
+        ).addOnSuccessListener {
+            _referrals.value = it
+        }
+    }
+
     init {
         getProfile()
         getUser()
+        getReferrals()
     }
 
 }
