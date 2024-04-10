@@ -281,7 +281,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     items = listings.data,
                     key = { it.id }
                 ) { listing ->
-                    val index = listings.data.indexOf(listing).plus(1)
+                    val index = listings.data.indexOf(listing)
                     val visibleItem =
                         remember { derivedStateOf { listState.firstVisibleItemIndex } }.value
                     Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
@@ -294,7 +294,8 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         }.value,
                         isMuted = isMuted,
                         onMute = { isMuted = it },
-                        progressiveMediaSource = progressiveMediaSource
+                        progressiveMediaSource = progressiveMediaSource,
+                        index = index
                     )
                 }
             }

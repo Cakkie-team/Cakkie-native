@@ -304,6 +304,7 @@
     <string name="deposit_message">Enter an amount in naira that you like to deposit into your wallet</string>
     <string name="your_friends">Your friends</string>
     <string name="your_referrals">Your Referrals</string>
+    <string name="ad">Ad</string>
 
 
 </resources>
