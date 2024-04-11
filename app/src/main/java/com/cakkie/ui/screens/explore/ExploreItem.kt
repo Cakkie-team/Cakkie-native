@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -63,6 +62,7 @@ import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
+import com.cakkie.ui.components.NativeAdView
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
@@ -77,16 +77,8 @@ import com.cakkie.utill.toObject
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
-import kotlin.concurrent.fixedRateTimer
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
@@ -402,243 +394,244 @@ fun ExploreItem(
 
     }
     if (index % 3 == 0) {
-        var advert by remember {
-            mutableStateOf<NativeAd?>(null)
-        }
-        val pageSt = rememberPagerState(pageCount = { advert?.images?.size ?: 1 })
-        val adLoader = AdLoader.Builder(context, "ca-app-pub-8613748949810587/6606609015")
-            .forNativeAd { ad: NativeAd ->
-                // Show the ad.
-                Timber.d("Ad loaded" + ad.images)
-                advert = ad
-            }
-            .withAdListener(object : AdListener() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    // Handle the failure by logging, altering the UI, and so on.
-                }
-            })
-            .withNativeAdOptions(
-                NativeAdOptions.Builder()
-                    // Methods in the NativeAdOptions.Builder class can be
-                    // used here to specify individual options settings.
-                    .build()
-            )
-            .build()
 
-        LaunchedEffect(key1 = Unit) {
-            //load ad
-            adLoader.loadAd(AdRequest.Builder().build())
+        NativeAdView(id = item.id)
+        /*  var advert by remember {
+              mutableStateOf<NativeAd?>(null)
+          }
+          val pageSt = rememberPagerState(pageCount = { advert?.images?.size ?: 1 })
+          val adLoader = AdLoader.Builder(context, "ca-app-pub-8613748949810587/6606609015")
+              .forNativeAd { ad: NativeAd ->
+                  // Show the ad.
+                  Timber.d("Ad loaded" + ad.images)
+                  advert = ad
+              }
+              .withAdListener(object : AdListener() {
+                  override fun onAdFailedToLoad(adError: LoadAdError) {
+                      // Handle the failure by logging, altering the UI, and so on.
+                  }
+              })
+              .withNativeAdOptions(
+                  NativeAdOptions.Builder()
+                      // Methods in the NativeAdOptions.Builder class can be
+                      // used here to specify individual options settings.
+                      .build()
+              )
+              .build()
 
-            // Reload ad every 1 hour
-            fixedRateTimer(name = item.id, initialDelay = 3600000, period = 3600000) {
-                advert?.destroy()
-                adLoader.loadAd(AdRequest.Builder().build())
-            }
-        }
+          LaunchedEffect(key1 = Unit) {
+              //load ad
+              adLoader.loadAd(AdRequest.Builder().build())
+
+              // Reload ad every 1 hour
+              fixedRateTimer(name = item.id, initialDelay = 3600000, period = 3600000) {
+                  advert?.destroy()
+                  adLoader.loadAd(AdRequest.Builder().build())
+              }
+          }*/
 
 
+        /*  Column {
+              Spacer(modifier = Modifier.height(30.dp))
+              Row(
+                  Modifier
+                      .padding(start = 16.dp, bottom = 2.dp, end = 2.dp)
+                      .fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween
+              ) {
+                  Row(
+                      verticalAlignment = Alignment.CenterVertically
+                  ) {
+                      var isLoading by remember {
+                          mutableStateOf(false)
+                      }
+                      AsyncImage(
+                          model = advert?.icon?.uri,
+                          contentDescription = "profile pic",
+                          onState = {
+                              //update isLoaded
+                              isLoading = it is AsyncImagePainter.State.Loading
+                          },
+                          modifier = Modifier
+                              .size(40.dp)
+                              .clip(shape = CircleShape)
+                              .clickable {
+                                  navigator.navigate(
+                                      ProfileDestination(
+                                          id = listing.shopId,
+                                          shop = listing.shop
+                                      )
+                                  )
+                              }
+                              .placeholder(
+                                  visible = isLoading,
+                                  highlight = PlaceholderHighlight.shimmer(),
+                                  color = CakkieBrown.copy(0.8f)
+                              )
+                              .fillMaxWidth(),
+                          contentScale = ContentScale.FillWidth,
+                      )
+                      Spacer(modifier = Modifier.width(8.dp))
+                      Column {
+                          Text(
+                              text = advert?.headline ?: "",
+                              style = MaterialTheme.typography.bodyLarge,
+                              fontWeight = FontWeight.SemiBold
+                          )
+                          Text(
+                              text = stringResource(id = R.string.ad),
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                      }
+                  }
 
-        Column {
-            Spacer(modifier = Modifier.height(30.dp))
-            Row(
-                Modifier
-                    .padding(start = 16.dp, bottom = 2.dp, end = 2.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    var isLoading by remember {
-                        mutableStateOf(false)
-                    }
-                    AsyncImage(
-                        model = advert?.icon?.uri,
-                        contentDescription = "profile pic",
-                        onState = {
-                            //update isLoaded
-                            isLoading = it is AsyncImagePainter.State.Loading
-                        },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(shape = CircleShape)
-                            .clickable {
-                                navigator.navigate(
-                                    ProfileDestination(
-                                        id = listing.shopId,
-                                        shop = listing.shop
-                                    )
-                                )
-                            }
-                            .placeholder(
-                                visible = isLoading,
-                                highlight = PlaceholderHighlight.shimmer(),
-                                color = CakkieBrown.copy(0.8f)
-                            )
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = advert?.headline ?: "",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = stringResource(id = R.string.ad),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
+  //                IconButton(onClick = { navigator.navigate(MoreOptionsDestination) }) {
+  //                    Image(
+  //                        painter = painterResource(id = R.drawable.options),
+  //                        contentDescription = "notification",
+  //                        modifier = Modifier.size(24.dp)
+  //                    )
+  //                }
+              }
+  //            Row(
+  //                Modifier
+  //                    .background(CakkieBrown)
+  //                    .fillMaxWidth(),
+  //                horizontalArrangement = Arrangement.SpaceBetween,
+  //                verticalAlignment = Alignment.CenterVertically
+  //            ) {
+  //                Text(
+  //                    text = stringResource(id = R.string.view_profile),
+  //                    style = MaterialTheme.typography.bodyLarge,
+  //                    modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+  //                    color = CakkieBackground
+  //                )
+  //                Spacer(modifier = Modifier.width(16.dp))
+  //                Icon(
+  //                    painter = painterResource(id = R.drawable.arrow_back),
+  //                    contentDescription = "arrow back",
+  //                    modifier = Modifier
+  //                        .size(24.dp)
+  //                        .rotate(180f),
+  //                    tint = CakkieBackground
+  //                )
+  //            }
+              Spacer(modifier = Modifier.height(8.dp))
+              HorizontalPager(state = pageSt) {
+                  Box(
+                      modifier = Modifier
+                          .fillMaxWidth()
+  //                    .height(screenHeight - 100.dp)
+  //                    .clickable { expanded = !expanded }
+  //                    .background(Color.Black.copy(alpha = 0.6f))
+                  ) {
 
-//                IconButton(onClick = { navigator.navigate(MoreOptionsDestination) }) {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.options),
-//                        contentDescription = "notification",
-//                        modifier = Modifier.size(24.dp)
-//                    )
-//                }
-            }
-//            Row(
-//                Modifier
-//                    .background(CakkieBrown)
-//                    .fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    text = stringResource(id = R.string.view_profile),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
-//                    color = CakkieBackground
-//                )
-//                Spacer(modifier = Modifier.width(16.dp))
-//                Icon(
-//                    painter = painterResource(id = R.drawable.arrow_back),
-//                    contentDescription = "arrow back",
-//                    modifier = Modifier
-//                        .size(24.dp)
-//                        .rotate(180f),
-//                    tint = CakkieBackground
-//                )
-//            }
-            Spacer(modifier = Modifier.height(8.dp))
-            HorizontalPager(state = pageSt) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-//                    .height(screenHeight - 100.dp)
-//                    .clickable { expanded = !expanded }
-//                    .background(Color.Black.copy(alpha = 0.6f))
-                ) {
+  //                    if (listing.media[it].isVideoUrl()) {
+  //                        val exoPlayer = remember {
+  //                            ExoPlayer.Builder(context).build().apply {
+  //                                playWhenReady = false
+  //                                val source = progressiveMediaSource
+  //                                    .createMediaSource(MediaItem.fromUri(listing.media[it]))
+  //                                setMediaSource(source)
+  //                            }
+  //                        }
+  //
+  //                        VideoPlayer(
+  //                            exoPlayer = exoPlayer,
+  //                            isPlaying = isPlaying,
+  //                            mute = isMuted,
+  //                            onMute = onMute,
+  //                            vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL,
+  //                            modifier = Modifier
+  //                                .heightIn(max = screenHeight * 0.7f)
+  //                                .clickable {
+  //                                    navigator.navigate(
+  //                                        CakespirationDestination(id = listing.id, item = listing)
+  //                                    )
+  //                                }
+  //                        )
+  //                    } else {
+                      var isLoading by remember {
+                          mutableStateOf(false)
+                      }
+                      AsyncImage(
+                          model = advert?.images?.get(it)?.uri,
+                          contentDescription = "cake",
+                          onState = {
+                              //update isLoaded
+                              isLoading = it is AsyncImagePainter.State.Loading
+                          },
+                          modifier = Modifier
+                              .clickable { }
+                              .heightIn(max = screenHeight * 0.65f)
+                              .placeholder(
+                                  visible = isLoading,
+                                  highlight = PlaceholderHighlight.shimmer(),
+                                  color = CakkieBrown.copy(0.8f)
+                              )
+                              .fillMaxWidth(),
+                          contentScale = ContentScale.FillWidth,
+                      )
+  //                    }
+                  }
+              }
+              Spacer(modifier = Modifier.height(8.dp))
+              Row(
+                  Modifier
+                      .padding(start = 8.dp, end = 16.dp)
+                      .fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically
+              ) {
 
-//                    if (listing.media[it].isVideoUrl()) {
-//                        val exoPlayer = remember {
-//                            ExoPlayer.Builder(context).build().apply {
-//                                playWhenReady = false
-//                                val source = progressiveMediaSource
-//                                    .createMediaSource(MediaItem.fromUri(listing.media[it]))
-//                                setMediaSource(source)
-//                            }
-//                        }
-//
-//                        VideoPlayer(
-//                            exoPlayer = exoPlayer,
-//                            isPlaying = isPlaying,
-//                            mute = isMuted,
-//                            onMute = onMute,
-//                            vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL,
-//                            modifier = Modifier
-//                                .heightIn(max = screenHeight * 0.7f)
-//                                .clickable {
-//                                    navigator.navigate(
-//                                        CakespirationDestination(id = listing.id, item = listing)
-//                                    )
-//                                }
-//                        )
-//                    } else {
-                    var isLoading by remember {
-                        mutableStateOf(false)
-                    }
-                    AsyncImage(
-                        model = advert?.images?.get(it)?.uri,
-                        contentDescription = "cake",
-                        onState = {
-                            //update isLoaded
-                            isLoading = it is AsyncImagePainter.State.Loading
-                        },
-                        modifier = Modifier
-                            .clickable { }
-                            .heightIn(max = screenHeight * 0.65f)
-                            .placeholder(
-                                visible = isLoading,
-                                highlight = PlaceholderHighlight.shimmer(),
-                                color = CakkieBrown.copy(0.8f)
-                            )
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth,
-                    )
-//                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                Modifier
-                    .padding(start = 8.dp, end = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                  HorizontalPagerIndicator(
+                      pagerState = pageSt,
+                      activeColor = CakkieBrown,
+                      spacing = 8.dp,
+                      indicatorWidth = 5.dp,
+                      indicatorHeight = 5.dp,
+                      pageCount = pageSt.pageCount,
+                      modifier = Modifier.offset(x = (-24).dp)
+                  )
+                  Card(
+                      onClick = {
 
-                HorizontalPagerIndicator(
-                    pagerState = pageSt,
-                    activeColor = CakkieBrown,
-                    spacing = 8.dp,
-                    indicatorWidth = 5.dp,
-                    indicatorHeight = 5.dp,
-                    pageCount = pageSt.pageCount,
-                    modifier = Modifier.offset(x = (-24).dp)
-                )
-                Card(
-                    onClick = {
-
-                    },
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(24.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = CakkieBrown
-                    )
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = advert?.callToAction ?: "View",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CakkieBackground
-                        )
-                    }
-                }
-            }
-            Text(
-                text = advert?.body ?: "",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
-                maxLines = maxLines,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (maxLines == 1) {
-                Text(
-                    text = stringResource(id = R.string.see_more),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .clickable { maxLines = Int.MAX_VALUE }
-                        .padding(start = 16.dp),
-                    color = CakkieBrown
-                )
-            }
-        }
+                      },
+                      modifier = Modifier
+                          .width(80.dp)
+                          .height(24.dp),
+                      shape = RoundedCornerShape(8.dp),
+                      colors = CardDefaults.cardColors(
+                          containerColor = CakkieBrown
+                      )
+                  ) {
+                      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                          Text(
+                              text = advert?.callToAction ?: "View",
+                              style = MaterialTheme.typography.bodyLarge,
+                              color = CakkieBackground
+                          )
+                      }
+                  }
+              }
+              Text(
+                  text = advert?.body ?: "",
+                  style = MaterialTheme.typography.bodyLarge,
+                  modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                  maxLines = maxLines,
+                  overflow = TextOverflow.Ellipsis
+              )
+              if (maxLines == 1) {
+                  Text(
+                      text = stringResource(id = R.string.see_more),
+                      style = MaterialTheme.typography.bodyLarge,
+                      modifier = Modifier
+                          .clickable { maxLines = Int.MAX_VALUE }
+                          .padding(start = 16.dp),
+                      color = CakkieBrown
+                  )
+              }
+          }*/
     }
     ExpandImage(
         item = listing,
