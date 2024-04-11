@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background">
+    android:layout_height="wrap_content">
 
     <com.google.android.gms.ads.nativead.NativeAdView
         android:id="@+id/nativeAdView"
@@ -16,55 +15,54 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="30dp"
             android:minHeight="60dp">
 
             <com.google.android.gms.ads.nativead.AdChoicesView
                 android:id="@+id/adChoice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@+id/tv_ad"
+                app:layout_constraintStart_toEndOf="@+id/tv_ad"
+                app:layout_constraintTop_toBottomOf="@+id/tv_headline" />
 
             <TextView
+                android:id="@+id/tv_ad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="@font/opensans_regular"
                 android:paddingHorizontal="4dp"
                 android:paddingVertical="1dp"
                 android:text="Ad"
-                android:textColor="@color/white"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/brown"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_app_icon"
+                app:layout_constraintTop_toBottomOf="@+id/tv_headline"
                 tools:ignore="SmallSp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="5dp" />
 
             <com.google.android.gms.ads.nativead.MediaView
                 android:id="@+id/mv_content"
-                android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="5dp"
+                android:minHeight="180dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/guideline" />
+                app:layout_constraintTop_toBottomOf="@id/iv_app_icon" />
+
 
             <ImageView
                 android:id="@+id/iv_app_icon"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:adjustViewBounds="true"
+                android:src="@drawable/cake65"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mv_content"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
 
@@ -74,9 +72,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:ellipsize="end"
+                android:fontFamily="@font/opensans_regular"
                 android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="13sp"
+                android:textColor="@color/brown"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/iv_app_icon"
                 app:layout_constraintTop_toTopOf="@+id/iv_app_icon"
@@ -87,29 +86,31 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginEnd="16dp"
                 android:ellipsize="end"
+                android:fontFamily="@font/opensans_regular"
                 android:maxLines="2"
                 android:paddingVertical="2dp"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/iv_app_icon"
-                app:layout_constraintTop_toBottomOf="@+id/tv_headline"
+                android:textColor="@color/brown"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/btn_cta"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mv_content"
                 tools:text="Stay up to date with your Ads Check how your ads are performing Checkit now" />
 
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cta"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="40dp"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/primary"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/background"
                 android:textSize="12sp"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +125,7 @@
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
 
@@ -139,7 +140,7 @@
             android:layout_marginBottom="4dp"
             android:gravity="center"
             android:text="Loading Ad..."
-            android:textColor="@color/white"
+            android:textColor="@color/brown"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

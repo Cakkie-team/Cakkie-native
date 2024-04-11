@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.kotlin.stdlib.jdk7)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -550,7 +550,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "We are getting your ad ready",
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = CakkieBackground,
                     )
                 }
