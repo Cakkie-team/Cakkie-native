@@ -121,7 +121,8 @@ fun ExpandImage(
                         Icon(
                             painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "Cancel",
-                            tint = CakkieBrown
+                            tint = CakkieBrown,
+                            modifier = Modifier.width(24.dp)
                         )
                     }
                 }
@@ -156,6 +157,7 @@ fun ExpandImage(
                                             isLiked = !isLiked
                                         }
                                         .padding(8.dp)
+                                        .width(24.dp)
                                 )
                                 Image(
                                     painter = painterResource(id = R.drawable.comment),
@@ -166,6 +168,7 @@ fun ExpandImage(
                                             navigator.navigate(CommentDestination(item = item))
                                         }
                                         .padding(8.dp)
+                                        .width(24.dp)
                                 )
                                 Image(
                                     painter = painterResource(
@@ -178,6 +181,7 @@ fun ExpandImage(
                                             isStarred = !isStarred
                                         }
                                         .padding(8.dp)
+                                        .width(24.dp)
                                 )
                             }
                             HorizontalPagerIndicator(
