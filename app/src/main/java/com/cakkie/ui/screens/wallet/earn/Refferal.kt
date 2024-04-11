@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -136,14 +137,27 @@ fun Referral(navigator: DestinationsNavigator) {
                     .fillMaxHeight(0.55f)
                     .fillMaxWidth()
             ) {
-                Text(
-                    text = "You have not invited any friend yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
+                Column(
+                    Modifier
                         .padding(16.dp)
+                        .fillMaxWidth(0.8f)
                         .align(Alignment.Center),
-                    color = CakkieBrown
-                )
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "You have not invited any friend yet",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CakkieBrown,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "Earn rewards and increase your earning rate by inviting friends to Cakkie",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CakkieBrown,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 

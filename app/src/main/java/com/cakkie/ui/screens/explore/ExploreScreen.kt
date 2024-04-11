@@ -237,7 +237,9 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         Image(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = "arrow back",
-                            modifier = Modifier.rotate(180f)
+                            modifier = Modifier
+                                .rotate(180f)
+                                .width(24.dp)
                         )
                     }
                 }

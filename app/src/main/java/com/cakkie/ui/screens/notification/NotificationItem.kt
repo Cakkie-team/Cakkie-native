@@ -54,7 +54,7 @@ fun NotificationItem(item: Notification, isBackground: Boolean, navigator: Desti
             modifier = Modifier
                 .background(Color.White)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .height(65.dp)
+//                .height(65.dp)
                 .clickable {
 //                    navigator.navigate(
 //                        AuthNotificationDestination
