@@ -203,7 +203,8 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
                     contentDescription = stringResource(
                         id = R.string.search
                     ),
-                    tint = CakkieBackground
+                    tint = CakkieBackground,
+                    modifier = Modifier.width(24.dp)
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(

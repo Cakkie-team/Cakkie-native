@@ -174,6 +174,7 @@ fun CakespirationItem(
                         isLiked = !isLiked
                     }
                     .padding(8.dp)
+                    .width(24.dp)
             )
             Text(
                 text = listing.totalLikes.toString(),
@@ -188,6 +189,7 @@ fun CakespirationItem(
                 modifier = Modifier
                     .clickable { navigator.navigate(CommentDestination(listing)) }
                     .padding(8.dp)
+                    .width(24.dp)
             )
             Text(
                 text = listing.commentCount.toString(),
@@ -202,6 +204,7 @@ fun CakespirationItem(
                 modifier = Modifier
                     .clickable { }
                     .padding(8.dp)
+                    .width(24.dp)
             )
             Icon(
                 painter = painterResource(
@@ -215,6 +218,7 @@ fun CakespirationItem(
                         isStarred = !isStarred
                     }
                     .padding(8.dp)
+                    .width(24.dp)
             )
 
             Icon(
@@ -224,6 +228,7 @@ fun CakespirationItem(
                 modifier = Modifier
                     .clickable { navigator.navigate(MoreOptionsDestination) }
                     .padding(8.dp)
+                    .width(24.dp)
             )
         }
 
