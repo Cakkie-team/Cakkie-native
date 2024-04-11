@@ -494,7 +494,8 @@ fun Earn(navigator: DestinationsNavigator) {
                 .padding(20.dp)
                 .fillMaxWidth(0.7f),
             colors = CardDefaults.cardColors(
-                containerColor = CakkieBrown002
+                containerColor = CakkieBrown002,
+                disabledContainerColor = CakkieBrown002.copy(alpha = 0.5f),
             )
         ) {
             Row(
