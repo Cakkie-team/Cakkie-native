@@ -159,7 +159,7 @@ fun CakespirationItem(
             Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 28.dp)
-                .offset(x = (-14).dp, y = (-16).dp),
+                .offset(x = (-8).dp, y = (-18).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(

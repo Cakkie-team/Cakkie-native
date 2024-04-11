@@ -33,6 +33,7 @@ import com.cakkie.ui.screens.appCurrentDestinationAsState
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
@@ -97,6 +98,7 @@ class MainActivity : ComponentActivity() {
                                         SplashScreenDestination -> 0.dp
                                         CakespirationDestination -> 16.dp
                                         ExploreScreenDestination -> 20.dp
+                                        CommentDestination -> 16.dp
                                         else -> 26.dp
                                     }
                                 )
