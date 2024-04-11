@@ -90,6 +90,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                     .clickable {
                         navigator.popBackStack()
                     }
+                    .width(24.dp)
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(

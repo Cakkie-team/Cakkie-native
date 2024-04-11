@@ -28,21 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
 @Composable
-fun IcingPurchase (){
+fun IcingPurchase() {
     var amount by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 32.dp, horizontal = 16.dp),
@@ -53,7 +51,11 @@ fun IcingPurchase (){
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            Image(painter = painterResource(id = R.drawable.arrow_back), contentDescription = "")
+            Image(
+                painter = painterResource(id = R.drawable.arrow_back),
+                contentDescription = "",
+                modifier = Modifier.size(24.dp)
+            )
             Text(
                 text = stringResource(id = R.string.wallet),
                 style = MaterialTheme.typography.bodyLarge,
@@ -85,27 +87,32 @@ fun IcingPurchase (){
             )
         }
         Spacer(modifier = Modifier.height(5.dp))
-        CakkieInputField(value = amount,
+        CakkieInputField(
+            value = amount,
             onValueChange = {
-                                                     amount = it},
+                amount = it
+            },
 
             placeholder = stringResource(id = R.string.amount_of_icing),
-            keyboardType = KeyboardType.Number)
+            keyboardType = KeyboardType.Number
+        )
         Spacer(modifier = Modifier.height(5.dp))
         Row {
             Spacer(modifier = Modifier.weight(1f))
-        Text(text = "Respective amount of Naira: NGN 0",
-            style = MaterialTheme.typography.bodySmall,
-            color = TextColorDark.copy(0.5f)
-        )
+            Text(
+                text = "Respective amount of Naira: NGN 0",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextColorDark.copy(0.5f)
+            )
             Spacer(modifier = Modifier.width(3.dp))
-            Image(painter = painterResource(id = R.drawable.badge), contentDescription = "",
+            Image(
+                painter = painterResource(id = R.drawable.badge), contentDescription = "",
                 modifier = Modifier.size(10.dp)
             )
-    }
+        }
         Spacer(modifier = Modifier.fillMaxHeight())
         CakkieButton(text = stringResource(id = R.string.proceed)) {
-            
+
         }
-        }
+    }
 }
