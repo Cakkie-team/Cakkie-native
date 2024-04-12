@@ -180,7 +180,7 @@ fun Earn(navigator: DestinationsNavigator) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
                 context,
-                "ca-app-pub-8613748949810587/1943587076",
+                if (retryCount % 2 == 0) "ca-app-pub-8613748949810587/7282817310" else "ca-app-pub-8613748949810587/1943587076",
                 adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
