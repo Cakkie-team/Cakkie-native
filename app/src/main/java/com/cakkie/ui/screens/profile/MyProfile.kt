@@ -24,7 +24,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -52,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,8 +84,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.ShimmerParams
 import kotlinx.coroutines.launch
-import me.onebone.toolbar.CollapsingToolbarScaffold
-import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import org.koin.androidx.compose.koinViewModel
 
@@ -103,6 +104,8 @@ fun MyProfile(navigator: DestinationsNavigator) {
     var activeTab by rememberSaveable {
         mutableStateOf("posts")
     }
+    val config = LocalConfiguration.current
+    val height = config.screenHeightDp.dp
     val state = rememberCollapsingToolbarScaffoldState()
     val offsetY = state.offsetY // y offset of the layout
 //    Timber.d("offsetY: $offsetY progress: $progress")
@@ -122,10 +125,10 @@ fun MyProfile(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage == 0) {
-            activeTab = "posts"
+        activeTab = if (pagerState.currentPage == 0) {
+            "posts"
         } else {
-            activeTab = "favourite"
+            "favourite"
         }
     }
     Column {
@@ -153,375 +156,368 @@ fun MyProfile(navigator: DestinationsNavigator) {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        CollapsingToolbarScaffold(
-            state = state,
-            modifier = Modifier,
-            scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
-            toolbar = {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
+        Column(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(150.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                var isLoading by remember {
+                    mutableStateOf(true)
+                }
+                AsyncImage(
+                    model = user?.coverImage?.get(0)?.replace("http", "https"),
+                    contentDescription = "cover",
+                    contentScale = ContentScale.Crop,
+                    onState = {
+                        //update isLoaded
+                        isLoading = it is AsyncImagePainter.State.Loading
+                    },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+                        .height(100.dp)
+                        .placeholder(
+                            visible = isLoading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
+                )
+                var loading by remember {
+                    mutableStateOf(true)
+                }
+                AsyncImage(
+                    model = user?.profileImage?.replace("http", "https"),
+                    contentDescription = "profile pic",
+                    contentScale = ContentScale.Crop,
+                    onState = {
+                        //update isLoaded
+                        loading = it is AsyncImagePainter.State.Loading
+                    },
+                    modifier = Modifier
+                        .padding(top = 50.dp)
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(100))
+                        .border(
+                            width = 3.dp,
+                            color = CakkieBackground,
+                            shape = RoundedCornerShape(100)
+                        )
+                        .placeholder(
+                            visible = loading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
+                )
+            }
+            Text(
+                text = user?.name ?: "",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .placeholder(
+                        visible = user == null,
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = CakkieBrown.copy(0.8f)
+                    )
+                    .align(Alignment.CenterHorizontally),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp
+            )
+            Text(
+                text = user?.address ?: "",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .placeholder(
+                        visible = user == null,
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = CakkieBrown.copy(0.8f)
+                    )
+                    .align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .padding(start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CakkieButton(
+                    text = stringResource(id = R.string.edit_profile),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .height(150.dp),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        var isLoading by remember {
-                            mutableStateOf(true)
-                        }
-                        AsyncImage(
-                            model = user?.coverImage?.get(0)?.replace("http", "https"),
-                            contentDescription = "cover",
-                            contentScale = ContentScale.Crop,
-                            onState = {
-                                //update isLoaded
-                                isLoading = it is AsyncImagePainter.State.Loading
-                            },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-                                .height(100.dp)
-                                .placeholder(
-                                    visible = isLoading,
-                                    highlight = PlaceholderHighlight.shimmer(),
-                                    color = CakkieBrown.copy(0.8f)
-                                )
-                        )
-                        var loading by remember {
-                            mutableStateOf(true)
-                        }
-                        AsyncImage(
-                            model = user?.profileImage?.replace("http", "https"),
-                            contentDescription = "profile pic",
-                            contentScale = ContentScale.Crop,
-                            onState = {
-                                //update isLoaded
-                                loading = it is AsyncImagePainter.State.Loading
-                            },
-                            modifier = Modifier
-                                .padding(top = 50.dp)
-                                .size(100.dp)
-                                .clip(RoundedCornerShape(100))
-                                .border(
-                                    width = 3.dp,
-                                    color = CakkieBackground,
-                                    shape = RoundedCornerShape(100)
-                                )
-                                .placeholder(
-                                    visible = loading,
-                                    highlight = PlaceholderHighlight.shimmer(),
-                                    color = CakkieBrown.copy(0.8f)
-                                )
-                        )
-                    }
-                    Text(
-                        text = user?.name ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .placeholder(
-                                visible = user == null,
-                                highlight = PlaceholderHighlight.shimmer(),
-                                color = CakkieBrown.copy(0.8f)
-                            )
-                            .align(Alignment.CenterHorizontally),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
-                    )
-                    Text(
-                        text = user?.address ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .placeholder(
-                                visible = user == null,
-                                highlight = PlaceholderHighlight.shimmer(),
-                                color = CakkieBrown.copy(0.8f)
-                            )
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(start = 16.dp, end = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CakkieButton(
-                            text = stringResource(id = R.string.edit_profile),
-                        ) {
 //                            navigator.navigate()
-                        }
-                        OutlinedButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(width = 70.dp, height = 34.dp),
-                            border = BorderStroke(1.dp, color = CakkieLightBrown),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = CakkieBackground,
-                                contentColor = CakkieBrown
-                            ),
-                            shape = RoundedCornerShape(20)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share, contentDescription = "",
-                                modifier = Modifier,
-                                tint = CakkieBrown
-                            )
-                        }
-                        OutlinedButton(
-                            onClick = {
-                                navigator.navigate(SettingsDestination)
-                            },
-                            modifier = Modifier
-                                .size(width = 70.dp, height = 34.dp),
-                            border = BorderStroke(1.dp, color = CakkieLightBrown),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = CakkieBackground,
-                                contentColor = CakkieBrown
-                            ),
-                            shape = RoundedCornerShape(20)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings, contentDescription = "",
-                                modifier = Modifier,
-                                tint = CakkieBrown
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min)
-                            .padding(start = 31.dp, end = 31.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = post.data.size.toString(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = CakkieBrown
-                            )
-                            Text(
-                                text = stringResource(id = R.string.posts),
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                        Divider(
-                            color = CakkieBrown,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                        )
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = shop.followingCount.toString(),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = CakkieBrown
-                            )
-                            Text(
-                                text = stringResource(id = R.string.following),
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                        Divider(
-                            color = CakkieBrown,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                        )
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = shop.followers.toString(),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = CakkieBrown
-                            )
-                            Text(
-                                text = stringResource(id = R.string.followers),
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Column(
-                        modifier = Modifier.height(50.dp)
-                    ) {
-                        if (offsetY > -1000) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp),
-                                horizontalArrangement = Arrangement.Start,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                OutlinedButton(
-                                    onClick = {
-                                        scope.launch {
-                                            pagerState.animateScrollToPage(0)
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .size(width = 90.dp, height = 34.dp),
-                                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
-                                        contentColor = CakkieBrown
-                                    ),
-                                    shape = RoundedCornerShape(60)
-                                ) {
-                                    Text(
-                                        text = stringResource(id = R.string.posts),
-                                        style = MaterialTheme.typography.labelSmall,
-                                    )
-                                }
-                                OutlinedButton(
-                                    onClick = {
-                                        scope.launch {
-                                            pagerState.animateScrollToPage(1)
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .height(34.dp)
-                                        .padding(start = 20.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (activeTab == "favourite") CakkieOrange else CakkieBackground,
-                                        contentColor = CakkieBrown
-                                    ),
-                                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                                    shape = RoundedCornerShape(60)
-                                ) {
-                                    Text(
-                                        text = stringResource(id = R.string.favourite_feed),
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
-                                }
+                }
+                OutlinedButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .size(width = 70.dp, height = 34.dp),
+                    border = BorderStroke(1.dp, color = CakkieLightBrown),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CakkieBackground,
+                        contentColor = CakkieBrown
+                    ),
+                    shape = RoundedCornerShape(20)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share, contentDescription = "",
+                        modifier = Modifier,
+                        tint = CakkieBrown
+                    )
+                }
+                OutlinedButton(
+                    onClick = {
+                        navigator.navigate(SettingsDestination)
+                    },
+                    modifier = Modifier
+                        .size(width = 70.dp, height = 34.dp),
+                    border = BorderStroke(1.dp, color = CakkieLightBrown),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CakkieBackground,
+                        contentColor = CakkieBrown
+                    ),
+                    shape = RoundedCornerShape(20)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings, contentDescription = "",
+                        modifier = Modifier,
+                        tint = CakkieBrown
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .padding(start = 31.dp, end = 31.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = post.data.size.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = stringResource(id = R.string.posts),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Divider(
+                    color = CakkieBrown,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = shop.followingCount.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = stringResource(id = R.string.following),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Divider(
+                    color = CakkieBrown,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = shop.followers.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = stringResource(id = R.string.followers),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.height(50.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(0)
                             }
-                        }
+                        },
+                        modifier = Modifier
+                            .size(width = 90.dp, height = 34.dp),
+                        border = BorderStroke(1.dp, color = CakkieLightBrown),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (activeTab == "posts") CakkieOrange else CakkieBackground,
+                            contentColor = CakkieBrown
+                        ),
+                        shape = RoundedCornerShape(60)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.posts),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        },
+                        modifier = Modifier
+                            .height(34.dp)
+                            .padding(start = 20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (activeTab == "favourite") CakkieOrange else CakkieBackground,
+                            contentColor = CakkieBrown
+                        ),
+                        border = BorderStroke(1.dp, color = CakkieLightBrown),
+                        shape = RoundedCornerShape(60)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.favourite_feed),
+                            style = MaterialTheme.typography.labelSmall
+                        )
                     }
                 }
-            },
-        ) {
-            HorizontalPager(state = pagerState) {
-                if (it == 0) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier
-                            .fillMaxSize()
+            }
+            Column(Modifier.height(height.minus(130.dp))) {
+                HorizontalPager(state = pagerState) {
+                    if (it == 0) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier
+                                .fillMaxSize()
 //                    .nestedScroll(nestedScroll)
-                            .padding(horizontal = 2.dp, vertical = 10.dp)
-                    ) {
-                        items(items = post.data, key = { it.id }) { item ->
-                            Box(
-                                modifier = Modifier
-                                    .clickable {
-                                        navigator.navigate(
-                                            ItemDetailsDestination(
-                                                id = item.id,
-                                                item
-                                            )
-                                        )
-                                    }
-                                    .padding(2.dp)
-                                    .size(width = 118.dp, height = 116.dp),
-                                contentAlignment = Alignment.BottomEnd
-                            ) {
-                                com.skydoves.landscapist.glide.GlideImage(
-                                    imageModel = item.media[0],
-                                    contentDescription = "post image",
-                                    modifier = Modifier
-                                        .padding(end = 3.dp, bottom = 4.dp)
-                                        .onGloballyPositioned {
-                                            sizeImage = it.size
-                                        },
-                                    contentScale = ContentScale.FillBounds,
-                                    shimmerParams = ShimmerParams(
-                                        baseColor = CakkieBrown.copy(0.8f),
-                                        highlightColor = CakkieBackground,
-                                        durationMillis = 1000,
-                                        dropOff = 0.5f,
-                                        tilt = 20f
-                                    ),
-                                )
+                                .padding(horizontal = 2.dp, vertical = 10.dp)
+                        ) {
+                            items(items = post.data, key = { it.id }) { item ->
                                 Box(
                                     modifier = Modifier
-                                        .matchParentSize()
-                                        .background(gradient)
-                                )
-                                Row(
-                                    modifier = Modifier.padding(end = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                        .clickable {
+                                            navigator.navigate(
+                                                ItemDetailsDestination(
+                                                    id = item.id,
+                                                    item
+                                                )
+                                            )
+                                        }
+                                        .padding(2.dp)
+                                        .size(width = 118.dp, height = 116.dp),
+                                    contentAlignment = Alignment.BottomEnd
                                 ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.gridicons_heart),
-                                        contentDescription = "",
-                                        modifier = Modifier.size(12.dp)
+                                    com.skydoves.landscapist.glide.GlideImage(
+                                        imageModel = item.media[0],
+                                        contentDescription = "post image",
+                                        modifier = Modifier
+                                            .padding(end = 3.dp, bottom = 4.dp)
+                                            .onGloballyPositioned {
+                                                sizeImage = it.size
+                                            },
+                                        contentScale = ContentScale.FillBounds,
+                                        shimmerParams = ShimmerParams(
+                                            baseColor = CakkieBrown.copy(0.8f),
+                                            highlightColor = CakkieBackground,
+                                            durationMillis = 1000,
+                                            dropOff = 0.5f,
+                                            tilt = 20f
+                                        ),
                                     )
-                                    Text(
-                                        text = item.totalLikes.toString(),
-                                        style = MaterialTheme.typography.displaySmall,
-                                        modifier = Modifier.padding(start = 2.dp)
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .background(gradient)
                                     )
+                                    Row(
+                                        modifier = Modifier.padding(end = 10.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.gridicons_heart),
+                                            contentDescription = "",
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Text(
+                                            text = item.totalLikes.toString(),
+                                            style = MaterialTheme.typography.displaySmall,
+                                            modifier = Modifier.padding(start = 2.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier
-                            .fillMaxSize()
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier
+                                .fillMaxSize()
 //                    .nestedScroll(nestedScroll)
-                            .padding(horizontal = 2.dp, vertical = 10.dp)
-                    ) {
-                        items(items = favourites, key = { it.id }) { item ->
-                            Box(
-                                modifier = Modifier
-                                    .clickable {
-                                        navigator.navigate(
-                                            ItemDetailsDestination(
-                                                id = item.id,
-                                                item
-                                            )
-                                        )
-                                    }
-                                    .padding(2.dp)
-                                    .size(width = 118.dp, height = 116.dp),
-                                contentAlignment = Alignment.BottomEnd
-                            ) {
-                                GlideImage(
-                                    model = item.media[0],
-                                    contentDescription = "post image",
-                                    modifier = Modifier
-                                        .padding(end = 3.dp, bottom = 4.dp)
-                                        .onGloballyPositioned {
-                                            sizeImage = it.size
-                                        },
-                                    contentScale = ContentScale.FillBounds
-                                )
+                                .padding(horizontal = 2.dp, vertical = 10.dp)
+                        ) {
+                            items(items = favourites, key = { it.id }) { item ->
                                 Box(
                                     modifier = Modifier
-                                        .matchParentSize()
-                                        .background(gradient)
-                                )
-                                Row(
-                                    modifier = Modifier.padding(end = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                        .clickable {
+                                            navigator.navigate(
+                                                ItemDetailsDestination(
+                                                    id = item.id,
+                                                    item
+                                                )
+                                            )
+                                        }
+                                        .padding(2.dp)
+                                        .size(width = 118.dp, height = 116.dp),
+                                    contentAlignment = Alignment.BottomEnd
                                 ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.gridicons_heart),
-                                        contentDescription = "",
-                                        modifier = Modifier.size(12.dp)
+                                    GlideImage(
+                                        model = item.media[0],
+                                        contentDescription = "post image",
+                                        modifier = Modifier
+                                            .padding(end = 3.dp, bottom = 4.dp)
+                                            .onGloballyPositioned {
+                                                sizeImage = it.size
+                                            },
+                                        contentScale = ContentScale.FillBounds
                                     )
-                                    Text(
-                                        text = item.totalLikes.toString(),
-                                        style = MaterialTheme.typography.displaySmall,
-                                        modifier = Modifier.padding(start = 2.dp)
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .background(gradient)
                                     )
+                                    Row(
+                                        modifier = Modifier.padding(end = 10.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.gridicons_heart),
+                                            contentDescription = "",
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Text(
+                                            text = item.totalLikes.toString(),
+                                            style = MaterialTheme.typography.displaySmall,
+                                            modifier = Modifier.padding(start = 2.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -529,5 +525,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 }
             }
         }
+
     }
 }

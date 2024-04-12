@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -35,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,7 +67,8 @@ fun Shop(navigator: DestinationsNavigator) {
     val viewModel: ShopViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
     val shop = viewModel.shop.observeAsState(ShopModel()).value
-
+    val config = LocalConfiguration.current
+    val height = config.screenHeightDp.dp
     //check if user is has a shop
     LaunchedEffect(key1 = user) {
         if (user?.hasShop == false) {
@@ -79,7 +83,11 @@ fun Shop(navigator: DestinationsNavigator) {
     }
 
     val pageState = rememberPagerState(pageCount = { 4 })
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxSize()
+    ) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -164,7 +172,10 @@ fun Shop(navigator: DestinationsNavigator) {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Column(Modifier.padding(horizontal = 16.dp)) {
+        Column(
+            Modifier
+                .padding(horizontal = 16.dp)
+        ) {
             Text(
                 text = shop.name,
                 style = MaterialTheme.typography.bodyLarge,
@@ -197,24 +208,27 @@ fun Shop(navigator: DestinationsNavigator) {
                 )
             }
         }
+
         Spacer(modifier = Modifier.height(10.dp))
-        //page tabs
-        PageTabs(
-            pagerState = pageState,
-            pageCount = pageState.pageCount,
-            tabs = listOf(
-                stringResource(id = R.string.listings),
-                stringResource(id = R.string.contracts),
-                stringResource(id = R.string.proposals),
-                stringResource(id = R.string.requests)
+        Column(Modifier.height(height.minus(88.dp))) {
+            //page tabs
+            PageTabs(
+                pagerState = pageState,
+                pageCount = pageState.pageCount,
+                tabs = listOf(
+                    stringResource(id = R.string.listings),
+                    stringResource(id = R.string.contracts),
+                    stringResource(id = R.string.proposals),
+                    stringResource(id = R.string.requests)
+                )
             )
-        )
-        HorizontalPager(state = pageState) {
-            when (it) {
-                1 -> Contracts()
-                2 -> Contracts()
-                3 -> Requests(navigator)
-                0 -> Listings(navigator)
+            HorizontalPager(state = pageState) {
+                when (it) {
+                    1 -> Contracts()
+                    2 -> Contracts()
+                    3 -> Requests(navigator)
+                    0 -> Listings(navigator)
+                }
             }
         }
     }
