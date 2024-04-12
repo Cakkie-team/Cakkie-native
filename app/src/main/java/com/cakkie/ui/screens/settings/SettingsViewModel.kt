@@ -10,6 +10,7 @@ import com.cakkie.datastore.Settings
 import com.cakkie.datastore.SettingsConstants
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -67,7 +68,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
     }
 
     fun logOut() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userRepository.clear()
             settings.clearAllPreference()
         }
