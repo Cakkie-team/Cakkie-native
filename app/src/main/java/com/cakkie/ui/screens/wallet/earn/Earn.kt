@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,6 +58,7 @@ import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Toaster
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -129,6 +131,10 @@ fun Earn(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
 
+    var retryCount by remember {
+        mutableIntStateOf(0)
+    }
+
     rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdClicked() {
             // Called when a click is recorded for an ad.
@@ -158,10 +164,19 @@ fun Earn(navigator: DestinationsNavigator) {
             Timber.d("Ad showed fullscreen content.")
         }
     }
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = retryCount) {
         viewModal.getBalance()
 
-        if (rewardedAd == null) {
+        if (retryCount > 5) {
+            gettingAd = false
+            Toaster(
+                context,
+                "Failed to get ad, exit screen and try again",
+                R.drawable.logo
+            ).show()
+        }
+
+        if (rewardedAd == null && retryCount <= 5) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
                 context,
@@ -171,6 +186,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Timber.d(adError.toString())
                         rewardedAd = null
+                        retryCount += 1
                     }
 
                     override fun onAdLoaded(ad: RewardedAd) {
