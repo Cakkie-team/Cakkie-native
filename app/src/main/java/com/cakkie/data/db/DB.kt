@@ -22,7 +22,7 @@ import com.cakkie.data.db.models.typeConverters.Converters
 //         */
 //        AutoMigration (from = 2, to = 3)
 //    ],
-    version = 3, // Updated version to 3
+    version = 4, // Updated version to 3
     exportSchema = false
 )
 @TypeConverters(Converters::class)

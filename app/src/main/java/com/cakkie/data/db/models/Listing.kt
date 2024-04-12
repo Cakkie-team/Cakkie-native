@@ -24,6 +24,7 @@ data class Listing(
     val commentCount: Int = 0,
     val createdAt: String = "",
     val description: String = "",
+    val type: String = "",
     @PrimaryKey
     val id: String = "",
     val isLiked: Boolean = false,

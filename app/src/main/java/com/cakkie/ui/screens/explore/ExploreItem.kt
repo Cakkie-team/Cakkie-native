@@ -336,15 +336,19 @@ fun ExploreItem(
             )
             Card(
                 onClick = {
-                    navigator.navigate(
-                        ItemDetailsDestination(
-                            id = listing.id,
-                            item = listing
+                    when (item.type) {
+                        "LISTING" -> navigator.navigate(
+                            ItemDetailsDestination(
+                                id = listing.id,
+                                item = listing
+                            )
                         )
-                    )
+
+                        else -> {}
+                    }
                 },
                 modifier = Modifier
-                    .width(64.dp)
+                    .width(if (item.type == "LISTING") 64.dp else 70.dp)
                     .height(24.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = CardDefaults.cardColors(
@@ -353,7 +357,9 @@ fun ExploreItem(
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = stringResource(id = R.string.order),
+                        text = if (item.type == "LISTING") stringResource(id = R.string.order) else stringResource(
+                            id = R.string.request
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         color = CakkieBackground
                     )
