@@ -77,6 +77,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val user = viewModel.user.observeAsState(User()).value
     val listings = viewModel.listings.observeAsState().value
+    val cakespiration = viewModel.cakespiration.observeAsState().value
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
     var visible by remember { mutableStateOf(true) }

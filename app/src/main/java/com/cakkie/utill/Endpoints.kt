@@ -55,6 +55,8 @@ object Endpoints {
         { page: Int, size: Int -> "$BASE_URL/listing/me?page=$page&pageSize=$size" }/* get my listings  GET*/
     val GET_LISTINGS =
         { page: Int, size: Int -> "$BASE_URL/listing?page=$page&pageSize=$size" }/* get listings  GET*/
+    val GET_CAKESPIRATIONS =
+        { page: Int, size: Int -> "$BASE_URL/listing/cakespiration?page=$page&pageSize=$size" }/* get cakespiratins  GET*/
     val GET_COMMENTS =
         { id: String, page: Int, size: Int -> "$BASE_URL/listing/comments/$id?page=$page&pageSize=$size" }/* get listings  GET*/
     val GET_LISTING = { id: String -> "$BASE_URL/listing/$id" } /* get listing*/

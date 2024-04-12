@@ -35,11 +35,14 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val socketClient: SocketClient by inject()
     private val _user = MutableLiveData<User>()
     private val _listings = MutableLiveData<ListingResponse>()
+    private val _cakespiration = MutableLiveData<ListingResponse>()
     private val listingRepository: ListingRepository by inject()
     private val _pagination = MutableLiveData(Pagination())
 
 
     val listings = _listings
+    val cakespiration = _cakespiration
+    val pagination = _pagination
     val user = _user
     val socket = socketClient.socket
 
@@ -59,6 +62,35 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             viewModelScope.launch(Dispatchers.Main) {
                 listingRepository.addListings(it.data)
                 _pagination.value = it.meta
+                val videoList = it.data.filter {
+                    it.media.any { it.isVideoUrl() }
+                }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
+                    .joinToString(",")
+//                        Timber.d("Video list: ${videoList.split(",")}")
+                val array = arrayListOf<String>()
+                array.addAll(videoList.split(","))
+
+                //create intent
+                val preloadingServiceIntent =
+                    Intent(context, VideoPreLoadingService::class.java)
+                preloadingServiceIntent.putStringArrayListExtra(
+                    Constants.VIDEO_LIST,
+                    array
+                )
+
+                //start intent
+                context.startService(preloadingServiceIntent)
+            }
+        }
+
+
+    fun getCakespirations(context: Context, page: Int = 0, size: Int = 20) =
+        NetworkCalls.get<ListingResponse>(
+            endpoint = Endpoints.GET_CAKESPIRATIONS(page, size),
+            body = listOf()
+        ).addOnSuccessListener {
+            viewModelScope.launch(Dispatchers.Main) {
+                _cakespiration.value = it
                 val videoList = it.data.filter {
                     it.media.any { it.isVideoUrl() }
                 }.map { it.media.filter { it.isVideoUrl() }.joinToString(",") }
@@ -130,6 +162,12 @@ class ExploreViewModal : ViewModel(), KoinComponent {
                         if (pagination != null) {
                             Timber.d("Pagination: $pagination and data: ${it}")
                             _listings.value = ListingResponse(data = it, meta = pagination)
+                            if (_cakespiration.value == null) {
+                                _cakespiration.value = ListingResponse(
+                                    data = it.filter { it.type != "LISTING" },
+                                    meta = pagination
+                                )
+                            }
                         }
                     }
                 }
