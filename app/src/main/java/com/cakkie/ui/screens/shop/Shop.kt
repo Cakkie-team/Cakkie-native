@@ -50,6 +50,7 @@ import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
 import com.cakkie.ui.screens.shop.contracts.Contracts
+import com.cakkie.ui.screens.shop.contracts.Proposals
 import com.cakkie.ui.screens.shop.listings.Listings
 import com.cakkie.ui.screens.shop.listings.Requests
 import com.cakkie.ui.theme.CakkieBackground
@@ -225,7 +226,7 @@ fun Shop(navigator: DestinationsNavigator) {
             HorizontalPager(state = pageState) {
                 when (it) {
                     1 -> Contracts()
-                    2 -> Contracts()
+                    2 -> Proposals()
                     3 -> Requests(navigator)
                     0 -> Listings(navigator)
                 }

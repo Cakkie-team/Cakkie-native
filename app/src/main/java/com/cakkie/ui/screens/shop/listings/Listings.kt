@@ -79,7 +79,7 @@ fun Listings(navigator: DestinationsNavigator) {
                 text = stringResource(id = R.string.create_listing),
                 modifier = Modifier
 //                .fillMaxWidth(0.8f)
-                    .offset(y = (-100).dp)
+                    .offset(y = (-30).dp)
                     .align(Alignment.BottomCenter)
             ) {
                 navigator.navigate(ChooseMediaDestination) {

@@ -3,7 +3,7 @@ package com.cakkie.ui.screens.shop.contracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,7 +24,11 @@ import com.cakkie.ui.theme.TextColorInactive
 
 @Composable
 fun Contracts() {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+    ) {
         Column(
             Modifier
                 .fillMaxWidth(0.8f)
@@ -57,7 +61,7 @@ fun Contracts() {
             text = stringResource(id = R.string.check_jobs),
             modifier = Modifier
 //                .fillMaxWidth(0.8f)
-                .offset(y = (-100).dp)
+                .offset(y = (-30).dp)
                 .align(Alignment.BottomCenter)
         ) {
 

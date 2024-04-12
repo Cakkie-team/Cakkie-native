@@ -3,7 +3,7 @@ package com.cakkie.ui.screens.shop.listings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -26,7 +26,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun Requests(navigator: DestinationsNavigator) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+    ) {
         Column(
             Modifier
                 .fillMaxWidth(0.8f)
@@ -59,7 +63,7 @@ fun Requests(navigator: DestinationsNavigator) {
             text = stringResource(id = R.string.create_listing),
             modifier = Modifier
 //                .fillMaxWidth(0.8f)
-                .offset(y = (-100).dp)
+                .offset(y = (-30).dp)
                 .align(Alignment.BottomCenter)
         ) {
             navigator.navigate(ChooseMediaDestination) {
