@@ -84,7 +84,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.ShimmerParams
 import kotlinx.coroutines.launch
-import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
@@ -106,8 +105,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
     }
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
-    val state = rememberCollapsingToolbarScaffoldState()
-    val offsetY = state.offsetY // y offset of the layout
 //    Timber.d("offsetY: $offsetY progress: $progress")
     val gradient = Brush.linearGradient(
         0.0f to Color.Transparent,
@@ -219,11 +216,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 text = user?.name ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .placeholder(
-                        visible = user == null,
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = CakkieBrown.copy(0.8f)
-                    )
                     .align(Alignment.CenterHorizontally),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp
@@ -234,11 +226,6 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .placeholder(
-                        visible = user == null,
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = CakkieBrown.copy(0.8f)
-                    )
                     .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(10.dp))
