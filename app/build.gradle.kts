@@ -17,8 +17,8 @@ android {
         applicationId = "com.cakkie"
         minSdk = 24
         targetSdk = 34
-        versionCode = 18
-        versionName = "1.03.5"
+        versionCode = 19
+        versionName = "1.03.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -186,5 +186,11 @@ dependencies {
 
     //referrer
     implementation(libs.installreferrer)
+
+    //google play core
+    implementation(libs.app.update)
+
+    // For Kotlin users, also import the Kotlin extensions library for Play In-App Update:
+    implementation(libs.app.update.ktx)
 
 }
