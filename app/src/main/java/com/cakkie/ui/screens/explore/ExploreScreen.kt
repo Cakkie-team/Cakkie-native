@@ -2,9 +2,11 @@ package com.cakkie.ui.screens.explore
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
@@ -54,10 +58,12 @@ import com.cakkie.R
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
+import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.ReactivateAccountDestination
+import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -255,6 +261,83 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 LazyRow(
                     Modifier.padding(horizontal = 16.dp)
                 ) {
+                    item {
+                        var isLoading by remember {
+                            mutableStateOf(false)
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(70.dp)
+                                .height(108.dp)
+                                .clip(shape = RoundedCornerShape(8.dp))
+                        ) {
+                            AsyncImage(
+                                model = "https://source.unsplash.com/100x150/?cake?video",
+                                contentDescription = "cake",
+                                onState = {
+                                    //update isLoaded
+                                    isLoading = it is AsyncImagePainter.State.Loading
+                                },
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(108.dp)
+                                    .clip(shape = RoundedCornerShape(8.dp))
+                                    .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
+                                    .clickable {
+                                        if (user.hasShop) {
+                                            navigator.navigate(ChooseMediaDestination(R.string.videos)) {
+                                                launchSingleTop = true
+                                            }
+                                        } else {
+                                            //navigate to create shop screen
+                                            navigator.navigate(ShopDestination) {
+                                                launchSingleTop = true
+                                            }
+
+                                        }
+                                    }
+                                    .placeholder(
+                                        visible = isLoading,
+                                        highlight = PlaceholderHighlight.shimmer(),
+                                        color = CakkieBrown.copy(0.8f)
+                                    )
+                                    .fillMaxWidth(),
+                                contentScale = ContentScale.FillWidth,
+                            )
+
+                            Box(
+                                Modifier
+                                    .background(CakkieBrown.copy(0.4f), RoundedCornerShape(8.dp))
+                                    .fillMaxSize(), contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "+",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBrown,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(CakkieBackground, CircleShape),
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.your_cakespiration),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBackground,
+                                        fontSize = 10.sp,
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
                     items(
                         items = cakespiration?.data ?: listOf(),
                     ) {
