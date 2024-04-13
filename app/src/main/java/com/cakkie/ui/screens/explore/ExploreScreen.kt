@@ -303,12 +303,15 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                         color = CakkieBrown.copy(0.8f)
                                     )
                                     .fillMaxWidth(),
-                                contentScale = ContentScale.FillWidth,
+                                contentScale = ContentScale.Crop,
                             )
 
                             Box(
                                 Modifier
-                                    .background(CakkieBrown.copy(0.4f), RoundedCornerShape(8.dp))
+                                    .background(
+                                        CakkieBrown.copy(0.4f),
+                                        RoundedCornerShape(8.dp)
+                                    )
                                     .fillMaxSize(), contentAlignment = Alignment.Center
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -364,7 +367,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                 baseColor = CakkieBrown.copy(0.8f),
                                 highlightColor = CakkieBackground,
                                 durationMillis = 1000,
-                                dropOff = 0.5f,
+                                dropOff = 0.4f,
                                 tilt = 20f
                             ),
                         )
