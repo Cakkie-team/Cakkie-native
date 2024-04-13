@@ -338,7 +338,8 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                     lastName = lastName.text,
                     userName = userName.text,
                     address = address.text,
-                    location = location!!
+                    location = location!!,
+                    referralCode = referralCode.text
                 ).addOnSuccessListener { resp ->
                     processing = false
                     if (resp.token.isNotEmpty()) {
