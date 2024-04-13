@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ import com.cakkie.di.CakkieApp
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -60,7 +62,12 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
-fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavigator) {
+fun Cakespiration(
+    id: String,
+    item: Listing? = null,
+    items: String = "",
+    navigator: DestinationsNavigator
+) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     val progressiveMediaSource = remember {
@@ -72,49 +79,28 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
+    val cakespirationRes = viewModel.cakespiration.observeAsState().value
+    val prevItems = items.toObjectList(Listing::class.java)
     val cakespirations = remember {
         mutableStateListOf(
-            Listing(
-                id = "0",
-                name = "Chocolate cake",
-                description = "Chocolate cake, a cake with chocolate flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
-                createdAt = "2021-05-01T00:00:00Z"
-            ),
-            Listing(
-                id = "1",
-                name = "Vanilla cake",
-                description = "Vanilla cake, a cake with vanilla flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
-                createdAt = "2021-05-01T00:00:00Z"
-            ),
-            Listing(
-                id = "2",
-                name = "Strawberry cake",
-                description = "Strawberry cake, a cake with strawberry flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
-                createdAt = "2021-05-01T00:00:00Z"
-            ),
-            Listing(
-                id = "3",
-                name = "Red velvet cake",
-                description = "Red velvet cake, a cake with red velvet flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
-                createdAt = "2021-05-01T00:00:00Z"
-            ),
-            Listing(
-                id = "4",
-                name = "Carrot cake",
-                description = "Carrot cake, a cake with carrot flavor. The earliest extant recipe is from 1847.",
-                media = listOf("https://cdn.cakkie.com/sweetbites/14209939151800954492394728024083320.mp4"),
-                createdAt = "2021-05-01T00:00:00Z"
-            ),
+            *prevItems.toTypedArray()
         )
     }
     val listState =
         rememberLazyListState(0)
 
-
+    LaunchedEffect(key1 = cakespirationRes) {
+        if (cakespirationRes?.data.isNullOrEmpty()) {
+            viewModel.getCakespirations(context)
+        } else {
+            //add all without duplicates
+            cakespirationRes?.data?.forEach { res ->
+                if (cakespirations.find { it.id == res.id } == null) {
+                    cakespirations.add(res)
+                }
+            }
+        }
+    }
 
     LaunchedEffect(key1 = id) {
         if (id.isNotEmpty()) {
@@ -220,14 +206,16 @@ fun Cakespiration(id: String, item: Listing? = null, navigator: DestinationsNavi
                         .clip(CircleShape), color = CakkieBackground
                 )
                 Spacer(modifier = Modifier.size(1.dp))
-                Text(
-                    text = cakespirations[remember {
-                        derivedStateOf { listState.firstVisibleItemIndex }
-                    }.value].name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 16.sp,
-                    color = CakkieBackground
-                )
+                if (cakespirations.size > 0) {
+                    Text(
+                        text = cakespirations[remember {
+                            derivedStateOf { listState.firstVisibleItemIndex }
+                        }.value].name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
+                        color = CakkieBackground
+                    )
+                }
             }
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(

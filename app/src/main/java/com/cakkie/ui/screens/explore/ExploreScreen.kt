@@ -231,7 +231,8 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         modifier = Modifier.clickable {
                             navigator.navigate(
                                 CakespirationDestination(
-                                    ""
+                                    "",
+                                    items = (cakespiration?.data ?: listOf()).toString()
                                 )
                             )
                         }
@@ -268,7 +269,12 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                 .clip(shape = RoundedCornerShape(8.dp))
                                 .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
                                 .clickable {
-                                    navigator.navigate(CakespirationDestination(id = it.id))
+                                    navigator.navigate(
+                                        CakespirationDestination(
+                                            id = it.id,
+                                            item = it
+                                        )
+                                    )
                                 },
                             contentScale = ContentScale.FillBounds,
                             shimmerParams = ShimmerParams(
