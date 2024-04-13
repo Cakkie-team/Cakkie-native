@@ -17,8 +17,8 @@ android {
         applicationId = "com.cakkie"
         minSdk = 24
         targetSdk = 34
-        versionCode = 17
-        versionName = "1.03.4"
+        versionCode = 18
+        versionName = "1.03.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
