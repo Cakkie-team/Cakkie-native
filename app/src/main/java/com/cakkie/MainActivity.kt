@@ -72,42 +72,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val appUpdateManager = AppUpdateManagerFactory.create(this)
-
-// Returns an intent object that you use to check for an update.
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        val activityResultLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult()
-            ) { result: ActivityResult ->
-                // handle callback
-                if (result.resultCode != RESULT_OK) {
-                    Timber.d("Update flow failed! Result code: " + result.resultCode)
-                    // If the update is canceled or fails,
-                    // you can request to start the update again.
-
-                }
-            }
-// Checks that the platform will allow the specified type of update.
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                && appUpdateInfo.updatePriority() >= 4 /* high priority */
-                // This example applies an immediate update. To apply a flexible update
-                // instead, pass in AppUpdateType.FLEXIBLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-            ) {
-                // Request the update.
-                appUpdateManager.startUpdateFlowForResult(
-                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
-                    appUpdateInfo,
-                    // an activity result launcher registered via registerForActivityResult
-                    activityResultLauncher,
-                    // Or pass 'AppUpdateType.FLEXIBLE' to newBuilder() for
-                    // flexible updates.
-                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-                )
-            }
-        }
+        checkForUpdate()
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
@@ -191,9 +156,16 @@ class MainActivity : ComponentActivity() {
 
     // Checks that the update is not stalled during 'onResume()'.
 // However, you should execute this check at all entry points into the app.
-    override fun onResume() {
-        super.onResume()
+//    override fun onResume() {
+//        super.onResume()
+//        checkForUpdate()
+//    }
+
+    private fun checkForUpdate() {
         val appUpdateManager = AppUpdateManagerFactory.create(this)
+
+// Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
         val activityResultLauncher =
             registerForActivityResult(
                 ActivityResultContracts.StartIntentSenderForResult()
@@ -206,20 +178,27 @@ class MainActivity : ComponentActivity() {
 
                 }
             }
-        appUpdateManager
-            .appUpdateInfo
-            .addOnSuccessListener { appUpdateInfo ->
-                if (appUpdateInfo.updateAvailability()
-                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                ) {
-                    // If an in-app update is already running, resume the update.
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        activityResultLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-                    )
-                }
+// Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if ((appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+//                && appUpdateInfo.updatePriority() >= 4 /* high priority */
+                        // This example applies an immediate update. To apply a flexible update
+                        // instead, pass in AppUpdateType.FLEXIBLE
+                        && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE))
+                || appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+            ) {
+                // Request the update.
+                appUpdateManager.startUpdateFlowForResult(
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // an activity result launcher registered via registerForActivityResult
+                    activityResultLauncher,
+                    // Or pass 'AppUpdateType.FLEXIBLE' to newBuilder() for
+                    // flexible updates.
+                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                )
             }
+        }
     }
 }
 
