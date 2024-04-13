@@ -90,30 +90,63 @@ fun Listings(navigator: DestinationsNavigator) {
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
-                    Modifier
-                        .background(Color.White)
-                        .height(40.dp)
-                        .clickable {
-                            navigator.navigate(ChooseMediaDestination(R.string.images)) {
-                                launchSingleTop = true
-                            }
-                        }
-                        .fillMaxWidth(),
+                    Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ph_plus),
-                        contentDescription = "Plus",
-                        modifier = Modifier.size(24.dp)
-                    )
+                    Row(
+                        Modifier
+                            .background(Color.White)
+                            .height(40.dp)
+                            .clickable {
+                                navigator.navigate(ChooseMediaDestination(R.string.images)) {
+                                    launchSingleTop = true
+                                }
+                            }
+                            .weight(1f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ph_plus),
+                            contentDescription = "Plus",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = stringResource(id = R.string.add_listing),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                     Spacer(modifier = Modifier.width(5.dp))
-                    Text(
-                        text = stringResource(id = R.string.add_listing),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        Modifier
+                            .background(Color.White)
+                            .height(40.dp)
+                            .clickable {
+                                navigator.navigate(ChooseMediaDestination(R.string.videos)) {
+                                    launchSingleTop = true
+                                }
+                            }
+                            .weight(1f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ph_plus),
+                            contentDescription = "Plus",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = stringResource(id = R.string.add_cakespiration),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
                 LazyColumn(Modifier.padding(vertical = 5.dp)) {
                     items(listings.data) { listing ->
