@@ -66,7 +66,7 @@ fun Requests(navigator: DestinationsNavigator) {
                 .offset(y = (-30).dp)
                 .align(Alignment.BottomCenter)
         ) {
-            navigator.navigate(ChooseMediaDestination) {
+            navigator.navigate(ChooseMediaDestination(R.string.images)) {
                 launchSingleTop = true
             }
         }

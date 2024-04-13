@@ -64,14 +64,14 @@ import timber.log.Timber
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalPermissionsApi::class)
 @Destination
 @Composable
-fun ChooseMedia(navigator: DestinationsNavigator) {
+fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
     val viewModel: ShopViewModel = koinViewModel()
     val context = LocalContext.current
     val medias = remember {
         mutableStateListOf<MediaModel>()
     }
     var filter by remember {
-        mutableIntStateOf(R.string.all)
+        mutableIntStateOf(default)
     }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val files = remember {
@@ -179,6 +179,18 @@ fun ChooseMedia(navigator: DestinationsNavigator) {
                                 modifier = Modifier
                                     .clickable {
                                         if (!files.contains(item) && files.size < 5) {
+                                            if (item.isVideo) {
+                                                files.clear()
+                                            } else {
+                                                //check if content of files has video
+                                                files
+                                                    .toList()
+                                                    .forEach {
+                                                        if (it.isVideo) {
+                                                            files.remove(it)
+                                                        }
+                                                    }
+                                            }
                                             files.add(item)
                                         } else {
                                             files.remove(item)
@@ -254,12 +266,16 @@ fun ChooseMedia(navigator: DestinationsNavigator) {
                     .fillMaxWidth(0.8f)
                     .align(Alignment.BottomCenter)
             ) {
-                //convert to json and send to next screen
-                navigator.navigate(
-                    CreateListingDestination(files = files.toList().toJson())
-                ) {
-                    launchSingleTop = true
+                //check if files has video and decide to navigate to create listing
+                if (files.toList().all { !it.isVideo }) {
+                    //convert to json and send to next screen
+                    navigator.navigate(
+                        CreateListingDestination(files = files.toList().toJson())
+                    ) {
+                        launchSingleTop = true
+                    }
                 }
+
             }
         }
     }
