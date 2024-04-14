@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Image
@@ -76,13 +77,15 @@ import timber.log.Timber
 //)
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkForUpdate()
 
         //request notification permission
-        askNotificationPermission()
+//        askNotificationPermission()
+        askMultiplePermissions()
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
@@ -215,6 +218,21 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    //request multiple permissions
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun askMultiplePermissions() {
+        val permissions = arrayOf(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            POST_NOTIFICATIONS,
+        )
+        val requestCode = 101
+        requestPermissions(permissions, requestCode)
     }
 
     private fun askNotificationPermission() {
