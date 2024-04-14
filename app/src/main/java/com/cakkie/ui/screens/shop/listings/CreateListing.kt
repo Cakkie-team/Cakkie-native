@@ -120,9 +120,6 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
     var description by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    var price by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
     val prices = remember {
         mutableStateListOf(TextFieldValue(""))
     }
@@ -708,7 +705,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             context,
                             "Something went wrong, please restart app",
                             R.drawable.logo
-                        )
+                        ).show()
                     }
                 }
                 Spacer(modifier = Modifier.height(30.dp))

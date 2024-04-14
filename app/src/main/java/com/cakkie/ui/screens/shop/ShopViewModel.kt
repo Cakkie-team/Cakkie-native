@@ -88,6 +88,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         shopId: String,
         meta: List<Pair<String, Any?>>,
         available: Boolean = true,
+        isListing: Boolean = true
     ) =
         NetworkCalls.post<LoginResponse>(
             endpoint = Endpoints.CREATE_LISTING, body = listOf(
@@ -100,6 +101,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 Pair("available", available),
                 Pair("shopId", shopId),
                 Pair("meta", JsonBody.generate(meta)),
+                Pair("type", if (isListing) "LISTING" else "CAKESPIRATION")
             )
         )
 
@@ -208,14 +210,14 @@ class ShopViewModel : ViewModel(), KoinComponent {
         body = listOf(Pair("available", available))
     )
 
-     fun getProfile() = NetworkCalls.get<User>(
-         endpoint = Endpoints.ACCOUNT,
-         body = listOf()
-     ).addOnSuccessListener {
-         viewModelScope.launch {
-             userRepository.updateUser(it)
-         }
-     }
+    fun getProfile() = NetworkCalls.get<User>(
+        endpoint = Endpoints.ACCOUNT,
+        body = listOf()
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.updateUser(it)
+        }
+    }
 
     init {
         getProfile()

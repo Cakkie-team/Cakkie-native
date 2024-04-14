@@ -309,6 +309,8 @@
     <string name="add_cakespiration">Add Cakespiration</string>
     <string name="your_cakespiration">Your Cakespiration</string>
     <string name="next">Next</string>
+    <string name="write_something_to_describe_your_cakespiration">write something to describe your cakespiration</string>
+    <string name="base_price">Base Price</string>
 
 
 </resources>
