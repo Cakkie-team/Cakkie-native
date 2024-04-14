@@ -58,8 +58,8 @@
 
         <service
             android:name=".ui.screens.notification.NotificationService"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

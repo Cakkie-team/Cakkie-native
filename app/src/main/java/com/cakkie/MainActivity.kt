@@ -79,6 +79,12 @@ class MainActivity : ComponentActivity() {
 //            sheetState = bottomSheetNavigator.navigatorSheetState
             //current destination
             val currentDestination = navController.appCurrentDestinationAsState().value
+
+            //handle notification from firebase
+            val extra = intent.extras
+            if (extra != null) {
+                Timber.d("Notification: $extra")
+            }
             CakkieTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
