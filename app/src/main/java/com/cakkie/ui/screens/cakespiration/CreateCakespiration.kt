@@ -55,10 +55,10 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.VideoPlayer
+import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.CreateCakespirationDestination
 import com.cakkie.ui.screens.destinations.EditVideoDestination
-import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.screens.shop.listings.FileModel
@@ -208,7 +208,7 @@ fun CreateCakespiration(file: String, navigator: DestinationsNavigator) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = R.string.base_price) + " *",
+                    text = stringResource(id = R.string.min_price) + " *",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -220,7 +220,7 @@ fun CreateCakespiration(file: String, navigator: DestinationsNavigator) {
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                    modifier = Modifier.fillMaxWidth(0.75f)
                 ) {
                     Row(
                         Modifier
@@ -304,14 +304,14 @@ fun CreateCakespiration(file: String, navigator: DestinationsNavigator) {
                         isListing = false
                     ).addOnSuccessListener {
                         processing = false
-                        navigator.navigate(ShopDestination) {
-                            popUpTo(ChooseMediaDestination) {
+                        navigator.navigate(CakespirationDestination(id = it.id, item = it)) {
+                            popUpTo(CreateCakespirationDestination) {
                                 inclusive = true
                             }
                             popUpTo(EditVideoDestination) {
                                 inclusive = true
                             }
-                            popUpTo(CreateCakespirationDestination) {
+                            popUpTo(ChooseMediaDestination) {
                                 inclusive = true
                             }
                             launchSingleTop = true

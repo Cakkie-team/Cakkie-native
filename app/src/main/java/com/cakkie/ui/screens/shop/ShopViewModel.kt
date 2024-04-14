@@ -90,7 +90,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         available: Boolean = true,
         isListing: Boolean = true
     ) =
-        NetworkCalls.post<LoginResponse>(
+        NetworkCalls.post<Listing>(
             endpoint = Endpoints.CREATE_LISTING, body = listOf(
                 Pair("name", name),
                 Pair("description", description),
