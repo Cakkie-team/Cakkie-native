@@ -45,6 +45,7 @@ import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
+import com.cakkie.ui.screens.destinations.EditVideoDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
@@ -130,6 +131,7 @@ class MainActivity : ComponentActivity() {
                                     top = when (currentDestination) {
                                         WalletDestination -> 0.dp
                                         DepositDestination -> 0.dp
+                                        EditVideoDestination -> 0.dp
                                         AssetDetailsDestination -> 0.dp
                                         SplashScreenDestination -> 0.dp
                                         CakespirationDestination -> 16.dp
