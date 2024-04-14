@@ -45,9 +45,11 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.cakkie.R
 import com.cakkie.ui.components.VideoPlayer
+import com.cakkie.ui.screens.destinations.CreateCakespirationDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.toJson
 import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -110,7 +112,7 @@ fun EditVideo(file: String, navigator: DestinationsNavigator) {
         ) {
             Card(
                 onClick = {
-
+                    navigator.navigate(CreateCakespirationDestination(file = media.toJson()))
                 },
                 modifier = Modifier
                     .width(74.dp)
