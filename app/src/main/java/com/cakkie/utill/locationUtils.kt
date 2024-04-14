@@ -3,11 +3,14 @@ package com.cakkie.utill
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Location
 import android.location.LocationManager
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.cakkie.utill.locationModels.LocationResult
 import com.cakkie.utill.locationModels.Place
@@ -44,6 +47,34 @@ fun Activity.isLocationPermissionGranted(): Boolean {
 @SuppressLint("MissingPermission")
 fun Activity.getCurrentLocation(): Location? {
     val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+        // Alert user to switch Location on in Settings
+        val builder = AlertDialog.Builder(this)
+
+        // Set the alert dialog title
+        builder.setTitle("Turn on \"Location\"")
+
+        // Display a message on alert dialog
+        builder.setMessage("\"Location\" is currently turned off. Turn on \"Location\" to enable cakkie to determine your location.")
+
+        // Set a positive button and its click listener on alert dialog
+        builder.setPositiveButton("OK") { dialog, which ->
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
+
+        // Display a negative button on alert dialog
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        // Finally, make the alert dialog using builder
+        val dialog: AlertDialog = builder.create()
+
+        // Display the alert dialog on app interface
+        dialog.show()
+    }
     val providers = locationManager.getProviders(true)
     var bestLocation: Location? = null
     if (isLocationPermissionGranted()) {

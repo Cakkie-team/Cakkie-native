@@ -60,6 +60,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
     var processing by remember {
         mutableStateOf(false)
     }
+
     Column(
         Modifier
             .padding(vertical = 30.dp, horizontal = 16.dp)
