@@ -32,18 +32,16 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
-import com.cakkie.ui.screens.destinations.EmailScreenDestination
+import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
-import com.cakkie.ui.screens.destinations.LoginScreenDestination
-import com.cakkie.ui.screens.destinations.OtpItemDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.screens.destinations.ResetPasswordDestination
-import com.cakkie.ui.screens.destinations.SignUpScreenDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -157,28 +155,14 @@ fun OtpScreen(
                     when {
                         isNewDevice -> {
                             navigator.navigate(ExploreScreenDestination) {
-                                launchSingleTop = true
-                                popUpTo(EmailScreenDestination.route) {
-                                    inclusive = true
-                                }
-                                popUpTo(LoginScreenDestination.route) {
-                                    inclusive = true
-                                }
-                                popUpTo(OtpScreenDestination.route) {
+                                popUpTo(NavGraphs.root) {
                                     inclusive = true
                                 }
                             }
                         }
                         isSignUp -> {
                             navigator.navigate(ExploreScreenDestination) {
-                                launchSingleTop = true
-                                popUpTo(EmailScreenDestination.route) {
-                                    inclusive = true
-                                }
-                                popUpTo(SignUpScreenDestination.route) {
-                                    inclusive = true
-                                }
-                                popUpTo(OtpScreenDestination.route) {
+                                popUpTo(NavGraphs.root) {
                                     inclusive = true
                                 }
                             }

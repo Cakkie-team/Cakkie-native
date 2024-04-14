@@ -87,6 +87,13 @@ class MainActivity : ComponentActivity() {
         //request notification permission
 //        askNotificationPermission()
         askMultiplePermissions()
+
+
+        //handle notification from firebase
+        val extra = intent.extras
+        if (extra != null) {
+            Timber.d("Notification: $extra")
+        }
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
@@ -94,11 +101,6 @@ class MainActivity : ComponentActivity() {
             //current destination
             val currentDestination = navController.appCurrentDestinationAsState().value
 
-            //handle notification from firebase
-            val extra = intent.extras
-            if (extra != null) {
-                Timber.d("Notification: $extra")
-            }
 
             LaunchedEffect(key1 = currentDestination) {
                 if (currentDestination == ExploreScreenDestination) {
