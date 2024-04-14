@@ -48,7 +48,7 @@ class NotificationService : FirebaseMessagingService() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random().nextInt(3000)
 
-        Timber.tag(Constants.TAG).d("From: ${p0.data}")
+//        Timber.tag(Constants.TAG).d("From: ${p0.notification}")
 
         /*
         Apps targeting SDK 26 or above (Android O) must implement notification channels and add its notifications
@@ -73,15 +73,15 @@ class NotificationService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.logo)
             .setLargeIcon(largeIcon)
-            .setContentTitle(p0.data["title"])
-            .setContentText(p0.data["message"])
+            .setContentTitle(p0.notification?.title)
+            .setContentText(p0.notification?.body)
             .setAutoCancel(true)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(p0.data["title"]))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(p0.notification?.body))
             .setSound(notificationSoundUri)
             .setContentIntent(pendingIntent)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText(p0.data["message"])
+                    .bigText(p0.notification?.body)
             )
 
         //Set notification color to match your app color template
