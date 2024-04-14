@@ -67,7 +67,7 @@ fun Referral(navigator: DestinationsNavigator) {
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
         putExtra(
             Intent.EXTRA_TEXT,
-            "Hey, I'm using Cakkie, a platform specifically for cake lovers, join the sweetness and earn rewards. Use my referral code ${user?.referralCode} to get started. Download the app now at https://cakkie.com?referral=${user?.referralCode}"
+            "Sweet news! Mining Icing is now live on Cakkie! Join me in this rich adventure and start earning sweet rewards. Use my referral code: ${user?.referralCode}. Let's indulge together! \uD83C\uDF89 Join here: https://cakkie.com?referral=${user?.referralCode}"
         )
         type = "text/plain"
     }
