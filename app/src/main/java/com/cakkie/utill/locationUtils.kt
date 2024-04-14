@@ -53,10 +53,10 @@ fun Activity.getCurrentLocation(): Location? {
         val builder = AlertDialog.Builder(this)
 
         // Set the alert dialog title
-        builder.setTitle("Turn on \"Location\"")
+        builder.setTitle("Turn on Location")
 
         // Display a message on alert dialog
-        builder.setMessage("\"Location\" is currently turned off. Turn on \"Location\" to enable cakkie to determine your location.")
+        builder.setMessage("Location is currently turned off. Turn on Location to enable cakkie to determine your location.")
 
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("OK") { dialog, which ->

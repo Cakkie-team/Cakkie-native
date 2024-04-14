@@ -121,7 +121,9 @@ fun OtpScreen(
         )
         Spacer(modifier = Modifier.height(40.dp))
         OtpInput(value = otp, onValueChange = {
-            otp = it
+            if (it.text.length <= 4) {
+                otp = it
+            }
         })
         //show error if email is not valid
         if (isError) {
@@ -160,6 +162,7 @@ fun OtpScreen(
                                 }
                             }
                         }
+
                         isSignUp -> {
                             navigator.navigate(ExploreScreenDestination) {
                                 popUpTo(NavGraphs.root) {
@@ -167,10 +170,12 @@ fun OtpScreen(
                                 }
                             }
                         }
+
                         isSavedChanges -> {
                             navigator.navigate(ResetPasswordDestination(email)) {
                             }
                         }
+
                         else -> {
                             navigator.navigate(ResetPasswordDestination(email)) {
                                 launchSingleTop = true

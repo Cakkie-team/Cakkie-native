@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction.Companion.Done
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -31,10 +32,13 @@ fun OtpInput(
 ) {
 
     BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
+        maxLines = 1,
+        singleLine = true,
+        value = value.text.take(4), // Limit the text to 4 characters
+        onValueChange = { onValueChange(TextFieldValue(it)) }, // Update the value to only keep the first 4 characters
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword
+            keyboardType = KeyboardType.NumberPassword,
+            imeAction = Done
         )
     ) {
         Row(
