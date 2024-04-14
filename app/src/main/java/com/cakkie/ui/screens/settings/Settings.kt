@@ -85,10 +85,11 @@ fun Settings(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.logOut()
-                navigator.navigate(SplashScreenDestination) {
-                    popUpTo(NavGraphs.root) {
-                        inclusive = true
+                viewModel.logOut {
+                    navigator.navigate(SplashScreenDestination) {
+                        popUpTo(NavGraphs.root) {
+                            inclusive = true
+                        }
                     }
                 }
             }
@@ -99,10 +100,11 @@ fun Settings(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.logOut()
-                navigator.navigate(SplashScreenDestination) {
-                    popUpTo(NavGraphs.root) {
-                        inclusive = true
+                viewModel.logOut {
+                    navigator.navigate(SplashScreenDestination) {
+                        popUpTo(NavGraphs.root) {
+                            inclusive = true
+                        }
                     }
                 }
             }

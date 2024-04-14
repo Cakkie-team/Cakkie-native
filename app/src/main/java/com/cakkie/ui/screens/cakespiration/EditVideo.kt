@@ -51,13 +51,14 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @OptIn(UnstableApi::class)
 @Destination
 @Composable
-fun EditVideo(file: String) {
+fun EditVideo(file: String, navigator: DestinationsNavigator) {
     val viewModal: ExploreViewModal = koinViewModel()
     var isMuted by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
@@ -145,7 +146,7 @@ fun EditVideo(file: String) {
         }
 
         IconButton(
-            onClick = { /*TODO*/ }, modifier = Modifier
+            onClick = { navigator.popBackStack() }, modifier = Modifier
                 .align(Alignment.TopStart)
         ) {
             Box(

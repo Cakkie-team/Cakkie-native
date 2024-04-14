@@ -41,6 +41,7 @@ object Endpoints {
     const val GET_REFERRALS = "$BASE_URL/account/referrals" /* get referrals */
     val SEND_FCM_TOKEN =
         { token: String -> "$BASE_URL/account/set-fcm-token/$token" } /* send fcm token */
+    const val LOGOUT = "$BASE_URL/auth/logout" /* logout */
 
 
     /**

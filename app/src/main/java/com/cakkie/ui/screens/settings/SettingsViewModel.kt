@@ -67,10 +67,22 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         }
     }
 
-    fun logOut() {
-        viewModelScope.launch(Dispatchers.IO) {
-            userRepository.clear()
-            settings.clearAllPreference()
+    fun logOut(onComplete: () -> Unit) {
+        NetworkCalls.get<User>(
+            endpoint = Endpoints.LOGOUT,
+            body = listOf()
+        ).addOnSuccessListener {
+            onComplete()
+            viewModelScope.launch(Dispatchers.IO) {
+                userRepository.clear()
+                settings.clearAllPreference()
+            }
+        }.addOnFailureListener {
+            onComplete()
+            viewModelScope.launch(Dispatchers.IO) {
+                userRepository.clear()
+                settings.clearAllPreference()
+            }
         }
     }
 
