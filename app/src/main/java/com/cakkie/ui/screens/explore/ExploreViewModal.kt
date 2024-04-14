@@ -22,6 +22,7 @@ import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import com.cakkie.utill.VideoPreLoadingService
 import com.cakkie.utill.isVideoUrl
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -171,6 +172,18 @@ class ExploreViewModal : ViewModel(), KoinComponent {
                         }
                     }
                 }
+            }
+        }
+
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Timber.d("Token: $it")
+            NetworkCalls.post<User>(
+                endpoint = Endpoints.SEND_FCM_TOKEN(it),
+                body = listOf()
+            ).addOnSuccessListener { response ->
+                Timber.d("Token sent successfully")
+            }.addOnFailureListener { exception ->
+                Timber.e(exception)
             }
         }
     }
