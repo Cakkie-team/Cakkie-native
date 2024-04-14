@@ -26,6 +26,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -97,6 +98,12 @@ class MainActivity : ComponentActivity() {
             val extra = intent.extras
             if (extra != null) {
                 Timber.d("Notification: $extra")
+            }
+
+            LaunchedEffect(key1 = currentDestination) {
+                if (currentDestination == ExploreScreenDestination) {
+                    askNotificationPermission()
+                }
             }
             CakkieTheme {
                 // A surface container using the 'background' color from the theme
@@ -229,7 +236,6 @@ class MainActivity : ComponentActivity() {
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            POST_NOTIFICATIONS,
         )
         val requestCode = 101
         requestPermissions(permissions, requestCode)
