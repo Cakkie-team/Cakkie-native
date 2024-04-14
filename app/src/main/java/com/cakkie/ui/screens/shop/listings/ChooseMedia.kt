@@ -49,6 +49,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.CreateListingDestination
+import com.cakkie.ui.screens.destinations.EditVideoDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBackground
@@ -271,6 +272,12 @@ fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
                     //convert to json and send to next screen
                     navigator.navigate(
                         CreateListingDestination(files = files.toList().toJson())
+                    ) {
+                        launchSingleTop = true
+                    }
+                } else {
+                    navigator.navigate(
+                        EditVideoDestination(file = files.toList().first().toJson())
                     ) {
                         launchSingleTop = true
                     }
