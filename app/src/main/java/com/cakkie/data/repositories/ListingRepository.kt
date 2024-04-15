@@ -4,7 +4,7 @@ import com.cakkie.data.db.daos.ListingDao
 import com.cakkie.data.db.models.Listing
 
 class ListingRepository(private val listingDao: ListingDao) {
-    suspend fun addListings(listings: List<Listing>) = listingDao.addListings(listings)
+    suspend fun addListings(listings: List<Listing>) = listingDao.replaceListings(listings)
     fun getListings() = listingDao.getListings()
 
     //    fun getChain(chainId: Int) = chainDao.getChain(chainId)

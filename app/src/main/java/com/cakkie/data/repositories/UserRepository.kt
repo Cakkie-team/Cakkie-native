@@ -1,9 +1,12 @@
 package com.cakkie.data.repositories
 
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import com.cakkie.data.db.daos.UserDao
 import com.cakkie.data.db.models.User
 
 class UserRepository(private val userDao: UserDao) {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createUser(user: User) = userDao.createUser(user)
     fun getUser() = userDao.getUser()
 

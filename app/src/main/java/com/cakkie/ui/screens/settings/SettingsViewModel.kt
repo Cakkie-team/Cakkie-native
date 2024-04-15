@@ -91,7 +91,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         body = listOf()
     ).addOnSuccessListener {
         viewModelScope.launch {
-            userRepository.updateUser(it)
+            userRepository.createUser(it)
         }
     }
 
@@ -109,7 +109,7 @@ class SettingsViewModel(private val settings: Settings) : ViewModel(), KoinCompo
         ).addOnSuccessListener {
             onSuccess(true)
             viewModelScope.launch {
-                userRepository.updateUser(it)
+                userRepository.createUser(it)
             }
         }.addOnFailureListener {
             onSuccess(false)

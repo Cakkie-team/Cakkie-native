@@ -266,7 +266,7 @@ fun CreateCakespiration(file: String, navigator: DestinationsNavigator) {
                 if (shop != null) {
                     val thisFile = context.createTmpFileFromUri(
                         uri = media.uri.toUri(),
-                        fileName = media.name.replace(" ", "")
+                        fileName = media.name.replace(" ", "").take(10)
                     )!!
 
                     val fileUrls = FileModel(

@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.cakkie.data.db.models.Listing
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,12 @@ interface ListingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addListings(chains: List<Listing>)
 
+    //delete old listings and add new ones
+    @Transaction
+    suspend fun replaceListings(chains: List<Listing>) {
+        deleteAll()
+        addListings(chains)
+    }
 
     // update a chain
     @Update

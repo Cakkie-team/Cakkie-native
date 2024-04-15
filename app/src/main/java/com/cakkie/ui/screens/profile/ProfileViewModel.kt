@@ -67,7 +67,7 @@ class ProfileViewModel : ViewModel(), KoinComponent {
         body = listOf()
     ).addOnSuccessListener {
         viewModelScope.launch {
-            userRepository.updateUser(it)
+            userRepository.createUser(it)
         }
     }
 

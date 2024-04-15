@@ -643,7 +643,7 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                         val fileUrls = media.map {
                             val file = context.createTmpFileFromUri(
                                 uri = it.uri.toUri(),
-                                fileName = it.name.replace(" ", "")
+                                fileName = it.name.replace(" ", "").take(10)
                             )!!
                             FileModel(
                                 file = file,
