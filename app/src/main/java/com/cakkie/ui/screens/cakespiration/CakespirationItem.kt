@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.MoreOptionsDestination
@@ -76,7 +78,7 @@ fun CakespirationItem(
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
     var isLiked by rememberSaveable { mutableStateOf(listing.isLiked) }
     var isStarred by rememberSaveable { mutableStateOf(listing.isStarred) }
-
+    val user = viewModal.user.observeAsState(User()).value
     val context = LocalContext.current
 
     val exoPlayer = remember {
@@ -171,6 +173,7 @@ fun CakespirationItem(
                 tint = if (isLiked) Color.Red else CakkieBackground,
                 modifier = Modifier
                     .clickable {
+                        viewModal.likeListing(listing.id, user.id)
                         isLiked = !isLiked
                     }
                     .padding(8.dp)
@@ -215,6 +218,7 @@ fun CakespirationItem(
                 tint = if (isStarred) CakkieYellow else CakkieBackground,
                 modifier = Modifier
                     .clickable {
+                        viewModal.starListing(listing.id, user.id)
                         isStarred = !isStarred
                     }
                     .padding(8.dp)
