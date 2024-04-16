@@ -170,7 +170,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                     mutableStateOf(true)
                 }
                 AsyncImage(
-                    model = user?.coverImage?.get(0)?.replace("http", "https"),
+                    model = user?.coverImage?.get(0)?.replace(Regex("\\bhttp://"), "https://"),
                     contentDescription = "cover",
                     contentScale = ContentScale.Crop,
                     onState = {
@@ -190,7 +190,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                     mutableStateOf(true)
                 }
                 AsyncImage(
-                    model = user?.profileImage?.replace("http", "https"),
+                    model = user?.profileImage?.replace(Regex("\\bhttp://"), "https://"),
                     contentDescription = "profile pic",
                     contentScale = ContentScale.Crop,
                     onState = {

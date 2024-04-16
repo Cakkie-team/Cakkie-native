@@ -117,7 +117,7 @@ fun ChangeProfile(
             name = TextFieldValue(user.name)
             phoneNumber = user.phoneNumber?.let { TextFieldValue(it) } ?: TextFieldValue("")
             address = TextFieldValue(user.address)
-            fileUrl = user.profileImage
+            fileUrl = user.profileImage.replace(Regex("\\bhttp://"), "https://")
         }
     }
 
@@ -130,7 +130,7 @@ fun ChangeProfile(
                     uploding = true
                     val file = context.createTmpFileFromUri(
                         uri = imageUri!!,
-                        fileName = "shopLogo"
+                        fileName = user.username
                     )!!
                     viewModel.uploadImage(
                         image = file,
@@ -141,6 +141,7 @@ fun ChangeProfile(
                         Timber.d(resp)
                         uploadMessage = "profile image uploaded"
                         uploding = false
+                        imageUri = null
                         file.delete()
                         viewModel.updateProfile(
                             firstName = name.text.split(" ").first().ifEmpty { user.firstName },
@@ -234,8 +235,8 @@ fun ChangeProfile(
         ) {
             Box(contentAlignment = Alignment.Center) {
                 GlideImage(
-                    model = imageUri ?: user?.profileImage?.replace("http", "https")
-                    ?: "https://source.unsplash.com/100x150/?cake?logo",
+                    model = imageUri
+                        ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
                     contentDescription = "cake logo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -266,7 +267,9 @@ fun ChangeProfile(
 
             CakkieButton(
                 text = stringResource(id = R.string.change_profile_picture),
+                processing = uploding,
             ) {
+                galleryLauncher.launch("image/*")
             }
         }
 
@@ -345,7 +348,8 @@ fun ChangeProfile(
                     .width(328.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
-                text = stringResource(id = R.string.save_changes)
+                text = stringResource(id = R.string.save_changes),
+                processing = processing
             ) {
                 navigator.navigate(ChangeProfileItemDestination)
 

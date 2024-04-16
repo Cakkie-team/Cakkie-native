@@ -65,7 +65,7 @@ fun CommentItem(item: Comment, userId: String, viewModal: ExploreViewModal) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = comment.user.profileImage.replace("http", "https"),
+                    model = comment.user.profileImage.replace(Regex("\\bhttp://"), "https://"),
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)

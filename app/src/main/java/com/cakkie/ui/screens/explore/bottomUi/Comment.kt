@@ -172,7 +172,8 @@ fun Comment(item: Listing = Listing(), navigator: DestinationsNavigator) {
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             ) {
-                GlideImage(model = user.profileImage.replace("http", "https"),
+                GlideImage(
+                    model = user.profileImage.replace(Regex("\\bhttp://"), "https://"),
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(40.dp)

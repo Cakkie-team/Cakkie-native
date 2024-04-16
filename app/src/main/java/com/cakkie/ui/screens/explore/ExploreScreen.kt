@@ -160,7 +160,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         mutableStateOf(false)
                     }
                     AsyncImage(
-                        model = user?.profileImage?.replace("http", "https") ?: "",
+                        model = user?.profileImage?.replace(Regex("\\bhttp://"), "https://") ?: "",
                         contentDescription = "profile pic",
                         onState = {
                             //update isLoaded

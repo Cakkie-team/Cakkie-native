@@ -147,7 +147,7 @@ fun Settings(
             verticalArrangement = Arrangement.Center
         ) {
             GlideImage(
-                model = user?.profileImage?.replace("http", "https") ?: "",
+                model = user?.profileImage?.replace(Regex("\\bhttp://"), "https://") ?: "",
                 contentDescription = "Settings Profile",
                 modifier = Modifier
                     .clickable { }

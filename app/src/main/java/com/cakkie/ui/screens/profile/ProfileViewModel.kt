@@ -53,7 +53,7 @@ class ProfileViewModel : ViewModel(), KoinComponent {
             Pair("firstName", firstName),
             Pair("lastName", lastName),
             Pair("address", address),
-            Pair("phone", phone),
+            Pair("phoneNumber", phone),
             Pair("profileImage", imageUrl),
             Pair(
                 "city",
