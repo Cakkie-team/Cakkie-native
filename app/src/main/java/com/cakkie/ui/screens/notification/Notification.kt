@@ -1,6 +1,5 @@
 package com.cakkie.ui.screens.notification
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,9 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.networkModels.NotificationResponse
 import com.cakkie.ui.theme.CakkieBackground
@@ -123,41 +120,41 @@ fun Notification(navigator: DestinationsNavigator) {
         }
     }
 
-    AnimatedVisibility(visible = !showTip) {
-        Popup(
-            alignment = Alignment.TopCenter,
-            offset = IntOffset(0, 100)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(TextColorDark, RoundedCornerShape(12.dp))
-                    .clip(RoundedCornerShape(12.dp))
-                    .height(70.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.cancel),
-                    contentDescription = "Cancel",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .clickable {
-                            viewModel.setNotificationTipShown()
-                        }
-                        .padding(end = 12.dp, top = 12.dp)
-                        .size(24.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.swipe_a_notification_to_delete_it),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBackground,
-//               fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(start = 18.dp)
-                        .align(Alignment.CenterStart)
-                )
-            }
-        }
-    }
+//    AnimatedVisibility(visible = !showTip) {
+//        Popup(
+//            alignment = Alignment.TopCenter,
+//            offset = IntOffset(0, 100)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp)
+//                    .background(TextColorDark, RoundedCornerShape(12.dp))
+//                    .clip(RoundedCornerShape(12.dp))
+//                    .height(70.dp)
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.cancel),
+//                    contentDescription = "Cancel",
+//                    modifier = Modifier
+//                        .align(Alignment.TopEnd)
+//                        .clickable {
+//                            viewModel.setNotificationTipShown()
+//                        }
+//                        .padding(end = 12.dp, top = 12.dp)
+//                        .size(24.dp)
+//                )
+//                Text(
+//                    text = stringResource(id = R.string.swipe_a_notification_to_delete_it),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = CakkieBackground,
+////               fontWeight = FontWeight.SemiBold,
+//                    modifier = Modifier
+//                        .padding(start = 18.dp)
+//                        .align(Alignment.CenterStart)
+//                )
+//            }
+//        }
+//    }
 }
 
