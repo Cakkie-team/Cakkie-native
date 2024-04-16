@@ -59,7 +59,6 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
-import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.NativeAdView
@@ -96,7 +95,7 @@ fun ExploreItem(
     index: Int = 0
 ) {
     val viewModal: ExploreViewModal = koinViewModel()
-    val user = viewModal.user.observeAsState(User()).value
+    val user = viewModal.user.observeAsState().value
     val context = LocalContext.current
     var listing by rememberSaveable { mutableStateOf(item) }
     var maxLines by rememberSaveable { mutableIntStateOf(1) }
@@ -298,7 +297,7 @@ fun ExploreItem(
                     modifier = Modifier
                         .size(24.dp)
                         .clickable {
-                            viewModal.likeListing(listing.id, user.id)
+                            if (user != null) viewModal.likeListing(listing.id, user.id)
                             isLiked = !isLiked
                         }
                 )
@@ -319,7 +318,7 @@ fun ExploreItem(
                     contentDescription = "star",
                     modifier = Modifier
                         .clickable {
-                            viewModal.starListing(listing.id, user.id)
+                            if (user != null) viewModal.starListing(listing.id, user.id)
                             isStarred = !isStarred
                         }
                         .size(24.dp)
