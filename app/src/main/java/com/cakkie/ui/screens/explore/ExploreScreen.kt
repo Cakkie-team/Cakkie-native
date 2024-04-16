@@ -55,7 +55,6 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.BottomState.hideNav
 import com.cakkie.R
-import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
@@ -84,7 +83,7 @@ import timber.log.Timber
 fun ExploreScreen(navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
-    val user = viewModel.user.observeAsState(User()).value
+    val user = viewModel.user.observeAsState().value
     val listings = viewModel.listings.observeAsState().value
     val cakespiration = viewModel.cakespiration.observeAsState().value
     val listState = rememberLazyListState()
@@ -285,7 +284,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                     .clip(shape = RoundedCornerShape(8.dp))
                                     .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
                                     .clickable {
-                                        if (user.hasShop) {
+                                        if (user?.hasShop == true) {
                                             navigator.navigate(ChooseMediaDestination(R.string.videos)) {
                                                 launchSingleTop = true
                                             }
