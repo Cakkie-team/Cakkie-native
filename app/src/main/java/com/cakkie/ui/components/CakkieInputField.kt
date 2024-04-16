@@ -91,12 +91,17 @@ fun CakkieInputField(
 
     LaunchedEffect(key1 = searchQuery, key2 = location) {
         if (isAddress && searchQuery.text.isEmpty()) {
-            if (location != null) {
-                addressList = getNearbyAddress(location.latitude, location.longitude)
-            }
+            addressList = getNearbyAddress(
+                location?.latitude ?: 0.0,
+                location?.longitude ?: 0.0
+            )
         }
-        if (searchQuery.text.isNotEmpty() && location != null) {
-            addressList = searchAddress(location.latitude, location.longitude, searchQuery.text)
+        if (searchQuery.text.isNotEmpty()) {
+            addressList = searchAddress(
+                location?.latitude ?: 0.0,
+                location?.longitude ?: 0.0,
+                searchQuery.text
+            )
         }
     }
     Column {

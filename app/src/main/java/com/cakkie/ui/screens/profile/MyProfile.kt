@@ -71,6 +71,7 @@ import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.ItemDetailsDestination
 import com.cakkie.ui.screens.destinations.SettingsDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -239,7 +240,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 CakkieButton(
                     text = stringResource(id = R.string.edit_profile),
                 ) {
-//                            navigator.navigate()
+                    navigator.navigate(ChangeProfileDestination)
                 }
                 OutlinedButton(
                     onClick = {},

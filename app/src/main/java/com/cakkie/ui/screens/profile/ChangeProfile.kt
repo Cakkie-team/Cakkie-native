@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.settings
+package com.cakkie.ui.screens.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -34,9 +34,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.screens.destinations.ChangeProfileDestination
 import com.cakkie.ui.screens.destinations.ChangeProfileItemDestination
-import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -46,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 @Composable
 fun ChangeProfile(navigator: DestinationsNavigator) {
-    val viewModel: ExploreViewModal = koinViewModel()
+    val viewModel: ProfileViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
     var username by remember {
         mutableStateOf(TextFieldValue(""))
@@ -80,7 +78,7 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
             )
 
             Text(
-                text = stringResource(id = R.string.settings),
+                text = stringResource(id = R.string.edit_profile),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .align(Alignment.Center),
@@ -107,7 +105,7 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
                 text = user?.name ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
-                fontSize = 12.sp,
+//                fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -117,7 +115,6 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
                 text = stringResource(id = R.string.change_profile_picture),
             ) {
             }
-
         }
 
         Column(
@@ -146,7 +143,7 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
                 textAlign = TextAlign.End,
                 color = CakkieBrown
             )
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             CakkieInputField(
                 value = email,
@@ -176,7 +173,8 @@ fun ChangeProfile(navigator: DestinationsNavigator) {
                 },
                 showEditIcon = true,
                 placeholder = "08065643278",
-                keyboardType = KeyboardType.Phone,)
+                keyboardType = KeyboardType.Phone,
+            )
             Text(
                 text = stringResource(id = R.string.phone_number),
                 style = MaterialTheme.typography.bodyLarge,
