@@ -207,10 +207,13 @@ fun Cakespiration(
                 )
                 Spacer(modifier = Modifier.size(1.dp))
                 if (cakespirations.size > 0) {
+                    val index = remember {
+                        derivedStateOf { listState.firstVisibleItemIndex }
+                    }.value
                     Text(
-                        text = cakespirations[remember {
-                            derivedStateOf { listState.firstVisibleItemIndex }
-                        }.value].name,
+                        text = cakespirations[
+                            if (index > cakespirations.size) cakespirations.size - 1 else index
+                        ].name,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 16.sp,
                         color = CakkieBackground
