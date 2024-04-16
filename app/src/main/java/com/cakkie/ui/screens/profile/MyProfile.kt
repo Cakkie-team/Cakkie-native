@@ -416,7 +416,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                         imageModel = item.media[0],
                                         contentDescription = "post image",
                                         modifier = Modifier
-                                            .padding(end = 3.dp, bottom = 4.dp)
+//                                            .padding(end = 3.dp, bottom = 4.dp)
                                             .onGloballyPositioned {
                                                 sizeImage = it.size
                                             },
@@ -479,7 +479,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
                                         model = item.media[0],
                                         contentDescription = "post image",
                                         modifier = Modifier
-                                            .padding(end = 3.dp, bottom = 4.dp)
+//                                            .padding(end = 3.dp, bottom = 4.dp)
                                             .onGloballyPositioned {
                                                 sizeImage = it.size
                                             },

@@ -394,7 +394,7 @@ fun Profile(id: String, shop: ShopModel = ShopModel(), navigator: DestinationsNa
                                         imageModel = item.media[0],
                                         contentDescription = "post image",
                                         modifier = Modifier
-                                            .padding(end = 3.dp, bottom = 4.dp)
+//                                            .padding(end = 3.dp, bottom = 4.dp)
                                             .onGloballyPositioned {
                                                 sizeImage = it.size
                                             },
