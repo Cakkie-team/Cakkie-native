@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -151,7 +153,9 @@ fun Settings(
                 contentDescription = "Settings Profile",
                 modifier = Modifier
                     .clickable { }
-                    .size(width = 60.dp, height = 62.dp)
+                    .clip(CircleShape)
+                    .size(width = 60.dp, height = 62.dp),
+                contentScale = ContentScale.Crop
             )
             Text(
                 text = user?.name ?: "",
