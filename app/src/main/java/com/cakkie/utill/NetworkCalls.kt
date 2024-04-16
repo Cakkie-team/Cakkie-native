@@ -34,8 +34,8 @@ object NetworkCalls {
                 ignoreUnknownKeys = true
                 coerceInputValues = true
             }) { request, response, result ->
-                response.let {
-                    Timber.d("request: $request")
+                request.let {
+                    Timber.d("request: $it")
                     Timber.d("response: $response")
                 }
                 result.fold(
@@ -47,7 +47,7 @@ object NetworkCalls {
                         Timber.d("body: $jsonBody")
                         response.let {
                             //get data from response
-                            val data = response.data.toString(Charsets.UTF_8)
+                            val data = it.data.toString(Charsets.UTF_8)
                             Timber.d("data: $data")
                             //convert data to json object
                             val json = Json.parseToJsonElement(data)
