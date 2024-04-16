@@ -46,14 +46,21 @@ object NetworkCalls {
                         Timber.e(e)
                         Timber.d("body: $jsonBody")
                         response.let {
-                            //get data from response
-                            val data = it.data.toString(Charsets.UTF_8)
-                            Timber.d("data: $data")
-                            //convert data to json object
-                            val json = Json.parseToJsonElement(data)
-                            //get message from json object
-                            val message = json.jsonObject["message"].toString()
-                            networkResult.onFailure(message.replace("\"", ""))
+                            // Check if response data is not empty
+                            if (it.data.isNotEmpty()) {
+                                //get data from response
+                                val data = it.data.toString(Charsets.UTF_8)
+                                Timber.d("data: $data")
+                                //convert data to json object
+                                val json = Json.parseToJsonElement(data)
+                                //get message from json object
+                                val message = json.jsonObject["message"].toString()
+                                networkResult.onFailure(message.replace("\"", ""))
+                            } else {
+                                // Handle case where response data is empty
+                                Timber.e("Response data is empty")
+                                networkResult.onFailure("Empty: Something went wrong!")
+                            }
                         }
                     }
                 )
