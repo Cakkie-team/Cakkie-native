@@ -10,9 +10,11 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
+import com.cakkie.utill.locationModels.LocationResult
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.File
 
 class ProfileViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
@@ -29,6 +31,51 @@ class ProfileViewModel : ViewModel(), KoinComponent {
             userRepository.getUser().asLiveData().observeForever {
                 _user.value = it
             }
+        }
+    }
+
+    fun uploadImage(image: File, path: String, fileName: String) =
+        NetworkCalls.uploadFile(
+            endpoint = Endpoints.UPLOAD_IMAGE(path, fileName), media = image
+        )
+
+
+    fun updateProfile(
+        firstName: String,
+        lastName: String,
+        phone: String,
+        address: String,
+        imageUrl: String,
+        location: LocationResult,
+    ) = NetworkCalls.put<User>(
+        endpoint = Endpoints.UPDATE_PROFILE,
+        body = listOf(
+            Pair("firstName", firstName),
+            Pair("lastName", lastName),
+            Pair("address", address),
+            Pair("phone", phone),
+            Pair("profileImage", imageUrl),
+            Pair(
+                "city",
+                location.addressComponents.firstOrNull { it.types.contains("locality") }?.longName
+                    ?: ""
+            ),
+            Pair(
+                "state",
+                location.addressComponents.firstOrNull { it.types.contains("administrative_area_level_1") }?.longName
+                    ?: ""
+            ),
+            Pair("latitude", location.geometry?.location?.lat ?: 0.0),
+            Pair("longitude", location.geometry?.location?.lng ?: 0.0),
+            Pair(
+                "country",
+                location.addressComponents.firstOrNull { it.types.contains("country") }?.longName
+                    ?: ""
+            ),
+        )
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.createUser(it)
         }
     }
 
@@ -62,7 +109,7 @@ class ProfileViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
-    private fun getProfile() = NetworkCalls.get<User>(
+    fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
         body = listOf()
     ).addOnSuccessListener {

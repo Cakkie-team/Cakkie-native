@@ -312,6 +312,7 @@
     <string name="write_something_to_describe_your_cakespiration">write something to describe your cakespiration</string>
     <string name="base_price">Base Price</string>
     <string name="min_price">Minimum price</string>
+    <string name="name">Name</string>
 
 
 </resources>

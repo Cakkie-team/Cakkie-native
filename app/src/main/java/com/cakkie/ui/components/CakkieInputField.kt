@@ -104,6 +104,26 @@ fun CakkieInputField(
             )
         }
     }
+
+    LaunchedEffect(key1 = Unit) {
+        if (location != null && isAddress) {
+//                                Timber.d("address is: "+context.getAddressFromLocation(location))
+            scope.launch(Dispatchers.IO) {
+                val address = getCurrentAddress(
+                    location.latitude, location.longitude
+                )
+                onValueChange.invoke(
+                    TextFieldValue(
+                        address?.formattedAddress ?: ""
+                    )
+                )
+
+                if (address != null) {
+                    onLocationClick.invoke(address)
+                }
+            }
+        }
+    }
     Column {
         OutlinedTextField(
             isError = isError,
