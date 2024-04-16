@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun ChangeProfileItem(
-    navigator: DestinationsNavigator
+    onComplete: ResultBackNavigator<Boolean>
 ) {
     var processing by remember {
         mutableStateOf(false)
@@ -86,6 +86,7 @@ fun ChangeProfileItem(
             processing = processing,
             text = stringResource(id = R.string.sure)
         ) {
+            onComplete.navigateBack(result = true)
         }
 
         Spacer(modifier = Modifier.height(30.dp))
