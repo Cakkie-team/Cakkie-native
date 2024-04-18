@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,7 +79,6 @@ fun Settings(
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
-    val context = LocalContext.current
 
     val notificationState = viewModel.notificationState.collectAsState().value
     deleteResultRecipient.onNavResult { result ->

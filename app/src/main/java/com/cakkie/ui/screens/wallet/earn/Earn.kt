@@ -480,29 +480,32 @@ fun Earn(navigator: DestinationsNavigator) {
         }
         Card(
             onClick = {
-                gettingAd = true
-                rewardedAd?.let { ad ->
-                    ad.show(context) { rewardItem ->
-                        gettingAd = false
-                        // Handle the reward.
+                if (gettingAd == false) {
+                    retryCount = 0
+                    rewardedAd?.let { ad ->
+                        ad.show(context) { rewardItem ->
+                            gettingAd = false
+                            // Handle the reward.
 //                        val rewardAmount = rewardItem.amount
 //                        val rewardType = rewardItem.type
-                        viewModal.mine()
-                            .addOnSuccessListener {
-                                viewModal.getProfile()
-                                viewModal.getBalance()
-                            }
-                        Timber.d("User earned the reward.")
-                    }
-                } ?: run {
+                            viewModal.mine()
+                                .addOnSuccessListener {
+                                    viewModal.getProfile()
+                                    viewModal.getBalance()
+                                }
+                            Timber.d("User earned the reward.")
+                        }
+                    } ?: run {
 //                    gettingAd = false
 //                    Toaster(
 //                        context,
 //                        "Ad wasn't ready yet, wait for 3secs and try again",
 //                        R.drawable.logo
 //                    ).show()
-                    Timber.d("The rewarded ad wasn't ready yet.")
+                        Timber.d("The rewarded ad wasn't ready yet.")
+                    }
                 }
+                gettingAd = true
             },
             enabled = !gettingAd && couldMine,
             shape = RoundedCornerShape(50),
