@@ -313,6 +313,7 @@
     <string name="base_price">Base Price</string>
     <string name="min_price">Minimum price</string>
     <string name="name">Name</string>
+    <string name="edit_shop">Edit Shop</string>
 
 
 </resources>
