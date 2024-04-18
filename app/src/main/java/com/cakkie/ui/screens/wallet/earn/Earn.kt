@@ -480,7 +480,7 @@ fun Earn(navigator: DestinationsNavigator) {
         }
         Card(
             onClick = {
-                if (gettingAd == false) {
+                if (!gettingAd) {
                     retryCount = 0
                     rewardedAd?.let { ad ->
                         ad.show(context) { rewardItem ->
