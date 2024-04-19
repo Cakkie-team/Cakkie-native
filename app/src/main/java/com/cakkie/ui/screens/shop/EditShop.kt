@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +47,6 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.cakkie.R
-import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.ChangeProfileItemDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -102,7 +104,7 @@ fun EditShop(
         mutableStateOf(false)
     }
     var uploadMessage by remember {
-        mutableStateOf("Upload a business logo")
+        mutableStateOf("")
     }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -271,61 +273,82 @@ fun EditShop(
                 var loading by remember {
                     mutableStateOf(true)
                 }
-                AsyncImage(
-                    model = imageUri
-                        ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
-                    contentDescription = "profile pic",
-                    contentScale = ContentScale.Crop,
-                    onState = {
-                        //update isLoaded
-                        loading = it is AsyncImagePainter.State.Loading
-                    },
+                Box(
                     modifier = Modifier
-                        .padding(top = 50.dp, start = 20.dp)
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(100))
-                        .border(
-                            width = 3.dp,
-                            color = CakkieBackground,
-                            shape = RoundedCornerShape(100)
-                        )
-                        .placeholder(
-                            visible = loading,
-                            highlight = PlaceholderHighlight.shimmer(),
-                            color = CakkieBrown.copy(0.8f)
-                        )
-                )
-                if (!uploding) {
-                    CircularProgressIndicator(
+                        .padding(top = 50.dp, start = 20.dp), contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = imageUri
+                            ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
+                        contentDescription = "shop logo",
+                        contentScale = ContentScale.Crop,
+                        onState = {
+                            //update isLoaded
+                            loading = it is AsyncImagePainter.State.Loading
+                        },
                         modifier = Modifier
-                            .padding(top = 80.dp, start = 40.dp)
-                            .size(30.dp),
-                        strokeWidth = 2.dp,
-                        color = CakkieBrown,
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = 3.dp,
+                                color = CakkieBackground,
+                                shape = CircleShape
+                            )
+                            .placeholder(
+                                visible = loading,
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = CakkieBrown.copy(0.8f)
+                            )
                     )
-                } else {
-                    Box(modifier = Modifier.clickable {
-                        galleryLauncher.launch("image/*")
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ph_plus),
-                            contentDescription = "upload image",
-                            modifier = Modifier.size(30.dp),
-                            tint = CakkieBackground
-                        )
+                    Box(
+                        modifier = Modifier
+                            .size(94.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(0.3f))
+                            .clickable {
+                                if (!uploding) galleryLauncher.launch("image/*")
+                            }, contentAlignment = Alignment.Center
+                    ) {
+                        if (uploding) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(30.dp),
+                                strokeWidth = 2.dp,
+                                color = CakkieBackground,
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ph_plus),
+                                contentDescription = "upload image",
+                                modifier = Modifier.size(30.dp),
+                                tint = CakkieBackground
+                            )
+                        }
                     }
+
                 }
 
-                CakkieButton(
-                    Modifier
+                Box(
+                    modifier = Modifier
                         .width(100.dp)
                         .height(30.dp)
+                        .clickable {
+                            navigator.navigate(ChangeProfileItemDestination)
+                        }
+                        .border(
+                            width = 1.dp,
+                            color = CakkieBrown,
+                            shape = RoundedCornerShape(20)
+                        )
                         .align(Alignment.BottomEnd),
-                    text = stringResource(id = R.string.save),
-                    processing = processing
+                    contentAlignment = Alignment.Center
                 ) {
-                    navigator.navigate(ChangeProfileItemDestination)
-
+                    Text(
+                        text = stringResource(id = R.string.save),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.End,
+                        color = CakkieBrown
+                    )
                 }
             }
         }

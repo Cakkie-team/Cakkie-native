@@ -68,14 +68,13 @@ fun ChangeProfileItem(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
         }
         Text(
             text = stringResource(id = R.string.save_changes_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
-            fontSize = 10.sp
         )
         Spacer(modifier = Modifier.height(35.dp))
 
