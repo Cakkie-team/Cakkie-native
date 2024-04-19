@@ -268,7 +268,7 @@ fun CakkieInputField(
                     },
                     modifier = Modifier
                         .padding(6.dp)
-                        .height(60.dp)
+                        .height(65.dp)
                 )
             }
             addressList.forEach { address ->
