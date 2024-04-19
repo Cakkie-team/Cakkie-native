@@ -315,6 +315,8 @@
     <string name="name">Name</string>
     <string name="edit_shop">Edit Shop</string>
     <string name="save">Save</string>
+    <string name="no_chats">No Chats</string>
+    <string name="support">Support</string>
 
 
 </resources>

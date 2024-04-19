@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +44,8 @@ import com.cakkie.R
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieLightBrown
+import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
@@ -54,29 +59,47 @@ fun Chat() {
         var query by remember {
             mutableStateOf(TextFieldValue(""))
         }
-
+        val chats = listOf<String>()
 
         Spacer(modifier = Modifier.height(20.dp))
         Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = stringResource(
-                    id = R.string.cakkie_logo
-                ),
-                modifier = Modifier
-                    .size(27.dp),
-                contentScale = ContentScale.FillWidth
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            androidx.compose.material.Text(
-                text = stringResource(id = R.string.chat),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 16.sp,
-                color = CakkieBrown,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = stringResource(
+                        id = R.string.cakkie_logo
+                    ),
+                    modifier = Modifier
+                        .size(27.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                androidx.compose.material.Text(
+                    text = stringResource(id = R.string.chat),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 16.sp,
+                    color = CakkieBrown,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            IconButton(onClick = { /*TODO*/ }) {
+                Image(
+                    painter = painterResource(id = R.drawable.support),
+                    contentDescription = stringResource(
+                        id = R.string.support
+                    ),
+                    modifier = Modifier
+                        .size(27.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
         }
         Spacer(modifier = Modifier.height(10.dp))
         Column(
@@ -100,87 +123,114 @@ fun Chat() {
                     .height(55.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn {
-                items(10) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            var isLoading by remember {
-                                mutableStateOf(false)
-                            }
-                            AsyncImage(
-                                model = "https://source.unsplash.com/100x150/?prifilepic",
-                                contentDescription = "profile pic",
-                                onState = {
-                                    //update isLoaded
-                                    isLoading = it is AsyncImagePainter.State.Loading
-                                },
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(shape = CircleShape)
-                                    .clickable {
+            if (chats.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.5f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.chat),
+                            contentDescription = stringResource(id = R.string.chat),
+                            modifier = Modifier.size(150.dp),
+                            tint = CakkieLightBrown
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = stringResource(id = R.string.no_chats),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TextColorDark,
+                            textAlign = TextAlign.Center,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                    }
+                }
+            } else {
+                LazyColumn {
+                    items(10) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                var isLoading by remember {
+                                    mutableStateOf(false)
+                                }
+                                AsyncImage(
+                                    model = "https://source.unsplash.com/100x150/?prifilepic",
+                                    contentDescription = "profile pic",
+                                    onState = {
+                                        //update isLoaded
+                                        isLoading = it is AsyncImagePainter.State.Loading
+                                    },
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(shape = CircleShape)
+                                        .clickable {
 
-                                    }
-                                    .placeholder(
-                                        visible = isLoading,
-                                        highlight = PlaceholderHighlight.shimmer(),
-                                        color = CakkieBrown.copy(0.8f)
+                                        }
+                                        .placeholder(
+                                            visible = isLoading,
+                                            highlight = PlaceholderHighlight.shimmer(),
+                                            color = CakkieBrown.copy(0.8f)
+                                        )
+                                        .fillMaxWidth(),
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = "Donald Trump",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = CakkieBrown,
+                                        textAlign = TextAlign.Center,
                                     )
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "Hey Joy, I’d love to get a similar...",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBrown,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+
+                            Column(horizontalAlignment = Alignment.End) {
                                 Text(
-                                    text = "Donald Trump",
+                                    text = "2:30 PM",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = CakkieBrown,
+                                    color = TextColorInactive,
                                     textAlign = TextAlign.Center,
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = "Hey Joy, I’d love to get a similar...",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = CakkieBrown,
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(
-                                text = "2:30 PM",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TextColorInactive,
-                                textAlign = TextAlign.Center,
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Box(
-                                modifier = Modifier
-                                    .background(CakkieBrown, CircleShape)
-                                    .clip(CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "2",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = CakkieBackground,
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.padding(4.dp)
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .background(CakkieBrown, CircleShape)
+                                        .clip(CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "2",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBackground,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier.padding(horizontal = 4.dp)
+                                    )
+                                }
                             }
                         }
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(100.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
+                    }
                 }
             }
         }
