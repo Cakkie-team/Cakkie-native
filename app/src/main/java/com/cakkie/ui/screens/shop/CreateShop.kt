@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -53,6 +54,8 @@ import com.cakkie.ui.screens.destinations.CreateShopDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
@@ -92,6 +95,31 @@ fun CreateShop(navigator: DestinationsNavigator) {
     )
     var fileUrl by remember {
         mutableStateOf("")
+    }
+    var nameIsValid by remember {
+        mutableStateOf(false)
+    }
+
+    var nameMessage by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = name.text) {
+        if (name.text.length < 3 || name.text.isEmpty()) {
+            nameIsValid = false
+            nameMessage = "Name must be at least 3 characters"
+        } else if (name.text.length > 30) {
+            nameIsValid = false
+            nameMessage = "Name must not be more than 30 characters"
+        } else {
+            viewModel.verifyShopName(name.text).addOnSuccessListener {
+                nameIsValid = !it.exists
+                nameMessage = if (!it.exists) "Name is available" else "Name is not available"
+            }.addOnFailureListener {
+                nameIsValid = false
+                nameMessage = "Name is not available"
+            }
+        }
+
     }
 
     LaunchedEffect(key1 = imageUri) {
@@ -152,7 +180,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
     }
     val canProceed = name.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            description.text.isNotBlank() &&
+            description.text.isNotBlank() && nameIsValid
             isChecked && fileUrl.isNotBlank() && location != null
 
     Column(Modifier.padding(horizontal = 16.dp)) {
@@ -231,7 +259,14 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 placeholder = stringResource(id = R.string.business_name),
                 keyboardType = KeyboardType.Text,
             )
-
+            Text(
+                text = nameMessage,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier,
+                fontSize = 12.sp,
+                textAlign = TextAlign.End,
+                color = if (nameIsValid) CakkieGreen else Error
+            )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = description,

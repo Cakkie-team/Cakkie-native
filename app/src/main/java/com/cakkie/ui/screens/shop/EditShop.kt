@@ -364,7 +364,9 @@ fun EditShop(
                         .width(100.dp)
                         .height(30.dp)
                         .clickable {
-                            if (!processing) navigator.navigate(ChangeProfileItemDestination)
+                            if (!processing && nameIsValid) navigator.navigate(
+                                ChangeProfileItemDestination
+                            )
                         }
                         .border(
                             width = 1.dp,
@@ -408,7 +410,7 @@ fun EditShop(
                     name = it
                 },
                 showEditIcon = true,
-                placeholder = "Jennifer Victor",
+                placeholder = "Shop Name",
                 keyboardType = KeyboardType.Text,
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
