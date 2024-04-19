@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +52,8 @@ import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.ChangeProfileItemDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
@@ -106,6 +109,14 @@ fun EditShop(
     var uploadMessage by remember {
         mutableStateOf("")
     }
+
+    var nameIsValid by remember {
+        mutableStateOf(false)
+    }
+
+    var nameMessage by remember {
+        mutableStateOf("")
+    }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -127,6 +138,28 @@ fun EditShop(
             description = TextFieldValue(shop.description)
             fileUrl = shop.image.replace(Regex("\\bhttp://"), "https://")
         }
+    }
+
+    LaunchedEffect(key1 = name.text) {
+        if (name.text.length < 3 || name.text.isEmpty()) {
+            nameIsValid = false
+            nameMessage = "Name must be at least 3 characters"
+        } else if (name.text.length > 30) {
+            nameIsValid = false
+            nameMessage = "Name must not be more than 30 characters"
+        } else if (name.text == shop?.name) {
+            nameIsValid = true
+            nameMessage = "Name is available"
+        } else {
+            viewModel.verifyShopName(name.text).addOnSuccessListener {
+                nameIsValid = !it.exists
+                nameMessage = if (!it.exists) "Name is available" else "Name is not available"
+            }.addOnFailureListener {
+                nameIsValid = false
+                nameMessage = "Name is not available"
+            }
+        }
+
     }
 
     onConfirm.onNavResult { result ->
@@ -331,7 +364,7 @@ fun EditShop(
                         .width(100.dp)
                         .height(30.dp)
                         .clickable {
-                            navigator.navigate(ChangeProfileItemDestination)
+                            if (!processing) navigator.navigate(ChangeProfileItemDestination)
                         }
                         .border(
                             width = 1.dp,
@@ -341,12 +374,21 @@ fun EditShop(
                         .align(Alignment.BottomEnd),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.save),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.End,
-                        color = CakkieBrown
-                    )
+                    if (processing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp),
+                            strokeWidth = 2.dp,
+                            color = CakkieBrown,
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(id = R.string.save),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.End,
+                            color = CakkieBrown
+                        )
+                    }
                 }
             }
         }
@@ -369,14 +411,25 @@ fun EditShop(
                 placeholder = "Jennifer Victor",
                 keyboardType = KeyboardType.Text,
             )
-            Text(
-                text = stringResource(id = R.string.name),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.End),
-                fontSize = 12.sp,
-                textAlign = TextAlign.End,
-                color = CakkieBrown
-            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = nameMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.End,
+                    color = if (nameIsValid) CakkieGreen else Error
+                )
+
+                Text(
+                    text = stringResource(id = R.string.name),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.End,
+                    color = CakkieBrown
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             CakkieInputField(
@@ -411,7 +464,7 @@ fun EditShop(
                 placeholder = stringResource(id = R.string.about_business),
                 keyboardType = KeyboardType.Text,
                 singleLine = false,
-                modifier = Modifier.height(120.dp)
+                modifier = Modifier.height(150.dp)
             )
             Text(
                 text = stringResource(id = R.string.description),

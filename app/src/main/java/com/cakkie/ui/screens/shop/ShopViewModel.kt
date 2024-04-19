@@ -13,7 +13,7 @@ import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
-import com.cakkie.networkModels.LoginResponse
+import com.cakkie.networkModels.ShopResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
@@ -51,7 +51,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         imageUrl: String,
         location: LocationResult,
     ) =
-        NetworkCalls.post<LoginResponse>(
+        NetworkCalls.post<ShopModel>(
             endpoint = Endpoints.CREATE_SHOP, body = listOf(
                 Pair("name", name),
                 Pair("description", description),
@@ -86,8 +86,8 @@ class ShopViewModel : ViewModel(), KoinComponent {
         imageUrl: String,
         location: LocationResult,
     ) =
-        NetworkCalls.post<LoginResponse>(
-            endpoint = Endpoints.CREATE_SHOP, body = listOf(
+        NetworkCalls.put<ShopModel>(
+            endpoint = Endpoints.UPDATE_SHOP, body = listOf(
                 Pair("name", name),
                 Pair("description", description),
                 Pair("address", address),
@@ -228,6 +228,11 @@ class ShopViewModel : ViewModel(), KoinComponent {
     ).addOnSuccessListener {
         _shop.value = it
     }
+
+    fun verifyShopName(name: String) = NetworkCalls.get<ShopResponse>(
+        endpoint = Endpoints.VERIFY_SHOP_NAME(name),
+        body = listOf()
+    )
 
     fun getMyListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
         endpoint = Endpoints.GET_MY_LISTINGS(page, size),
