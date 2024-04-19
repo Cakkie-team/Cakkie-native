@@ -47,6 +47,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.PageTabs
+import com.cakkie.ui.screens.destinations.EditShopDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
 import com.cakkie.ui.screens.shop.contracts.Contracts
@@ -153,7 +154,9 @@ fun Shop(navigator: DestinationsNavigator) {
                     )
                 }
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        navigator.navigate(EditShopDestination)
+                    },
                     modifier = Modifier
                         .size(width = 70.dp, height = 34.dp),
                     border = BorderStroke(1.dp, color = CakkieLightBrown),

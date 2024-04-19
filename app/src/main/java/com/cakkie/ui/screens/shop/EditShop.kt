@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,8 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,24 +35,28 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.ChangeProfileItemDestination
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.getCurrentLocation
 import com.cakkie.utill.locationModels.LocationResult
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
@@ -229,47 +235,98 @@ fun EditShop(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                GlideImage(
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp)
+                    .height(150.dp),
+                contentAlignment = Alignment.TopStart
+            ) {
+                var isLoading by remember {
+                    mutableStateOf(true)
+                }
+                AsyncImage(
                     model = imageUri
                         ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
-                    contentDescription = "cake logo",
+                    contentDescription = "cover",
                     contentScale = ContentScale.Crop,
+                    onState = {
+                        //update isLoaded
+                        isLoading = it is AsyncImagePainter.State.Loading
+                    },
                     modifier = Modifier
-                        .size(64.dp)
-                        .clip(shape = CircleShape)
-                        .clickable {
-                            galleryLauncher.launch("image/*")
-                        }
+                        .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+                        .height(100.dp)
+                        .placeholder(
+                            visible = isLoading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
                 )
-                if (uploding) {
+                var loading by remember {
+                    mutableStateOf(true)
+                }
+                AsyncImage(
+                    model = imageUri
+                        ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
+                    contentDescription = "profile pic",
+                    contentScale = ContentScale.Crop,
+                    onState = {
+                        //update isLoaded
+                        loading = it is AsyncImagePainter.State.Loading
+                    },
+                    modifier = Modifier
+                        .padding(top = 50.dp, start = 20.dp)
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(100))
+                        .border(
+                            width = 3.dp,
+                            color = CakkieBackground,
+                            shape = RoundedCornerShape(100)
+                        )
+                        .placeholder(
+                            visible = loading,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = CakkieBrown.copy(0.8f)
+                        )
+                )
+                if (!uploding) {
                     CircularProgressIndicator(
                         modifier = Modifier
+                            .padding(top = 80.dp, start = 40.dp)
                             .size(30.dp),
                         strokeWidth = 2.dp,
                         color = CakkieBrown,
                     )
+                } else {
+                    Box(modifier = Modifier.clickable {
+                        galleryLauncher.launch("image/*")
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ph_plus),
+                            contentDescription = "upload image",
+                            modifier = Modifier.size(30.dp),
+                            tint = CakkieBackground
+                        )
+                    }
                 }
-            }
-            Text(
-                text = shop?.name ?: "",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier,
-//                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            )
 
-            Spacer(Modifier.height(9.dp))
+                CakkieButton(
+                    Modifier
+                        .width(100.dp)
+                        .height(30.dp)
+                        .align(Alignment.BottomEnd),
+                    text = stringResource(id = R.string.save),
+                    processing = processing
+                ) {
+                    navigator.navigate(ChangeProfileItemDestination)
 
-            CakkieButton(
-                text = stringResource(id = R.string.change_profile_picture),
-                processing = uploding,
-            ) {
-                galleryLauncher.launch("image/*")
+                }
             }
         }
 
@@ -342,19 +399,6 @@ fun EditShop(
                 color = CakkieBrown
             )
             Spacer(modifier = Modifier.height(50.dp))
-
-            CakkieButton(
-                Modifier
-                    .width(328.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                text = stringResource(id = R.string.save_changes),
-                processing = processing
-            ) {
-                navigator.navigate(ChangeProfileItemDestination)
-
-            }
-            Spacer(modifier = Modifier.height(17.dp))
         }
 
     }

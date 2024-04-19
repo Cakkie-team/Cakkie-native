@@ -314,6 +314,7 @@
     <string name="min_price">Minimum price</string>
     <string name="name">Name</string>
     <string name="edit_shop">Edit Shop</string>
+    <string name="save">Save</string>
 
 
 </resources>
