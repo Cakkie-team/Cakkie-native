@@ -81,6 +81,9 @@ fun Shop(navigator: DestinationsNavigator) {
                 }
                 launchSingleTop = true
             }
+        } else {
+            viewModel.getMyShop()
+            viewModel.getMyListings()
         }
     }
 

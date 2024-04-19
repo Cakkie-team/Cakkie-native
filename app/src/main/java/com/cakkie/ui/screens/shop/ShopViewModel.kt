@@ -222,7 +222,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         return files
     }
 
-    private fun getMyShop() = NetworkCalls.get<ShopModel>(
+    fun getMyShop() = NetworkCalls.get<ShopModel>(
         endpoint = Endpoints.CREATE_SHOP,
         body = listOf()
     ).addOnSuccessListener {
@@ -263,8 +263,8 @@ class ShopViewModel : ViewModel(), KoinComponent {
     init {
         getProfile()
         getUser()
-        getMyShop()
-        getMyListings()
+//        getMyShop()
+//        getMyListings()
     }
 }
 
