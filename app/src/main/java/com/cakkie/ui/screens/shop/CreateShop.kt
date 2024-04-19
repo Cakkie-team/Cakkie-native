@@ -180,7 +180,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
     }
     val canProceed = name.text.isNotBlank() &&
             address.text.isNotBlank() &&
-            description.text.isNotBlank() && nameIsValid
+            description.text.isNotBlank() && nameIsValid &&
             isChecked && fileUrl.isNotBlank() && location != null
 
     Column(Modifier.padding(horizontal = 16.dp)) {
