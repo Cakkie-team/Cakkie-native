@@ -103,7 +103,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val scrollFraction =
         remember { derivedStateOf { listState.firstVisibleItemScrollOffset } }.value
 
-
+    val visibleItem = remember { derivedStateOf { listState.firstVisibleItemIndex } }.value
     LaunchedEffect(scrollFraction) {
         visible = scrollFraction <= prevScroll
         hideNav.value = scrollFraction > prevScroll
@@ -381,16 +381,12 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     key = { it.id }
                 ) { listing ->
                     val index = listings.data.indexOf(listing)
-                    val visibleItem =
-                        remember { derivedStateOf { listState.firstVisibleItemIndex } }.value
                     Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
                     ExploreItem(
 //                       user = user,
                         navigator = navigator,
                         item = listing,
-                        shouldPlay = remember {
-                            derivedStateOf { index == visibleItem }
-                        }.value,
+                        shouldPlay = index == visibleItem,
                         isMuted = isMuted,
                         onMute = { isMuted = it },
                         progressiveMediaSource = progressiveMediaSource,

@@ -11,15 +11,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -37,6 +41,7 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 
+@kotlin.OptIn(ExperimentalMaterial3Api::class)
 @OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
@@ -46,10 +51,12 @@ fun VideoPlayer(
     showControls: Boolean = false,
     mute: Boolean = true,
     vResizeMode: Int = AspectRatioFrameLayout.RESIZE_MODE_FIT,
-    onMute: (Boolean) -> Unit = {},
+    onMute: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    var _isPlaying by remember {
+        mutableStateOf(isPlaying)
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = mute) {
@@ -60,14 +67,14 @@ fun VideoPlayer(
         }
     }
 
-    exoPlayer.playWhenReady = isPlaying
+    exoPlayer.playWhenReady = _isPlaying
     exoPlayer.videoScalingMode =
         C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
     exoPlayer.volume = if (mute) 0f else 1f
     exoPlayer.prepare()
-    LaunchedEffect(isPlaying) {
-        if (!isPlaying) {
+    LaunchedEffect(_isPlaying) {
+        if (!_isPlaying) {
             exoPlayer.pause()
         } else {
             exoPlayer.play()
@@ -118,6 +125,29 @@ fun VideoPlayer(
                     tint = CakkieBackground,
                     modifier = Modifier
                         .size(30.dp)
+                        .padding(5.dp)
+                )
+            }
+        }
+
+        //play and pause
+        if (_isPlaying.not()) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBrown
+                ), shape = CircleShape,
+                onClick = {
+                    _isPlaying = !_isPlaying
+                }, modifier = Modifier
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    painter =
+                    painterResource(id = R.drawable.play),
+                    contentDescription = "Speaker",
+                    tint = CakkieBackground,
+                    modifier = Modifier
+                        .size(60.dp)
                         .padding(5.dp)
                 )
             }

@@ -244,7 +244,7 @@ fun ExploreItem(
                         onMute = onMute,
                         vResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL,
                         modifier = Modifier
-                            .heightIn(max = screenHeight * 0.7f)
+                            .heightIn(max = screenHeight * 0.6f)
                             .clickable {
                                 navigator.navigate(
                                     CakespirationDestination(id = listing.id, item = listing)
