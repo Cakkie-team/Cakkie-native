@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
@@ -51,10 +52,11 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun ChatList() {
+fun ChatList(navigator: DestinationsNavigator) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         var query by remember {
             mutableStateOf(TextFieldValue(""))
@@ -89,7 +91,9 @@ fun ChatList() {
                 )
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                navigator.navigate(ChatDestination("support"))
+            }) {
                 Image(
                     painter = painterResource(id = R.drawable.support),
                     contentDescription = stringResource(
