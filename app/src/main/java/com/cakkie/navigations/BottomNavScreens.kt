@@ -1,7 +1,7 @@
 package com.cakkie.navigations
 
 import com.cakkie.R
-import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.screens.destinations.ChatListDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
@@ -33,7 +33,7 @@ enum class BottomNavScreens(
     ),
 
     ChatScreen(
-        direction = ChatDestination,
+        direction = ChatListDestination,
         title = R.string.chat,
         icon = R.drawable.chat,
     ),
