@@ -80,7 +80,7 @@ fun CreateShop(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
     var uploadMessage by remember {
-        mutableStateOf("Upload a business logo")
+        mutableStateOf("")
     }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -95,18 +95,18 @@ fun CreateShop(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(key1 = imageUri) {
-        if (imageUri != null) {
+        if (imageUri != null && name.text.isNotEmpty()) {
             uploding = true
             val file = context.createTmpFileFromUri(
                 uri = imageUri!!,
-                fileName = "shopLogo"
+                fileName = name.text
             )!!
             viewModel.uploadImage(
                 image = file,
                 path = "shop-logos",
                 fileName = file.name + ".png"
             ).addOnSuccessListener { resp ->
-                fileUrl = Endpoints.FILE_URL("shop-logos/" + file.name + ".png")
+                fileUrl = Endpoints.FILE_URL("shop-logos/" + name.text + ".png")
                 Timber.d(resp)
                 uploadMessage = "Logo uploaded"
                 uploding = false
@@ -117,6 +117,8 @@ fun CreateShop(navigator: DestinationsNavigator) {
                 uploadMessage = "Failed to upload logo, try again"
                 file.delete()
             }
+        } else if (name.text.isEmpty()) {
+            uploadMessage = "Please enter a business name first"
         }
     }
 
@@ -137,7 +139,17 @@ fun CreateShop(navigator: DestinationsNavigator) {
     }
     val activity = context as Activity
     val currentLocation = activity.getCurrentLocation()
-
+    LaunchedEffect(key1 = uploadMessage) {
+        if (uploadMessage.isNotEmpty()) {
+            //show toast
+            Toaster(
+                context = context,
+                message = uploadMessage,
+                image = R.drawable.logo
+            ).show()
+            uploadMessage = ""
+        }
+    }
     val canProceed = name.text.isNotBlank() &&
             address.text.isNotBlank() &&
             description.text.isNotBlank() &&

@@ -77,6 +77,42 @@ class ShopViewModel : ViewModel(), KoinComponent {
             )
         )
 
+
+    //update shop
+    fun updateShop(
+        name: String,
+        description: String,
+        address: String,
+        imageUrl: String,
+        location: LocationResult,
+    ) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.CREATE_SHOP, body = listOf(
+                Pair("name", name),
+                Pair("description", description),
+                Pair("address", address),
+                Pair(
+                    "city",
+                    location.addressComponents.firstOrNull { it.types.contains("locality") }?.longName
+                        ?: ""
+                ),
+                Pair(
+                    "state",
+                    location.addressComponents.firstOrNull { it.types.contains("administrative_area_level_1") }?.longName
+                        ?: ""
+                ),
+                Pair("latitude", location.geometry?.location?.lat ?: 0.0),
+                Pair("longitude", location.geometry?.location?.lng ?: 0.0),
+                Pair(
+                    "country",
+                    location.addressComponents.firstOrNull { it.types.contains("country") }?.longName
+                        ?: ""
+                ),
+                Pair("image", imageUrl),
+            )
+        )
+
+
     //create listings
     fun createListing(
         name: String,

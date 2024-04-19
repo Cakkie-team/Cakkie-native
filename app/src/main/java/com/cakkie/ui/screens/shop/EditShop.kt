@@ -78,8 +78,8 @@ fun EditShop(
     var name by remember {
         mutableStateOf(TextFieldValue(shop?.name ?: ""))
     }
-    var phoneNumber by remember {
-        mutableStateOf(TextFieldValue(shop?.state ?: ""))
+    var description by remember {
+        mutableStateOf(TextFieldValue(shop?.description ?: ""))
     }
 
     var address by remember {
@@ -124,6 +124,7 @@ fun EditShop(
         if (shop != null) {
             name = TextFieldValue(shop.name)
             address = TextFieldValue(shop.address)
+            description = TextFieldValue(shop.description)
             fileUrl = shop.image.replace(Regex("\\bhttp://"), "https://")
         }
     }
@@ -151,45 +152,42 @@ fun EditShop(
                         uploding = false
                         imageUri = null
                         file.delete()
-//                        viewModel.updateProfile(
-//                            firstName = name.text.split(" ").first().ifEmpty { shop.firstName },
-//                            lastName = name.text.split(" ").last().ifEmpty { shop.lastName },
-//                            phone = phoneNumber.text,
-//                            address = address.text,
-//                            imageUrl = fileUrl,
-//                            location = location!!
-//                        ).addOnSuccessListener { user ->
-//                            viewModel.getProfile()
-//                            processing = false
-//                            navigator.popBackStack()
-//                        }.addOnFailureListener {
-//                            processing = false
-//                            uploadMessage = "Failed to update profile, try again"
-//                        }
+                        viewModel.updateShop(
+                            name = name.text,
+                            description = description.text,
+                            address = address.text,
+                            imageUrl = fileUrl,
+                            location = location!!
+                        ).addOnSuccessListener { shop ->
+                            viewModel.getProfile()
+                            processing = false
+                            navigator.popBackStack()
+                        }.addOnFailureListener {
+                            processing = false
+                            uploadMessage = "Failed to update shop, try again"
+                        }
                     }.addOnFailureListener { exception ->
                         Timber.d(exception)
                         uploding = false
                         processing = false
-                        uploadMessage = "Failed to upload profile image, try again"
+                        uploadMessage = "Failed to upload shop image, try again"
                         file.delete()
                     }
                 } else if (shop != null) {
                     processing = true
-//                    viewModel.updateProfile(
-//                        firstName = name.text.split(" ").first().ifEmpty { shop.firstName },
-//                        lastName = name.text.split(" ").last().ifEmpty { shop.lastName },
-//                        phone = phoneNumber.text,
-//                        address = address.text,
-//                        imageUrl = fileUrl,
-//                        location = location!!
-//                    ).addOnSuccessListener { user ->
-//                        viewModel.getProfile()
-//                        processing = false
-//                        navigator.popBackStack()
-//                    }.addOnFailureListener {
-//                        processing = false
-//                        uploadMessage = "Failed to update profile, try again"
-//                    }
+                    viewModel.updateShop(
+                        name = name.text,
+                        description = description.text,
+                        address = address.text,
+                        imageUrl = fileUrl,
+                        location = location!!
+                    ).addOnSuccessListener { Shop ->
+                        processing = false
+                        navigator.popBackStack()
+                    }.addOnFailureListener {
+                        processing = false
+                        uploadMessage = "Failed to update shop, try again"
+                    }
                 }
             }
         }
@@ -404,17 +402,19 @@ fun EditShop(
             Spacer(modifier = Modifier.height(20.dp))
 
             CakkieInputField(
-                value = phoneNumber,
+                value = description,
                 onValueChange = {
                     isError = true
-                    phoneNumber = it
+                    description = it
                 },
                 showEditIcon = true,
-                placeholder = "08001010101",
-                keyboardType = KeyboardType.Phone,
+                placeholder = stringResource(id = R.string.about_business),
+                keyboardType = KeyboardType.Text,
+                singleLine = false,
+                modifier = Modifier.height(120.dp)
             )
             Text(
-                text = stringResource(id = R.string.phone_number),
+                text = stringResource(id = R.string.description),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.End),
                 fontSize = 12.sp,
