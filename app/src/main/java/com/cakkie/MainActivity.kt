@@ -43,6 +43,7 @@ import com.cakkie.ui.screens.appCurrentDestinationAsState
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.screens.destinations.ChatListDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.EditVideoDestination
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
                                             when (currentDestination) {
                                                 JobsDestination -> 50.dp
                                                 ShopDestination -> 50.dp
-                                                ChatDestination -> 50.dp
+                                                ChatListDestination -> 50.dp
                                                 OrdersDestination -> 50.dp
                                                 else -> 0.dp
                                             }
