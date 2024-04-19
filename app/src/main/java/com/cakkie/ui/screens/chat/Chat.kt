@@ -163,7 +163,7 @@ fun Chat() {
                             Spacer(modifier = Modifier.height(2.dp))
                             Box(
                                 modifier = Modifier
-                                    .background(CakkieBrown)
+                                    .background(CakkieBrown, CircleShape)
                                     .clip(CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
