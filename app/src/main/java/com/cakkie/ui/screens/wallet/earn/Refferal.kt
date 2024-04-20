@@ -1,10 +1,7 @@
 package com.cakkie.ui.screens.wallet.earn
 
 
-import android.content.Context
 import android.content.Intent
-import android.util.DisplayMetrics
-import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -38,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.startActivity
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
@@ -47,9 +42,6 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.utill.Toaster
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -73,13 +65,13 @@ fun Referral(navigator: DestinationsNavigator) {
     }
     val shareIntent = Intent.createChooser(sendIntent, "Share your referral code")
 
-    val adView = remember {
-        AdView(context).apply {
-            adUnitId = "ca-app-pub-8613748949810587/1273874365"
-            setAdSize(getAdSize(context))
-            loadAd(AdRequest.Builder().build())
-        }
-    }
+//    val adView = remember {
+//        AdView(context).apply {
+//            adUnitId = "ca-app-pub-8613748949810587/1273874365"
+//            setAdSize(getAdSize(context))
+//            loadAd(AdRequest.Builder().build())
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -212,22 +204,22 @@ fun Referral(navigator: DestinationsNavigator) {
         ) {
             startActivity(context, shareIntent, null)
         }
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            AndroidView(factory = { adView }) { view ->
-                // Add any necessary modifications to the ad view here
-            }
-        }
+//        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+//            AndroidView(factory = { adView }) { view ->
+//                // Add any necessary modifications to the ad view here
+//            }
+//        }
     }
 }
 
-private fun getAdSize(context: Context): AdSize {
-    val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-    val outMetrics = DisplayMetrics()
-    display.getMetrics(outMetrics)
-
-    val density = outMetrics.density
-
-    val adWidthPixels = outMetrics.widthPixels.toFloat()
-    val adWidth = (adWidthPixels / density).toInt()
-    return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
-}
+//private fun getAdSize(context: Context): AdSize {
+//    val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+//    val outMetrics = DisplayMetrics()
+//    display.getMetrics(outMetrics)
+//
+//    val density = outMetrics.density
+//
+//    val adWidthPixels = outMetrics.widthPixels.toFloat()
+//    val adWidth = (adWidthPixels / density).toInt()
+//    return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+//}

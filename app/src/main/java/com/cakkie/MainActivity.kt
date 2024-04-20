@@ -13,8 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -37,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.appodeal.ads.Appodeal
 import com.bumptech.glide.Glide
 import com.cakkie.BottomState.hideNav
 import com.cakkie.navigations.BottomNav
@@ -67,8 +66,6 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
-import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import timber.log.Timber
 
@@ -93,6 +90,12 @@ class MainActivity : ComponentActivity() {
 //        askNotificationPermission()
         askMultiplePermissions()
 
+        Appodeal.initialize(
+            this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
+            Appodeal.INTERSTITIAL or Appodeal.REWARDED_VIDEO
+        ) {
+            // Appodeal initialization finished
+        }
 
         //handle notification from firebase
         val extra = intent.extras
@@ -161,17 +164,17 @@ class MainActivity : ComponentActivity() {
                                         )
                                         .fillMaxSize(),
                                     engine = rememberAnimatedNavHostEngine(
-                                        navHostContentAlignment = Alignment.TopCenter,
-                                        rootDefaultAnimations = RootNavGraphDefaultAnimations(
-                                            enterTransition = { slideInHorizontally() },
-                                            exitTransition = { slideOutHorizontally() }
-                                        ),
-                                        defaultAnimationsForNestedNavGraph = mapOf(
-                                            NavGraphs.root to NestedNavGraphDefaultAnimations(
-                                                enterTransition = { slideInHorizontally() },
-                                                exitTransition = { slideOutHorizontally() }
-                                            ),
-                                        )
+//                                        navHostContentAlignment = Alignment.TopCenter,
+//                                        rootDefaultAnimations = RootNavGraphDefaultAnimations(
+//                                            enterTransition = { slideInHorizontally() },
+//                                            exitTransition = { slideOutHorizontally() }
+//                                        ),
+//                                        defaultAnimationsForNestedNavGraph = mapOf(
+//                                            NavGraphs.root to NestedNavGraphDefaultAnimations(
+//                                                enterTransition = { slideInHorizontally() },
+//                                                exitTransition = { slideOutHorizontally() }
+//                                            ),
+//                                        )
                                     )
                                 )
                                 BottomNav(

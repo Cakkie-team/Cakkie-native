@@ -16,7 +16,6 @@ import com.cakkie.datastore.SettingsConstants
 import com.cakkie.socket.SocketClient
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Headers
-import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +41,7 @@ class CakkieApp : Application() {
         }
 
         //initialize admob
-        MobileAds.initialize(this) {}
+//        MobileAds.initialize(this) {}
 
         // Create notification channel
         createNotificationChannel()

@@ -183,7 +183,7 @@ dependencies {
     implementation(libs.accompanist.placeholder.material)
 
     //admob
-    implementation(libs.play.services.ads)
+//    implementation(libs.play.services.ads)
 
     //referrer
     implementation(libs.installreferrer)
@@ -193,5 +193,11 @@ dependencies {
 
     // For Kotlin users, also import the Kotlin extensions library for Play In-App Update:
     implementation(libs.app.update.ktx)
+
+    //appodeal sdk
+    implementation("com.appodeal.ads:sdk:3.2.1.+") {
+        exclude("com.appodeal.ads.sdk.networks", "adcolony")
+    }
+
 
 }

@@ -61,7 +61,6 @@ import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
-import com.cakkie.ui.components.NativeAdView
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
@@ -398,9 +397,9 @@ fun ExploreItem(
         )
 
     }
-    if (index % 3 == 0 && index != 0) {
-        NativeAdView(id = item.id)
-    }
+//    if (index % 3 == 0 && index != 0) {
+//        NativeAdView(id = item.id)
+//    }
     ExpandImage(
         item = listing,
         expanded = expanded,
