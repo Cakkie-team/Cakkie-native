@@ -13,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -42,7 +44,6 @@ import com.cakkie.ui.screens.NavGraphs
 import com.cakkie.ui.screens.appCurrentDestinationAsState
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
 import com.cakkie.ui.screens.destinations.CakespirationDestination
-import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.destinations.ChatListDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
@@ -66,6 +67,8 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import timber.log.Timber
 
@@ -157,7 +160,16 @@ class MainActivity : ComponentActivity() {
                                             }
                                         )
                                         .fillMaxSize(),
-                                    engine = rememberAnimatedNavHostEngine()
+                                    engine = rememberAnimatedNavHostEngine(
+                                        navHostContentAlignment = Alignment.TopCenter,
+                                        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
+                                        defaultAnimationsForNestedNavGraph = mapOf(
+                                            NavGraphs.root to NestedNavGraphDefaultAnimations(
+                                                enterTransition = { slideInHorizontally() },
+                                                exitTransition = { slideOutHorizontally() }
+                                            ),
+                                        )
+                                    )
                                 )
                                 BottomNav(
                                     navController = navController,
@@ -165,7 +177,7 @@ class MainActivity : ComponentActivity() {
                                         ExploreScreenDestination -> true
                                         JobsDestination -> true
                                         ShopDestination -> true
-                                        ChatDestination -> true
+                                        ChatListDestination -> true
                                         OrdersDestination -> true
                                         else -> false
                                     },
