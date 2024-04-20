@@ -89,10 +89,10 @@ class MainActivity : ComponentActivity() {
         //request notification permission
 //        askNotificationPermission()
         askMultiplePermissions()
-
+        Appodeal.setMrecViewId(R.id.appodealMrecView)
         Appodeal.initialize(
             this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
-            Appodeal.INTERSTITIAL or Appodeal.REWARDED_VIDEO
+            Appodeal.MREC or Appodeal.REWARDED_VIDEO
         ) {
             // Appodeal initialization finished
         }

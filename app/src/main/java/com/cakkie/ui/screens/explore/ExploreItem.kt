@@ -1,5 +1,7 @@
 package com.cakkie.ui.screens.explore
 
+import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -57,8 +60,10 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import com.appodeal.ads.Appodeal
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
+import com.cakkie.databinding.AdviewBinding
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.VideoPlayer
@@ -397,9 +402,25 @@ fun ExploreItem(
         )
 
     }
-//    if (index % 3 == 0 && index != 0) {
-//        NativeAdView(id = item.id)
-//    }
+    if (index % 3 == 0 && index != 0) {
+        var show by remember {
+            mutableStateOf(false)
+        }
+        if (Appodeal.canShow(Appodeal.MREC, "explore")) {
+            Appodeal.show(context as Activity, Appodeal.MREC, "explore")
+            show = true
+        }
+        AnimatedVisibility(visible = show) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                AndroidViewBinding(
+                    AdviewBinding::inflate, modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        }
+
+    }
     ExpandImage(
         item = listing,
         expanded = expanded,
