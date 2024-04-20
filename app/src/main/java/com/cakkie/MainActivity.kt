@@ -162,7 +162,10 @@ class MainActivity : ComponentActivity() {
                                         .fillMaxSize(),
                                     engine = rememberAnimatedNavHostEngine(
                                         navHostContentAlignment = Alignment.TopCenter,
-                                        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
+                                        rootDefaultAnimations = RootNavGraphDefaultAnimations(
+                                            enterTransition = { slideInHorizontally() },
+                                            exitTransition = { slideOutHorizontally() }
+                                        ),
                                         defaultAnimationsForNestedNavGraph = mapOf(
                                             NavGraphs.root to NestedNavGraphDefaultAnimations(
                                                 enterTransition = { slideInHorizontally() },
