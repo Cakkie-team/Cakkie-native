@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,10 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -47,6 +51,7 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.ui.theme.TextColorInactive
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
@@ -60,6 +65,8 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
     val chats = (0..15).toList()
+    var message by remember { mutableStateOf(TextFieldValue("")) }
+
     Column(Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Row(
@@ -71,7 +78,8 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                 IconButton(onClick = { navigator.popBackStack() }) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow_back),
-                        contentDescription = "Back", contentScale = ContentScale.FillWidth,
+                        contentDescription = "Back",
+                        contentScale = ContentScale.FillWidth,
                         modifier = Modifier.width(24.dp)
                     )
                 }
@@ -119,7 +127,8 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
             IconButton(onClick = { showOption = true }) {
                 Image(
                     painter = painterResource(id = R.drawable.options),
-                    contentDescription = "Back", contentScale = ContentScale.FillWidth,
+                    contentDescription = "Back",
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier.width(24.dp)
                 )
             }
@@ -139,21 +148,62 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                 fontSize = 18.sp
             )
         }
-        LazyColumn(Modifier.fillMaxSize(), reverseLayout = true) {
-            items(
-                items = chats,
-                key = { index -> index }
-            ) {
+        LazyColumn(Modifier.weight(1f), reverseLayout = true) {
+            items(items = chats, key = { index -> index }) {
                 ChatItem(it)
             }
         }
+        Card(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = CardDefaults.elevatedShape,
+            colors = CardDefaults.cardColors(
+                containerColor = CakkieBackground
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            )
+        ) {
+            Row(Modifier.fillMaxWidth()) {
+                TextField(
+                    value = message,
+                    onValueChange = { message = it },
+                    placeholder = {
+                        Text(
+                            text = "Type a message",
+                            color = TextColorInactive,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 14.sp
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    leadingIcon = {
+                        IconButton(onClick = { }) {
+                            Image(
+                                painter = painterResource(id = R.drawable.fluent_attach),
+                                contentDescription = "Back",
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier.width(24.dp)
+                            )
+                        }
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = CakkieBrown,
+                        textColor = TextColorDark
+                    )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 
     AnimatedVisibility(visible = showOption) {
-        Popup(
-            alignment = Alignment.TopEnd,
-            onDismissRequest = { showOption = false }
-        ) {
+        Popup(alignment = Alignment.TopEnd, onDismissRequest = { showOption = false }) {
             Card(
                 Modifier.padding(16.dp),
                 shape = CardDefaults.elevatedShape,
@@ -165,8 +215,7 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                 )
             ) {
                 Column(
-                    Modifier
-                        .padding(16.dp)
+                    Modifier.padding(16.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
