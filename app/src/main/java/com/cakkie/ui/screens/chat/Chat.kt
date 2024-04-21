@@ -2,7 +2,6 @@ package com.cakkie.ui.screens.chat
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,10 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -119,35 +119,47 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                 )
             }
 
-            AnimatedVisibility(visible = showOption) {
-                Popup(
-                    alignment = Alignment.TopEnd,
-                    onDismissRequest = { showOption = false }
+        }
+    }
+
+    AnimatedVisibility(visible = showOption) {
+        Popup(
+            alignment = Alignment.TopEnd,
+            onDismissRequest = { showOption = false }
+        ) {
+            Card(
+                Modifier.padding(16.dp),
+                shape = CardDefaults.elevatedShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBackground
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                )
+            ) {
+                Column(
+                    Modifier
+                        .padding(16.dp)
                 ) {
-                    Column(
-                        Modifier
-                            .background(CakkieBackground, RoundedCornerShape(8.dp))
-                            .clip(RoundedCornerShape(8.dp))
-                            .padding(16.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.report),
-                                contentDescription = stringResource(
-                                    id = R.string.report
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(id = R.string.report_user),
-                                color = TextColorDark,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.report),
+                            contentDescription = stringResource(
+                                id = R.string.report
+                            ),
+                            tint = CakkieBrown,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(id = R.string.report_user),
+                            color = TextColorDark,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
         }
     }
+
 }

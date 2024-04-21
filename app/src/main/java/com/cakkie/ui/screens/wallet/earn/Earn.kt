@@ -176,11 +176,11 @@ fun Earn(navigator: DestinationsNavigator) {
         override fun onRewardedVideoFinished(amount: Double, currency: String) {
             // Called when rewarded video is viewed until the end
             gettingAd = false
-//            viewModal.mine()
-//                .addOnSuccessListener {
-//                    viewModal.getProfile()
-//                    viewModal.getBalance()
-//                }
+            viewModal.mine()
+                .addOnSuccessListener {
+                    viewModal.getProfile()
+                    viewModal.getBalance()
+                }
         }
 
         override fun onRewardedVideoClosed(finished: Boolean) {
