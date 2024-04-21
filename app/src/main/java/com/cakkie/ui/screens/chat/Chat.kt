@@ -2,8 +2,10 @@ package com.cakkie.ui.screens.chat
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -41,6 +45,7 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
@@ -54,7 +59,7 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
     var showOption by remember {
         mutableStateOf(false)
     }
-
+    val chats = (0..15).toList()
     Column(Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Row(
@@ -118,7 +123,29 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                     modifier = Modifier.width(24.dp)
                 )
             }
-
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(CakkieOrange)
+                .height(40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Award Contract",
+                color = TextColorDark,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+        LazyColumn(Modifier.fillMaxSize(), reverseLayout = true) {
+            items(
+                items = chats,
+                key = { index -> index }
+            ) {
+                ChatItem(it)
+            }
         }
     }
 
