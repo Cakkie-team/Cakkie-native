@@ -60,6 +60,7 @@ import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -136,6 +137,12 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onRewardedVideoFailedToLoad() {
             // Called when rewarded video failed to load
+            gettingAd = false
+            Toaster(
+                context,
+                "Ad failed to load, try again",
+                R.drawable.logo
+            ).show()
         }
 
         override fun onRewardedVideoShown() {
@@ -144,6 +151,12 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onRewardedVideoShowFailed() {
             // Called when rewarded video show failed
+            gettingAd = false
+            Toaster(
+                context,
+                "Ad display failed, try again",
+                R.drawable.logo
+            ).show()
         }
 
         override fun onRewardedVideoClicked() {
@@ -166,6 +179,12 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onRewardedVideoExpired() {
             // Called when rewarded video is expired
+            gettingAd = false
+            Toaster(
+                context,
+                "Ad expired, try again",
+                R.drawable.logo
+            ).show()
         }
     })
 
