@@ -92,7 +92,25 @@ fun Earn(navigator: DestinationsNavigator) {
 
     var remainingTime by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    var gettingAd by remember {
+        mutableStateOf(false)
+    }
 
+    var retryCount by remember {
+        mutableIntStateOf(0)
+    }
+    var countDownTimer by remember { mutableIntStateOf(0) }
+
+    // Count down timer
+    LaunchedEffect(key1 = gettingAd) {
+        if (gettingAd) {
+            countDownTimer = 15
+            while (countDownTimer > 0) {
+                delay(1000)
+                countDownTimer -= 1
+            }
+        }
+    }
     LaunchedEffect(key1 = user) {
         couldMine = false
 
@@ -127,13 +145,6 @@ fun Earn(navigator: DestinationsNavigator) {
 //    var rewardedAd by remember {
 //        mutableStateOf<RewardedAd?>(null)
 //    }
-    var gettingAd by remember {
-        mutableStateOf(false)
-    }
-
-    var retryCount by remember {
-        mutableIntStateOf(0)
-    }
 
     Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
         override fun onRewardedVideoLoaded(isPrecache: Boolean) {
@@ -687,6 +698,12 @@ fun Earn(navigator: DestinationsNavigator) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "We are getting your ad ready",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBackground,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "$countDownTimer seconds remaining",
                         style = MaterialTheme.typography.bodyLarge,
                         color = CakkieBackground,
                     )
