@@ -328,15 +328,17 @@ fun ExploreItem(
                         .size(24.dp)
                 )
             }
-            HorizontalPagerIndicator(
-                pagerState = pageState,
-                activeColor = CakkieBrown,
-                spacing = 8.dp,
-                indicatorWidth = 5.dp,
-                indicatorHeight = 5.dp,
-                pageCount = pageState.pageCount,
-                modifier = Modifier.offset(x = (-24).dp)
-            )
+            if (pageState.pageCount > 1) {
+                HorizontalPagerIndicator(
+                    pagerState = pageState,
+                    activeColor = CakkieBrown,
+                    spacing = 8.dp,
+                    indicatorWidth = 5.dp,
+                    indicatorHeight = 5.dp,
+                    pageCount = pageState.pageCount,
+                    modifier = Modifier.offset(x = (-24).dp)
+                )
+            }
             Card(
                 onClick = {
                     when (item.type) {
