@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
@@ -78,7 +77,7 @@ class VideoPreLoadingService :
                     val downloadPercentage: Double = (bytesCached * 100.0
                             / requestLength)
 
-                    Log.d(TAG, "downloadPercentage $downloadPercentage videoUri: $videoUri")
+//                    Log.d(TAG, "downloadPercentage $downloadPercentage videoUri: $videoUri")
                 }
 
             cachingJob = GlobalScope.launch(Dispatchers.IO) {

@@ -61,6 +61,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.appodeal.ads.Appodeal
+import com.appodeal.ads.MrecCallbacks
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.databinding.AdviewBinding
@@ -82,6 +83,7 @@ import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(
@@ -408,6 +410,37 @@ fun ExploreItem(
         var show by remember {
             mutableStateOf(false)
         }
+        Appodeal.setMrecCallbacks(object : MrecCallbacks {
+            override fun onMrecLoaded(isPrecache: Boolean) {
+                // Called when MREC is loaded
+                Appodeal.show(context as Activity, Appodeal.MREC, "explore")
+                show = true
+            }
+
+            override fun onMrecFailedToLoad() {
+                // Called when MREC failed to load
+                Timber.d("MREC failed to load")
+                Appodeal.cache(context as Activity, Appodeal.MREC)
+            }
+
+            override fun onMrecShown() {
+                // Called when MREC is shown
+            }
+
+            override fun onMrecShowFailed() {
+                // Called when MREC show failed
+            }
+
+            override fun onMrecClicked() {
+                // Called when MREC is clicked
+            }
+
+            override fun onMrecExpired() {
+                // Called when MREC is expired
+                show = false
+                Timber.d("MREC expired")
+            }
+        })
         if (Appodeal.canShow(Appodeal.MREC, "explore")) {
             Appodeal.show(context as Activity, Appodeal.MREC, "explore")
             show = true

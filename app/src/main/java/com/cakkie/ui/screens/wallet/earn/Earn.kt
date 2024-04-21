@@ -65,6 +65,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -133,6 +134,10 @@ fun Earn(navigator: DestinationsNavigator) {
     Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
         override fun onRewardedVideoLoaded(isPrecache: Boolean) {
             // Called when rewarded video is loaded
+            Timber.d("Ad was loaded.")
+            if (gettingAd) {
+                Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
+            }
         }
 
         override fun onRewardedVideoFailedToLoad() {
@@ -536,6 +541,8 @@ fun Earn(navigator: DestinationsNavigator) {
                 if (!gettingAd) {
                     if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
                         Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
+                    } else {
+                        Appodeal.cache(context, Appodeal.REWARDED_VIDEO)
                     }
 //                    retryCount = 0
 //                    rewardedAd?.let { ad ->

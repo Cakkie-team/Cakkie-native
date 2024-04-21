@@ -75,7 +75,6 @@ import com.ramcosta.composedestinations.navigation.popUpTo
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Destination
@@ -125,9 +124,9 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    LaunchedEffect(listings) {
-        Timber.d("Listings: ${listings?.data}")
-    }
+//    LaunchedEffect(listings) {
+//        Timber.d("Listings: ${listings?.data}")
+//    }
 
     //check if user is has a shop
     LaunchedEffect(key1 = user) {
@@ -381,7 +380,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     key = { it.id }
                 ) { listing ->
                     val index = listings.data.indexOf(listing)
-                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
+//                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
                     ExploreItem(
 //                       user = user,
                         navigator = navigator,

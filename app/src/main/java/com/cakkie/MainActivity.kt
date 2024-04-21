@@ -92,9 +92,12 @@ class MainActivity : ComponentActivity() {
         Appodeal.setMrecViewId(R.id.appodealMrecView)
         Appodeal.initialize(
             this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
-            Appodeal.MREC or Appodeal.REWARDED_VIDEO
+            Appodeal.REWARDED_VIDEO or Appodeal.MREC
         ) {
             // Appodeal initialization finished
+            it?.forEach { adType ->
+                Timber.d("AdType: $adType")
+            }
         }
 
         //handle notification from firebase

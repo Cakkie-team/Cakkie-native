@@ -171,7 +171,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
                 if (it.isNotEmpty()) {
                     _pagination.observeForever { pagination ->
                         if (pagination != null) {
-                            Timber.d("Pagination: $pagination and data: ${it}")
+//                            Timber.d("Pagination: $pagination and data: ${it}")
                             _listings.value = ListingResponse(data = it, meta = pagination)
                             if (_cakespiration.value == null) {
                                 _cakespiration.value = ListingResponse(
