@@ -141,7 +141,8 @@ fun CakespirationItem(
                 .fillMaxSize()
                 .clickable {
                     onMute.invoke(!isMuted)
-                }
+                },
+            isCakespiration = true
         )
 
 //        DisposableEffect(Unit) {

@@ -51,7 +51,8 @@ fun VideoPlayer(
     showControls: Boolean = false,
     mute: Boolean = true,
     vResizeMode: Int = AspectRatioFrameLayout.RESIZE_MODE_FIT,
-    onMute: (Boolean) -> Unit = {}
+    onMute: (Boolean) -> Unit = {},
+    isCakespiration: Boolean = false
 ) {
     val context = LocalContext.current
     var _isPlaying by remember {
@@ -73,8 +74,9 @@ fun VideoPlayer(
     exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
     exoPlayer.volume = if (mute) 0f else 1f
     exoPlayer.prepare()
-    LaunchedEffect(_isPlaying) {
-        if (!_isPlaying) {
+    LaunchedEffect(isPlaying) {
+        _isPlaying = isPlaying
+        if (isPlaying) {
             exoPlayer.pause()
         } else {
             exoPlayer.play()
@@ -131,7 +133,7 @@ fun VideoPlayer(
         }
 
         //play and pause
-        if (_isPlaying.not()) {
+        if (_isPlaying.not() && isCakespiration.not()) {
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = CakkieBrown
