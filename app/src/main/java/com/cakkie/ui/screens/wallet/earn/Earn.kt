@@ -36,6 +36,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appodeal.ads.Appodeal
+import com.appodeal.ads.InterstitialCallbacks
 import com.appodeal.ads.RewardedVideoCallbacks
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
@@ -64,6 +66,7 @@ import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.text.DecimalFormat
@@ -88,6 +91,7 @@ fun Earn(navigator: DestinationsNavigator) {
     var couldMine by remember { mutableStateOf(false) }
 
     var remainingTime by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = user) {
         couldMine = false
@@ -136,6 +140,7 @@ fun Earn(navigator: DestinationsNavigator) {
             // Called when rewarded video is loaded
             Timber.d("Ad was loaded.")
             if (gettingAd) {
+                gettingAd = false
                 Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
             }
         }
@@ -171,11 +176,11 @@ fun Earn(navigator: DestinationsNavigator) {
         override fun onRewardedVideoFinished(amount: Double, currency: String) {
             // Called when rewarded video is viewed until the end
             gettingAd = false
-            viewModal.mine()
-                .addOnSuccessListener {
-                    viewModal.getProfile()
-                    viewModal.getBalance()
-                }
+//            viewModal.mine()
+//                .addOnSuccessListener {
+//                    viewModal.getProfile()
+//                    viewModal.getBalance()
+//                }
         }
 
         override fun onRewardedVideoClosed(finished: Boolean) {
@@ -192,6 +197,49 @@ fun Earn(navigator: DestinationsNavigator) {
             ).show()
         }
     })
+
+    Appodeal.setInterstitialCallbacks(object : InterstitialCallbacks {
+        override fun onInterstitialLoaded(isPrecache: Boolean) {
+            // Called when interstitial is loaded
+            if (gettingAd) {
+                gettingAd = false
+                Appodeal.show(context, Appodeal.INTERSTITIAL)
+            }
+        }
+
+        override fun onInterstitialFailedToLoad() {
+            // Called when interstitial failed to load
+            Timber.d("Ad failed to load.")
+        }
+
+        override fun onInterstitialShown() {
+            // Called when interstitial is shown
+            Timber.d("interstitial was shown.")
+        }
+
+        override fun onInterstitialShowFailed() {
+            // Called when interstitial show failed
+        }
+
+        override fun onInterstitialClicked() {
+            // Called when interstitial is clicked
+            Timber.d("Ad was clicked.")
+        }
+
+        override fun onInterstitialClosed() {
+            // Called when interstitial is closed
+            viewModal.mine()
+                .addOnSuccessListener {
+                    viewModal.getProfile()
+                    viewModal.getBalance()
+                }
+        }
+
+        override fun onInterstitialExpired() {
+            // Called when interstitial is expired
+        }
+    })
+
 
 //    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
 //        override fun onAdClicked() {
@@ -542,7 +590,13 @@ fun Earn(navigator: DestinationsNavigator) {
                     if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
                         Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
                     } else {
-                        Appodeal.cache(context, Appodeal.REWARDED_VIDEO)
+                        scope.launch {
+                            delay(5000)
+                            if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
+                                gettingAd = false
+                                Appodeal.show(context, Appodeal.INTERSTITIAL)
+                            }
+                        }
                     }
 //                    retryCount = 0
 //                    rewardedAd?.let { ad ->
