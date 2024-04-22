@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appodeal.ads.Appodeal
 import com.appodeal.ads.InterstitialCallbacks
-import com.appodeal.ads.RewardedVideoCallbacks
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.ReferralDestination
@@ -66,7 +65,6 @@ import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.text.DecimalFormat
@@ -146,68 +144,68 @@ fun Earn(navigator: DestinationsNavigator) {
 //        mutableStateOf<RewardedAd?>(null)
 //    }
 
-    Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
-        override fun onRewardedVideoLoaded(isPrecache: Boolean) {
-            // Called when rewarded video is loaded
-            Timber.d("Ad was loaded.")
-            if (gettingAd) {
-                gettingAd = false
-                Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
-            }
-        }
-
-        override fun onRewardedVideoFailedToLoad() {
-            // Called when rewarded video failed to load
-            gettingAd = false
-            Toaster(
-                context,
-                "Ad failed to load, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onRewardedVideoShown() {
-            // Called when rewarded video is shown
-        }
-
-        override fun onRewardedVideoShowFailed() {
-            // Called when rewarded video show failed
-            gettingAd = false
-            Toaster(
-                context,
-                "Ad display failed, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onRewardedVideoClicked() {
-            // Called when rewarded video is clicked
-        }
-
-        override fun onRewardedVideoFinished(amount: Double, currency: String) {
-            // Called when rewarded video is viewed until the end
-            gettingAd = false
-            viewModal.mine()
-                .addOnSuccessListener {
-                    viewModal.getProfile()
-                    viewModal.getBalance()
-                }
-        }
-
-        override fun onRewardedVideoClosed(finished: Boolean) {
-            // Called when rewarded video is closed
-        }
-
-        override fun onRewardedVideoExpired() {
-            // Called when rewarded video is expired
-            gettingAd = false
-            Toaster(
-                context,
-                "Ad expired, try again",
-                R.drawable.logo
-            ).show()
-        }
-    })
+//    Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
+//        override fun onRewardedVideoLoaded(isPrecache: Boolean) {
+//            // Called when rewarded video is loaded
+//            Timber.d("Ad was loaded.")
+//            if (gettingAd) {
+//                gettingAd = false
+//                Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
+//            }
+//        }
+//
+//        override fun onRewardedVideoFailedToLoad() {
+//            // Called when rewarded video failed to load
+//            gettingAd = false
+//            Toaster(
+//                context,
+//                "Ad failed to load, try again",
+//                R.drawable.logo
+//            ).show()
+//        }
+//
+//        override fun onRewardedVideoShown() {
+//            // Called when rewarded video is shown
+//        }
+//
+//        override fun onRewardedVideoShowFailed() {
+//            // Called when rewarded video show failed
+//            gettingAd = false
+//            Toaster(
+//                context,
+//                "Ad display failed, try again",
+//                R.drawable.logo
+//            ).show()
+//        }
+//
+//        override fun onRewardedVideoClicked() {
+//            // Called when rewarded video is clicked
+//        }
+//
+//        override fun onRewardedVideoFinished(amount: Double, currency: String) {
+//            // Called when rewarded video is viewed until the end
+//            gettingAd = false
+//            viewModal.mine()
+//                .addOnSuccessListener {
+//                    viewModal.getProfile()
+//                    viewModal.getBalance()
+//                }
+//        }
+//
+//        override fun onRewardedVideoClosed(finished: Boolean) {
+//            // Called when rewarded video is closed
+//        }
+//
+//        override fun onRewardedVideoExpired() {
+//            // Called when rewarded video is expired
+//            gettingAd = false
+//            Toaster(
+//                context,
+//                "Ad expired, try again",
+//                R.drawable.logo
+//            ).show()
+//        }
+//    })
 
     Appodeal.setInterstitialCallbacks(object : InterstitialCallbacks {
         override fun onInterstitialLoaded(isPrecache: Boolean) {
@@ -221,6 +219,12 @@ fun Earn(navigator: DestinationsNavigator) {
         override fun onInterstitialFailedToLoad() {
             // Called when interstitial failed to load
             Timber.d("Ad failed to load.")
+            gettingAd = false
+            Toaster(
+                context,
+                "Ad failed to load, try again",
+                R.drawable.logo
+            ).show()
         }
 
         override fun onInterstitialShown() {
@@ -230,6 +234,12 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onInterstitialShowFailed() {
             // Called when interstitial show failed
+            gettingAd = false
+            Toaster(
+                context,
+                "Ad display failed, try again",
+                R.drawable.logo
+            ).show()
         }
 
         override fun onInterstitialClicked() {
@@ -598,16 +608,8 @@ fun Earn(navigator: DestinationsNavigator) {
         Card(
             onClick = {
                 if (!gettingAd) {
-                    if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
-                        Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
-                    } else {
-                        scope.launch {
-                            delay(5000)
-                            if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
-                                gettingAd = false
-                                Appodeal.show(context, Appodeal.INTERSTITIAL)
-                            }
-                        }
+                    if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
+                        Appodeal.show(context, Appodeal.INTERSTITIAL)
                     }
 //                    retryCount = 0
 //                    rewardedAd?.let { ad ->
