@@ -46,22 +46,41 @@ import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.toObjectList
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 
 @Destination
 @Composable
-fun Chat(id: String, navigator: DestinationsNavigator) {
-
+fun Chat(
+    id: String,
+    fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
+    navigator: DestinationsNavigator
+) {
+    var files by remember {
+        mutableStateOf(emptyList<MediaModel>())
+    }
+    fileRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                files = result.value.toObjectList(MediaModel::class.java)
+            }
+        }
+    }
 
     var showOption by remember {
         mutableStateOf(false)
@@ -182,7 +201,9 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = MaterialTheme.typography.bodyLarge,
                     leadingIcon = {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = {
+                            navigator.navigate(ChooseMediaDestination(from = "chat"))
+                        }) {
                             Image(
                                 painter = painterResource(id = R.drawable.fluent_attach),
                                 contentDescription = "Back",

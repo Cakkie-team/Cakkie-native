@@ -68,7 +68,7 @@ import org.koin.androidx.compose.koinViewModel
 fun ChooseMedia(
     default: Int = R.string.all,
     from: String = "",
-    onComplete: ResultBackNavigator<List<MediaModel>>,
+    onComplete: ResultBackNavigator<String>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: ShopViewModel = koinViewModel()
@@ -298,7 +298,7 @@ fun ChooseMedia(
                     .align(Alignment.BottomCenter)
             ) {
                 if (from == "chat") {
-                    onComplete.navigateBack(files.toList())
+                    onComplete.navigateBack(files.toList().toJson())
                 } else {
                     //check if files has video and decide to navigate to create listing
                     if (files.toList().all { !it.isVideo }) {
