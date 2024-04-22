@@ -249,6 +249,7 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onInterstitialClosed() {
             // Called when interstitial is closed
+            gettingAd = false
             viewModal.mine()
                 .addOnSuccessListener {
                     viewModal.getProfile()
@@ -609,6 +610,7 @@ fun Earn(navigator: DestinationsNavigator) {
             onClick = {
                 if (!gettingAd) {
                     if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
+                        gettingAd = false
                         Appodeal.show(context, Appodeal.INTERSTITIAL)
                     }
 //                    retryCount = 0
