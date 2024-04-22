@@ -61,6 +61,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun Chat(id: String, navigator: DestinationsNavigator) {
+
+
     var showOption by remember {
         mutableStateOf(false)
     }
@@ -187,6 +189,18 @@ fun Chat(id: String, navigator: DestinationsNavigator) {
                                 contentScale = ContentScale.FillWidth,
                                 modifier = Modifier.width(24.dp)
                             )
+                        }
+                    },
+                    trailingIcon = {
+                        AnimatedVisibility(visible = message.text.isNotEmpty()) {
+                            IconButton(onClick = { }) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.send_fill),
+                                    contentDescription = "Back",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.width(24.dp)
+                                )
+                            }
                         }
                     },
                     colors = TextFieldDefaults.textFieldColors(
