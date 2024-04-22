@@ -59,13 +59,18 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalPermissionsApi::class)
 @Destination
 @Composable
-fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
+fun ChooseMedia(
+    default: Int = R.string.all,
+    from: String = "",
+    onComplete: ResultBackNavigator<List<MediaModel>>,
+    navigator: DestinationsNavigator
+) {
     val viewModel: ShopViewModel = koinViewModel()
     val context = LocalContext.current
     val medias = remember {
@@ -179,28 +184,32 @@ fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
                                 contentDescription = "cake",
                                 modifier = Modifier
                                     .clickable {
-                                        if (!files.contains(item) && files.size < 5) {
-                                            if (item.isVideo) {
-                                                files.clear()
-                                            } else {
+                                        if (from == "chat") {
+                                            if (!files.contains(item) && files.size < 5) {
                                                 //check if content of files has video
-                                                files
-                                                    .toList()
-                                                    .forEach {
-                                                        if (it.isVideo) {
-                                                            files.remove(it)
-                                                        }
-                                                    }
+                                                files.add(item)
+                                            } else {
+                                                files.remove(item)
                                             }
-                                            files.add(item)
                                         } else {
-                                            files.remove(item)
+                                            if (!files.contains(item) && files.size < 5) {
+                                                if (item.isVideo) {
+                                                    files.clear()
+                                                } else {
+                                                    //check if content of files has video
+                                                    files
+                                                        .toList()
+                                                        .forEach {
+                                                            if (it.isVideo) {
+                                                                files.remove(it)
+                                                            }
+                                                        }
+                                                }
+                                                files.add(item)
+                                            } else {
+                                                files.remove(item)
+                                            }
                                         }
-                                        Timber.d(
-                                            files
-                                                .contains(item)
-                                                .toString()
-                                        )
                                     }
                                     .fillMaxWidth()
                                     .height(screenWidth / 3),
@@ -221,10 +230,31 @@ fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
                             }
                             Checkbox(
                                 checked = files.contains(item), onCheckedChange = {
-                                    if (!files.contains(item) && files.size < 5) {
-                                        files.add(item)
+                                    if (from == "chat") {
+                                        if (!files.contains(item) && files.size < 5) {
+                                            //check if content of files has video
+                                            files.add(item)
+                                        } else {
+                                            files.remove(item)
+                                        }
                                     } else {
-                                        files.remove(item)
+                                        if (!files.contains(item) && files.size < 5) {
+                                            if (item.isVideo) {
+                                                files.clear()
+                                            } else {
+                                                //check if content of files has video
+                                                files
+                                                    .toList()
+                                                    .forEach {
+                                                        if (it.isVideo) {
+                                                            files.remove(it)
+                                                        }
+                                                    }
+                                            }
+                                            files.add(item)
+                                        } else {
+                                            files.remove(item)
+                                        }
                                     }
                                 }, modifier = Modifier
                                     .size(20.dp)
@@ -267,19 +297,23 @@ fun ChooseMedia(default: Int = R.string.all, navigator: DestinationsNavigator) {
                     .fillMaxWidth(0.8f)
                     .align(Alignment.BottomCenter)
             ) {
-                //check if files has video and decide to navigate to create listing
-                if (files.toList().all { !it.isVideo }) {
-                    //convert to json and send to next screen
-                    navigator.navigate(
-                        CreateListingDestination(files = files.toList().toJson())
-                    ) {
-                        launchSingleTop = true
-                    }
+                if (from == "chat") {
+                    onComplete.navigateBack(files.toList())
                 } else {
-                    navigator.navigate(
-                        EditVideoDestination(file = files.toList().first().toJson())
-                    ) {
-                        launchSingleTop = true
+                    //check if files has video and decide to navigate to create listing
+                    if (files.toList().all { !it.isVideo }) {
+                        //convert to json and send to next screen
+                        navigator.navigate(
+                            CreateListingDestination(files = files.toList().toJson())
+                        ) {
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navigator.navigate(
+                            EditVideoDestination(file = files.toList().first().toJson())
+                        ) {
+                            launchSingleTop = true
+                        }
                     }
                 }
 
