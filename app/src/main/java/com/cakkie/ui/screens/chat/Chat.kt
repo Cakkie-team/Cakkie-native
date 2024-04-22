@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
@@ -63,6 +68,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun Chat(
@@ -70,6 +76,8 @@ fun Chat(
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     navigator: DestinationsNavigator
 ) {
+    val config = LocalConfiguration.current
+    val width = config.screenWidthDp.dp
     var files by remember {
         mutableStateOf(emptyList<MediaModel>())
     }
@@ -173,6 +181,68 @@ fun Chat(
             items(items = chats, key = { index -> index }) {
                 ChatItem(it)
             }
+        }
+        AnimatedVisibility(files.isNotEmpty()) {
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                shape = CardDefaults.elevatedShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBackground,
+                ),
+            ) {
+                Row(
+                    Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                ) {
+                    files.forEach {
+                        Card(
+                            Modifier
+                                .padding(vertical = 5.dp, horizontal = 3.dp)
+                                .size(80.dp, 60.dp),
+                            shape = CardDefaults.elevatedShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = CakkieBackground,
+                            ),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 4.dp
+                            )
+                        ) {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                GlideImage(
+                                    model = it.uri,
+                                    contentDescription = it.name,
+                                    modifier = Modifier
+                                        .size(80.dp, 60.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                                IconButton(
+                                    onClick = {
+                                        files = files.filter { file -> file.uri != it.uri }
+                                    }, modifier = Modifier
+                                        .align(Alignment.Center)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.cancel),
+                                        contentDescription = "cancel",
+                                        tint = CakkieBackground,
+                                        modifier = Modifier
+                                            .background(
+                                                CakkieBrown.copy(0.5f),
+                                                shape = CircleShape
+                                            )
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
         }
         Card(
             Modifier
