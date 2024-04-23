@@ -43,9 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,8 +66,10 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
+import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.toObjectList
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
@@ -83,7 +87,8 @@ fun Chat(
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     navigator: DestinationsNavigator
 ) {
-    val config = LocalConfiguration.current
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
     var files by remember {
         mutableStateOf(emptyList<MediaModel>())
     }
@@ -106,6 +111,9 @@ fun Chat(
 
     val selectedChats = remember {
         mutableStateListOf<Int>()
+    }
+    var deleteCon by remember {
+        mutableStateOf(false)
     }
 
     Column(Modifier.fillMaxSize()) {
@@ -470,8 +478,47 @@ fun Chat(
                         Pair(R.drawable.copy, R.string.copy),
                         Pair(R.drawable.share, R.string.reply),
                         Pair(R.drawable.delete, R.string.delete)
-                    ).forEach {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    ).filter {
+                        if (selectedChats.size > 1) {
+                            it.second != R.string.reply
+                        } else {
+                            true
+                        }
+                    }.forEach {
+                        Column(
+                            Modifier.clickable {
+                                when (it.second) {
+                                    R.string.copy -> {
+                                        // copy
+                                        clipboardManager.setText(
+                                            AnnotatedString(
+                                                selectedChats.joinToString(
+                                                    "\n"
+                                                )
+                                            )
+                                        )
+                                        selectedChats.clear()
+                                        Toaster(
+                                            context,
+                                            "Copied to clipboard",
+                                            R.drawable.logo
+                                        ).show()
+                                    }
+
+                                    R.string.reply -> {
+                                        // reply
+                                        replyTo = "Chat item ${selectedChats.first()}"
+                                        selectedChats.clear()
+                                    }
+
+                                    R.string.delete -> {
+                                        // delete
+                                        deleteCon = true
+                                    }
+                                }
+                            },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Icon(
                                 painter = painterResource(id = it.first),
                                 contentDescription = stringResource(
@@ -483,6 +530,74 @@ fun Chat(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(id = it.second),
+                                color = TextColorDark,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    AnimatedVisibility(visible = deleteCon) {
+        Popup(alignment = Alignment.BottomCenter, onDismissRequest = { }) {
+            Card(
+                Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBackground
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                )
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.delete),
+                            contentDescription = "cancel",
+                            tint = CakkieBrown,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Delete Message${if (selectedChats.size > 1) "s" else ""}?",
+                            color = TextColorDark,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = {
+                                deleteCon = false
+                                selectedChats.clear()
+                            }
+                        ) {
+                            Text(
+                                text = "Yes",
+                                color = Error,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        IconButton(
+                            onClick = {
+                                deleteCon = false
+                            }
+                        ) {
+                            Text(
+                                text = "No",
                                 color = TextColorDark,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold
