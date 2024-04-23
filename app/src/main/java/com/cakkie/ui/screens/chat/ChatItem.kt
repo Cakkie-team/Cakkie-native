@@ -3,6 +3,7 @@ package com.cakkie.ui.screens.chat
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -53,7 +54,13 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun ChatItem(item: Int, onReply: () -> Unit) {
+fun ChatItem(
+    item: Int,
+    canSelect: Boolean,
+    selected: Boolean,
+    onSelect: (Int) -> Unit,
+    onReply: () -> Unit
+) {
     val config = LocalConfiguration.current
     val width = config.screenWidthDp.dp
     val density = LocalDensity.current
@@ -100,6 +107,12 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
 
     Row(
         Modifier
+            .combinedClickable(
+                onLongClick = { onSelect.invoke(item) },
+                onClick = { if (canSelect) onSelect.invoke(item) }
+            )
+            .padding(vertical = 4.dp)
+            .background(if (selected) CakkieOrange.copy(alpha = 0.3f) else Color.Transparent)
             .fillMaxWidth(),
         horizontalArrangement = if (item % 2 == 0) Arrangement.Start else Arrangement.End
     ) {
@@ -110,6 +123,7 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                     orientation = Orientation.Horizontal,
                     interactionSource = interactionSource,
                 )
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .offset {
                     IntOffset(
                         // 2
@@ -118,8 +132,7 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                             .roundToInt(),
                         y = 0,
                     )
-                }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                },
             shape = CardDefaults.elevatedShape,
             colors = CardDefaults.cardColors(
                 containerColor = if (item % 2 != 0) CakkieBrown else CakkieBrown002,
@@ -128,7 +141,7 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                 defaultElevation = 8.dp
             )
         ) {
-            Column(Modifier.widthIn(min = 150.dp, max = width * 0.8f)) {
+            Column(Modifier.widthIn(min = 150.dp, max = width * 0.7f)) {
                 if (item % 3 == 0) {
                     Card(
                         Modifier
@@ -139,7 +152,7 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                         ),
                     ) {
                         Row(
-                            Modifier.widthIn(min = 150.dp, max = width * 0.8f),
+                            Modifier.widthIn(min = 150.dp, max = width * 0.7f),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(Modifier.weight(1f)) {

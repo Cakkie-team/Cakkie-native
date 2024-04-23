@@ -318,6 +318,9 @@
     <string name="no_chats">No Chats</string>
     <string name="support">Support</string>
     <string name="report_user">Report User</string>
+    <string name="copy">Copy</string>
+    <string name="reply">Reply</string>
+    <string name="delete">Delete</string>
 
 
 </resources>

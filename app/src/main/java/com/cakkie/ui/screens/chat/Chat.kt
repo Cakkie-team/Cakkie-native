@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -33,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,6 +61,7 @@ import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
@@ -81,7 +84,6 @@ fun Chat(
     navigator: DestinationsNavigator
 ) {
     val config = LocalConfiguration.current
-    val width = config.screenWidthDp.dp
     var files by remember {
         mutableStateOf(emptyList<MediaModel>())
     }
@@ -101,6 +103,10 @@ fun Chat(
     }
     val chats = (0..15).toList()
     var message by remember { mutableStateOf(TextFieldValue("")) }
+
+    val selectedChats = remember {
+        mutableStateListOf<Int>()
+    }
 
     Column(Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -171,13 +177,13 @@ fun Chat(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CakkieOrange)
+                .background(CakkieBrown002)
                 .height(40.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Award Contract",
-                color = TextColorDark,
+                color = CakkieBackground,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
@@ -185,7 +191,18 @@ fun Chat(
         }
         LazyColumn(Modifier.weight(1f), reverseLayout = true) {
             items(items = chats, key = { index -> index }) {
-                ChatItem(it) {
+                ChatItem(
+                    it,
+                    canSelect = selectedChats.isNotEmpty(),
+                    selected = selectedChats.contains(it),
+                    onSelect = {
+                        if (selectedChats.contains(it)) {
+                            selectedChats.remove(it)
+                        } else {
+                            selectedChats.add(it)
+                        }
+                    },
+                ) {
                     replyTo = "Chat item $it"
                 }
             }
@@ -430,4 +447,50 @@ fun Chat(
         }
     }
 
+    AnimatedVisibility(visible = selectedChats.isNotEmpty()) {
+        Popup(alignment = Alignment.BottomCenter, onDismissRequest = { }) {
+            Card(
+                Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBackground
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                )
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    listOf(
+                        Pair(R.drawable.copy, R.string.copy),
+                        Pair(R.drawable.share, R.string.reply),
+                        Pair(R.drawable.delete, R.string.delete)
+                    ).forEach {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = painterResource(id = it.first),
+                                contentDescription = stringResource(
+                                    id = it.second
+                                ),
+                                tint = CakkieBrown,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(id = it.second),
+                                color = TextColorDark,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
