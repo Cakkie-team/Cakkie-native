@@ -11,10 +11,12 @@ import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -36,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,32 +132,54 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                 if (item % 3 == 0) {
                     Card(
                         Modifier
-                            .width(IntrinsicSize.Max)
-                            .heightIn(min = 43.dp),
+                            .heightIn(min = 43.dp, max = 80.dp),
                         shape = RoundedCornerShape(0.dp, 16.dp, 16.dp, 0.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.Black.copy(alpha = 0.5f),
                         ),
                     ) {
-                        Column(Modifier.fillMaxWidth()) {
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = "james bond",
-                                color = CakkieOrange,
-                                style = MaterialTheme.typography.bodyLarge,
+                        Row(
+                            Modifier.widthIn(min = 150.dp, max = width * 0.8f),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = "james bond",
+                                    color = CakkieOrange,
+                                    style = MaterialTheme.typography.bodyLarge,
 //                                fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp),
+                                    fontSize = 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Chat item $item ytde6tufy76tgyifg6y8rtguoyhy89y88 hgf78ty8ut78tgiy",
+                                    maxLines = 2,
+                                    color = CakkieBackground,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Spacer(modifier = Modifier.height(15.dp))
+                            }
+
+                            Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 10.dp),
-                                fontSize = 14.sp
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "Chat item $item",
-                                color = CakkieBackground,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(horizontal = 10.dp),
-                            )
-                            Spacer(modifier = Modifier.height(15.dp))
+                                    .width(60.dp)
+                                    .fillMaxHeight()
+                            ) {
+                                GlideImage(
+                                    model = "https://picsum.photos/200/300",
+                                    contentDescription = "chat image",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(CakkieBrown.copy(alpha = 0.5f)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
                         }
                     }
                 }
