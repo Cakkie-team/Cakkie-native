@@ -95,6 +95,7 @@ fun Report(name: String, navigator: DestinationsNavigator) {
             processing = processing,
             text = stringResource(id = R.string.done)
         ) {
+            navigator.popBackStack()
         }
         Spacer(modifier = Modifier.height(20.dp))
 
