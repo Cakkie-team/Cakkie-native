@@ -89,7 +89,9 @@ fun Chat(
             }
         }
     }
-
+    var replyTo by remember {
+        mutableStateOf("")
+    }
     var showOption by remember {
         mutableStateOf(false)
     }
@@ -179,7 +181,9 @@ fun Chat(
         }
         LazyColumn(Modifier.weight(1f), reverseLayout = true) {
             items(items = chats, key = { index -> index }) {
-                ChatItem(it)
+                ChatItem(it) {
+                    replyTo = "Chat item $it"
+                }
             }
         }
         AnimatedVisibility(files.isNotEmpty()) {
@@ -233,6 +237,7 @@ fun Chat(
                                                 CakkieBrown.copy(0.5f),
                                                 shape = CircleShape
                                             )
+                                            .size(24.dp)
                                             .align(Alignment.Center)
                                     )
                                 }
@@ -243,6 +248,45 @@ fun Chat(
                 }
             }
             Spacer(modifier = Modifier.padding(8.dp))
+        }
+        AnimatedVisibility(replyTo.isNotEmpty()) {
+//            Spacer(modifier = Modifier.padding(8.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                Card(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    shape = CardDefaults.elevatedShape,
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White.copy(0.5f),
+                    ),
+                ) {
+                    Text(
+                        text = replyTo,
+                        color = TextColorDark,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(10.dp),
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        replyTo = ""
+                    }, modifier = Modifier
+                        .align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.cancel),
+                        contentDescription = "cancel",
+                        tint = CakkieBrown,
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+            }
+//            Spacer(modifier = Modifier.padding(8.dp))
         }
         Card(
             Modifier
@@ -329,6 +373,7 @@ fun Chat(
                                 id = R.string.report
                             ),
                             tint = CakkieBrown,
+                            modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
