@@ -66,7 +66,7 @@ fun SetAvailability(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .width(80.dp)
-                .height(5.dp)
+                .height(8.dp)
                 .clip(CircleShape)
                 .background(CakkieBrown)
         )

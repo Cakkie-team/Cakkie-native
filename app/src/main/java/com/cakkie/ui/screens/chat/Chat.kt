@@ -62,6 +62,7 @@ import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
+import com.cakkie.ui.screens.destinations.ReportDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -208,7 +209,7 @@ fun Chat(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    navigator.navigate(AwardContractDestination(name = "chat"))
+                    navigator.navigate(AwardContractDestination(name = "Sweet bites"))
                 }
                 .background(CakkieBrown002)
                 .height(40.dp),
@@ -458,7 +459,10 @@ fun Chat(
                 Column(
                     Modifier.padding(16.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.clickable {
+                        showOption = false
+                        navigator.navigate(ReportDestination(name = "Sweet bites"))
+                    }, verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             painter = painterResource(id = R.drawable.report),
                             contentDescription = stringResource(
