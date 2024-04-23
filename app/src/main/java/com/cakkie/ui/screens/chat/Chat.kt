@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -312,17 +313,18 @@ fun Chat(
                     onClick = {
                         replyTo = ""
                     }, modifier = Modifier
+                        .offset(x = (-6).dp)
                         .align(Alignment.TopEnd)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.cancel),
                         contentDescription = "cancel",
-                        tint = CakkieBrown,
+                        tint = CakkieBackground,
                         modifier = Modifier
                             .background(
                                 CakkieBrown.copy(0.5f), shape = CircleShape
                             )
-                            .size(30.dp)
+                            .size(24.dp)
                     )
                 }
             }
