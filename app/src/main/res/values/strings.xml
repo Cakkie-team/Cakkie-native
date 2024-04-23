@@ -322,6 +322,8 @@
     <string name="reply">Reply</string>
     <string name="delete">Delete</string>
     <string name="contract_confirmation">Are you sure you want %1$s to have the contract?</string>
+    <string name="congratulations_contract">Congratulations, You have the contract</string>
+    <string name="send_a_thank_note">Send a Thanks Note</string>
 
 
 </resources>

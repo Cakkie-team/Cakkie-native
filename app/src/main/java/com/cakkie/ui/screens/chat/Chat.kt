@@ -61,6 +61,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.ReceiveContractDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -87,6 +88,7 @@ fun Chat(
     id: String,
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     awardResult: ResultRecipient<AwardContractDestination, String>,
+    congratsResult: ResultRecipient<ReceiveContractDestination, String>,
     navigator: DestinationsNavigator
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -107,10 +109,11 @@ fun Chat(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-
+                navigator.navigate(ReceiveContractDestination)
             }
         }
     }
+
     var replyTo by remember {
         mutableStateOf("")
     }
@@ -126,7 +129,15 @@ fun Chat(
     var deleteCon by remember {
         mutableStateOf(false)
     }
-
+    congratsResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                message =
+                    TextFieldValue("Thank you for the contract, I will get started on it immediately")
+            }
+        }
+    }
     Column(Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Row(
