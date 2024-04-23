@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -253,6 +256,7 @@ fun Chat(
 //            Spacer(modifier = Modifier.padding(8.dp))
             Box(
                 Modifier
+                    .heightIn(max = 80.dp)
                     .fillMaxWidth()
             ) {
                 Card(
@@ -261,15 +265,36 @@ fun Chat(
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     shape = CardDefaults.elevatedShape,
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(0.5f),
+                        containerColor = Color.Black.copy(0.5f),
                     ),
                 ) {
-                    Text(
-                        text = replyTo,
-                        color = TextColorDark,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(10.dp),
-                    )
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            maxLines = 2,
+                            text = replyTo,
+                            color = TextColorDark,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(10.dp),
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .fillMaxHeight()
+                        ) {
+                            GlideImage(
+                                model = "https://picsum.photos/200/300",
+                                contentDescription = "chat image",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(CakkieBrown.copy(alpha = 0.5f)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
                 IconButton(
                     onClick = {
