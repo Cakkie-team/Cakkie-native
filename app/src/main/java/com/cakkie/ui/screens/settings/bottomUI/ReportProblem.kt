@@ -39,49 +39,50 @@ fun ReportProblem(navigator: DestinationsNavigator) {
         mutableStateOf(TextFieldValue(""))
     }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 32.dp, vertical = 41.dp)
-                    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 20.dp)
+    ) {
 
-                        Text(
-                            text = stringResource(id = R.string.report_a_problem),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp
-                        )
+        Text(
+            text = stringResource(id = R.string.report_a_problem),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
 
-                        Text(
-                            text = stringResource(id = R.string.report_problem_message),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier,
-                            fontSize = 10.sp
-                        )
-                        Spacer(modifier = Modifier.height(19.dp))
+        Text(
+            text = stringResource(id = R.string.report_problem_message),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier,
+            fontSize = 10.sp,
+            lineHeight = 14.sp
+        )
+        Spacer(modifier = Modifier.height(19.dp))
 
-                        CakkieInputField(
-                            value = email,
-                            onValueChange = { email = it },
-                            singleLine = false,
-                            placeholder = "Type Something",
-                            keyboardType = KeyboardType.Text,
-                            modifier = Modifier
-                                .size(height = 129.dp, width = 330.dp)
-                                .clip(RoundedCornerShape(3.dp))
-                        )
-                        Spacer(modifier = Modifier.height(22.dp))
+        CakkieInputField(
+            value = email,
+            onValueChange = { email = it },
+            singleLine = false,
+            placeholder = "Type Something",
+            keyboardType = KeyboardType.Text,
+            modifier = Modifier
+                .size(height = 129.dp, width = 330.dp)
+                .clip(RoundedCornerShape(3.dp))
+        )
+        Spacer(modifier = Modifier.height(22.dp))
 
-                        CakkieButton(
-                            Modifier
-                                .height(50.dp)
-                                .fillMaxWidth(),
-                            processing = processing,
-                            text = stringResource(id = R.string.done)
-                        ) {
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
+        CakkieButton(
+            Modifier
+                .height(50.dp)
+                .fillMaxWidth(),
+            processing = processing,
+            text = stringResource(id = R.string.done)
+        ) {
+        }
+        Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                }
+    }
+}

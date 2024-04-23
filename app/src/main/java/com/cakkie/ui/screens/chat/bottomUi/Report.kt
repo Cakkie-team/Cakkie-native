@@ -48,7 +48,7 @@ fun Report(name: String, navigator: DestinationsNavigator) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp, vertical = 41.dp)
+            .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
         Box(
             modifier = Modifier
@@ -64,14 +64,15 @@ fun Report(name: String, navigator: DestinationsNavigator) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
 
         Text(
             text = stringResource(id = R.string.report_problem_message),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
-            fontSize = 10.sp
+            fontSize = 10.sp,
+            lineHeight = 14.sp
         )
         Spacer(modifier = Modifier.height(19.dp))
 
