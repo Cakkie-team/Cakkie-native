@@ -237,8 +237,7 @@ fun Chat(
                                         tint = CakkieBackground,
                                         modifier = Modifier
                                             .background(
-                                                CakkieBrown.copy(0.5f),
-                                                shape = CircleShape
+                                                CakkieBrown.copy(0.5f), shape = CircleShape
                                             )
                                             .size(24.dp)
                                             .align(Alignment.Center)
@@ -272,14 +271,27 @@ fun Chat(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            maxLines = 2,
-                            text = replyTo,
-                            color = TextColorDark,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(10.dp),
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                        Column(Modifier.weight(1f)) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "james bond",
+                                color = CakkieOrange,
+                                style = MaterialTheme.typography.bodyLarge,
+//                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 10.dp),
+                                fontSize = 14.sp
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = replyTo,
+                                maxLines = 2,
+                                color = CakkieBackground,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(horizontal = 10.dp),
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Spacer(modifier = Modifier.height(15.dp))
+                        }
                         Box(
                             modifier = Modifier
                                 .width(60.dp)
@@ -307,7 +319,10 @@ fun Chat(
                         contentDescription = "cancel",
                         tint = CakkieBrown,
                         modifier = Modifier
-                            .size(24.dp)
+                            .background(
+                                CakkieBrown.copy(0.5f), shape = CircleShape
+                            )
+                            .size(30.dp)
                     )
                 }
             }

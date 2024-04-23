@@ -155,7 +155,7 @@ fun ChatItem(item: Int, onReply: () -> Unit) {
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Chat item $item ytde6tufy76tgyifg6y8rtguoyhy89y88 hgf78ty8ut78tgiy",
+                                    text = "Chat item $item",
                                     maxLines = 2,
                                     color = CakkieBackground,
                                     style = MaterialTheme.typography.bodyLarge,
