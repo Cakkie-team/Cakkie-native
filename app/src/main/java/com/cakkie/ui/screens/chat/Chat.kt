@@ -59,6 +59,7 @@ import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBackground
@@ -85,6 +86,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 fun Chat(
     id: String,
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
+    awardResult: ResultRecipient<AwardContractDestination, String>,
     navigator: DestinationsNavigator
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -97,6 +99,15 @@ fun Chat(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 files = result.value.toObjectList(MediaModel::class.java)
+            }
+        }
+    }
+
+    awardResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+
             }
         }
     }
@@ -185,6 +196,9 @@ fun Chat(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable {
+                    navigator.navigate(AwardContractDestination(name = "chat"))
+                }
                 .background(CakkieBrown002)
                 .height(40.dp),
             contentAlignment = Alignment.Center
