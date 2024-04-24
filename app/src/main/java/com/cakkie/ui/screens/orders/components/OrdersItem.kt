@@ -1,11 +1,13 @@
 package com.cakkie.ui.screens.orders.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,20 +30,21 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBlue
 import com.cakkie.ui.theme.TextColorDark
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun OrdersItem() {
+fun OrdersItem(item: Int, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(96.dp)
+            .padding(vertical = 6.dp)
             .background(Color.White),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
             modifier = Modifier
+                .clickable { onClick.invoke() }
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -50,7 +52,7 @@ fun OrdersItem() {
                 model = "https://source.unsplash.com/100x100/?cakes,cover",
                 contentDescription = "",
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
             )
             Column(
@@ -71,19 +73,20 @@ fun OrdersItem() {
             }
             Spacer(modifier = Modifier.weight(1f))
             Card(
-                onClick = {},
                 modifier = Modifier
                     .size(width = 96.dp, height = 32.dp),
-                shape = CardDefaults.elevatedShape,
+                shape = MaterialTheme.shapes.small,
                 colors = CardDefaults.cardColors(
                     containerColor = CakkieBlue
                 )
             ) {
-                Text(
-                    text = stringResource(id = R.string.pending),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White,
-                )
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = stringResource(id = R.string.pending),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White,
+                    )
+                }
             }
         }
     }
