@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.networkModels.TransactionResponse
+import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.screens.wallet.WalletViewModel
-import com.cakkie.ui.screens.wallet.components.WalletFilter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -82,7 +82,7 @@ fun WalletHistory(navigator: DestinationsNavigator) {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        WalletFilter(filter) {
+        CakkieFilter(filter) {
             filter = it
         }
         Spacer(modifier = Modifier.height(10.dp))

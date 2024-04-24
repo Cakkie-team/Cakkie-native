@@ -1,23 +1,26 @@
 package com.cakkie.ui.components
 
+
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,143 +28,96 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.ramcosta.composedestinations.annotation.Destination
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import com.cakkie.R
-import com.cakkie.ui.screens.destinations.CompletedDestination
-import com.cakkie.ui.screens.destinations.DeclinedDestination
-import com.cakkie.ui.screens.destinations.InProgressDestination
-import com.cakkie.ui.screens.destinations.OrdersDestination
-import com.cakkie.ui.screens.destinations.PendingDestination
-import com.cakkie.ui.screens.orders.componentscrrens.InProgress
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.cakkie.ui.theme.TextColorDark
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CakkieFilter (navigator: DestinationsNavigator){
-        var expanded by remember {
-            mutableStateOf(false)
-        }
+fun CakkieFilter(
+    value: String,
+    options: List<String> = listOf("All", "Pending", "Success", "Failed"),
+    onValueChange: (String) -> Unit
+) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .width(120.dp)
-            .height(187.dp),
+            .padding(start = 20.dp)
+            .border(
+                width = 1.dp,
+                color = CakkieBrown,
+                shape = RoundedCornerShape(8)
+            )
+            .clip(RoundedCornerShape(8))
+            .width(120.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            modifier = Modifier
+        Row(
+            Modifier
+                .padding(vertical = 8.dp, horizontal = 10.dp)
                 .fillMaxWidth()
-                .size(width = 160.dp, height = 94.dp)
+                .clickable {
+                    expanded = true
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .clickable {
+                        expanded = true
+                    },
+                color = TextColorDark
+            )
+
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "Dropdown Icon",
+                tint = CakkieBrown,
+                modifier = Modifier
+                    .rotate(if (expanded) 180f else 0f)
+                    .size(20.dp)
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .width(width = 120.dp)
                 .background(CakkieBackground)
         ) {
-            OutlinedTextField(
-                value = "Filters",
-                onValueChange = {},
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                modifier = Modifier
-                    .menuAnchor()
-                    .padding(start = 20.dp)
-                    .size(width = 84.dp, height = 28.dp)
-                    .background(CakkieBackground),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = CakkieBrown,
-                )
-            )
-            ExposedDropdownMenu(expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.all),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.clickable {
-                            navigator.navigate(OrdersDestination())
-                        }
-                    )
-                },
-                    onClick = {
-                        expanded = false
-                    }
-                )
+            options.forEach { option ->
                 Divider(
-                    modifier = Modifier.padding(start = 5.dp),
                     thickness = 1.dp,
                     color = CakkieLightBrown
                 )
                 DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.in_progress),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier =  Modifier.clickable {
-                            navigator.navigate(InProgressDestination())
-                        }
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                },
+                    colors = MenuDefaults.itemColors(
+                        textColor = CakkieBrown
+                    ),
+                    onClick = {
+                        onValueChange.invoke(option)
+                        expanded = false
+                    }
+                )
 
-                    )
-                },
-                    onClick = {
-                        expanded = false
-                    }
-                )
-                Divider(
-                    modifier = Modifier.padding(start = 5.dp),
-                    thickness = 1.dp,
-                    color = CakkieLightBrown
-                )
-                DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.completed),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier =  Modifier.clickable {
-                            navigator.navigate(CompletedDestination())
-                        }
-                    )
-                },
-                    onClick = {
-                        expanded = false
-                    }
-                )
-                Divider(
-                    modifier = Modifier.padding(start = 5.dp),
-                    thickness = 1.dp,
-                    color = CakkieLightBrown
-                )
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.pending),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier =  Modifier.clickable {
-                                navigator.navigate(PendingDestination())
-                            }
-                        )
-                    },
-                    onClick = {
-                        expanded = false
-                    }
-                )
-                Divider(
-                    modifier = Modifier.padding(start = 5.dp),
-                    thickness = 1.dp,
-                    color = CakkieLightBrown
-                )
-                DropdownMenuItem(text = {
-                    Text(text = stringResource(id = R.string.declined),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier =  Modifier.clickable {
-                            navigator.navigate(DeclinedDestination())
-                        }
-                    )
-                },
-                    onClick = {
-                        expanded = false
-                    }
-                )
             }
+            Divider(
+                thickness = 1.dp,
+                color = CakkieLightBrown
+            )
         }
     }
 }
