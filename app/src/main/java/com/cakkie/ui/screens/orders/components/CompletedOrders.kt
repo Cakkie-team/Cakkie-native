@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.orders.componentscrrens
+package com.cakkie.ui.screens.orders.components
 
 
 import androidx.compose.foundation.Image

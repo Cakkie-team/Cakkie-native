@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.orders.componentscrrens
+package com.cakkie.ui.screens.orders.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,7 +26,7 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 @Destination
 @Composable
 fun OngoingOrder() {

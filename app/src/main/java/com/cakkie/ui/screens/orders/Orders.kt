@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +43,7 @@ fun Orders(navigator: DestinationsNavigator) {
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -52,6 +53,7 @@ fun Orders(navigator: DestinationsNavigator) {
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
                 modifier = Modifier
                     .align(Alignment.CenterStart)
+                    .size(24.dp)
                     .clickable {
                         navigator.popBackStack()
                     },
@@ -62,11 +64,11 @@ fun Orders(navigator: DestinationsNavigator) {
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         CakkieFilter(filter) {
             filter = it
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn {
             items(5) {

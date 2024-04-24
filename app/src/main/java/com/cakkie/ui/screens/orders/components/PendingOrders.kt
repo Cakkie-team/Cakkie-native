@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.orders.componentscrrens
+package com.cakkie.ui.screens.orders.components
 
 
 import androidx.compose.foundation.Image
@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +27,7 @@ import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 @Destination
 @Composable
 //fun PendingOrders(navigator: DestinationsNavigator) {
