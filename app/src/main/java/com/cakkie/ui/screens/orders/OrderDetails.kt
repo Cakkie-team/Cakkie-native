@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,11 +30,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
-fun InProgressOrder(navigator: DestinationsNavigator) {
+fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 32.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
@@ -44,6 +45,7 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Image(
                 painterResource(id = R.drawable.arrow_back), contentDescription = "Go back",
                 modifier = Modifier
+                    .size(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
                         navigator.popBackStack()
@@ -60,18 +62,18 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
         Row {
             Text(
                 text = stringResource(id = R.string.ordered_from_cakkie),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodyLarge,
 
                 )
             Text(
                 text = " Jane Doe",
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = CakkieBrown
             )
         }
         Text(
             text = "Posted 19th June",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyLarge,
             color = TextColorDark.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -82,10 +84,10 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "HI, I would like to klnfn  jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
-                    "woyrory r yrororywer;iorryo   row;tyr8tw8o \n y8wyoiy/iy o ryhfo /yoryi r" +
-                    " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o  fwry.riuyrukyr8ir.rufyr.grog8y/o",
-            style = MaterialTheme.typography.bodySmall
+            text = "HI, I would like to klnfn jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
+                    "woyrory r yrororywer;iorryo row;tyr8tw8o y8wyoiy/iy o ryhfo /yoryi r" +
+                    " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o fwry.riuyrukyr8ir.rufyr.grog8y/o",
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -97,18 +99,18 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 Text(
                     text = stringResource(id = R.string.size),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Text(
                         text = "6 inches:",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = stringResource(id = R.string.medium_sized_pan),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
@@ -116,13 +118,13 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     text = stringResource(id = R.string.proposed_price),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "NGN 20,000",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -137,26 +139,26 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     text = stringResource(id = R.string.shape),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = stringResource(id = R.string.rounded_shape),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text(
                     text = stringResource(id = R.string.location),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Lagos State",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -171,7 +173,7 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     text = stringResource(id = R.string.status),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -184,7 +186,7 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
                     )
                     Text(
                         text = stringResource(id = R.string.in_progress),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
@@ -192,13 +194,13 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     text = stringResource(id = R.string.icing),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "300 ",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -212,13 +214,13 @@ fun InProgressOrder(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     text = stringResource(id = R.string.deadline),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "3 Days 14 Hours",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }

@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieFilter
+import com.cakkie.ui.screens.destinations.OrderDetailsDestination
 import com.cakkie.ui.screens.orders.components.OrdersItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -71,7 +72,7 @@ fun Orders(navigator: DestinationsNavigator) {
         LazyColumn {
             items(5) {
                 OrdersItem(it) {
-
+                    navigator.navigate(OrderDetailsDestination(it))
                 }
             }
         }
