@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.orders
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,13 +17,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -48,6 +57,9 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
         Pair("Quantity", "1"),
         Pair("Shape", "Round"),
     )
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -255,6 +267,74 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
             fontStyle = FontStyle.Italic,
         )
     }
+
+    if (openDialog.value)
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.cakkie_icon),
+                        contentDescription = ""
+                    )
+                    Text(
+                        text = stringResource(id = R.string.warning),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start = 50.dp)
+                    )
+                }
+            },
+            text = {
+                Text(
+                    text = stringResource(id = R.string.are_you_sure_you_want_to_cancel_this_order),
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            },
+            confirmButton =
+            {
+                Button(
+                    onClick = { },
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = CakkieBrown,
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.yes,
+                        )
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { },
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = CakkieBrown,
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.no,
+                        )
+                    )
+                }
+            },
+            containerColor = CakkieBackground,
+            shape = RectangleShape,
+            modifier = Modifier.border(
+                width = 1.dp,
+                color = CakkieBrown,
+            )
+        )
 }
 
 
