@@ -325,6 +325,10 @@
     <string name="congratulations_contract">Congratulations, You have the contract</string>
     <string name="send_a_thank_note">Send a Thanks Note</string>
     <string name="report_">Report %1$s?</string>
+    <string name="waiting_time">Waiting time</string>
+    <string name="delivery_address">Delvery address</string>
+    <string name="message_support">Message Support</string>
+    <string name="generate_code">Reveal Code</string>
 
 
 </resources>

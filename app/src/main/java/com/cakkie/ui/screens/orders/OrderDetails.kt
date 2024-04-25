@@ -13,14 +13,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChatDestination
@@ -31,10 +41,18 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
+    val meta = listOf(
+        Pair("Size", "6 inches"),
+        Pair("Flavour", "Chocolate"),
+        Pair("Price", "N 3000"),
+        Pair("Quantity", "1"),
+        Pair("Shape", "Round"),
+    )
     Column(
         modifier = Modifier
+            .verticalScroll(rememberScrollState())
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(16.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
@@ -57,6 +75,22 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .align(Alignment.Center)
             )
+            IconButton(
+                onClick = {
+                    navigator.navigate(ChatDestination("support"))
+                }, modifier = Modifier
+                    .align(Alignment.CenterEnd)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.support),
+                    contentDescription = stringResource(
+                        id = R.string.support
+                    ),
+                    modifier = Modifier
+                        .size(27.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row {
@@ -72,7 +106,7 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
             )
         }
         Text(
-            text = "Posted 19th June",
+            text = "on 19th June",
             style = MaterialTheme.typography.bodyLarge,
             color = TextColorDark.copy(alpha = 0.7f)
         )
@@ -82,7 +116,7 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
             style = MaterialTheme.typography.bodyLarge,
             color = CakkieBrown,
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = "HI, I would like to klnfn jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
                     "woyrory r yrororywer;iorryo row;tyr8tw8o y8wyoiy/iy o ryhfo /yoryi r" +
@@ -90,93 +124,79 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(20.dp))
+
+        meta.filterIndexed { index, _ -> index % 2 == 0 }
+            .zip(meta.filterIndexed { index, _ -> index % 2 != 0 }).forEach {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = it.first.first,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            text = it.first.second,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = it.second.first,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            text = it.second.second,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+        Spacer(modifier = Modifier.height(5.dp))
+        Column {
+            Text(
+                text = stringResource(id = R.string.delivery_address),
+                style = MaterialTheme.typography.bodyLarge,
+                color = CakkieBrown
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.location
+                    ),
+                    contentDescription = "location",
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "No 1, Cakkie Street, Cakkie Town, Cakkie State",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(verticalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                    text = stringResource(id = R.string.size),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBrown
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    Text(
-                        text = "6 inches:",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        text = stringResource(id = R.string.medium_sized_pan),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Column {
-                Text(
-                    text = stringResource(id = R.string.proposed_price),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBrown
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "NGN 20,000",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 35.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.shape),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBrown
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = stringResource(id = R.string.rounded_shape),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Column {
-                Text(
-                    text = stringResource(id = R.string.location),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBrown
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Lagos State",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 60.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
                 Text(
                     text = stringResource(id = R.string.status),
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(5.dp))
                 Row {
                     Image(
                         painter = painterResource(
@@ -184,36 +204,16 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
                         ),
                         contentDescription = ""
                     )
+                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = stringResource(id = R.string.in_progress),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Column {
+            Column(Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(id = R.string.icing),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CakkieBrown
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "300 ",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.deadline),
+                    text = stringResource(id = R.string.waiting_time),
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBrown
                 )
@@ -224,12 +224,36 @@ fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(80.dp))
-        CakkieButton(
-            text = stringResource(id = R.string.send_a_message)
+
+        Spacer(modifier = Modifier.height(40.dp))
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            navigator.navigate(ChatDestination(""))
+            CakkieButton(
+                text = stringResource(id = R.string.generate_code)
+            ) {
+                navigator.navigate(ChatDestination(""))
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "234657",
+                style = MaterialTheme.typography.bodyLarge,
+                color = CakkieBrown,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .blur(10.dp)
+                    .weight(1f),
+                textAlign = TextAlign.Center
+            )
         }
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = "Reveal code to delivery agent only when you receive your order",
+            style = MaterialTheme.typography.bodyLarge,
+            fontStyle = FontStyle.Italic,
+        )
     }
 }
 
