@@ -331,6 +331,7 @@
     <string name="generate_code">Reveal Code</string>
     <string name="set_delivery_address">Set delivery address</string>
     <string name="no_orders">No Orders</string>
+    <string name="Confirm_Pin">Confirm Pin</string>
 
 
 </resources>

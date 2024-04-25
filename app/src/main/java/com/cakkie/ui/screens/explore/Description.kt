@@ -34,6 +34,7 @@ import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -181,7 +182,12 @@ fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         ) {
-
+            navigator.navigate(
+                ConfirmPinDestination(
+                    amount = NumberFormat.getInstance()
+                        .format(item.price[sizes.indexOf(selectedSize)].plus(1000))
+                )
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
     }

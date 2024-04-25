@@ -57,6 +57,7 @@ import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CakespirationDestination
+import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBrown
@@ -81,6 +82,7 @@ fun ItemDetails(
     id: String,
     item: Listing = Listing(),
     changeAddressResult: ResultRecipient<SetDeliveryAddressDestination, User>,
+    confirmPinResult: ResultRecipient<ConfirmPinDestination, Boolean>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: ExploreViewModal = koinViewModel()
@@ -112,6 +114,15 @@ fun ItemDetails(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 viewModel.getProfile()
+            }
+        }
+    }
+
+    confirmPinResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                Toaster(context, "pin successfully", R.drawable.logo)
             }
         }
     }
