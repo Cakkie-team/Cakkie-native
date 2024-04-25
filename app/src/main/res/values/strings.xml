@@ -330,6 +330,7 @@
     <string name="message_support">Message Support</string>
     <string name="generate_code">Reveal Code</string>
     <string name="set_delivery_address">Set delivery address</string>
+    <string name="no_orders">No Orders</string>
 
 
 </resources>
