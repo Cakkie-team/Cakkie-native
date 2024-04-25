@@ -28,7 +28,8 @@ import com.cakkie.ui.theme.Error
 fun OtpInput(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
-    isError: Boolean = false
+    isError: Boolean = false,
+    readOnly: Boolean = false
 ) {
 
     BasicTextField(
@@ -39,7 +40,8 @@ fun OtpInput(
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.NumberPassword,
             imeAction = Done
-        )
+        ),
+        readOnly = readOnly,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -57,11 +59,11 @@ fun OtpInput(
                             RoundedCornerShape(8.dp)
                         )
                         .clip(RoundedCornerShape(8.dp))
-                        .size(70.dp),
+                        .size(if (readOnly) 50.dp else 70.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = number,
+                        text = if (readOnly && number.isNotEmpty()) "*" else number,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold
