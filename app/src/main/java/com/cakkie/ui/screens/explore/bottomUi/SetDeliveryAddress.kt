@@ -96,7 +96,7 @@ fun SetDeliveryAddress(onComplete: ResultBackNavigator<User>) {
             }
         )
         Spacer(modifier = Modifier.height(20.dp))
-        CakkieButton(text = stringResource(id = R.string.save)) {
+        CakkieButton(text = stringResource(id = R.string.save), processing = processing) {
             processing = true
             viewModel.updateAddress(
                 address = address.text,

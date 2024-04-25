@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.explore
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -125,7 +127,9 @@ fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .clickable { navigator.navigate(SetDeliveryAddressDestination) }
+                    .weight(1f),
                 color = CakkieBrown,
                 textDecoration = TextDecoration.Underline
             )
