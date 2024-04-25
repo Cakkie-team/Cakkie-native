@@ -26,10 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -38,7 +40,7 @@ import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Description(item: Listing, navigator: DestinationsNavigator) {
+fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
     val sizes = item.sizes.map { "$it in" }
     var selectedSize by remember { mutableStateOf(sizes.first()) }
     Column {
@@ -105,6 +107,30 @@ fun Description(item: Listing, navigator: DestinationsNavigator) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(id = R.string.delivery_address),
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(0.5f)
+            )
+            Text(
+                text = user?.address ?: "No address",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f),
+                color = CakkieBrown,
+                textDecoration = TextDecoration.Underline
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         listOf(
             R.string.price,
             R.string.delivery_fee,

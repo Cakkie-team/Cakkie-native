@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -78,6 +79,7 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
     var listing by rememberSaveable {
         mutableStateOf(item)
     }
+    val user = viewModel.user.observeAsState().value
     var expanded by rememberSaveable { mutableStateOf(false) }
     var isMuted by rememberSaveable { mutableStateOf(true) }
     val imagePageState =
@@ -172,23 +174,23 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
                     }
                 }
             }
-
-            Row(
-                Modifier
-                    .padding(top = 10.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HorizontalPagerIndicator(
-                    pagerState = imagePageState,
-                    activeColor = CakkieBrown,
-                    spacing = 8.dp,
-                    indicatorWidth = 5.dp,
-                    indicatorHeight = 5.dp,
-                    pageCount = imagePageState.pageCount,
-                )
-            }
+            if (imagePageState.pageCount > 1)
+                Row(
+                    Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    HorizontalPagerIndicator(
+                        pagerState = imagePageState,
+                        activeColor = CakkieBrown,
+                        spacing = 8.dp,
+                        indicatorWidth = 5.dp,
+                        indicatorHeight = 5.dp,
+                        pageCount = imagePageState.pageCount,
+                    )
+                }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = listing.name,
@@ -251,7 +253,7 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
             //page
             HorizontalPager(state = pageState) {
                 when (it) {
-                    0 -> Description(listing, navigator)
+                    0 -> Description(user, listing, navigator)
                     1 -> Reviews()
                 }
             }
