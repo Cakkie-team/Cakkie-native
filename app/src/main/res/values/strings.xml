@@ -329,6 +329,7 @@
     <string name="delivery_address">Delvery address</string>
     <string name="message_support">Message Support</string>
     <string name="generate_code">Reveal Code</string>
+    <string name="set_delivery_address">Set delivery address</string>
 
 
 </resources>

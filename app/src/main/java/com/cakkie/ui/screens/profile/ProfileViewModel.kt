@@ -39,6 +39,36 @@ class ProfileViewModel : ViewModel(), KoinComponent {
             endpoint = Endpoints.UPLOAD_IMAGE(path, fileName), media = image
         )
 
+    fun updateAddress(
+        address: String,
+        location: LocationResult,
+    ) = NetworkCalls.put<User>(
+        endpoint = Endpoints.UPDATE_PROFILE,
+        body = listOf(
+            Pair("address", address),
+            Pair(
+                "city",
+                location.addressComponents.firstOrNull { it.types.contains("locality") }?.longName
+                    ?: ""
+            ),
+            Pair(
+                "state",
+                location.addressComponents.firstOrNull { it.types.contains("administrative_area_level_1") }?.longName
+                    ?: ""
+            ),
+            Pair("latitude", location.geometry?.location?.lat ?: 0.0),
+            Pair("longitude", location.geometry?.location?.lng ?: 0.0),
+            Pair(
+                "country",
+                location.addressComponents.firstOrNull { it.types.contains("country") }?.longName
+                    ?: ""
+            ),
+        )
+    ).addOnSuccessListener {
+        viewModelScope.launch {
+            userRepository.createUser(it)
+        }
+    }
 
     fun updateProfile(
         firstName: String,
