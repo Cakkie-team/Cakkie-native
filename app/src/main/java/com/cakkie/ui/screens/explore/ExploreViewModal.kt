@@ -153,7 +153,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         socketClient.socket.emit("like-comment", data)
     }
 
-    private fun getProfile() = NetworkCalls.get<User>(
+    fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
         body = listOf()
     ).addOnSuccessListener {

@@ -50,6 +50,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
@@ -57,12 +58,15 @@ import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
+import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.isVideoUrl
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
@@ -73,7 +77,12 @@ import org.koin.androidx.compose.koinViewModel
 )
 @Destination
 @Composable
-fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNavigator) {
+fun ItemDetails(
+    id: String,
+    item: Listing = Listing(),
+    changeAddressResult: ResultRecipient<SetDeliveryAddressDestination, User>,
+    navigator: DestinationsNavigator
+) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     var listing by rememberSaveable {
@@ -98,6 +107,14 @@ fun ItemDetails(id: String, item: Listing = Listing(), navigator: DestinationsNa
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
 
+    changeAddressResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.getProfile()
+            }
+        }
+    }
 
     LaunchedEffect(key1 = id) {
         viewModel.getListing(id).addOnSuccessListener {
