@@ -1,6 +1,8 @@
 package com.cakkie.ui.screens.wallet.bottomUI
 
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
@@ -37,11 +40,14 @@ import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
+import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +67,26 @@ fun ConfirmPin(
     var step by remember { mutableIntStateOf(0) }
     var otp by remember { mutableStateOf(TextFieldValue("")) }
 
+    //countdown timer
+    var timer by remember {
+        mutableIntStateOf(60)
+    }
+
+    var timerRunning by remember {
+        mutableStateOf(true)
+    }
+
+
+    LaunchedEffect(key1 = timerRunning) {
+        timer = 60
+        if (timerRunning) {
+            while (timer > 0) {
+                timer--
+                delay(1000)
+            }
+            if (timer == 0) timerRunning = false
+        }
+    }
     LaunchedEffect(key1 = user?.pin) {
         step = if (user?.pin == null) 0
         else 1
@@ -92,7 +118,11 @@ fun ConfirmPin(
                     0 -> R.string.enter_transaction_pin
                     1 -> R.string.confirm_transaction_pin
                     else -> R.string.kindly_enter_the_verification_code_sent_to_your_email
-                }, user?.email ?: ""
+                }, "${
+                    user?.email?.take(4)
+                }****${
+                    user?.email?.takeLast(10)
+                }"
             ),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier,
@@ -115,6 +145,38 @@ fun ConfirmPin(
                 else -> otp
             }, onValueChange = {}, readOnly = true
         )
+        AnimatedVisibility(step == 2) {
+            Text(text = if (timerRunning) timer.toString() + "s"
+            else stringResource(id = R.string.resend_code),
+                style = MaterialTheme.typography.titleMedium,
+                color = CakkieBrown,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable {
+                        if (!timerRunning) {
+                            timerRunning = true
+                            viewModel
+                                .resendOtp(email = user?.email ?: "")
+                                .addOnSuccessListener {
+                                    timerRunning = true
+                                    Toaster(
+                                        context = context,
+                                        message = "Otp Sent",
+                                        image = R.drawable.logo
+                                    ).show()
+                                }
+                                .addOnFailureListener {
+                                    Toaster(
+                                        context = context,
+                                        message = "Otp Resend Failed",
+                                        image = R.drawable.logo
+                                    ).show()
+                                }
+                        }
+                    })
+
+        }
         listOf(1, 4, 7).forEach { row ->
             Spacer(modifier = Modifier.height(10.dp))
             Row(
@@ -126,13 +188,17 @@ fun ConfirmPin(
                         onClick = {
                             when (step) {
                                 0 -> pin =
-                                    if (pin.text.length < 4) pin.copy(text = pin.text + (row + col).toString()) else pin
+                                    if (pin.text.length < 4)
+                                        pin.copy(text = pin.text + (row + col).toString()) else pin
 
                                 1 -> pinConfirm =
-                                    if (pinConfirm.text.length < 4) pinConfirm.copy(text = pinConfirm.text + (row + col).toString()) else pinConfirm
+                                    if (pinConfirm.text.length < 4)
+                                        pinConfirm.copy(text = pinConfirm.text + (row + col).toString())
+                                    else pinConfirm
 
                                 else -> otp =
-                                    if (otp.text.length < 4) otp.copy(text = otp.text + (row + col).toString()) else otp
+                                    if (otp.text.length < 4)
+                                        otp.copy(text = otp.text + (row + col).toString()) else otp
                             }
                         },
                         modifier = Modifier
@@ -174,7 +240,8 @@ fun ConfirmPin(
 
                             1 -> pinConfirm =
                                 if (col == 1) pinConfirm.copy(text = pinConfirm.text.dropLast(1))
-                                else if (pinConfirm.text.length < 4) pinConfirm.copy(text = pinConfirm.text + "0") else pinConfirm
+                                else if (pinConfirm.text.length < 4)
+                                    pinConfirm.copy(text = pinConfirm.text + "0") else pinConfirm
 
                             else -> otp = if (col == 1) otp.copy(text = otp.text.dropLast(1))
                             else if (otp.text.length < 4) otp.copy(text = otp.text + "0") else otp
@@ -213,27 +280,55 @@ fun ConfirmPin(
             .fillMaxWidth()
             .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.proceed),
-        enabled = pin.text.isNotEmpty(),
+        enabled = when (step) {
+            0 -> pin.text.length == 4
+            1 -> if (pin.text.isNotEmpty()) pin.text == pinConfirm.text
+            else pinConfirm.text.length == 4
+
+            else -> otp.text.length == 4
+        },
         processing = processing
     ) {
-        if (step == 0) {
-            step = 1
-            return@CakkieButton
-        }
-        if (step == 1) {
-            if (pin.text == pinConfirm.text) {
+        when (step) {
+            0 -> {
+                step = 1
+            }
+
+            1 -> {
                 step = 2
-                return@CakkieButton
+                viewModel
+                    .resendOtp(email = user?.email ?: "")
+                    .addOnSuccessListener {
+                        timerRunning = true
+                        Toaster(
+                            context = context,
+                            message = "Otp Sent",
+                            image = R.drawable.logo
+                        ).show()
+                    }
+                    .addOnFailureListener {
+                        Toaster(
+                            context = context,
+                            message = "Otp Resend Failed",
+                            image = R.drawable.logo
+                        ).show()
+                    }
+            }
+
+            2 -> {
+                processing = true
+                viewModel.resetPin(pin.text, pinConfirm.text, otp.text)
+                    .addOnSuccessListener {
+                        processing = false
+                        Toaster(context, it.message, R.drawable.logo).show()
+                        step = 1
+                    }
+                    .addOnFailureListener {
+                        processing = false
+                        Toaster(context, it, R.drawable.logo).show()
+                    }
             }
         }
-        if (step == 2) {
-//            viewModel.verifyOtp(otp.text)
-            return@CakkieButton
-        }
-        processing = false
-//        onComplete.navigateBack(result = true)
-        processing = true
-
     }
     Spacer(modifier = Modifier.height(17.dp))
 

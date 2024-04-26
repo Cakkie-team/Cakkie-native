@@ -8,6 +8,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Balance
 import com.cakkie.networkModels.DepositResponse
+import com.cakkie.networkModels.LoginResponse
 import com.cakkie.networkModels.Transaction
 import com.cakkie.networkModels.TransactionResponse
 import com.cakkie.utill.Endpoints
@@ -50,6 +51,21 @@ class WalletViewModel : ViewModel(), KoinComponent {
             Pair("amount", amount)
         )
     )
+
+    fun resetPin(pin: String, confirmPin: String, otp: String) = NetworkCalls.post<LoginResponse>(
+        endpoint = Endpoints.RESET_PIN,
+        body = listOf(
+            Pair("pin", pin),
+            Pair("pinConfirmation", confirmPin),
+            Pair("otp", otp)
+        )
+    )
+
+    //resend otp
+    fun resendOtp(email: String) =
+        NetworkCalls.post<LoginResponse>(
+            endpoint = Endpoints.RESEND_OTP(email), body = listOf()
+        )
 
     fun getTransactions(currencyId: String? = null, page: Int = 0, pageSize: Int = 30) {
         NetworkCalls.get<TransactionResponse>(
