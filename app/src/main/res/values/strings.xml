@@ -332,6 +332,8 @@
     <string name="set_delivery_address">Set delivery address</string>
     <string name="no_orders">No Orders</string>
     <string name="Confirm_Pin">Confirm Pin</string>
+    <string name="create_pin">Create Pin</string>
+    <string name="confirm_transaction_pin">Confirm Transaction Pin</string>
 
 
 </resources>
