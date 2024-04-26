@@ -22,6 +22,10 @@ data class ShopModel(
     val longitude: Double = 0.0,
     val name: String = "",
     val state: String = "",
+    val isPremium: Boolean = false,
+    val hasBadge: Boolean = false,
+    val premiumExpiresAt: String = "",
+    val premiumStartedAt: String = "",
     val updatedAt: String = "",
     @Embedded(prefix = "user_")
     val user: User = User(),
