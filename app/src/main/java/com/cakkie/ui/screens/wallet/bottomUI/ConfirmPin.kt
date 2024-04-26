@@ -146,6 +146,7 @@ fun ConfirmPin(
             }, onValueChange = {}, readOnly = true
         )
         AnimatedVisibility(step == 2) {
+            Spacer(modifier = Modifier.height(10.dp))
             Text(text = if (timerRunning) timer.toString() + "s"
             else stringResource(id = R.string.resend_code),
                 style = MaterialTheme.typography.titleMedium,
@@ -322,6 +323,7 @@ fun ConfirmPin(
                         processing = false
                         Toaster(context, it.message, R.drawable.logo).show()
                         step = 1
+                        viewModel.getProfile()
                     }
                     .addOnFailureListener {
                         processing = false
