@@ -195,9 +195,7 @@ dependencies {
     implementation(libs.app.update.ktx)
 
     //appodeal sdk
-    implementation("com.appodeal.ads:sdk:3.2.1.+") {
-        exclude("com.appodeal.ads.sdk.networks", "adcolony")
-    }
+    implementation(libs.sdk)
 
 
 }

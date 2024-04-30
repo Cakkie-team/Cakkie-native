@@ -36,6 +36,7 @@ material3Version = "1.5.0"
 media3ExoplayerVersion = "1.2.0"
 playServicesAdsVersion = "23.0.0"
 playServicesLocationVersion = "21.0.1"
+sdkVersion = "3.3.0.0"
 serialization = "1.5.1"
 # ksp
 ksp = "1.9.10-1.0.13"
@@ -107,6 +108,7 @@ compose-material = { group = "androidx.compose.material", name = "material", ver
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "compose" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+sdk = { module = "com.appodeal.ads:sdk", version.ref = "sdkVersion" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmerVersion" }
 socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClientVersion" }
 toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }

@@ -93,7 +93,7 @@ class MainActivity : ComponentActivity() {
         Appodeal.setMrecViewId(R.id.appodealMrecView)
         Appodeal.initialize(
             this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
-            Appodeal.INTERSTITIAL
+            Appodeal.REWARDED_VIDEO or Appodeal.INTERSTITIAL
         ) {
             // Appodeal initialization finished
             it?.forEach { adType ->
