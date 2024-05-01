@@ -540,7 +540,8 @@ fun Earn(navigator: DestinationsNavigator) {
                         gettingAd = false
                         Appodeal.show(context, Appodeal.INTERSTITIAL)
                     }
-                } else gettingAd = true
+                }
+                gettingAd = true
             },
             enabled = !gettingAd && couldMine,
             shape = RoundedCornerShape(50),

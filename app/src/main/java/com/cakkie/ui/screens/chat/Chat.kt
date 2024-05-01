@@ -121,7 +121,7 @@ fun Chat(
     var showOption by remember {
         mutableStateOf(false)
     }
-    val chats = (0..15).toList()
+    val chats = emptyList<Int>()
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     val selectedChats = remember {
