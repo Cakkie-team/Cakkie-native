@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appodeal.ads.Appodeal
 import com.appodeal.ads.InterstitialCallbacks
-import com.appodeal.ads.RewardedVideoCallbacks
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.ReferralDestination
@@ -141,7 +140,7 @@ fun Earn(navigator: DestinationsNavigator) {
 //        mutableStateOf<RewardedAd?>(null)
 //    }
 
-    Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
+    /*Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
         override fun onRewardedVideoLoaded(isPrecache: Boolean) {
             // Called when rewarded video is loaded
             Timber.d("Ad was loaded.")
@@ -200,7 +199,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 R.drawable.logo
             ).show()
         }
-    })
+    })*/
 
     Appodeal.setInterstitialCallbacks(object : InterstitialCallbacks {
         override fun onInterstitialLoaded(isPrecache: Boolean) {
@@ -213,6 +212,7 @@ fun Earn(navigator: DestinationsNavigator) {
 
         override fun onInterstitialFailedToLoad() {
             // Called when interstitial failed to load
+            gettingAd = false
             Timber.d("Ad failed to load.")
             Toaster(
                 context,
@@ -533,10 +533,11 @@ fun Earn(navigator: DestinationsNavigator) {
         Card(
             onClick = {
                 if (!gettingAd) {
-                    if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
-                        gettingAd = false
-                        Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
-                    } else if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
+//                    if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
+//                        gettingAd = false
+//                        Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
+//                    } else
+                    if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
                         gettingAd = false
                         Appodeal.show(context, Appodeal.INTERSTITIAL)
                     }

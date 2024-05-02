@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.User
@@ -198,8 +197,3 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         }
     }
 }
-
-data class VideoModel(
-    val exoPlayer: ExoPlayer,
-    val listings: Listing
-)

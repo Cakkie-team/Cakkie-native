@@ -7,6 +7,7 @@ import com.cakkie.data.repositories.UserRepository
 import com.cakkie.datastore.Settings
 import com.cakkie.socket.SocketClient
 import com.cakkie.ui.screens.auth.AuthViewModel
+import com.cakkie.ui.screens.chat.ChatViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.screens.notification.NotificationViewModel
 import com.cakkie.ui.screens.profile.ProfileViewModel
@@ -61,6 +62,11 @@ val appModule = module {
     //inject ProfileViewModel
     viewModel {
         ProfileViewModel()
+    }
+
+    //inject ChatViewModel
+    viewModel {
+        ChatViewModel()
     }
 
 //    //inject OrderViewModel

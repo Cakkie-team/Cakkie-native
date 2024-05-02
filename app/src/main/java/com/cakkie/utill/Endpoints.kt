@@ -102,6 +102,13 @@ object Endpoints {
         } /* get transaction  GET*/
     const val MINE = "$BASE_URL/wallet/mine" /* mine  POST*/
 
+
+    /**
+     * Chat
+     */
+    const val START_CHAT = "$BASE_URL/chat/conversations" /* start chat  POST*/
+
+
     /**
      * Location
      * */
