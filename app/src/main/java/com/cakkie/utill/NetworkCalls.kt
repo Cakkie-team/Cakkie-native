@@ -47,7 +47,7 @@ object NetworkCalls {
                         Timber.d("body: $jsonBody")
                         response.let {
                             // Check if response data is not empty
-                            if (it.data.isNotEmpty()) {
+                            if (it.data.isNotEmpty() && it.statusCode < 500) {
                                 //get data from response
                                 val data = it.data.toString(Charsets.UTF_8)
                                 Timber.d("data: $data")

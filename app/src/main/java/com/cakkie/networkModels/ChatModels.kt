@@ -17,8 +17,16 @@ data class Conversation(
     val shopId: String = "",
     val updatedAt: String = "",
     val unreadCount: Int = 0,
+    val display: Display = Display(),
 ) : Parcelable
 
+@Serializable
+@Parcelize
+data class Display(
+    val image: String = "",
+    val isOnline: Boolean = false,
+    val name: String = "",
+) : Parcelable
 
 @Serializable
 @Parcelize

@@ -107,6 +107,8 @@ object Endpoints {
      * Chat
      */
     const val START_CHAT = "$BASE_URL/chat/conversations" /* start chat  POST*/
+    val GET_CONV =
+        { search: String, page: Int, size: Int -> "$BASE_URL/chat/conversations?page=$page&search=$search&pageSize=$size" }/* get conversation  GET*/
 
 
     /**
