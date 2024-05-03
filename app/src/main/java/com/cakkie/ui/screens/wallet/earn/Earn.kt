@@ -92,17 +92,22 @@ fun Earn(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
 
+    var loadingAd by remember {
+        mutableStateOf(true)
+    }
+
     var countDownTimer by remember { mutableIntStateOf(0) }
 
     // Count down timer
-    LaunchedEffect(key1 = gettingAd) {
-        if (gettingAd) {
+    LaunchedEffect(key1 = gettingAd, key2 = loadingAd) {
+        if (gettingAd || loadingAd) {
             countDownTimer = 15
             while (countDownTimer > 0) {
                 delay(1000)
                 countDownTimer -= 1
             }
             gettingAd = false
+            loadingAd = false
         }
     }
     LaunchedEffect(key1 = user) {
@@ -544,7 +549,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 }
                 gettingAd = true
             },
-            enabled = !gettingAd && couldMine,
+            enabled = !gettingAd && couldMine && !loadingAd,
             shape = RoundedCornerShape(50),
             modifier = Modifier
                 .padding(20.dp)
@@ -562,7 +567,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Mine",
+                    text = "Mine ${if (loadingAd) countDownTimer else ""}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBackground,
                     fontSize = 24.sp
