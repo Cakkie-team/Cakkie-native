@@ -38,7 +38,7 @@ data class Message(
     val isDeleted: Boolean = false,
     val isDelivered: Boolean = false,
     val isRead: Boolean = false,
-    val media: List<String> = listOf(),
+    val media: String? = null,
     val replyToId: String = "",
     val replyTo: Message? = null,
     val text: String = "",

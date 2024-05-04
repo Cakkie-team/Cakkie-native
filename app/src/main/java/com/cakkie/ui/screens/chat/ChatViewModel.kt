@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.Conversation
 import com.cakkie.networkModels.ConversationResponse
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
@@ -37,14 +38,20 @@ class ChatViewModel : ViewModel(), KoinComponent {
     }
 
     //start chat
-    fun startChat() = NetworkCalls.post<User>(
+    fun startChat(
+        forAdmins: Boolean,
+        shopId: String?,
+        content: String,
+        media: String?,
+    ) = NetworkCalls.post<Conversation>(
         endpoint = Endpoints.START_CHAT,
-        body = listOf()
-    ).addOnSuccessListener { response ->
-        Timber.d("Token sent successfully")
-    }.addOnFailureListener { exception ->
-        Timber.e(exception)
-    }
+        body = listOf(
+            "forAdmins" to forAdmins,
+            "shopId" to shopId,
+            "content" to content,
+            "media" to media
+        )
+    )
 
 
     fun getConversations(search: String = "", page: Int = 0, size: Int = 20) =
@@ -68,6 +75,23 @@ class ChatViewModel : ViewModel(), KoinComponent {
         data.put("pageSize", 20)
         socketClient.socket.emit("getConversationMessages", data)
     }
+
+    fun sendMessages(
+        userId: String,
+        conversationId: String?,
+        text: String,
+        media: String?,
+        replyTo: String?
+    ) {
+        val data = JSONObject()
+        data.put("conversationId", conversationId)
+        data.put("userId", userId)
+        data.put("replyTo", replyTo)
+        data.put("text", text)
+        data.put("media", media)
+        socketClient.socket.emit("sendMessage", data)
+    }
+
     fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
         body = listOf()

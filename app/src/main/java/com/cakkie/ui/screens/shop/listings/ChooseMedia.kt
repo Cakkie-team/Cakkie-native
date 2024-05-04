@@ -186,7 +186,8 @@ fun ChooseMedia(
                                     .clickable {
                                         if (from == "chat") {
                                             if (!files.contains(item) && files.size < 5) {
-                                                //check if content of files has video
+                                                //clear
+                                                files.clear()
                                                 files.add(item)
                                             } else {
                                                 files.remove(item)
@@ -232,7 +233,8 @@ fun ChooseMedia(
                                 checked = files.contains(item), onCheckedChange = {
                                     if (from == "chat") {
                                         if (!files.contains(item) && files.size < 5) {
-                                            //check if content of files has video
+                                            //clear
+                                            files.clear()
                                             files.add(item)
                                         } else {
                                             files.remove(item)

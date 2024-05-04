@@ -111,8 +111,8 @@ fun Chat(
     var conver by remember {
         mutableStateOf(conversation)
     }
-    var chats by remember {
-        mutableStateOf<List<Message>>(listOf())
+    val chats = remember {
+        mutableStateListOf<Message>()
     }
     LaunchedEffect(user) {
         if (id == "support" && user != null) {
@@ -141,13 +141,19 @@ fun Chat(
     if (conver != null) {
         DisposableEffect(Unit) {
             viewModel.socket.on("messages-${conver!!.id}") {
-                Timber.d("Messages: $it")
                 val newChats = it[0].toString().toObjectList(Message::class.java)
-                chats = newChats
+                Timber.d("Messages: ${newChats.toString()}")
+                chats.addAll(newChats)
+            }
+            viewModel.socket.on("newMessage-${conver!!.id}") {
+                Timber.d("Messages: $it")
+                val newChats = it[0].toString().toObject(Message::class.java)
+                chats.add(newChats)
             }
 
             onDispose {
                 viewModel.socket.off("messages-${conver!!.id}")
+                viewModel.socket.off("newMessage-${conver!!.id}")
             }
         }
     }
@@ -479,7 +485,34 @@ fun Chat(
                     },
                     trailingIcon = {
                         AnimatedVisibility(visible = message.text.isNotEmpty()) {
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = {
+                                if (conver == null) {
+                                    viewModel.startChat(
+                                        forAdmins = id == "support",
+                                        shopId = null,
+                                        content = message.text,
+                                        media = files.ifEmpty { null }?.first()?.uri
+                                    ).addOnSuccessListener {
+                                        conver = it
+                                        message = TextFieldValue("")
+                                    }.addOnFailureListener {
+                                        Toaster(
+                                            context,
+                                            it ?: "Failed to send message",
+                                            R.drawable.logo
+                                        ).show()
+                                    }
+                                } else {
+                                    viewModel.sendMessages(
+                                        userId = user!!.id,
+                                        conversationId = conver!!.id,
+                                        text = message.text,
+                                        media = files.ifEmpty { null }?.first()?.uri,
+                                        replyTo = replyTo.ifEmpty { null }
+                                    )
+                                    message = TextFieldValue("")
+                                }
+                            }) {
                                 Image(
                                     painter = painterResource(id = R.drawable.send_fill),
                                     contentDescription = "Back",

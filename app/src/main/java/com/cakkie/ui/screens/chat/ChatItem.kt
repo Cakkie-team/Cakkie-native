@@ -183,7 +183,7 @@ fun ChatItem(
                                 Spacer(modifier = Modifier.height(15.dp))
                             }
 
-                            if (item.replyTo.media.isNotEmpty()) {
+                            if (item.replyTo.media != null) {
                                 Box(
                                     modifier = Modifier
                                         .width(60.dp)
@@ -203,7 +203,7 @@ fun ChatItem(
                         }
                     }
                 }
-                if (item.media.isNotEmpty()) {
+                if (item.media != null) {
                     //chat image
                     Card(
                         Modifier
