@@ -60,6 +60,14 @@ class ChatViewModel : ViewModel(), KoinComponent {
         data.put("id", id)
         socketClient.socket.emit("getSupport", data)
     }
+
+    fun getMessages(id: String) {
+        val data = JSONObject()
+        data.put("conversationId", id)
+        data.put("page", 0)
+        data.put("pageSize", 20)
+        socketClient.socket.emit("getConversationMessages", data)
+    }
     fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
         body = listOf()

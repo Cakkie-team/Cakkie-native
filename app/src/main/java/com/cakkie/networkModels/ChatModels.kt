@@ -1,6 +1,7 @@
 package com.cakkie.networkModels
 
 import android.os.Parcelable
+import com.cakkie.data.db.models.User
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -42,6 +43,7 @@ data class Message(
     val text: String = "",
     val updatedAt: String = "",
     val userId: String = "",
+    val user: User = User()
 ) : Parcelable
 
 

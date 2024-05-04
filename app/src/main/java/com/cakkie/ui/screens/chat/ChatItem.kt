@@ -45,20 +45,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.Message
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieOrange
+import com.cakkie.utill.formatDate
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ChatItem(
-    item: Int,
+    item: Message,
+    viewModel: ChatViewModel,
+    user: User?,
     canSelect: Boolean,
     selected: Boolean,
-    onSelect: (Int) -> Unit,
+    onSelect: (Message) -> Unit,
     onReply: () -> Unit
 ) {
     val config = LocalConfiguration.current
@@ -81,7 +86,7 @@ fun ChatItem(
                 // 7
                 DraggableAnchors {
                     DragAnchors.Start at 0f
-                    DragAnchors.End at if (item % 2 == 0) width.value * 0.8f else -width.value * 0.8f
+                    DragAnchors.End at if (item.userId != user?.id) width.value * 0.8f else -width.value * 0.8f
                 }
             )
         }
@@ -114,7 +119,7 @@ fun ChatItem(
             .padding(vertical = 4.dp)
             .background(if (selected) CakkieOrange.copy(alpha = 0.3f) else Color.Transparent)
             .fillMaxWidth(),
-        horizontalArrangement = if (item % 2 == 0) Arrangement.Start else Arrangement.End
+        horizontalArrangement = if (item.userId != user?.id) Arrangement.Start else Arrangement.End
     ) {
         Card(
             Modifier
@@ -135,14 +140,14 @@ fun ChatItem(
                 },
             shape = CardDefaults.elevatedShape,
             colors = CardDefaults.cardColors(
-                containerColor = if (item % 2 != 0) CakkieBrown else CakkieBrown002,
+                containerColor = if (item.userId == user?.id) CakkieBrown else CakkieBrown002,
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 8.dp
             )
         ) {
             Column(Modifier.widthIn(min = 150.dp, max = width * 0.7f)) {
-                if (item % 3 == 0) {
+                if (false) {
                     Card(
                         Modifier
                             .heightIn(min = 43.dp, max = 80.dp),
@@ -196,7 +201,7 @@ fun ChatItem(
                         }
                     }
                 }
-                if (item % 2 == 1) {
+                if (false) {
                     //chat image
                     Card(
                         Modifier
@@ -219,7 +224,7 @@ fun ChatItem(
                 Spacer(modifier = Modifier.height(6.dp))
                 // Chat item content
                 Text(
-                    text = "Chat item $item",
+                    text = item.text,
                     color = CakkieBackground,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = 10.dp),
@@ -227,7 +232,7 @@ fun ChatItem(
                 Spacer(modifier = Modifier.padding(2.dp))
                 // Chat item timestamp
                 Text(
-                    text = "12:00 PM",
+                    text = item.updatedAt.formatDate(),
                     color = CakkieBackground,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier

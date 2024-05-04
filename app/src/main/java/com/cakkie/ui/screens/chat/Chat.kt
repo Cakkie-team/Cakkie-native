@@ -63,6 +63,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Conversation
+import com.cakkie.networkModels.Message
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
@@ -110,22 +111,43 @@ fun Chat(
     var conver by remember {
         mutableStateOf(conversation)
     }
-
+    var chats by remember {
+        mutableStateOf<List<Message>>(listOf())
+    }
     LaunchedEffect(user) {
         if (id == "support" && user != null) {
             viewModel.getSupport(user.id)
         }
     }
+
+    LaunchedEffect(conver) {
+        if (conver != null) {
+            viewModel.getMessages(conver!!.id)
+        }
+    }
     if (user != null) {
         DisposableEffect(Unit) {
             viewModel.socket.on("support-${user.id}") {
-                Timber.d("Support chat $it")
+                Timber.d("Support: $it")
                 val newConv = it[0].toString().toObject(Conversation::class.java)
                 conver = newConv
             }
-
             onDispose {
                 viewModel.socket.off("support-${user.id}")
+            }
+        }
+    }
+
+    if (conver != null) {
+        DisposableEffect(Unit) {
+            viewModel.socket.on("messages-${conver!!.id}") {
+                Timber.d("Messages: $it")
+                val newChats = it[0].toString().toObjectList(Message::class.java)
+                chats = newChats
+            }
+
+            onDispose {
+                viewModel.socket.off("messages-${conver!!.id}")
             }
         }
     }
@@ -153,11 +175,11 @@ fun Chat(
     var showOption by remember {
         mutableStateOf(false)
     }
-    val chats = emptyList<Int>()
+
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     val selectedChats = remember {
-        mutableStateListOf<Int>()
+        mutableStateListOf<String>()
     }
     var deleteCon by remember {
         mutableStateOf(false)
@@ -258,16 +280,18 @@ fun Chat(
             }
         }
         LazyColumn(Modifier.weight(1f), reverseLayout = true) {
-            items(items = chats, key = { index -> index }) {
+            items(items = chats, key = { index -> index.id }) {
                 ChatItem(
                     it,
+                    viewModel,
+                    user,
                     canSelect = selectedChats.isNotEmpty(),
-                    selected = selectedChats.contains(it),
+                    selected = selectedChats.contains(it.id),
                     onSelect = {
-                        if (selectedChats.contains(it)) {
-                            selectedChats.remove(it)
+                        if (selectedChats.contains(it.id)) {
+                            selectedChats.remove(it.id)
                         } else {
-                            selectedChats.add(it)
+                            selectedChats.add(it.id)
                         }
                     },
                 ) {

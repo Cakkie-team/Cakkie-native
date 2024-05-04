@@ -91,9 +91,9 @@ fun ExploreItem(
     onMute: (Boolean) -> Unit = {},
     progressiveMediaSource: ProgressiveMediaSource.Factory,
     navigator: DestinationsNavigator,
-    index: Int = 0
+    index: Int = 0,
+    viewModal: ExploreViewModal = koinViewModel()
 ) {
-    val viewModal: ExploreViewModal = koinViewModel()
     val user = viewModal.user.observeAsState().value
     val context = LocalContext.current
     var listing by rememberSaveable { mutableStateOf(item) }
