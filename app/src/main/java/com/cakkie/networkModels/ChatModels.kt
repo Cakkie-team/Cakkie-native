@@ -40,6 +40,7 @@ data class Message(
     val isRead: Boolean = false,
     val media: List<String> = listOf(),
     val replyToId: String = "",
+    val replyTo: Message? = null,
     val text: String = "",
     val updatedAt: String = "",
     val userId: String = "",

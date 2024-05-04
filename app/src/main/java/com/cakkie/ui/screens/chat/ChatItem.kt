@@ -147,7 +147,7 @@ fun ChatItem(
             )
         ) {
             Column(Modifier.widthIn(min = 150.dp, max = width * 0.7f)) {
-                if (false) {
+                if (item.replyTo != null) {
                     Card(
                         Modifier
                             .heightIn(min = 43.dp, max = 80.dp),
@@ -163,7 +163,7 @@ fun ChatItem(
                             Column(Modifier.weight(1f)) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = "james bond",
+                                    text = item.replyTo.user.firstName,
                                     color = CakkieOrange,
                                     style = MaterialTheme.typography.bodyLarge,
 //                                fontWeight = FontWeight.Bold,
@@ -173,7 +173,7 @@ fun ChatItem(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "Chat item $item",
+                                    text = item.replyTo.text,
                                     maxLines = 2,
                                     color = CakkieBackground,
                                     style = MaterialTheme.typography.bodyLarge,
@@ -183,25 +183,27 @@ fun ChatItem(
                                 Spacer(modifier = Modifier.height(15.dp))
                             }
 
-                            Box(
-                                modifier = Modifier
-                                    .width(60.dp)
-                                    .fillMaxHeight()
-                            ) {
-                                GlideImage(
-                                    model = "https://picsum.photos/200/300",
-                                    contentDescription = "chat image",
+                            if (item.replyTo.media.isNotEmpty()) {
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(CakkieBrown.copy(alpha = 0.5f)),
-                                    contentScale = ContentScale.Crop
-                                )
+                                        .width(60.dp)
+                                        .fillMaxHeight()
+                                ) {
+                                    GlideImage(
+                                        model = item.replyTo.media.first(),
+                                        contentDescription = "chat image",
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(CakkieBrown.copy(alpha = 0.5f)),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
 
                         }
                     }
                 }
-                if (false) {
+                if (item.media.isNotEmpty()) {
                     //chat image
                     Card(
                         Modifier
@@ -212,7 +214,7 @@ fun ChatItem(
                         ),
                     ) {
                         GlideImage(
-                            model = "https://picsum.photos/200/300",
+                            model = item.media.first(),
                             contentDescription = "chat image",
                             modifier = Modifier
                                 .height(width * 0.5f)
