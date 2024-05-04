@@ -33,7 +33,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +62,7 @@ import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Conversation
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
@@ -73,6 +77,7 @@ import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.toObject
 import com.cakkie.utill.toObjectList
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
@@ -81,21 +86,48 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
 fun Chat(
     id: String,
+    conversation: Conversation? = null,
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     awardResult: ResultRecipient<AwardContractDestination, String>,
     congratsResult: ResultRecipient<ReceiveContractDestination, String>,
     navigator: DestinationsNavigator
 ) {
+    val viewModel: ChatViewModel = koinViewModel()
+    val user = viewModel.user.observeAsState().value
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     var files by remember {
         mutableStateOf(emptyList<MediaModel>())
+    }
+    var conver by remember {
+        mutableStateOf(conversation)
+    }
+
+    LaunchedEffect(user) {
+        if (id == "support" && user != null) {
+            viewModel.getSupport(user.id)
+        }
+    }
+    if (user != null) {
+        DisposableEffect(Unit) {
+            viewModel.socket.on("support-${user.id}") {
+                Timber.d("Support chat $it")
+                val newConv = it[0].toString().toObject(Conversation::class.java)
+                conver = newConv
+            }
+
+            onDispose {
+                viewModel.socket.off("support-${user.id}")
+            }
+        }
     }
     fileRecipient.onNavResult { result ->
         when (result) {
@@ -159,7 +191,7 @@ fun Chat(
                     mutableStateOf(false)
                 }
                 AsyncImage(
-                    model = "https://source.unsplash.com/80x80/?profile",
+                    model = conver?.display?.image ?: "https://source.unsplash.com/80x80/?profile",
                     contentDescription = "profile pic",
                     onState = {
                         //update isLoaded
@@ -182,13 +214,13 @@ fun Chat(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Cakkie Support",
+                        text = conver?.display?.name ?: "Cakkie Support",
                         color = TextColorDark,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Online",
+                        text = if (conver?.display?.isOnline == true) "Online" else "Offline",
                         color = CakkieGreen,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 14.sp
@@ -205,23 +237,25 @@ fun Chat(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navigator.navigate(AwardContractDestination(name = "Sweet bites"))
-                }
-                .background(CakkieBrown002)
-                .height(40.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Award Contract",
-                color = CakkieBackground,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+        AnimatedVisibility(visible = false) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navigator.navigate(AwardContractDestination(name = "Sweet bites"))
+                    }
+                    .background(CakkieBrown002)
+                    .height(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Award Contract",
+                    color = CakkieBackground,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
         }
         LazyColumn(Modifier.weight(1f), reverseLayout = true) {
             items(items = chats, key = { index -> index }) {

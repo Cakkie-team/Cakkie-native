@@ -11,6 +11,7 @@ import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
@@ -46,7 +47,7 @@ class ChatViewModel : ViewModel(), KoinComponent {
     }
 
 
-    fun getConversation(search: String = "", page: Int = 0, size: Int = 20) =
+    fun getConversations(search: String = "", page: Int = 0, size: Int = 20) =
         NetworkCalls.get<ConversationResponse>(
             endpoint = Endpoints.GET_CONV(search, page, size),
             body = listOf()
@@ -54,6 +55,11 @@ class ChatViewModel : ViewModel(), KoinComponent {
             _conversations.value = it
         }
 
+    fun getSupport(id: String) {
+        val data = JSONObject()
+        data.put("id", id)
+        socketClient.socket.emit("getSupport", data)
+    }
     fun getProfile() = NetworkCalls.get<User>(
         endpoint = Endpoints.ACCOUNT,
         body = listOf()
