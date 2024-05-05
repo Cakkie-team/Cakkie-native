@@ -21,8 +21,11 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.networkModels.Notification
 import com.cakkie.networkModels.NotificationResponse
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.TextColorDark
@@ -44,9 +48,14 @@ import org.koin.androidx.compose.koinViewModel
 fun Notification(navigator: DestinationsNavigator) {
     val viewModel: NotificationViewModel = koinViewModel()
     val notifications = viewModel.notifications.observeAsState(NotificationResponse()).value
-
+    val noti = remember {
+        mutableStateListOf<Notification>()
+    }
     val showTip = viewModel.isNotificationTipShown.collectAsState(true).value
 
+    LaunchedEffect(key1 = notifications.data) {
+        noti.addAll(notifications.data)
+    }
 
     Column {
         Box(
@@ -75,7 +84,7 @@ fun Notification(navigator: DestinationsNavigator) {
         }
         Spacer(modifier = Modifier.height(18.dp))
 
-        if (notifications.data.isEmpty()) {
+        if (noti.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,7 +105,14 @@ fun Notification(navigator: DestinationsNavigator) {
         LazyColumn(
             state = rememberLazyListState()
         ) {
-            items(items = notifications.data, key = { it.id }) { notification ->
+            items(items = noti, key = { it.id }) { notification ->
+                val index = noti.indexOf(notification)
+                if (index > noti.lastIndex - 2 && notifications.data.isNotEmpty()) {
+                    viewModel.getNotifications(
+                        notifications.meta.nextPage,
+                        notifications.meta.pageSize
+                    )
+                }
                 val state = rememberDismissState(
                     confirmStateChange = {
                         if (it == DismissValue.DismissedToEnd) {
@@ -110,10 +126,10 @@ fun Notification(navigator: DestinationsNavigator) {
                     {
                         NotificationItem(notification, isBackground = true, navigator = navigator)
 
-                }, dismissContent =
-                {
-                    NotificationItem(notification, isBackground = false, navigator = navigator)
-                })
+                    }, dismissContent =
+                    {
+                        NotificationItem(notification, isBackground = false, navigator = navigator)
+                    })
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
