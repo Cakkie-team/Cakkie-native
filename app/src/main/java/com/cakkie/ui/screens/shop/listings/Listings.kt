@@ -20,7 +20,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
@@ -45,8 +49,15 @@ import org.koin.androidx.compose.koinViewModel
 fun Listings(navigator: DestinationsNavigator) {
     val viewModel: ShopViewModel = koinViewModel()
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
+    val post = remember {
+        mutableStateListOf<Listing>()
+    }
+
+    LaunchedEffect(key1 = listings.data) {
+        post.addAll(listings.data)
+    }
     Box(modifier = Modifier.fillMaxSize()) {
-        if (listings.data.isEmpty()) {
+        if (post.isEmpty()) {
             Column(
                 Modifier
                     .fillMaxWidth(0.8f)
@@ -149,7 +160,11 @@ fun Listings(navigator: DestinationsNavigator) {
                     }
                 }
                 LazyColumn(Modifier.padding(vertical = 5.dp)) {
-                    items(listings.data) { listing ->
+                    items(post, key = { it.id }) { listing ->
+                        val index = post.indexOf(listing)
+                        if (index > post.lastIndex - 2 && listings.data.isNotEmpty()) {
+                            viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
+                        }
                         ListingItem(item = listing) {
                             navigator.navigate(
                                 PreviewListingDestination(
