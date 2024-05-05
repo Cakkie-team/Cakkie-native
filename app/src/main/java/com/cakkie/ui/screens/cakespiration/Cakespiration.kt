@@ -80,6 +80,7 @@ fun Cakespiration(
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
     val cakespirationRes = viewModel.cakespiration.observeAsState().value
+
     val prevItems = items.toObjectList(Listing::class.java)
     val cakespirations = remember {
         mutableStateListOf(
@@ -135,6 +136,14 @@ fun Cakespiration(
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
             items(items = cakespirations, key = { it.id }) { listing ->
+                val index = cakespirations.indexOf(listing)
+                if (index > cakespirations.lastIndex - 2 && cakespirationRes?.meta?.nextPage != null) {
+                    viewModel.getCakespirations(
+                        context,
+                        cakespirationRes.meta.nextPage,
+                        cakespirationRes.meta.pageSize
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .background(Color.Black)

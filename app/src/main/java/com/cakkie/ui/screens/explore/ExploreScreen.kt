@@ -133,11 +133,11 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(listings?.data) {
-        post.addAll(listings?.data ?: listOf())
+        listings?.data?.filterNot { it in post }?.let { post.addAll(it) }
     }
 
     LaunchedEffect(cakespiration?.data) {
-        story.addAll(cakespiration?.data ?: listOf())
+        cakespiration?.data?.let { story.addAll(it.filterNot { it in story }) }
     }
 
     //check if user is has a shop
