@@ -184,7 +184,7 @@ fun Chat(
     }
 
     var replyTo by remember {
-        mutableStateOf("")
+        mutableStateOf<Message?>(null)
     }
     var showOption by remember {
         mutableStateOf(false)
@@ -193,7 +193,7 @@ fun Chat(
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     val selectedChats = remember {
-        mutableStateListOf<String>()
+        mutableStateListOf<Message>()
     }
     var deleteCon by remember {
         mutableStateOf(false)
@@ -305,16 +305,16 @@ fun Chat(
                     viewModel,
                     user,
                     canSelect = selectedChats.isNotEmpty(),
-                    selected = selectedChats.contains(it.id),
+                    selected = selectedChats.map { it.id }.contains(it.id),
                     onSelect = {
-                        if (selectedChats.contains(it.id)) {
-                            selectedChats.remove(it.id)
+                        if (selectedChats.map { it.id }.contains(it.id)) {
+                            selectedChats.removeIf { chat -> chat.id == it.id }
                         } else {
-                            selectedChats.add(it.id)
+                            selectedChats.add(it)
                         }
                     },
                 ) {
-                    replyTo = "Chat item $it"
+                    replyTo = it
                 }
             }
         }
@@ -380,7 +380,7 @@ fun Chat(
             }
             Spacer(modifier = Modifier.padding(8.dp))
         }
-        AnimatedVisibility(replyTo.isNotEmpty()) {
+        AnimatedVisibility(replyTo != null) {
 //            Spacer(modifier = Modifier.padding(8.dp))
             Box(
                 Modifier
@@ -403,7 +403,8 @@ fun Chat(
                         Column(Modifier.weight(1f)) {
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "james bond",
+                                text = if (replyTo?.user?.id == user?.id) "You"
+                                else replyTo?.user?.name ?: "",
                                 color = CakkieOrange,
                                 style = MaterialTheme.typography.bodyLarge,
 //                                fontWeight = FontWeight.Bold,
@@ -412,7 +413,7 @@ fun Chat(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = replyTo,
+                                text = replyTo?.text ?: "",
                                 maxLines = 2,
                                 color = CakkieBackground,
                                 style = MaterialTheme.typography.bodyLarge,
@@ -421,25 +422,27 @@ fun Chat(
                             )
                             Spacer(modifier = Modifier.height(15.dp))
                         }
-                        Box(
-                            modifier = Modifier
-                                .width(60.dp)
-                                .fillMaxHeight()
-                        ) {
-                            GlideImage(
-                                model = "https://picsum.photos/200/300",
-                                contentDescription = "chat image",
+                        if (replyTo?.media != null) {
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(CakkieBrown.copy(alpha = 0.5f)),
-                                contentScale = ContentScale.Crop
-                            )
+                                    .width(60.dp)
+                                    .fillMaxHeight()
+                            ) {
+                                GlideImage(
+                                    model = replyTo!!.media,
+                                    contentDescription = "chat image",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(CakkieBrown.copy(alpha = 0.5f)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
                 }
                 IconButton(
                     onClick = {
-                        replyTo = ""
+                        replyTo = null
                     }, modifier = Modifier
                         .offset(x = (-6).dp)
                         .align(Alignment.TopEnd)
@@ -521,9 +524,10 @@ fun Chat(
                                         conversationId = conver!!.id,
                                         text = message.text,
                                         media = files.ifEmpty { null }?.first()?.uri,
-                                        replyTo = replyTo.ifEmpty { null }
+                                        replyTo = replyTo?.id
                                     )
                                     message = TextFieldValue("")
+                                    replyTo = null
                                 }
                             }) {
                                 Image(
@@ -640,7 +644,7 @@ fun Chat(
 
                                     R.string.reply -> {
                                         // reply
-                                        replyTo = "Chat item ${selectedChats.first()}"
+                                        replyTo = selectedChats.first()
                                         selectedChats.clear()
                                     }
 
