@@ -716,6 +716,12 @@ fun Chat(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = {
+                                selectedChats.forEach {
+                                    viewModel.deleteChat(
+                                        userId = user!!.id,
+                                        messageId = it.id
+                                    )
+                                }
                                 deleteCon = false
                                 selectedChats.clear()
                             }

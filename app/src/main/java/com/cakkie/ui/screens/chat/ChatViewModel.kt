@@ -81,6 +81,13 @@ class ChatViewModel : ViewModel(), KoinComponent {
         socketClient.socket.emit("deliveredMessage", data)
     }
 
+    fun deleteChat(userId: String, messageId: String) {
+        val data = JSONObject()
+        data.put("userId", userId)
+        data.put("messageId", messageId)
+        socketClient.socket.emit("deleteMessage", data)
+    }
+
     fun getMessages(id: String) {
         val data = JSONObject()
         data.put("conversationId", id)

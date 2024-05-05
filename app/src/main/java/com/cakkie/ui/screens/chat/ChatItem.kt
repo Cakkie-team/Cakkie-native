@@ -136,15 +136,34 @@ fun ChatItem(
     Row(
         Modifier
             .combinedClickable(
-                onLongClick = { onSelect.invoke(item) },
-                onClick = { if (canSelect) onSelect.invoke(item) }
+                onLongClick = { if (item.isDeleted.not()) onSelect.invoke(item) },
+                onClick = { if (canSelect && item.isDeleted.not()) onSelect.invoke(item) }
             )
             .padding(vertical = 4.dp)
             .background(if (selected) CakkieOrange.copy(alpha = 0.3f) else Color.Transparent)
             .fillMaxWidth(),
         horizontalArrangement = if (item.userId != user?.id) Arrangement.Start else Arrangement.End
     ) {
-        Card(
+        if (item.isDeleted) {
+            Card(
+                Modifier
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                shape = CardDefaults.elevatedShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = if (item.userId == user?.id) CakkieBrown else CakkieBrown002,
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                )
+            ) {
+                Text(
+                    text = "Message Deleted",
+                    color = CakkieBackground,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(10.dp),
+                )
+            }
+        } else Card(
             Modifier
                 .anchoredDraggable(
                     state = dragableState,
