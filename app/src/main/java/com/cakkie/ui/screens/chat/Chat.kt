@@ -140,7 +140,9 @@ fun Chat(
         }
     }
     LaunchedEffect(key1 = chatRes) {
-        chatRes?.data?.let { chats.addAll(it.filterNot { it in chats }) }
+        chats.addAll(chatRes?.data?.filterNot { res ->
+            chats.any { it.id == res.id }
+        } ?: emptyList())
     }
     if (user != null) {
         DisposableEffect(Unit) {
