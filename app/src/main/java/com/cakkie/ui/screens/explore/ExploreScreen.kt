@@ -133,19 +133,15 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(listings?.data) {
-        listings?.data?.forEach { res ->
-            if (post.find { it.id == res.id } == null) {
-                post.add(res)
-            }
-        }
+        post.addAll(listings?.data?.filterNot { res ->
+            post.any { it.id == res.id }
+        } ?: emptyList())
     }
 
     LaunchedEffect(cakespiration?.data) {
-        cakespiration?.data?.forEach { res ->
-            if (story.find { it.id == res.id } == null) {
-                story.add(res)
-            }
-        }
+        story.addAll(cakespiration?.data?.filterNot { res ->
+            story.any { it.id == res.id }
+        } ?: emptyList())
     }
 
     //check if user is has a shop
