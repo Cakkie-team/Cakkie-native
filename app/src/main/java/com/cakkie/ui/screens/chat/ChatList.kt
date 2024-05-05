@@ -29,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
+import com.cakkie.networkModels.Conversation
 import com.cakkie.networkModels.Message
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.ChatDestination
@@ -74,12 +76,21 @@ fun ChatList(navigator: DestinationsNavigator) {
     val viewModel: ChatViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
     val conversations = viewModel.conversations.observeAsState().value
+    val convos = remember {
+        mutableStateListOf<Conversation>()
+    }
     var query by remember {
         mutableStateOf(TextFieldValue(""))
     }
 
     LaunchedEffect(key1 = query.text) {
         viewModel.getConversations(query.text)
+    }
+
+    LaunchedEffect(key1 = conversations) {
+        convos.addAll(conversations?.data?.filterNot { res ->
+            convos.any { it.id == res.id }
+        } ?: emptyList())
     }
 
     if (user != null) {
@@ -188,7 +199,15 @@ fun ChatList(navigator: DestinationsNavigator) {
                 }
             } else {
                 LazyColumn {
-                    items(items = conversations?.data ?: listOf()) {
+                    items(items = convos) {
+                        val index = convos.indexOf(it)
+                        if (index > convos.size - 2 && conversations?.data?.isEmpty() == false) {
+                            viewModel.getConversations(
+                                query.text,
+                                conversations.meta.nextPage,
+                                conversations.meta.pageSize
+                            )
+                        }
                         Row(
                             Modifier
                                 .fillMaxWidth()
