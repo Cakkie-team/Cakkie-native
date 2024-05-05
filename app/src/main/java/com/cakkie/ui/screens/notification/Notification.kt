@@ -51,7 +51,9 @@ fun Notification(navigator: DestinationsNavigator) {
     val showTip = viewModel.isNotificationTipShown.collectAsState(true).value
 
     LaunchedEffect(key1 = notifications.data) {
-        noti.addAll(notifications.data.filterNot { it in noti })
+        noti.addAll(notifications?.data?.filterNot { res ->
+            noti.any { it.id == res.id }
+        } ?: emptyList())
     }
 
     Column {
@@ -125,7 +127,7 @@ fun Notification(navigator: DestinationsNavigator) {
 //
 //                    }, dismissContent =
 //                    {
-                        NotificationItem(notification, isBackground = false, navigator = navigator)
+                NotificationItem(notification, isBackground = false, navigator = navigator)
 //                    })
                 Spacer(modifier = Modifier.height(8.dp))
             }

@@ -54,7 +54,9 @@ fun Listings(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(key1 = listings.data) {
-        post.addAll(listings.data.filterNot { it in post })
+        post.addAll(listings?.data?.filterNot { res ->
+            post.any { it.id == res.id }
+        } ?: emptyList())
     }
     Box(modifier = Modifier.fillMaxSize()) {
         if (post.isEmpty()) {
