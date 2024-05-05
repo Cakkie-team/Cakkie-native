@@ -14,10 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -113,23 +110,23 @@ fun Notification(navigator: DestinationsNavigator) {
                         notifications.meta.pageSize
                     )
                 }
-                val state = rememberDismissState(
-                    confirmStateChange = {
-                        if (it == DismissValue.DismissedToEnd) {
-
-                        }
-                        true
-                    }
-                )
-                SwipeToDismiss(
-                    state = state, background =
-                    {
-                        NotificationItem(notification, isBackground = true, navigator = navigator)
-
-                    }, dismissContent =
-                    {
+//                val state = rememberDismissState(
+//                    confirmStateChange = {
+//                        if (it == DismissValue.DismissedToEnd) {
+//
+//                        }
+//                        true
+//                    }
+//                )
+//                SwipeToDismiss(
+//                    state = state, background =
+//                    {
+//                        NotificationItem(notification, isBackground = true, navigator = navigator)
+//
+//                    }, dismissContent =
+//                    {
                         NotificationItem(notification, isBackground = false, navigator = navigator)
-                    })
+//                    })
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
