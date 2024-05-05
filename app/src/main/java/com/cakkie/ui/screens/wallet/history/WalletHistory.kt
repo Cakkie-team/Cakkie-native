@@ -66,7 +66,7 @@ fun WalletHistory(navigator: DestinationsNavigator) {
     }
 
     LaunchedEffect(key1 = history) {
-        trans.addAll(history.data)
+        trans.addAll(history.data.filterNot { it in trans })
     }
 
     Column(

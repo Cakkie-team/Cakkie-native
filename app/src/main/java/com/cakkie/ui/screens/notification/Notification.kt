@@ -51,7 +51,7 @@ fun Notification(navigator: DestinationsNavigator) {
     val showTip = viewModel.isNotificationTipShown.collectAsState(true).value
 
     LaunchedEffect(key1 = notifications.data) {
-        noti.addAll(notifications.data)
+        noti.addAll(notifications.data.filterNot { it in noti })
     }
 
     Column {
