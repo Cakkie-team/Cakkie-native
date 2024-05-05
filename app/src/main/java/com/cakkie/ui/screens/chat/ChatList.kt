@@ -234,7 +234,7 @@ fun ChatList(navigator: DestinationsNavigator) {
 
                             Column(horizontalAlignment = Alignment.End) {
                                 Text(
-                                    text = it.recentMessage.updatedAt.formatDate(),
+                                    text = it.recentMessage.createdAt.formatDate(),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = TextColorInactive,
                                     textAlign = TextAlign.Center,
