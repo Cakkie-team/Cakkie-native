@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.networkModels.Transaction
 import com.cakkie.networkModels.TransactionResponse
 import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.screens.wallet.WalletViewModel
@@ -43,7 +46,11 @@ fun WalletHistory(navigator: DestinationsNavigator) {
     var filter by remember { mutableStateOf("All") }
     val viewModel: WalletViewModel = koinViewModel()
     val history = viewModel.transaction.observeAsState(TransactionResponse()).value
-    val filtered = history.data.filter {
+    val listState = rememberLazyListState()
+    val trans = remember {
+        mutableStateListOf<Transaction>()
+    }
+    val filtered = trans.filter {
         val status = it.status.lowercase(Locale.ROOT)
         when (filter.lowercase(Locale.ROOT)) {
             "all" -> true
@@ -53,8 +60,13 @@ fun WalletHistory(navigator: DestinationsNavigator) {
             else -> true
         }
     }
+    val lastIndex = filtered.lastIndex
     LaunchedEffect(key1 = Unit) {
         viewModel.getAllTransactions()
+    }
+
+    LaunchedEffect(key1 = history) {
+        trans.addAll(history.data)
     }
 
     Column(
@@ -87,10 +99,14 @@ fun WalletHistory(navigator: DestinationsNavigator) {
         }
         Spacer(modifier = Modifier.height(10.dp))
         if (filtered.isNotEmpty()) {
-            LazyColumn {
+            LazyColumn(state = listState) {
                 items(
                     items = filtered,
                 ) {
+                    val index = filtered.lastIndexOf(it)
+                    if (index > lastIndex - 2 && history.data.isNotEmpty()) {
+                        viewModel.getAllTransactions(history.meta.nextPage, history.meta.pageSize)
+                    }
                     HistoryItem(it)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
