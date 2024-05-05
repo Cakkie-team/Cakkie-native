@@ -238,5 +238,6 @@ fun Shop(navigator: DestinationsNavigator) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(150.dp))
     }
 }

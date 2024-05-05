@@ -172,7 +172,7 @@ fun ChatList(navigator: DestinationsNavigator) {
                     .height(55.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            if (conversations?.data?.isEmpty() == true) {
+            if (convos.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
