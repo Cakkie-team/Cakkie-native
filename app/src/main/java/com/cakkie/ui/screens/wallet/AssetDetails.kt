@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.networkModels.Balance
+import com.cakkie.networkModels.Transaction
 import com.cakkie.networkModels.TransactionResponse
 import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
@@ -61,9 +63,15 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
     val dec = DecimalFormat("#,##0.00")
     val viewModel: WalletViewModel = koinViewModel()
     val history = viewModel.transaction.observeAsState(TransactionResponse()).value
-
+    val trans = remember {
+        mutableStateListOf<Transaction>()
+    }
     LaunchedEffect(key1 = item) {
         viewModel.getTransactions(item.id)
+    }
+
+    LaunchedEffect(key1 = history) {
+        trans.addAll(history.data)
     }
 
     Column(
@@ -274,13 +282,17 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
             }
 
             items(
-                items = history?.data ?: listOf(),
+                items = trans
             ) {
+                val index = trans.lastIndexOf(it)
+                if (index > trans.lastIndex - 2 && history.data.isNotEmpty()) {
+                    viewModel.getTransactions(item.id, history.meta.nextPage, history.meta.pageSize)
+                }
                 HistoryItem(it)
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-            if (history.data.isEmpty()) {
+            if (trans.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier
