@@ -116,7 +116,7 @@ fun ChatItem(
         }
     }
     LaunchedEffect(key1 = user) {
-        if (user != null) {
+        if (user != null && message.readBy.contains(user.id).not()) {
             viewModel.readChat(user.id, message.id)
         }
     }

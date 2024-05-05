@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
+import com.cakkie.networkModels.Message
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -57,17 +59,20 @@ import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.formatDate
+import com.cakkie.utill.toObject
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Destination
 @Composable
 fun ChatList(navigator: DestinationsNavigator) {
     val viewModel: ChatViewModel = koinViewModel()
+    val user = viewModel.user.observeAsState().value
     val conversations = viewModel.conversations.observeAsState().value
     var query by remember {
         mutableStateOf(TextFieldValue(""))
@@ -77,6 +82,19 @@ fun ChatList(navigator: DestinationsNavigator) {
         viewModel.getConversations(query.text)
     }
 
+    if (user != null) {
+        DisposableEffect(Unit) {
+            viewModel.socket.on("newMessage-${user.id}") {
+                Timber.d("delivered: $it")
+                val message = it[0].toString().toObject(Message::class.java)
+                viewModel.deliveredChat(user.id, message.id)
+            }
+
+            onDispose {
+                viewModel.socket.off("newMessage-${user.id}")
+            }
+        }
+    }
 
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(20.dp))
