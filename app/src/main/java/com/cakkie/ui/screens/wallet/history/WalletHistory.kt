@@ -102,6 +102,7 @@ fun WalletHistory(navigator: DestinationsNavigator) {
             LazyColumn(state = listState) {
                 items(
                     items = filtered,
+                    key = { it.id }
                 ) {
                     val index = filtered.lastIndexOf(it)
                     if (index > lastIndex - 2 && history.data.isNotEmpty()) {

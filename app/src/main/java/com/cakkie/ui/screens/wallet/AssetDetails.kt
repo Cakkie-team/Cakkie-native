@@ -282,7 +282,8 @@ fun AssetDetails(item: Balance = Balance(), navigator: DestinationsNavigator) {
             }
 
             items(
-                items = trans
+                items = trans,
+                key = { it.id }
             ) {
                 val index = trans.lastIndexOf(it)
                 if (index > trans.lastIndex - 2 && history.data.isNotEmpty()) {
