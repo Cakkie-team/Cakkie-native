@@ -31,6 +31,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +56,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.BottomState.hideNav
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
@@ -85,6 +87,12 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState().value
     val listings = viewModel.listings.observeAsState().value
     val cakespiration = viewModel.cakespiration.observeAsState().value
+    val post = remember {
+        mutableStateListOf<Listing>()
+    }
+    val story = remember {
+        mutableStateListOf<Listing>()
+    }
     val listState = rememberLazyListState()
     var isMuted by rememberSaveable { mutableStateOf(true) }
     var visible by remember { mutableStateOf(true) }
@@ -124,9 +132,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         }
     }
 
-//    LaunchedEffect(listings) {
-//        Timber.d("Listings: ${listings?.data}")
-//    }
+    LaunchedEffect(listings?.data) {
+        post.addAll(listings?.data ?: listOf())
+    }
+
+    LaunchedEffect(cakespiration?.data) {
+        story.addAll(cakespiration?.data ?: listOf())
+    }
 
     //check if user is has a shop
     LaunchedEffect(key1 = user) {
@@ -236,7 +248,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                             navigator.navigate(
                                 CakespirationDestination(
                                     "",
-                                    items = (cakespiration?.data ?: listOf()).toString()
+                                    items = (story).toString()
                                 )
                             )
                         }
@@ -340,8 +352,17 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     items(
-                        items = cakespiration?.data ?: listOf(),
+                        items = story,
+                        key = { it.id }
                     ) {
+                        val index = story.indexOf(it)
+                        if (index > story.lastIndex - 2 && cakespiration?.data?.isNotEmpty() == true) {
+                            viewModel.getCakespirations(
+                                context,
+                                cakespiration.meta.nextPage,
+                                cakespiration.meta.pageSize
+                            )
+                        }
                         Spacer(modifier = Modifier.width(4.dp))
                         GlideImage(
                             imageModel = it.media.first(),
@@ -374,25 +395,26 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            if (listings != null) {
-                items(
-                    items = listings.data,
-                    key = { it.id }
-                ) { listing ->
-                    val index = listings.data.indexOf(listing)
-//                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
-                    ExploreItem(
-//                       user = user,
-                        navigator = navigator,
-                        item = listing,
-                        shouldPlay = index == visibleItem,
-                        isMuted = isMuted,
-                        onMute = { isMuted = it },
-                        progressiveMediaSource = progressiveMediaSource,
-                        index = index,
-                        viewModal = viewModel
-                    )
+            items(
+                items = post,
+                key = { it.id }
+            ) { listing ->
+                val index = post.indexOf(listing)
+                if (index > post.lastIndex - 2 && listings?.data?.isNotEmpty() == true) {
+                    viewModel.getListings(context, listings.meta.nextPage, listings.meta.pageSize)
                 }
+//                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
+                ExploreItem(
+//                       user = user,
+                    navigator = navigator,
+                    item = listing,
+                    shouldPlay = index == visibleItem,
+                    isMuted = isMuted,
+                    onMute = { isMuted = it },
+                    progressiveMediaSource = progressiveMediaSource,
+                    index = index,
+                    viewModal = viewModel
+                )
             }
             item { Spacer(modifier = Modifier.height(180.dp)) }
         }
