@@ -263,7 +263,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
     init {
         getProfile()
         getUser()
-//        getMyShop()
+        getMyShop()
 //        getMyListings()
     }
 }

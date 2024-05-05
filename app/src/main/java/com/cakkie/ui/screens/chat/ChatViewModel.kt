@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.File
 
 class ChatViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
@@ -80,6 +81,11 @@ class ChatViewModel : ViewModel(), KoinComponent {
         data.put("messageId", messageId)
         socketClient.socket.emit("deliveredMessage", data)
     }
+
+    fun uploadImage(image: File, path: String, fileName: String) =
+        NetworkCalls.uploadFile(
+            endpoint = Endpoints.UPLOAD_IMAGE(path, fileName), media = image
+        )
 
     fun deleteChat(userId: String, messageId: String) {
         val data = JSONObject()

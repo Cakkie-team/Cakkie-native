@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -71,6 +72,7 @@ import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
 import com.cakkie.ui.screens.destinations.ReportDestination
 import com.cakkie.ui.screens.shop.MediaModel
+import com.cakkie.ui.screens.shop.listings.FileModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
@@ -79,7 +81,9 @@ import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.toObject
 import com.cakkie.utill.toObjectList
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -92,6 +96,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.util.Locale
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Destination
@@ -500,34 +505,77 @@ fun Chat(
                         }
                     },
                     trailingIcon = {
-                        AnimatedVisibility(visible = message.text.isNotEmpty()) {
+                        AnimatedVisibility(visible = message.text.isNotEmpty() || files.isNotEmpty()) {
                             IconButton(onClick = {
-                                if (conver == null) {
-                                    viewModel.startChat(
-                                        forAdmins = id == "support",
-                                        shopId = null,
-                                        content = message.text,
-                                        media = files.ifEmpty { null }?.first()?.uri
-                                    ).addOnSuccessListener {
-                                        conver = it
-                                        message = TextFieldValue("")
-                                    }.addOnFailureListener {
-                                        Toaster(
-                                            context,
-                                            it,
-                                            R.drawable.logo
-                                        ).show()
+                                if (user != null) {
+                                    val fileUrls = files.map {
+                                        val file = context.createTmpFileFromUri(
+                                            uri = it.uri.toUri(),
+                                            fileName = it.name.replace(" ", "").take(10)
+                                        )!!
+                                        FileModel(
+                                            file = file,
+                                            url = Endpoints.FILE_URL(
+                                                "${
+                                                    user.username.lowercase(Locale.ROOT)
+                                                        .replace(" ", "")
+                                                }/${file.name.replace(" ", "")}.${
+                                                    it.mediaMimeType.split("/").last()
+                                                }"
+                                            ),
+                                            mediaMimeType = it.mediaMimeType.split("/").last()
+                                        )
                                     }
-                                } else {
-                                    viewModel.sendMessages(
-                                        userId = user!!.id,
-                                        conversationId = conver!!.id,
-                                        text = message.text,
-                                        media = files.ifEmpty { null }?.first()?.uri,
-                                        replyTo = replyTo?.id
-                                    )
-                                    message = TextFieldValue("")
-                                    replyTo = null
+                                    fileUrls.forEach {
+                                        viewModel.uploadImage(
+                                            image = it.file,
+                                            path = user.username.lowercase(Locale.ROOT)
+                                                .replace(" ", ""),
+                                            fileName = "${it.file.name}.${it.mediaMimeType}"
+                                        ).addOnSuccessListener { resp ->
+                                            Timber.d(resp)
+                                            it.file.delete()
+                                        }.addOnFailureListener { exception ->
+                                            Timber.d(exception)
+                                            Toaster(
+                                                context,
+                                                exception.message.toString(),
+                                                R.drawable.logo
+                                            )
+                                            it.file.delete()
+                                        }
+                                    }
+                                    if (conver == null) {
+                                        viewModel.startChat(
+                                            forAdmins = id == "support",
+                                            shopId = null,
+                                            content = message.text,
+                                            media = fileUrls.ifEmpty { null }?.first()?.url
+                                        ).addOnSuccessListener {
+                                            conver = it
+                                            message = TextFieldValue("")
+                                            replyTo = null
+                                            files = emptyList()
+                                        }.addOnFailureListener {
+                                            Toaster(
+                                                context,
+                                                it,
+                                                R.drawable.logo
+                                            ).show()
+                                        }
+                                    } else {
+
+                                        viewModel.sendMessages(
+                                            userId = user.id,
+                                            conversationId = conver!!.id,
+                                            text = message.text,
+                                            media = fileUrls.ifEmpty { null }?.first()?.url,
+                                            replyTo = replyTo?.id
+                                        )
+                                        message = TextFieldValue("")
+                                        replyTo = null
+                                        files = emptyList()
+                                    }
                                 }
                             }) {
                                 Image(
