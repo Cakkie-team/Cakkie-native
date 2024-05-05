@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +41,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,6 +89,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -114,6 +117,8 @@ fun Chat(
     val chats = remember {
         mutableStateListOf<Message>()
     }
+    val chatState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     LaunchedEffect(user) {
         if (id == "support" && user != null) {
             viewModel.getSupport(user.id)
@@ -142,13 +147,16 @@ fun Chat(
         DisposableEffect(Unit) {
             viewModel.socket.on("messages-${conver!!.id}") {
                 val newChats = it[0].toString().toObjectList(Message::class.java)
-                Timber.d("Messages: ${newChats.toString()}")
+                Timber.d("Messages: $newChats")
                 chats.addAll(newChats)
             }
             viewModel.socket.on("newMessage-${conver!!.id}") {
                 Timber.d("Messages: $it")
                 val newChats = it[0].toString().toObject(Message::class.java)
                 chats.add(newChats)
+                scope.launch {
+                    chatState.animateScrollToItem(0)
+                }
             }
 
             onDispose {
@@ -285,8 +293,13 @@ fun Chat(
                 )
             }
         }
-        LazyColumn(Modifier.weight(1f), reverseLayout = true) {
-            items(items = chats, key = { index -> index.id }) {
+        LazyColumn(
+            Modifier.weight(1f),
+            state = chatState,
+            reverseLayout = true
+        ) {
+            val sortedChat = chats.sortedBy { it.createdAt }.reversed()
+            items(items = sortedChat, key = { index -> index.id }) {
                 ChatItem(
                     it,
                     viewModel,
@@ -498,7 +511,7 @@ fun Chat(
                                     }.addOnFailureListener {
                                         Toaster(
                                             context,
-                                            it ?: "Failed to send message",
+                                            it,
                                             R.drawable.logo
                                         ).show()
                                     }
