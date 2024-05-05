@@ -203,7 +203,10 @@ fun ChatList(navigator: DestinationsNavigator) {
                                     mutableStateOf(false)
                                 }
                                 AsyncImage(
-                                    model = it.display.image,
+                                    model = it.display.image.replace(
+                                        Regex("\\bhttp://"),
+                                        "https://"
+                                    ),
                                     contentDescription = "profile pic",
                                     onState = {
                                         //update isLoaded

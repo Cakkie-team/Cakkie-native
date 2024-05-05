@@ -241,7 +241,8 @@ fun Chat(
                     mutableStateOf(false)
                 }
                 AsyncImage(
-                    model = conver?.display?.image ?: "https://source.unsplash.com/80x80/?profile",
+                    model = conver?.display?.image?.replace(Regex("\\bhttp://"), "https://")
+                        ?: "https://source.unsplash.com/80x80/?profile",
                     contentDescription = "profile pic",
                     onState = {
                         //update isLoaded
