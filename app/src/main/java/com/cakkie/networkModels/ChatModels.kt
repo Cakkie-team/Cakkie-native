@@ -56,6 +56,6 @@ data class ConversationResponse(
 
 @Serializable
 data class MessageResponse(
-    val data: List<Conversation> = listOf(),
+    val data: List<Message> = listOf(),
     val meta: Pagination = Pagination(),
 )

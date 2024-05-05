@@ -94,11 +94,11 @@ class ChatViewModel : ViewModel(), KoinComponent {
         socketClient.socket.emit("deleteMessage", data)
     }
 
-    fun getMessages(id: String) {
+    fun getMessages(id: String, page: Int = 0, size: Int = 20) {
         val data = JSONObject()
         data.put("conversationId", id)
-        data.put("page", 0)
-        data.put("pageSize", 20)
+        data.put("page", page)
+        data.put("pageSize", size)
         socketClient.socket.emit("getConversationMessages", data)
     }
 

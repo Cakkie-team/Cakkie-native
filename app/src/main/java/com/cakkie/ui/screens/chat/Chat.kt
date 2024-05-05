@@ -67,6 +67,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Conversation
 import com.cakkie.networkModels.Message
+import com.cakkie.networkModels.MessageResponse
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
@@ -119,6 +120,9 @@ fun Chat(
     var conver by remember {
         mutableStateOf(conversation)
     }
+    var chatRes by remember {
+        mutableStateOf<MessageResponse?>(null)
+    }
     val chats = remember {
         mutableStateListOf<Message>()
     }
@@ -134,6 +138,9 @@ fun Chat(
         if (conver != null) {
             viewModel.getMessages(conver!!.id)
         }
+    }
+    LaunchedEffect(key1 = chatRes) {
+        chatRes?.data?.let { chats.addAll(it.filterNot { it in chats }) }
     }
     if (user != null) {
         DisposableEffect(Unit) {
@@ -151,9 +158,9 @@ fun Chat(
     if (conver != null) {
         DisposableEffect(Unit) {
             viewModel.socket.on("messages-${conver!!.id}") {
-                val newChats = it[0].toString().toObjectList(Message::class.java)
+                val newChats = it[0].toString().toObject(MessageResponse::class.java)
                 Timber.d("Messages: $newChats")
-                chats.addAll(newChats)
+                chatRes = newChats
             }
             viewModel.socket.on("newMessage-${conver!!.id}") {
                 Timber.d("Messages: $it")
@@ -305,6 +312,12 @@ fun Chat(
         ) {
             val sortedChat = chats.sortedBy { it.createdAt }.reversed()
             items(items = sortedChat, key = { index -> index.id }) {
+                val index = sortedChat.indexOf(it)
+                if (index > sortedChat.lastIndex - 2 && chatRes?.data?.isNotEmpty() == true) {
+                    chatRes?.meta?.let { page ->
+                        viewModel.getMessages(conver!!.id, page.nextPage, page.pageSize)
+                    }
+                }
                 ChatItem(
                     it,
                     viewModel,
