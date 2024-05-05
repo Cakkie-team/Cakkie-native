@@ -31,8 +31,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,13 +56,15 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.utill.formatDate
+import com.cakkie.utill.toObject
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ChatItem(
-    item: Message,
+    message: Message,
     viewModel: ChatViewModel,
     user: User?,
     canSelect: Boolean,
@@ -66,6 +72,7 @@ fun ChatItem(
     onSelect: (Message) -> Unit,
     onReply: () -> Unit
 ) {
+    var item by remember { mutableStateOf(message) }
     val config = LocalConfiguration.current
     val width = config.screenWidthDp.dp
     val density = LocalDensity.current
@@ -108,7 +115,23 @@ fun ChatItem(
             }
         }
     }
-
+    LaunchedEffect(key1 = user) {
+        if (user != null) {
+            viewModel.readChat(user.id, message.id)
+        }
+    }
+    if (user != null) {
+        DisposableEffect(Unit) {
+            viewModel.socket.on("updateMessage-${message.id}") {
+                Timber.d("updateMessage: $it")
+                val newMsg = it[0].toString().toObject(Message::class.java)
+                item = newMsg
+            }
+            onDispose {
+                viewModel.socket.off("updateMessage-${message.id}")
+            }
+        }
+    }
 
     Row(
         Modifier
@@ -163,7 +186,7 @@ fun ChatItem(
                             Column(Modifier.weight(1f)) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = item.replyTo.user.firstName,
+                                    text = item.replyTo!!.user.firstName,
                                     color = CakkieOrange,
                                     style = MaterialTheme.typography.bodyLarge,
 //                                fontWeight = FontWeight.Bold,
@@ -173,7 +196,7 @@ fun ChatItem(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = item.replyTo.text,
+                                    text = item.replyTo!!.text,
                                     maxLines = 2,
                                     color = CakkieBackground,
                                     style = MaterialTheme.typography.bodyLarge,
@@ -183,14 +206,14 @@ fun ChatItem(
                                 Spacer(modifier = Modifier.height(15.dp))
                             }
 
-                            if (item.replyTo.media != null) {
+                            if (item.replyTo!!.media != null) {
                                 Box(
                                     modifier = Modifier
                                         .width(60.dp)
                                         .fillMaxHeight()
                                 ) {
                                     GlideImage(
-                                        model = item.replyTo.media.first(),
+                                        model = item.replyTo!!.media,
                                         contentDescription = "chat image",
                                         modifier = Modifier
                                             .fillMaxSize()
@@ -214,7 +237,7 @@ fun ChatItem(
                         ),
                     ) {
                         GlideImage(
-                            model = item.media.first(),
+                            model = item.media,
                             contentDescription = "chat image",
                             modifier = Modifier
                                 .height(width * 0.5f)
@@ -234,7 +257,7 @@ fun ChatItem(
                 Spacer(modifier = Modifier.padding(2.dp))
                 // Chat item timestamp
                 Text(
-                    text = item.updatedAt.formatDate(),
+                    text = item.createdAt.formatDate(),
                     color = CakkieBackground,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier

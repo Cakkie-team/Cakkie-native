@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
 class ChatViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
@@ -66,6 +65,13 @@ class ChatViewModel : ViewModel(), KoinComponent {
         val data = JSONObject()
         data.put("id", id)
         socketClient.socket.emit("getSupport", data)
+    }
+
+    fun readChat(userId: String, messageId: String) {
+        val data = JSONObject()
+        data.put("userId", userId)
+        data.put("messageId", messageId)
+        socketClient.socket.emit("readMessage", data)
     }
 
     fun getMessages(id: String) {
