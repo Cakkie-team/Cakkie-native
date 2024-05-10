@@ -22,6 +22,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +38,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -76,8 +81,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @androidx.annotation.OptIn(UnstableApi::class)
 @Destination
 @Composable
@@ -132,13 +140,32 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         }
     }
 
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        viewModel.getListings(context)
+        viewModel.getCakespirations(context)
+        delay(1000)
+        refreshing = false
+    }
+
+    val state = rememberPullRefreshState(refreshing, ::refresh)
+
     LaunchedEffect(listings?.data) {
+        if (listings?.meta?.currentPage == 0) {
+            post.clear()
+        }
         post.addAll(listings?.data?.filterNot { res ->
             post.any { it.id == res.id }
         } ?: emptyList())
     }
 
     LaunchedEffect(cakespiration?.data) {
+        if (cakespiration?.meta?.currentPage == 0) {
+            story.clear()
+        }
         story.addAll(cakespiration?.data?.filterNot { res ->
             story.any { it.id == res.id }
         } ?: emptyList())
@@ -157,270 +184,288 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
+            .pullRefresh(state = state)
             .fillMaxSize()
     ) {
-        AnimatedVisibility(visible = visible) {
-            Row(
-                Modifier
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    var isLoading by remember {
-                        mutableStateOf(false)
-                    }
-                    AsyncImage(
-                        model = user?.profileImage?.replace(Regex("\\bhttp://"), "https://") ?: "",
-                        contentDescription = "profile pic",
-                        onState = {
-                            //update isLoaded
-                            isLoading = it is AsyncImagePainter.State.Loading
-                        },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(shape = CircleShape)
-                            .clickable {
-                                navigator.navigate(MyProfileDestination)
-                            }
-                            .placeholder(
-                                visible = isLoading,
-                                highlight = PlaceholderHighlight.shimmer(),
-                                color = CakkieBrown.copy(0.8f)
-                            )
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = "Welcome \uD83D\uDC4B",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = user?.name ?: "",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
-                        Image(
-                            painter = painterResource(id = R.drawable.notification),
-                            contentDescription = "notification",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    IconButton(onClick = { navigator.navigate(WalletDestination) }) {
-                        Image(
-                            painter = painterResource(id = R.drawable.wallet),
-                            contentDescription = "wallet",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        LazyColumn(state = listState) {
-            item {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            AnimatedVisibility(visible = visible) {
                 Row(
                     Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.cakespiration),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            navigator.navigate(
-                                CakespirationDestination(
-                                    "",
-                                    items = (story).toString()
-                                )
-                            )
-                        }
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.watch_all),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CakkieBrown
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_back),
-                            contentDescription = "arrow back",
-                            modifier = Modifier
-                                .rotate(180f)
-                                .width(24.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                LazyRow(
-                    Modifier.padding(horizontal = 16.dp)
-                ) {
-                    item {
                         var isLoading by remember {
                             mutableStateOf(false)
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Box(
+                        AsyncImage(
+                            model = user?.profileImage?.replace(Regex("\\bhttp://"), "https://")
+                                ?: "",
+                            contentDescription = "profile pic",
+                            onState = {
+                                //update isLoaded
+                                isLoading = it is AsyncImagePainter.State.Loading
+                            },
                             modifier = Modifier
-                                .width(70.dp)
-                                .height(108.dp)
-                                .clip(shape = RoundedCornerShape(8.dp))
+                                .size(40.dp)
+                                .clip(shape = CircleShape)
+                                .clickable {
+                                    navigator.navigate(MyProfileDestination)
+                                }
+                                .placeholder(
+                                    visible = isLoading,
+                                    highlight = PlaceholderHighlight.shimmer(),
+                                    color = CakkieBrown.copy(0.8f)
+                                )
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "Welcome \uD83D\uDC4B",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = user?.name ?: "",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
+                            Image(
+                                painter = painterResource(id = R.drawable.notification),
+                                contentDescription = "notification",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        IconButton(onClick = { navigator.navigate(WalletDestination) }) {
+                            Image(
+                                painter = painterResource(id = R.drawable.wallet),
+                                contentDescription = "wallet",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            LazyColumn(state = listState) {
+                item {
+                    Row(
+                        Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cakespiration),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                navigator.navigate(
+                                    CakespirationDestination(
+                                        "",
+                                        items = (story).toString()
+                                    )
+                                )
+                            }
                         ) {
-                            AsyncImage(
-                                model = "https://source.unsplash.com/100x150/?cake?video",
-                                contentDescription = "cake",
-                                onState = {
-                                    //update isLoaded
-                                    isLoading = it is AsyncImagePainter.State.Loading
-                                },
+                            Text(
+                                text = stringResource(id = R.string.watch_all),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = CakkieBrown
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.arrow_back),
+                                contentDescription = "arrow back",
+                                modifier = Modifier
+                                    .rotate(180f)
+                                    .width(24.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(
+                        Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        item {
+                            var isLoading by remember {
+                                mutableStateOf(false)
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Box(
                                 modifier = Modifier
                                     .width(70.dp)
                                     .height(108.dp)
                                     .clip(shape = RoundedCornerShape(8.dp))
-                                    .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        if (user?.hasShop == true) {
-                                            navigator.navigate(ChooseMediaDestination(R.string.videos)) {
-                                                launchSingleTop = true
-                                            }
-                                        } else {
-                                            //navigate to create shop screen
-                                            navigator.navigate(ShopDestination) {
-                                                launchSingleTop = true
-                                            }
-
-                                        }
-                                    }
-                                    .placeholder(
-                                        visible = isLoading,
-                                        highlight = PlaceholderHighlight.shimmer(),
-                                        color = CakkieBrown.copy(0.8f)
-                                    )
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Crop,
-                            )
-
-                            Box(
-                                Modifier
-                                    .background(
-                                        CakkieBrown.copy(0.4f),
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                    .fillMaxSize(), contentAlignment = Alignment.Center
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "+",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = CakkieBrown,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 24.sp,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .size(30.dp)
-                                            .clip(CircleShape)
-                                            .background(CakkieBackground, CircleShape),
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = stringResource(id = R.string.your_cakespiration),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = CakkieBackground,
-                                        fontSize = 10.sp,
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = 12.sp
-                                    )
+                                AsyncImage(
+                                    model = "https://source.unsplash.com/100x150/?cake?video",
+                                    contentDescription = "cake",
+                                    onState = {
+                                        //update isLoaded
+                                        isLoading = it is AsyncImagePainter.State.Loading
+                                    },
+                                    modifier = Modifier
+                                        .width(70.dp)
+                                        .height(108.dp)
+                                        .clip(shape = RoundedCornerShape(8.dp))
+                                        .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            if (user?.hasShop == true) {
+                                                navigator.navigate(ChooseMediaDestination(R.string.videos)) {
+                                                    launchSingleTop = true
+                                                }
+                                            } else {
+                                                //navigate to create shop screen
+                                                navigator.navigate(ShopDestination) {
+                                                    launchSingleTop = true
+                                                }
+
+                                            }
+                                        }
+                                        .placeholder(
+                                            visible = isLoading,
+                                            highlight = PlaceholderHighlight.shimmer(),
+                                            color = CakkieBrown.copy(0.8f)
+                                        )
+                                        .fillMaxWidth(),
+                                    contentScale = ContentScale.Crop,
+                                )
+
+                                Box(
+                                    Modifier
+                                        .background(
+                                            CakkieBrown.copy(0.4f),
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .fillMaxSize(), contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = "+",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = CakkieBrown,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 24.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .size(30.dp)
+                                                .clip(CircleShape)
+                                                .background(CakkieBackground, CircleShape),
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = stringResource(id = R.string.your_cakespiration),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = CakkieBackground,
+                                            fontSize = 10.sp,
+                                            textAlign = TextAlign.Center,
+                                            lineHeight = 12.sp
+                                        )
+                                    }
                                 }
                             }
+                            Spacer(modifier = Modifier.width(4.dp))
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
-                    }
-                    items(
-                        items = story,
-                        key = { it.id }
-                    ) {
-                        val index = story.indexOf(it)
-                        if (index > story.lastIndex - 2 && cakespiration?.data?.isNotEmpty() == true) {
-                            viewModel.getCakespirations(
-                                context,
-                                cakespiration.meta.nextPage,
-                                cakespiration.meta.pageSize
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        GlideImage(
-                            imageModel = it.media.first(),
-                            contentDescription = "cake",
-                            modifier = Modifier
-                                .width(70.dp)
-                                .height(108.dp)
+                        items(
+                            items = story,
+                            key = { it.id }
+                        ) {
+                            val index = story.indexOf(it)
+                            if (index > story.lastIndex - 2 && cakespiration?.data?.isNotEmpty() == true) {
+                                viewModel.getCakespirations(
+                                    context,
+                                    cakespiration.meta.nextPage,
+                                    cakespiration.meta.pageSize
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                            GlideImage(
+                                imageModel = it.media.first(),
+                                contentDescription = "cake",
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(108.dp)
 //                                .padding(4.dp)
-                                .clip(shape = RoundedCornerShape(8.dp))
-                                .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
-                                .clickable {
-                                    navigator.navigate(
-                                        CakespirationDestination(
-                                            id = it.id,
-                                            item = it
+                                    .clip(shape = RoundedCornerShape(8.dp))
+                                    .border(1.dp, CakkieBrown, RoundedCornerShape(8.dp))
+                                    .clickable {
+                                        navigator.navigate(
+                                            CakespirationDestination(
+                                                id = it.id,
+                                                item = it
+                                            )
                                         )
-                                    )
-                                },
-                            contentScale = ContentScale.FillBounds,
-                            shimmerParams = ShimmerParams(
-                                baseColor = CakkieBrown.copy(0.8f),
-                                highlightColor = CakkieBackground,
-                                durationMillis = 1000,
-                                dropOff = 0.4f,
-                                tilt = 20f
-                            ),
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
+                                    },
+                                contentScale = ContentScale.FillBounds,
+                                shimmerParams = ShimmerParams(
+                                    baseColor = CakkieBrown.copy(0.8f),
+                                    highlightColor = CakkieBackground,
+                                    durationMillis = 1000,
+                                    dropOff = 0.4f,
+                                    tilt = 20f
+                                ),
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
                     }
                 }
-            }
 
-            items(
-                items = post,
-                key = { it.id }
-            ) { listing ->
-                val index = post.indexOf(listing)
-                if (index > post.lastIndex - 2 && listings?.data?.isNotEmpty() == true) {
-                    viewModel.getListings(context, listings.meta.nextPage, listings.meta.pageSize)
-                }
+                items(
+                    items = post,
+                    key = { it.id }
+                ) { listing ->
+                    val index = post.indexOf(listing)
+                    if (index > post.lastIndex - 2 && listings?.data?.isNotEmpty() == true) {
+                        viewModel.getListings(
+                            context,
+                            listings.meta.nextPage,
+                            listings.meta.pageSize
+                        )
+                    }
 //                    Timber.d("index ${listing.name}: $index visibleIndex: $visibleItem")
-                ExploreItem(
+                    ExploreItem(
 //                       user = user,
-                    navigator = navigator,
-                    item = listing,
-                    shouldPlay = index == visibleItem,
-                    isMuted = isMuted,
-                    onMute = { isMuted = it },
-                    progressiveMediaSource = progressiveMediaSource,
-                    index = index,
-                    viewModal = viewModel
-                )
+                        navigator = navigator,
+                        item = listing,
+                        shouldPlay = index == visibleItem,
+                        isMuted = isMuted,
+                        onMute = { isMuted = it },
+                        progressiveMediaSource = progressiveMediaSource,
+                        index = index,
+                        viewModal = viewModel
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(180.dp)) }
             }
-            item { Spacer(modifier = Modifier.height(180.dp)) }
         }
+        PullRefreshIndicator(
+            refreshing, state,
+            Modifier.align(Alignment.TopCenter),
+            backgroundColor = CakkieBackground,
+            contentColor = CakkieBrown
+        )
     }
+
 }
