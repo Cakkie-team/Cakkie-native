@@ -48,7 +48,6 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import kotlinx.coroutines.delay
@@ -59,8 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ConfirmPin(
     currencyRate: CurrencyRate,
-    navigator: DestinationsNavigator,
-    onComplete: ResultBackNavigator<Boolean>
+    onComplete: ResultBackNavigator<CurrencyRate>
 ) {
     val viewModel: WalletViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
@@ -350,7 +348,7 @@ fun ConfirmPin(
                 } else {
                     viewModel.verifyPin(pinConfirm.text)
                         .addOnSuccessListener {
-                            Toaster(context, "Order Made", R.drawable.logo).show()
+                            onComplete.navigateBack(currency.copy(pin = pinConfirm.text))
                         }.addOnFailureListener {
                             Toaster(context, it, R.drawable.logo).show()
                         }

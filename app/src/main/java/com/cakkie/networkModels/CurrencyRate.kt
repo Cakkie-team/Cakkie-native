@@ -19,5 +19,6 @@ data class CurrencyRate(
     val symbol: String = "",
     val type: String = "",
     val updatedAt: String = "",
-    val withdrawalFee: Double = 0.0
+    val withdrawalFee: Double = 0.0,
+    val pin: String = "",
 ) : Parcelable
