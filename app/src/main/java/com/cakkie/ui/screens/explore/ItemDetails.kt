@@ -52,6 +52,7 @@ import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
 import com.cakkie.di.CakkieApp
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.ui.components.ExpandImage
 import com.cakkie.ui.components.HorizontalPagerIndicator
 import com.cakkie.ui.components.PageTabs
@@ -82,7 +83,7 @@ fun ItemDetails(
     id: String,
     item: Listing = Listing(),
     changeAddressResult: ResultRecipient<SetDeliveryAddressDestination, User>,
-    confirmPinResult: ResultRecipient<ConfirmPinDestination, Boolean>,
+    confirmPinResult: ResultRecipient<ConfirmPinDestination, CurrencyRate>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: ExploreViewModal = koinViewModel()
@@ -108,6 +109,9 @@ fun ItemDetails(
     val progressiveMediaSource = remember {
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
+    var processing by remember {
+        mutableStateOf(false)
+    }
 
     changeAddressResult.onNavResult { result ->
         when (result) {
@@ -122,7 +126,8 @@ fun ItemDetails(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                Toaster(context, "pin successfully", R.drawable.logo)
+                processing = true
+                Toaster(context, "pin successfully", R.drawable.logo).show()
             }
         }
     }
@@ -281,7 +286,7 @@ fun ItemDetails(
             //page
             HorizontalPager(state = pageState) {
                 when (it) {
-                    0 -> Description(user, listing, navigator)
+                    0 -> Description(user, listing, navigator, processing)
                     1 -> Reviews()
                 }
             }

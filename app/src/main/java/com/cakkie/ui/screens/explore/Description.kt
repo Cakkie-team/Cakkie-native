@@ -43,7 +43,12 @@ import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
+fun Description(
+    user: User?,
+    item: Listing,
+    navigator: DestinationsNavigator,
+    loading: Boolean = false
+) {
     val sizes = item.sizes.map { "$it in" }
     var selectedSize by remember { mutableStateOf(sizes.first()) }
     Column {
@@ -180,7 +185,8 @@ fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
             text = stringResource(id = R.string.order),
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            processing = loading
         ) {
             navigator.navigate(
                 ConfirmPinDestination(
