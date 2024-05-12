@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.wallet.bottomUI
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -82,10 +84,12 @@ fun ConfirmPin(
     }
 
     LaunchedEffect(key1 = onSelectCurrency) {
-        viewModel.getConversionRate(currencyRate.symbol, currencyRate.amount.toDouble())
-            .addOnSuccessListener {
-                currencies = it
-            }
+        viewModel.getConversionRate(
+            currencyRate.symbol,
+            currencyRate.amount.replace(",", "").toDouble()
+        ).addOnSuccessListener {
+            currencies = it
+        }
     }
 
 
@@ -129,9 +133,12 @@ fun ConfirmPin(
             Text(
                 text = "Change Currency",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier,
+                modifier = Modifier.clickable { onSelectCurrency = true },
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp
+                fontSize = 16.sp,
+                color = CakkieBrown,
+                textAlign = TextAlign.End,
+                textDecoration = TextDecoration.Underline,
             )
 
         }
@@ -363,33 +370,40 @@ fun ConfirmPin(
         Popup(
             onDismissRequest = { onSelectCurrency = false }
         ) {
-            Column(Modifier.fillMaxWidth(0.7f)) {
-                currencies.forEach {
-                    Card(
-                        onClick = {
-                            currency = it
-                            onSelectCurrency = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = CakkieBackground
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp
-                        ),
-                        shape = CardDefaults.elevatedShape
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .padding(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = CakkieBackground
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    ),
+                    shape = CardDefaults.elevatedShape
+                ) {
+                    Column(
+                        Modifier
+                            .padding(16.dp)
+                            .background(CakkieBackground)
                     ) {
-                        Box(Modifier.fillMaxSize()) {
-                            Text(
-                                text = "-${it.amount} ${it.symbol}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.align(Alignment.Center),
-                                color = TextColorDark,
-                                fontSize = 26.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                        currencies.forEach {
+                            Box(Modifier.clickable {
+                                currency = it
+                                onSelectCurrency = false
+                            }) {
+                                Text(
+                                    text = "-${it.amount} ${it.symbol}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.align(Alignment.Center),
+                                    color = TextColorDark,
+                                    fontSize = 26.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                            }
+                            Spacer(modifier = Modifier.height(5.dp))
                         }
                     }
                 }
