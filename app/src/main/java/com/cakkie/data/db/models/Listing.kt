@@ -6,6 +6,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.cakkie.networkModels.Comment
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.Meta
 import com.cakkie.networkModels.Pagination
 import kotlinx.parcelize.Parcelize
@@ -33,7 +34,10 @@ data class Listing(
     @Embedded(prefix = "meta_")
     val meta: Meta = Meta(),
     val name: String = "",
+    val currencySymbol: String = "",
     val price: List<Int> = listOf(0),
+    @Embedded(prefix = "currency_")
+    val currency: CurrencyRate = CurrencyRate(),
     @Embedded(prefix = "shop_")
     val shop: ShopModel = ShopModel(),
     val shopId: String = "",

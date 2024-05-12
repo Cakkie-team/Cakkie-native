@@ -184,8 +184,10 @@ fun Description(user: User?, item: Listing, navigator: DestinationsNavigator) {
         ) {
             navigator.navigate(
                 ConfirmPinDestination(
-                    amount = NumberFormat.getInstance()
-                        .format(item.price[sizes.indexOf(selectedSize)].plus(1000))
+                    item.currency.copy(
+                        amount = NumberFormat.getInstance()
+                            .format(item.price[sizes.indexOf(selectedSize)].plus(1000))
+                    )
                 )
             )
         }

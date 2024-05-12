@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.cakkie.R
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.wallet.WalletViewModel
@@ -55,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun ConfirmPin(
-    amount: String,
+    currencyRate: CurrencyRate,
     navigator: DestinationsNavigator,
     onComplete: ResultBackNavigator<Boolean>
 ) {
@@ -67,7 +68,8 @@ fun ConfirmPin(
     var pinConfirm by remember { mutableStateOf(TextFieldValue("")) }
     var step by remember { mutableIntStateOf(0) }
     var otp by remember { mutableStateOf(TextFieldValue("")) }
-    var currency by remember { mutableStateOf("NGN") }
+    var currencies by remember { mutableStateOf(emptyList<CurrencyRate>()) }
+    var currency by remember { mutableStateOf(currencyRate) }
     var onSelectCurrency by remember { mutableStateOf(false) }
 
     //countdown timer
@@ -78,6 +80,14 @@ fun ConfirmPin(
     var timerRunning by remember {
         mutableStateOf(true)
     }
+
+    LaunchedEffect(key1 = onSelectCurrency) {
+        viewModel.getConversionRate(currencyRate.symbol, currencyRate.amount.toDouble())
+            .addOnSuccessListener {
+                currencies = it
+            }
+    }
+
 
 
     LaunchedEffect(key1 = timerRunning) {
@@ -142,7 +152,7 @@ fun ConfirmPin(
         )
     }
     Text(
-        text = "-$amount $currency",
+        text = "-${currency.amount} ${currency.symbol}",
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(horizontal = 32.dp),
         fontWeight = FontWeight.SemiBold,
@@ -354,7 +364,35 @@ fun ConfirmPin(
             onDismissRequest = { onSelectCurrency = false }
         ) {
             Column(Modifier.fillMaxWidth(0.7f)) {
-
+                currencies.forEach {
+                    Card(
+                        onClick = {
+                            currency = it
+                            onSelectCurrency = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = CakkieBackground
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 8.dp
+                        ),
+                        shape = CardDefaults.elevatedShape
+                    ) {
+                        Box(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "-${it.amount} ${it.symbol}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.align(Alignment.Center),
+                                color = TextColorDark,
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
             }
         }
 
