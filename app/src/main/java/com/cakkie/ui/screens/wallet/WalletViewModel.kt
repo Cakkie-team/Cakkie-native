@@ -100,6 +100,11 @@ class WalletViewModel : ViewModel(), KoinComponent {
             endpoint = Endpoints.GET_CONVERSION_RATE(symbol, amount)
         )
 
+    fun verifyPin(pin: String) = NetworkCalls.post<LoginResponse>(
+        endpoint = Endpoints.VERIFY_PIN(pin),
+        body = listOf()
+    )
+
     fun mine() = NetworkCalls.get<Transaction>(
         endpoint = Endpoints.MINE,
         body = listOf()

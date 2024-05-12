@@ -328,24 +328,33 @@ fun ConfirmPin(
             }
 
             1 -> {
-                step = 2
-                viewModel
-                    .resendOtp(email = user?.email ?: "")
-                    .addOnSuccessListener {
-                        timerRunning = true
-                        Toaster(
-                            context = context,
-                            message = "Otp Sent",
-                            image = R.drawable.logo
-                        ).show()
-                    }
-                    .addOnFailureListener {
-                        Toaster(
-                            context = context,
-                            message = "Otp Resend Failed",
-                            image = R.drawable.logo
-                        ).show()
-                    }
+                if (user?.pin == null) {
+                    step = 2
+                    viewModel
+                        .resendOtp(email = user?.email ?: "")
+                        .addOnSuccessListener {
+                            timerRunning = true
+                            Toaster(
+                                context = context,
+                                message = "Otp Sent",
+                                image = R.drawable.logo
+                            ).show()
+                        }
+                        .addOnFailureListener {
+                            Toaster(
+                                context = context,
+                                message = "Otp Resend Failed",
+                                image = R.drawable.logo
+                            ).show()
+                        }
+                } else {
+                    viewModel.verifyPin(pinConfirm.text)
+                        .addOnSuccessListener {
+                            Toaster(context, "Order Made", R.drawable.logo).show()
+                        }.addOnFailureListener {
+                            Toaster(context, it, R.drawable.logo).show()
+                        }
+                }
             }
 
             2 -> {
@@ -389,6 +398,7 @@ fun ConfirmPin(
                             .background(CakkieBackground)
                     ) {
                         currencies.forEach {
+                            Spacer(modifier = Modifier.height(5.dp))
                             Box(Modifier.clickable {
                                 currency = it
                                 onSelectCurrency = false

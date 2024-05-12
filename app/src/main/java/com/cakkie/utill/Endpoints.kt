@@ -26,7 +26,7 @@ object Endpoints {
     /**
      * Pin
      **/
-    const val VERIFY_PIN = "$BASE_URL/user/verify-pin" /* verify pin */
+    val VERIFY_PIN = { pin: String -> "$BASE_URL/account/verify-pin/$pin" } /* verify pin */
     const val RESET_PIN = "$BASE_URL/auth/reset-pin" /* set pin */
 
 
