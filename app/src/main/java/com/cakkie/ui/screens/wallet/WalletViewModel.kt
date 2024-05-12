@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Balance
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.DepositResponse
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.networkModels.Transaction
@@ -93,6 +94,11 @@ class WalletViewModel : ViewModel(), KoinComponent {
             userRepository.createUser(it)
         }
     }
+
+    fun getConversionRate(symbol: String, amount: Double) =
+        NetworkCalls.getObjectList<CurrencyRate>(
+            endpoint = Endpoints.GET_CONVERSION_RATE(symbol, amount)
+        )
 
     fun mine() = NetworkCalls.get<Transaction>(
         endpoint = Endpoints.MINE,

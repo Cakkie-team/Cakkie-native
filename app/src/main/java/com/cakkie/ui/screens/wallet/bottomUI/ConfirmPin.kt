@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
@@ -66,6 +67,8 @@ fun ConfirmPin(
     var pinConfirm by remember { mutableStateOf(TextFieldValue("")) }
     var step by remember { mutableIntStateOf(0) }
     var otp by remember { mutableStateOf(TextFieldValue("")) }
+    var currency by remember { mutableStateOf("NGN") }
+    var onSelectCurrency by remember { mutableStateOf(false) }
 
     //countdown timer
     var timer by remember {
@@ -98,20 +101,30 @@ fun ConfirmPin(
             .padding(horizontal = 32.dp, vertical = 17.dp)
     ) {
 
-        Text(
-            text = stringResource(
-                id = when (step) {
-                    0 -> R.string.create_pin
-                    1 -> R.string.Confirm_Pin
-                    else -> R.string.otp_verification
-                }
-            ),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp
-        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = stringResource(
+                    id = when (step) {
+                        0 -> R.string.create_pin
+                        1 -> R.string.Confirm_Pin
+                        else -> R.string.otp_verification
+                    }
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp
+            )
 
+            Text(
+                text = "Change Currency",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp
+            )
+
+        }
         Text(
             text = stringResource(
                 id = when (step) {
@@ -129,12 +142,14 @@ fun ConfirmPin(
         )
     }
     Text(
-        text = "-$amount",
+        text = "-$amount $currency",
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(horizontal = 32.dp),
         fontWeight = FontWeight.SemiBold,
         fontSize = 26.sp
     )
+
+
     Spacer(modifier = Modifier.height(15.dp))
 
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -333,5 +348,16 @@ fun ConfirmPin(
         }
     }
     Spacer(modifier = Modifier.height(17.dp))
+
+    AnimatedVisibility(visible = onSelectCurrency) {
+        Popup(
+            onDismissRequest = { onSelectCurrency = false }
+        ) {
+            Column(Modifier.fillMaxWidth(0.7f)) {
+
+            }
+        }
+
+    }
 
 }

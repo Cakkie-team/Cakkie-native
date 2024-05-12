@@ -101,6 +101,8 @@ object Endpoints {
             "$BASE_URL/wallet/transactions?page=$page&pageSize=$size"
         } /* get transaction  GET*/
     const val MINE = "$BASE_URL/wallet/mine" /* mine  POST*/
+    val GET_CONVERSION_RATE =
+        { symbol: String, amount: Double -> "$BASE_URL/wallet/conversion-rate/$symbol/$amount" } /* get conversion  GET*/
 
 
     /**
