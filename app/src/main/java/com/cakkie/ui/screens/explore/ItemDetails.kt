@@ -145,7 +145,7 @@ fun ItemDetails(
                         navigator.navigate(OrdersDestination)
                     }.addOnFailureListener {
                         processing = false
-                        Toaster(context, it, R.drawable.logo)
+                        Toaster(context, it, R.drawable.logo).show()
                     }
                 }
             }

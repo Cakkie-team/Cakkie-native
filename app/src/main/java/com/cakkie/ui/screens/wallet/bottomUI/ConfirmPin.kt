@@ -350,7 +350,12 @@ fun ConfirmPin(
                     viewModel.verifyPin(pinConfirm.text)
                         .addOnSuccessListener {
                             processing = false
-                            onComplete.navigateBack(currency.copy(pin = pinConfirm.text))
+                            onComplete.navigateBack(
+                                currency.copy(
+                                    pin = pinConfirm.text,
+                                    symbol = currency.symbol
+                                )
+                            )
                         }.addOnFailureListener {
                             processing = false
                             Toaster(context, it, R.drawable.logo).show()
