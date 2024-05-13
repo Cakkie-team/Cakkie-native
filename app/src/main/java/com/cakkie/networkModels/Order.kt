@@ -1,9 +1,14 @@
 package com.cakkie.networkModels
 
+import android.os.Parcelable
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
+@Parcelize
 data class Order(
     val cancelReason: String = "",
     val conversationId: String = "",
@@ -31,9 +36,11 @@ data class Order(
     val user: User = User(),
     val userId: String = "",
     val waitTime: String = ""
-)
+) : Parcelable
 
 
+@Serializable
+@Parcelize
 data class Rating(
     val createdAt: String = "",
     val dispatchMessage: String = "",
@@ -47,4 +54,4 @@ data class Rating(
     val userId: String = "",
     val userMessage: String = "",
     val userRating: Int = 0
-)
+) : Parcelable

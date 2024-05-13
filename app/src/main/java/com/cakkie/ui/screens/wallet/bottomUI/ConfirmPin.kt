@@ -346,10 +346,13 @@ fun ConfirmPin(
                             ).show()
                         }
                 } else {
+                    processing = true
                     viewModel.verifyPin(pinConfirm.text)
                         .addOnSuccessListener {
+                            processing = false
                             onComplete.navigateBack(currency.copy(pin = pinConfirm.text))
                         }.addOnFailureListener {
+                            processing = false
                             Toaster(context, it, R.drawable.logo).show()
                         }
                 }
