@@ -114,6 +114,11 @@ object Endpoints {
 
 
     /**
+     * Order
+     */
+    const val CREATE_ORDER = "$BASE_URL/order" /* create order  POST*/
+
+    /**
      * Location
      * */
     val GET_LOCATION =

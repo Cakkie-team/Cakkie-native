@@ -14,6 +14,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.ListingRepository
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.CommentResponse
+import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.Pagination
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Constants
@@ -28,6 +29,7 @@ import org.json.JSONObject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
+import java.util.Locale
 
 @OptIn(UnstableApi::class)
 class ExploreViewModal : ViewModel(), KoinComponent {
@@ -160,6 +162,32 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             userRepository.createUser(it)
         }
     }
+
+    fun createOrder(
+        listingId: String,
+        shopId: String, quantity: Int,
+        unitPrice: Double,
+        deliveryAddress: String,
+        deliveryFee: Double,
+        latitude: Double,
+        longitude: Double,
+        currencySymbol: String,
+        pin: String
+    ) = NetworkCalls.post<Order>(
+        endpoint = Endpoints.CREATE_ORDER,
+        body = listOf(
+            Pair("listingId", listingId),
+            Pair("shopId", shopId),
+            Pair("quantity", quantity),
+            Pair("unitPrice", unitPrice),
+            Pair("deliveryAddress", deliveryAddress),
+            Pair("deliveryFee", deliveryFee),
+            Pair("latitude", latitude),
+            Pair("longitude", longitude),
+            Pair("currencySymbol", currencySymbol.uppercase(Locale.ROOT)),
+            Pair("pin", pin)
+        )
+    )
 
     init {
         getProfile()
