@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,8 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.appodeal.ads.Appodeal
-import com.appodeal.ads.InterstitialCallbacks
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.ReferralDestination
@@ -56,11 +56,17 @@ import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
-import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Toaster
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -87,7 +93,8 @@ fun Earn(navigator: DestinationsNavigator) {
     ).split(".")
     var couldMine by remember { mutableStateOf(false) }
 
-    var remainingTime by remember { mutableStateOf("") }
+    var mindedSpk by remember { mutableStateOf("") }
+    var remainingTime by remember { mutableLongStateOf(0) }
     var gettingAd by remember {
         mutableStateOf(false)
     }
@@ -124,16 +131,27 @@ fun Earn(navigator: DestinationsNavigator) {
         // Add 2 hours to the target time
         val targetMillis =
             targetDateTime.plusHours(2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
+        var spkPerMillis = (user?.earningRate ?: 0.0) / 3600000
+        var totalSpkMined = spkPerMillis * 3600000
+        var totalSpkMinedStr = dec.format(totalSpkMined)
+        mindedSpk = "$totalSpkMinedStr SPK"
         while (Instant.now().toEpochMilli() < targetMillis) {
             val currentTime = Instant.now().toEpochMilli()
             val remainingMillis = targetMillis - currentTime
 
-            val hours = remainingMillis / (1000 * 60 * 60)
-            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
-            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+//            Timber.d("Remaining time: $remainingMillis")
 
-            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+//            val hours = remainingMillis / (1000 * 60 * 60)
+//            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
+//            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+
+            //calculate total spk from remaining time
+            spkPerMillis = (user?.earningRate ?: 0.0) / 3600000
+            totalSpkMined = spkPerMillis * (3600000 - remainingMillis)
+            totalSpkMinedStr = dec.format(totalSpkMined)
+            mindedSpk = "$totalSpkMinedStr SPK"
+            remainingTime = remainingMillis
+//            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
 
             delay(1000) // Delay for 1 second
         }
@@ -141,132 +159,145 @@ fun Earn(navigator: DestinationsNavigator) {
         // Countdown finished
         couldMine = true
     }
-//    var rewardedAd by remember {
-//        mutableStateOf<RewardedAd?>(null)
-//    }
+    var rewardedAd by remember {
+        mutableStateOf<RewardedAd?>(null)
+    }
+    var interstitialAd by remember {
+        mutableStateOf<InterstitialAd?>(null)
+    }
 
-    /*Appodeal.setRewardedVideoCallbacks(object : RewardedVideoCallbacks {
-        override fun onRewardedVideoLoaded(isPrecache: Boolean) {
-            // Called when rewarded video is loaded
-            Timber.d("Ad was loaded.")
-            if (gettingAd) {
-                gettingAd = false
-                Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
-            }
-        }
+    var retryCount by remember {
+        mutableIntStateOf(0)
+    }
 
-        override fun onRewardedVideoFailedToLoad() {
-            // Called when rewarded video failed to load
-            Toaster(
-                context,
-                "Ad failed to load, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onRewardedVideoShown() {
-            // Called when rewarded video is shown
-        }
-
-        override fun onRewardedVideoShowFailed() {
-            // Called when rewarded video show failed
-            Toaster(
-                context,
-                "Ad display failed, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onRewardedVideoClicked() {
-            // Called when rewarded video is clicked
-        }
-
-        override fun onRewardedVideoFinished(amount: Double, currency: String) {
-            // Called when rewarded video is viewed until the end
-            gettingAd = false
-            viewModal.mine()
-                .addOnSuccessListener {
-                    viewModal.getProfile()
-                    viewModal.getBalance()
-                }
-        }
-
-        override fun onRewardedVideoClosed(finished: Boolean) {
-            // Called when rewarded video is closed
-        }
-
-        override fun onRewardedVideoExpired() {
-            // Called when rewarded video is expired
-            gettingAd = false
-            Toaster(
-                context,
-                "Ad expired, try again",
-                R.drawable.logo
-            ).show()
-        }
-    })*/
-
-    Appodeal.setInterstitialCallbacks(object : InterstitialCallbacks {
-        override fun onInterstitialLoaded(isPrecache: Boolean) {
-            // Called when interstitial is loaded
-            if (gettingAd) {
-                gettingAd = false
-                Appodeal.show(context, Appodeal.INTERSTITIAL)
-            }
-        }
-
-        override fun onInterstitialFailedToLoad() {
-            // Called when interstitial failed to load
-            gettingAd = false
-            Timber.d("Ad failed to load.")
-            Toaster(
-                context,
-                "Ad failed to load, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onInterstitialShown() {
-            // Called when interstitial is shown
-            Timber.d("interstitial was shown.")
-        }
-
-        override fun onInterstitialShowFailed() {
-            // Called when interstitial show failed
-            gettingAd = false
-            Toaster(
-                context,
-                "Ad display failed, try again",
-                R.drawable.logo
-            ).show()
-        }
-
-        override fun onInterstitialClicked() {
-            // Called when interstitial is clicked
+    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdClicked() {
+            // Called when a click is recorded for an ad.
             Timber.d("Ad was clicked.")
         }
 
-        override fun onInterstitialClosed() {
-            // Called when interstitial is closed
-            gettingAd = false
-            viewModal.mine()
-                .addOnSuccessListener {
-                    viewModal.getProfile()
-                    viewModal.getBalance()
-                }
+        override fun onAdDismissedFullScreenContent() {
+            // Called when ad is dismissed.
+            // Set the ad reference to null so you don't show the ad a second time.
+            Timber.d("Ad dismissed fullscreen content.")
+            rewardedAd = null
         }
 
-        override fun onInterstitialExpired() {
-            // Called when interstitial is expired
+        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+            // Called when ad fails to show.
+            Timber.e("Ad failed to show fullscreen content.")
+            rewardedAd = null
         }
-    })
 
-    LaunchedEffect(key1 = Unit) {
-        viewModal.getBalance()
+        override fun onAdImpression() {
+            // Called when an impression is recorded for an ad.
+            Timber.d("Ad recorded an impression.")
+        }
+
+        override fun onAdShowedFullScreenContent() {
+            // Called when ad is shown.
+            Timber.d("Ad showed fullscreen content.")
+        }
     }
 
+//    interstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+//        override fun onAdClicked() {
+//            // Called when a click is recorded for an ad.
+//            Timber.d("Ad was clicked.")
+//        }
+//
+//        override fun onAdDismissedFullScreenContent() {
+//            // Called when ad is dismissed.
+//            Timber.d("Ad dismissed fullscreen content.")
+//            interstitialAd = null
+//        }
+//
+//        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+//            // Called when ad fails to show.
+//            Timber.e("Ad failed to show fullscreen content.")
+//            interstitialAd = null
+//        }
+//
+//        override fun onAdImpression() {
+//            // Called when an impression is recorded for an ad.
+//            Timber.d("Ad recorded an impression.")
+//        }
+//
+//        override fun onAdShowedFullScreenContent() {
+//            // Called when ad is shown.
+//            Timber.d("Ad showed fullscreen content.")
+//        }
+//    }
+    LaunchedEffect(key1 = retryCount) {
+        viewModal.getBalance()
 
+        if (retryCount > 5) {
+            gettingAd = false
+            Toaster(
+                context,
+                "Failed to get ad, exit screen and try again",
+                R.drawable.logo
+            ).show()
+        }
 
+        if (rewardedAd == null && retryCount <= 5) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                context,
+                if (retryCount % 2 == 0) "ca-app-pub-8613748949810587/7282817310" else "ca-app-pub-8613748949810587/1943587076",
+                adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Timber.d(adError.toString())
+                        rewardedAd = null
+                        retryCount += 1
+                    }
+
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        Timber.d("Ad was loaded.")
+                        rewardedAd = ad
+                        if (gettingAd) {
+                            ad.show(context) { rewardItem ->
+                                gettingAd = false
+                                // Handle the reward.
+//                        val rewardAmount = rewardItem.amount
+//                        val rewardType = rewardItem.type
+                                viewModal.mine()
+                                    .addOnSuccessListener {
+                                        viewModal.getProfile()
+                                        viewModal.getBalance()
+                                    }
+                                Timber.d("User earned the reward.")
+                            }
+                        }
+                    }
+                })
+        }
+
+//        if (interstitialAd == null && retryCount <= 5 && !couldMine) {
+//            val adRequest = AdRequest.Builder().build()
+//            InterstitialAd.load(
+//                context,
+//                if (retryCount % 2 == 0) "ca-app-pub-8613748949810587/8957142430" else "ca-app-pub-8613748949810587/9349940392",
+//                adRequest,
+//                object : InterstitialAdLoadCallback() {
+//                    override fun onAdFailedToLoad(adError: LoadAdError) {
+//                        Timber.d(adError.toString())
+//                        rewardedAd = null
+//                        retryCount += 1
+//                    }
+//
+//                    override fun onAdLoaded(ad: InterstitialAd) {
+//                        Timber.d("Ad was loaded.")
+//                        interstitialAd = ad
+//                        if (gettingAd) {
+//                            ad.show(context)
+//                            gettingAd = false
+//                        }
+//                    }
+//                })
+//        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -389,18 +420,27 @@ fun Earn(navigator: DestinationsNavigator) {
         Box(
             modifier = Modifier
                 .background(
-                    (if (couldMine) CakkieGreen else CakkieBrown002).copy(0.8f),
+                    CakkieBrown002.copy(0.4f),
                     RoundedCornerShape(50)
                 )
+                .width(200.dp)
+                .height(30.dp)
                 .clip(RoundedCornerShape(50)),
             contentAlignment = Alignment.Center
         ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .background(CakkieBrown002.copy(0.8f), RoundedCornerShape(50))
+                    .fillMaxHeight()
+                    .fillMaxWidth((3600000 - remainingTime).div(3600000f))
+            )
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 5.dp)
             ) {
                 Text(
-                    text = "Next session starts",
+                    text = "Amount to mine:",
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBackground,
                     fontSize = 16.sp,
@@ -409,7 +449,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = remainingTime,
+                    text = mindedSpk,
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieOrange,
                     fontSize = 16.sp,
@@ -538,18 +578,35 @@ fun Earn(navigator: DestinationsNavigator) {
         Card(
             onClick = {
                 if (!gettingAd) {
-//                    if (Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Icingmining")) {
-//                        gettingAd = false
-//                        Appodeal.show(context, Appodeal.REWARDED_VIDEO, "Icingmining")
-//                    } else
-                    if (Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
-                        gettingAd = false
-                        Appodeal.show(context, Appodeal.INTERSTITIAL)
+                    retryCount = 0
+//                    if(couldMine){
+                    rewardedAd?.let { ad ->
+                        ad.show(context) { rewardItem ->
+                            gettingAd = false
+                            // Handle the reward.
+//                        val rewardAmount = rewardItem.amount
+//                        val rewardType = rewardItem.type
+                            viewModal.mine()
+                                .addOnSuccessListener {
+                                    viewModal.getProfile()
+                                    viewModal.getBalance()
+                                }
+                            Timber.d("User earned the reward.")
+                        }
+                    } ?: run {
+//                    gettingAd = false
+//                    Toaster(
+//                        context,
+//                        "Ad wasn't ready yet, wait for 3secs and try again",
+//                        R.drawable.logo
+//                    ).show()
+                        Timber.d("The rewarded ad wasn't ready yet.")
                     }
+//                    }
                 }
                 gettingAd = true
             },
-            enabled = !gettingAd && couldMine && !loadingAd,
+            enabled = !gettingAd,
             shape = RoundedCornerShape(50),
             modifier = Modifier
                 .padding(20.dp)
@@ -567,7 +624,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Mine ${if (loadingAd) countDownTimer else ""}",
+                    text = "Mine",
                     style = MaterialTheme.typography.bodyLarge,
                     color = CakkieBackground,
                     fontSize = 24.sp

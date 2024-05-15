@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://artifactory.appodeal.com/appodeal")
+//        maven("https://artifactory.appodeal.com/appodeal")
     }
 }
 

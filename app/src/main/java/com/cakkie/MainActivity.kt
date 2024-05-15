@@ -35,7 +35,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.appodeal.ads.Appodeal
 import com.bumptech.glide.Glide
 import com.cakkie.BottomState.hideNav
 import com.cakkie.navigations.BottomNav
@@ -91,15 +90,15 @@ class MainActivity : ComponentActivity() {
 //        askNotificationPermission()
         askMultiplePermissions()
 //        Appodeal.setMrecViewId(R.id.appodealMrecView)
-        Appodeal.initialize(
-            this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
-            Appodeal.INTERSTITIAL
-        ) {
-            // Appodeal initialization finished
-            it?.forEach { adType ->
-                Timber.d("AdType: $adType")
-            }
-        }
+//        Appodeal.initialize(
+//            this, "cbd3296cd5288550da77f4ae2078cab384f5a24ab28d7f87",
+//            Appodeal.INTERSTITIAL
+//        ) {
+//            // Appodeal initialization finished
+//            it?.forEach { adType ->
+//                Timber.d("AdType: $adType")
+//            }
+//        }
 
         //handle notification from firebase
         val extra = intent.extras

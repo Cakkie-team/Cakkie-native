@@ -183,7 +183,7 @@ dependencies {
     implementation(libs.accompanist.placeholder.material)
 
     //admob
-//    implementation(libs.play.services.ads)
+    implementation(libs.play.services.ads)
 
     //referrer
     implementation(libs.installreferrer)
@@ -195,7 +195,7 @@ dependencies {
     implementation(libs.app.update.ktx)
 
     //appodeal sdk
-    implementation(libs.sdk)
+//    implementation(libs.sdk)
 
 
 }
