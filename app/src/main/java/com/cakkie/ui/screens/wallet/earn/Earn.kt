@@ -589,6 +589,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 }
                 if (user != null) {
                     if (user.earningRate > 20.5 && it.title.contains(("Invite"))) state = "Claimed"
+                    if (user.rewards.contains(it.title)) state = "Claimed"
                 }
                 Row(Modifier.clickable {
                     when (it.title) {
@@ -597,14 +598,16 @@ fun Earn(navigator: DestinationsNavigator) {
                             uriHandle.openUri(it.url)
                             state = "Verifying"
                             scope.launch {
-                                delay(60000)
+                                delay(30000)
                                 Toaster(
                                     context,
                                     "Be sure to complete to task",
                                     R.drawable.logo
                                 ).show()
-                                delay(60000)
+                                delay(30000)
                                 viewModal.mine(it.title).addOnSuccessListener {
+                                    viewModal.getProfile()
+                                    viewModal.getBalance()
                                     state = "Claimed"
                                 }.addOnFailureListener {
                                     Toaster(
