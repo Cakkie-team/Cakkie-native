@@ -110,6 +110,11 @@ class WalletViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
+    fun mine(title: String) = NetworkCalls.get<Transaction>(
+        endpoint = Endpoints.GET_REWARD(title),
+        body = listOf()
+    )
+
     private fun getReferrals() {
         NetworkCalls.getObjectList<User>(
             endpoint = Endpoints.GET_REFERRALS

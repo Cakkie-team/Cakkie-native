@@ -15,6 +15,7 @@ data class User(
     val city: String = "",
     val country: String = "",
     val coverImage: List<String> = listOf(""),
+    val rewards: List<String> = listOf(""),
     val createdAt: String = "",
     val dateOfBirth: String? = null,
     val email: String = "",

@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,6 +72,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.text.DecimalFormat
@@ -98,25 +101,27 @@ fun Earn(navigator: DestinationsNavigator) {
     var gettingAd by remember {
         mutableStateOf(false)
     }
+    val scope = rememberCoroutineScope()
+    val uriHandle = LocalUriHandler.current
 
-    var loadingAd by remember {
-        mutableStateOf(true)
-    }
+//    var loadingAd by remember {
+//        mutableStateOf(true)
+//    }
 
-    var countDownTimer by remember { mutableIntStateOf(0) }
+//    var countDownTimer by remember { mutableIntStateOf(0) }
 
     // Count down timer
-    LaunchedEffect(key1 = gettingAd, key2 = loadingAd) {
-        if (gettingAd || loadingAd) {
-            countDownTimer = 15
-            while (countDownTimer > 0) {
-                delay(1000)
-                countDownTimer -= 1
-            }
-            gettingAd = false
-            loadingAd = false
-        }
-    }
+//    LaunchedEffect(key1 = gettingAd, key2 = loadingAd) {
+//        if (gettingAd || loadingAd) {
+//            countDownTimer = 15
+//            while (countDownTimer > 0) {
+//                delay(1000)
+//                countDownTimer -= 1
+//            }
+//            gettingAd = false
+//            loadingAd = false
+//        }
+//    }
     LaunchedEffect(key1 = user) {
         couldMine = false
 
@@ -529,13 +534,88 @@ fun Earn(navigator: DestinationsNavigator) {
             }
             items(
                 items = listOf(
-                    "Invite a friend",
+                    TaskM(
+                        "Invite a friend",
+                        "",
+                        R.drawable.invite,
+                        "Increase your earnings when you invite your friends."
+                    ),
+                    TaskM(
+                        "Follow us on X",
+                        "https://x.com/cakkiefoods",
+                        R.drawable.x,
+                        "Follow Cakkiefoods on X to earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Subscribe on youtube",
+                        "https://youtube.com",
+                        R.drawable.invite,
+                        "Subscribe to our youtube channel and earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Follow us on instagram",
+                        "https://www.instagram.com/cakkiefoods/",
+                        R.drawable.invite,
+                        "Follow Cakkiefoods on instagram to earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Follow us on Facebook",
+                        "https://web.facebook.com/cakkiefoods",
+                        R.drawable.invite,
+                        "Follow our page on facebook to earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Join Whatsapp community",
+                        "https://chat.whatsapp.com/LnozCm09MLsAsn5pY2VASg",
+                        R.drawable.invite,
+                        "Join the Whatsapp community and be rewarded 1000SPK"
+                    ),
+                    TaskM(
+                        "Follow us on Linkedin",
+                        "https://www.linkedin.com/company/cakkie",
+                        R.drawable.invite,
+                        "Follow Cakkiefoods on Linkedin to earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Join Telegram community",
+                        "https://t.me/cakkieIcing",
+                        R.drawable.invite,
+                        "Join the Whatsapp community and be rewarded 1000SPK"
+                    )
                 )
             ) {
+                var state by remember {
+                    mutableStateOf("Claim")
+                }
+                if (user != null) {
+                    if (user.earningRate > 20.5) state = "Claimed"
+                }
                 Row(Modifier.clickable {
-                    when (it) {
+                    when (it.title) {
                         "Invite a friend" -> navigator.navigate(ReferralDestination)
-                        else -> {}
+                        else -> {
+                            uriHandle.openUri(it.url)
+                            state = "Verifying"
+                            scope.launch {
+                                delay(60000)
+                                Toaster(
+                                    context,
+                                    "Be sure to complete to task",
+                                    R.drawable.logo
+                                ).show()
+                                delay(60000)
+                                viewModal.mine(it.title).addOnSuccessListener {
+                                    state = "Claimed"
+                                }.addOnFailureListener {
+                                    Toaster(
+                                        context,
+                                        it.localizedMessage ?: it.message
+                                        ?: "Unable to claim, can't verify",
+                                        R.drawable.logo
+                                    ).show()
+                                }
+                            }
+                        }
                     }
                 }, verticalAlignment = Alignment.CenterVertically) {
                     Box(
@@ -545,28 +625,30 @@ fun Earn(navigator: DestinationsNavigator) {
                             .border(1.dp, CakkieBrown, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(CakkieBrown, CircleShape)
-                                .size(9.dp)
-                        )
+                        if (state === "Claimed") {
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(CakkieBrown, CircleShape)
+                                    .size(9.dp)
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                     Image(
-                        painter = painterResource(id = R.drawable.invite),
+                        painter = painterResource(id = it.icon),
                         contentDescription = "task Icon",
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Column {
                         Text(
-                            text = it,
+                            text = it.title + if (it.title.contains("Invite")) "" else "  -  $state  1000SPK",
                             style = MaterialTheme.typography.bodyMedium,
                             color = CakkieBrown,
                         )
                         Text(
-                            text = "Increase your earnings when you invite your friends.",
+                            text = it.description,
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark,
                         )
@@ -672,15 +754,22 @@ fun Earn(navigator: DestinationsNavigator) {
                         style = MaterialTheme.typography.bodyLarge,
                         color = CakkieBackground,
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = "$countDownTimer seconds remaining",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBackground,
-                    )
+//                    Spacer(modifier = Modifier.height(10.dp))
+//                    Text(
+//                        text = "$countDownTimer seconds remaining",
+//                        style = MaterialTheme.typography.bodyLarge,
+//                        color = CakkieBackground,
+//                    )
                 }
             }
         }
     }
 
 }
+
+data class TaskM(
+    val title: String,
+    val url: String = "",
+    val icon: Int,
+    val description: String
+)
