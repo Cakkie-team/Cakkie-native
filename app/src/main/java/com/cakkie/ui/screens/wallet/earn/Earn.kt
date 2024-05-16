@@ -548,38 +548,38 @@ fun Earn(navigator: DestinationsNavigator) {
                     ),
                     TaskM(
                         "Subscribe on youtube",
-                        "https://youtube.com",
-                        R.drawable.invite,
+                        "https://youtube.com/@CakkieFoods",
+                        R.drawable.youtube_icon,
                         "Subscribe to our youtube channel and earn 1000SPK"
                     ),
                     TaskM(
                         "Follow us on instagram",
                         "https://www.instagram.com/cakkiefoods/",
-                        R.drawable.invite,
+                        R.drawable.instagram,
                         "Follow Cakkiefoods on instagram to earn 1000SPK"
                     ),
                     TaskM(
                         "Follow us on Facebook",
                         "https://web.facebook.com/cakkiefoods",
-                        R.drawable.invite,
+                        R.drawable.facebook,
                         "Follow our page on facebook to earn 1000SPK"
                     ),
                     TaskM(
                         "Join Whatsapp community",
                         "https://chat.whatsapp.com/LnozCm09MLsAsn5pY2VASg",
-                        R.drawable.invite,
+                        R.drawable.whatsapp_icon,
                         "Join the Whatsapp community and be rewarded 1000SPK"
                     ),
                     TaskM(
                         "Follow us on Linkedin",
                         "https://www.linkedin.com/company/cakkie",
-                        R.drawable.invite,
+                        R.drawable.linkedin,
                         "Follow Cakkiefoods on Linkedin to earn 1000SPK"
                     ),
                     TaskM(
                         "Join Telegram community",
                         "https://t.me/cakkieIcing",
-                        R.drawable.invite,
+                        R.drawable.telegram,
                         "Join the Whatsapp community and be rewarded 1000SPK"
                     )
                 )
@@ -588,7 +588,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     mutableStateOf("Claim")
                 }
                 if (user != null) {
-                    if (user.earningRate > 20.5) state = "Claimed"
+                    if (user.earningRate > 20.5 && it.title.contains(("Invite"))) state = "Claimed"
                 }
                 Row(Modifier.clickable {
                     when (it.title) {
