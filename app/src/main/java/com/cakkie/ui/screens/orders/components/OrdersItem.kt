@@ -27,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.Order
 import com.cakkie.ui.theme.CakkieBlue
 import com.cakkie.ui.theme.TextColorDark
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun OrdersItem(item: Int, onClick: () -> Unit) {
+fun OrdersItem(item: Order, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

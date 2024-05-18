@@ -118,6 +118,12 @@ object Endpoints {
      * Order
      */
     const val CREATE_ORDER = "$BASE_URL/order" /* create order  POST*/
+    val GET_ORDERS =
+        { status: String?, page: Int, size: Int ->
+            "$BASE_URL/order?page=$page&pageSize=$size${
+                if (status.isNullOrEmpty()) "" else "&status=${status.uppercase()}"
+            }"
+        } /* get order  GET*/
 
     /**
      * Location

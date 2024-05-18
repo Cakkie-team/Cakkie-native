@@ -55,3 +55,10 @@ data class Rating(
     val userMessage: String = "",
     val userRating: Int = 0
 ) : Parcelable
+
+
+@Serializable
+data class OrderResponse(
+    val data: List<Order> = listOf(),
+    val meta: Pagination = Pagination(),
+)

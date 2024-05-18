@@ -6,28 +6,38 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.OrderResponse
+import com.cakkie.utill.Endpoints
+import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class OrderViewModel (){
-//class OrderViewModel : ViewModel(), KoinComponent {
-//    private val userRepository: UserRepository by inject()
-//    private val  _user = MutableLiveData<User>()
-//
-//    val user = _user
-//
-//
-//
-//    private fun  getUser(){
-//        viewModelScope.launch {
-//            userRepository.getUser().asLiveData().observeForever {
-//                _user.value = it
-//            }
-//        }
-//    }
-//
-//    init {
-//        getUser()
-//}
+class OrderViewModel : ViewModel(), KoinComponent {
+    private val userRepository: UserRepository by inject()
+    private val _user = MutableLiveData<User>()
+    private val _orders = MutableLiveData<OrderResponse>()
+
+    val orders = _orders
+    val user = _user
+
+    fun getMyOrders(page: Int = 0, size: Int = 20, status: String?) =
+        NetworkCalls.get<OrderResponse>(
+            endpoint = Endpoints.GET_ORDERS(status, page, size),
+            body = listOf()
+        ).addOnSuccessListener {
+            _orders.value = it
+        }
+
+    private fun getUser() {
+        viewModelScope.launch {
+            userRepository.getUser().asLiveData().observeForever {
+                _user.value = it
+            }
+        }
+    }
+
+    init {
+        getUser()
+    }
 }

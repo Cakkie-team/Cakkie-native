@@ -10,6 +10,7 @@ import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.chat.ChatViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.screens.notification.NotificationViewModel
+import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.screens.profile.ProfileViewModel
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.screens.shop.ShopViewModel
@@ -69,10 +70,10 @@ val appModule = module {
         ChatViewModel()
     }
 
-//    //inject OrderViewModel
-//    viewModel {
-//        OrderViewModel(get())
-//    }
+    //inject OrderViewModel
+    viewModel {
+        OrderViewModel()
+    }
 
     //inject WalletViewModel
     viewModel {

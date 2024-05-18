@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.networkModels.Order
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -49,7 +50,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
-fun OrderDetails(item: Int, navigator: DestinationsNavigator) {
+fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
     val meta = listOf(
         Pair("Size", "6 inches"),
         Pair("Flavour", "Chocolate"),
