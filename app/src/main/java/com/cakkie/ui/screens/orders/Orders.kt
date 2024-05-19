@@ -81,11 +81,11 @@ fun Orders(navigator: DestinationsNavigator) {
 
     Box(
         modifier = Modifier
-            .pullRefresh(state = state)
             .fillMaxSize()
     ) {
         Column(
             modifier = Modifier
+                .pullRefresh(state = state)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top

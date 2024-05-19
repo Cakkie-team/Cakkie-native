@@ -35,7 +35,11 @@ data class Order(
     val updatedAt: String = "",
     val user: User = User(),
     val userId: String = "",
-    val waitTime: String = ""
+    val waitTime: String = "",
+    val meta: Meta = Meta(),
+    val title: String = "",
+    val description: String = "",
+    val image: String = "",
 ) : Parcelable
 
 

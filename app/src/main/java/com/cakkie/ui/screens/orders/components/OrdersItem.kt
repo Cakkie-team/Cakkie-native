@@ -49,7 +49,7 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlideImage(
-                model = item.listing.media.first(),
+                model = item.image,
                 contentDescription = "",
                 modifier = Modifier
                     .size(40.dp)
@@ -61,7 +61,7 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = item.listing.name,
+                    text = item.title,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(5.dp))

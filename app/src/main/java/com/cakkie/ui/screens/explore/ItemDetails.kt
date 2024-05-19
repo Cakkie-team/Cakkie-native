@@ -59,7 +59,6 @@ import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ConfirmPinDestination
-import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBrown
@@ -110,9 +109,7 @@ fun ItemDetails(
     val progressiveMediaSource = remember {
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
-    var processing by remember {
-        mutableStateOf(false)
-    }
+
 
     changeAddressResult.onNavResult { result ->
         when (result) {
@@ -123,34 +120,7 @@ fun ItemDetails(
         }
     }
 
-    confirmPinResult.onNavResult { result ->
-        when (result) {
-            is NavResult.Canceled -> {}
-            is NavResult.Value -> {
-                processing = true
-                if (user != null) {
-                    viewModel.createOrder(
-                        item.id,
-                        item.shopId,
-                        1,
-                        result.value.amount.replace(",", "").toDouble(),
-                        user.address,
-                        1000.00,
-                        user.latitude,
-                        user.longitude,
-                        result.value.symbol,
-                        result.value.pin
-                    ).addOnSuccessListener {
-                        processing = false
-                        navigator.navigate(OrdersDestination)
-                    }.addOnFailureListener {
-                        processing = false
-                        Toaster(context, it, R.drawable.logo).show()
-                    }
-                }
-            }
-        }
-    }
+
 
     LaunchedEffect(key1 = id) {
         viewModel.getListing(id).addOnSuccessListener {
@@ -306,7 +276,7 @@ fun ItemDetails(
             //page
             HorizontalPager(state = pageState) {
                 when (it) {
-                    0 -> Description(user, listing, navigator, processing)
+                    0 -> Description(user, listing, navigator, viewModel, confirmPinResult)
                     1 -> Reviews()
                 }
             }

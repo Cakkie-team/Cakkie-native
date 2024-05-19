@@ -19,6 +19,7 @@ import com.cakkie.networkModels.Pagination
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Constants
 import com.cakkie.utill.Endpoints
+import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
 import com.cakkie.utill.VideoPreLoadingService
 import com.cakkie.utill.isVideoUrl
@@ -172,7 +173,11 @@ class ExploreViewModal : ViewModel(), KoinComponent {
         latitude: Double,
         longitude: Double,
         currencySymbol: String,
-        pin: String
+        title: String,
+        image: String,
+        description: String,
+        pin: String,
+        meta: List<Pair<String, Any?>>
     ) = NetworkCalls.post<Order>(
         endpoint = Endpoints.CREATE_ORDER,
         body = listOf(
@@ -185,7 +190,11 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             Pair("latitude", latitude),
             Pair("longitude", longitude),
             Pair("currencySymbol", currencySymbol.uppercase(Locale.ROOT)),
-            Pair("pin", pin)
+            Pair("pin", pin),
+            Pair("title", title),
+            Pair("image", image),
+            Pair("description", description),
+            Pair("meta", JsonBody.generate(meta))
         )
     )
 

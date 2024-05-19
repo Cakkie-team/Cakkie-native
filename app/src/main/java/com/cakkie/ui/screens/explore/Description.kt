@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -33,12 +34,17 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ConfirmPinDestination
+import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,10 +53,51 @@ fun Description(
     user: User?,
     item: Listing,
     navigator: DestinationsNavigator,
-    loading: Boolean = false
+    viewModel: ExploreViewModal,
+    confirmPinResult: ResultRecipient<ConfirmPinDestination, CurrencyRate>
 ) {
     val sizes = item.sizes.map { "$it in" }
     var selectedSize by remember { mutableStateOf(sizes.first()) }
+    var processing by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+    confirmPinResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                processing = true
+                if (user != null) {
+                    viewModel.createOrder(
+                        item.id,
+                        item.shopId,
+                        1,
+                        result.value.amount.replace(",", "").toDouble(),
+                        user.address,
+                        1000.00,
+                        user.latitude,
+                        user.longitude,
+                        result.value.symbol,
+                        item.name,
+                        item.media.first(),
+                        item.description,
+                        result.value.pin,
+                        meta = listOf(
+                            Pair("shape", item.meta.shape),
+                            Pair("flavour", item.meta.flavour),
+                            Pair("size", selectedSize),
+                        )
+                    ).addOnSuccessListener {
+                        processing = false
+                        navigator.navigate(OrdersDestination)
+                    }.addOnFailureListener {
+                        processing = false
+                        Toaster(context, it, R.drawable.logo).show()
+                    }
+                }
+            }
+        }
+    }
     Column {
         Text(
             text = item.description,
@@ -186,7 +233,7 @@ fun Description(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
-            processing = loading
+            processing = processing
         ) {
             navigator.navigate(
                 ConfirmPinDestination(
