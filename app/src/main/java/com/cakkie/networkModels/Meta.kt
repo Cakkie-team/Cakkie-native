@@ -10,4 +10,5 @@ data class Meta(
     val flavour: String = "",
     val quantity: String = "",
     val shape: String = "",
+    val size: String = "",
 ) : Parcelable
