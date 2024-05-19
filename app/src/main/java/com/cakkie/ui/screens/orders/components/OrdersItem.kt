@@ -22,14 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.cakkie.R
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.theme.CakkieBlue
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.formatDateTime
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -50,7 +49,7 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlideImage(
-                model = "https://source.unsplash.com/100x100/?cakes,cover",
+                model = item.listing.media.first(),
                 contentDescription = "",
                 modifier = Modifier
                     .size(40.dp)
@@ -62,12 +61,12 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = stringResource(id = R.string.velvet_cupcakes),
+                    text = item.listing.name,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "12 May, 8:23 am",
+                    text = item.createdAt.formatDateTime(),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextColorDark.copy(0.7f)
                 )
@@ -83,7 +82,7 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
             ) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = stringResource(id = R.string.pending),
+                        text = item.status,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
                     )
