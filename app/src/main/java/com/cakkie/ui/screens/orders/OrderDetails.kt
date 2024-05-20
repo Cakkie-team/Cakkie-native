@@ -1,6 +1,8 @@
 package com.cakkie.ui.screens.orders
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,10 +53,15 @@ import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
-import com.cakkie.utill.formatDate
 import com.cakkie.utill.formatDateTime
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
@@ -68,6 +76,44 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
     }
     var showCode by remember {
         mutableStateOf(false)
+    }
+
+    var canCancel by remember {
+        mutableStateOf(false)
+    }
+
+    var remainingTime by remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = item.waitTime) {
+        val targetDateTime = LocalDateTime.parse(
+            item.waitTime.ifEmpty { item.createdAt },
+            DateTimeFormatter.ISO_DATE_TIME
+        )
+
+        // Add 2 hours to the target time
+        val targetMillis =
+            targetDateTime.plusHours(1).plusMinutes(30).atZone(ZoneId.systemDefault()).toInstant()
+                .toEpochMilli()
+        remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
+        while (Instant.now().toEpochMilli() < targetMillis) {
+            val currentTime = Instant.now().toEpochMilli()
+            val remainingMillis = targetMillis - currentTime
+
+//            Timber.d("Remaining time: $remainingMillis")
+
+            val hours = remainingMillis / (1000 * 60 * 60)
+            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
+            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+
+            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+            delay(1000) // Delay for 1 second
+        }
+
+        // Countdown finished
+        canCancel = true
     }
     Column(
         modifier = Modifier
@@ -238,7 +284,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = item.waitTime.formatDate(),
+                    text = remainingTime,
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -256,7 +302,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                         else -> R.string.generate_code
                     }
                 ),
-                enabled = item.status == "PENDING" || item.status == "ARRIVED",
+                enabled = (item.status == "PENDING" && canCancel) || item.status == "ARRIVED",
             ) {
                 if (item.status == "PENDING") {
                     openDialog.value = true
