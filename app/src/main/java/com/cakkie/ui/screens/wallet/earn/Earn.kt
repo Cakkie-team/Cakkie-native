@@ -127,7 +127,7 @@ fun Earn(navigator: DestinationsNavigator) {
 
         //current data time in iso
         val currentDateTime =
-            LocalDateTime.now().minusHours(2).format(DateTimeFormatter.ISO_DATE_TIME)
+            LocalDateTime.now().minusMinutes(15).format(DateTimeFormatter.ISO_DATE_TIME)
         val targetDateTime = LocalDateTime.parse(
             user?.lastMine?.ifEmpty { currentDateTime } ?: currentDateTime,
             DateTimeFormatter.ISO_DATE_TIME
@@ -135,9 +135,9 @@ fun Earn(navigator: DestinationsNavigator) {
 
         // Add 2 hours to the target time
         val targetMillis =
-            targetDateTime.plusHours(2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        var spkPerMillis = (user?.earningRate ?: 0.0) / 3600000
-        var totalSpkMined = spkPerMillis * 3600000
+            targetDateTime.plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        var spkPerMillis = (user?.earningRate ?: 0.0) / 300000
+        var totalSpkMined = spkPerMillis * 300000
         var totalSpkMinedStr = dec.format(totalSpkMined)
         mindedSpk = "$totalSpkMinedStr SPK"
         while (Instant.now().toEpochMilli() < targetMillis) {
@@ -151,8 +151,8 @@ fun Earn(navigator: DestinationsNavigator) {
 //            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
 
             //calculate total spk from remaining time
-            spkPerMillis = (user?.earningRate ?: 0.0) / 3600000
-            totalSpkMined = spkPerMillis * (3600000 - remainingMillis)
+            spkPerMillis = (user?.earningRate ?: 0.0) / 300000
+            totalSpkMined = spkPerMillis * (300000 - remainingMillis)
             totalSpkMinedStr = dec.format(totalSpkMined)
             mindedSpk = "$totalSpkMinedStr SPK"
             remainingTime = remainingMillis
