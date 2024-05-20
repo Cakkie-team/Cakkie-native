@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.orders
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,21 +17,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.components.CakkieButton
@@ -46,19 +50,23 @@ import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.formatDate
+import com.cakkie.utill.formatDateTime
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
     val meta = listOf(
-        Pair("Size", "6 inches"),
-        Pair("Flavour", "Chocolate"),
-        Pair("Price", "N 3000"),
-        Pair("Quantity", "1"),
-        Pair("Shape", "Round"),
+        Pair("Size", "${item.meta.size} inches"),
+        Pair("Flavour", item.meta.flavour),
+        Pair("Price", "N ${item.unitPrice * item.quantity}"),
+        Pair("Quantity", item.quantity.toString()),
     )
     val openDialog = remember {
+        mutableStateOf(false)
+    }
+    var showCode by remember {
         mutableStateOf(false)
     }
     Column(
@@ -108,18 +116,18 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(20.dp))
         Row {
             Text(
-                text = stringResource(id = R.string.ordered_from_cakkie),
+                text = stringResource(id = R.string.ordered_from),
                 style = MaterialTheme.typography.bodyLarge,
 
                 )
             Text(
-                text = " Jane Doe",
+                text = " ${item.shop.name}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = CakkieBrown
             )
         }
         Text(
-            text = "on 19th June",
+            text = "on ${item.createdAt.formatDateTime()}",
             style = MaterialTheme.typography.bodyLarge,
             color = TextColorDark.copy(alpha = 0.7f)
         )
@@ -131,9 +139,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "HI, I would like to klnfn jwfjwkh jiefj;wi hfwiu hrif hukseh fuio " +
-                    "woyrory r yrororywer;iorryo row;tyr8tw8o y8wyoiy/iy o ryhfo /yoryi r" +
-                    " wioyoi uw/wyf8uyhriof y rwry8roryuirtg.8o fwry.riuyrukyr8ir.rufyr.grog8y/o",
+            text = item.description,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -191,7 +197,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "No 1, Cakkie Street, Cakkie Town, Cakkie State",
+                    text = item.deliveryAddress,
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -219,7 +225,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
-                        text = stringResource(id = R.string.in_progress),
+                        text = item.status.lowercase(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -232,7 +238,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "3 Days 14 Hours",
+                    text = item.waitTime.formatDate(),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -244,19 +250,29 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CakkieButton(
-                text = stringResource(id = R.string.generate_code)
+                text = stringResource(
+                    id = when (item.status) {
+                        "PENDING" -> R.string.cancel
+                        else -> R.string.generate_code
+                    }
+                ),
+                enabled = item.status == "PENDING" || item.status == "ARRIVED",
             ) {
-                navigator.navigate(ChatDestination(""))
+                if (item.status == "PENDING") {
+                    openDialog.value = true
+                } else {
+                    showCode = true
+                }
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "234657",
+                text = item.id.takeLast(6),
                 style = MaterialTheme.typography.bodyLarge,
                 color = CakkieBrown,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .blur(10.dp)
+                    .blur(if (showCode) 0.dp else 10.dp)
                     .weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -270,72 +286,78 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
     }
 
     if (openDialog.value)
-        AlertDialog(
+        Popup(
             onDismissRequest = { openDialog.value = false },
-            title = {
-                Row(
-                    modifier = Modifier
+            alignment = Alignment.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = CakkieBrown,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .fillMaxWidth(0.8f)
+                    .padding(horizontal = 16.dp)
+                    .background(CakkieBackground, shape = RoundedCornerShape(8.dp))
+            ) {
+                Column(
+                    Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cakkie_icon),
-                        contentDescription = ""
-                    )
-                    Text(
-                        text = stringResource(id = R.string.warning),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(start = 50.dp)
-                    )
-                }
-            },
-            text = {
-                Text(
-                    text = stringResource(id = R.string.are_you_sure_you_want_to_cancel_this_order),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            },
-            confirmButton =
-            {
-                Button(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = CakkieBrown,
-                        containerColor = Color.Transparent
-                    )
-                ) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.yes,
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.cakkie_icon),
+                            contentDescription = ""
                         )
-                    )
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = CakkieBrown,
-                        containerColor = Color.Transparent
-                    )
-                ) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.no,
+                        Text(
+                            text = stringResource(id = R.string.warning),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(start = 10.dp)
                         )
+                    }
+                    Text(
+                        text = stringResource(id = R.string.are_you_sure_you_want_to_cancel_this_order),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(top = 10.dp)
                     )
+                    Row {
+                        Button(
+                            onClick = { },
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = CakkieBrown,
+                                containerColor = Color.Transparent
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.no),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                        Button(
+                            onClick = { },
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = CakkieBrown,
+                                containerColor = Color.Transparent
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.yes),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-            },
-            containerColor = CakkieBackground,
-            shape = RectangleShape,
-            modifier = Modifier.border(
-                width = 1.dp,
-                color = CakkieBrown,
-            )
-        )
+            }
+        }
 }
 
 

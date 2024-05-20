@@ -35,6 +35,7 @@ import com.cakkie.utill.formatDateTime
 fun OrdersItem(item: Order, onClick: () -> Unit) {
     Box(
         modifier = Modifier
+            .clickable { onClick.invoke() }
             .fillMaxWidth()
             .padding(vertical = 6.dp)
             .background(Color.White),
@@ -42,7 +43,6 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
     ) {
         Row(
             modifier = Modifier
-                .clickable { onClick.invoke() }
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.Start,

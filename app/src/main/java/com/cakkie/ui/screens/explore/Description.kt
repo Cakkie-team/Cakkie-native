@@ -72,7 +72,7 @@ fun Description(
                         item.id,
                         item.shopId,
                         1,
-                        result.value.amount.replace(",", "").toDouble(),
+                        item.price[sizes.indexOf(selectedSize)].toDouble(),
                         user.address,
                         1000.00,
                         user.latitude,
