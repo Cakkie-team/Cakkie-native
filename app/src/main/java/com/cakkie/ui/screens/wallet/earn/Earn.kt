@@ -127,7 +127,8 @@ fun Earn(navigator: DestinationsNavigator) {
 
         //current data time in iso
         val currentDateTime =
-            LocalDateTime.now().minusMinutes(15).format(DateTimeFormatter.ISO_DATE_TIME)
+            LocalDateTime.now().minusHours(1).minusMinutes(15)
+                .format(DateTimeFormatter.ISO_DATE_TIME)
         val targetDateTime = LocalDateTime.parse(
             user?.lastMine?.ifEmpty { currentDateTime } ?: currentDateTime,
             DateTimeFormatter.ISO_DATE_TIME
@@ -135,9 +136,10 @@ fun Earn(navigator: DestinationsNavigator) {
 
         // Add 2 hours to the target time
         val targetMillis =
-            targetDateTime.plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        var spkPerMillis = (user?.earningRate ?: 0.0) / 300000
-        var totalSpkMined = spkPerMillis * 300000
+            targetDateTime.plusHours(1).plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant()
+                .toEpochMilli()
+        var spkPerMillis = (user?.earningRate ?: 0.0) / 900000
+        var totalSpkMined = spkPerMillis * 900000
         var totalSpkMinedStr = dec.format(totalSpkMined)
         mindedSpk = "$totalSpkMinedStr SPK"
         while (Instant.now().toEpochMilli() < targetMillis) {
@@ -151,8 +153,8 @@ fun Earn(navigator: DestinationsNavigator) {
 //            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
 
             //calculate total spk from remaining time
-            spkPerMillis = (user?.earningRate ?: 0.0) / 300000
-            totalSpkMined = spkPerMillis * (300000 - remainingMillis)
+            spkPerMillis = (user?.earningRate ?: 0.0) / 900000
+            totalSpkMined = spkPerMillis * (900000 - remainingMillis)
             totalSpkMinedStr = dec.format(totalSpkMined)
             mindedSpk = "$totalSpkMinedStr SPK"
             remainingTime = remainingMillis
@@ -438,7 +440,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     .align(Alignment.CenterStart)
                     .background(CakkieBrown002.copy(0.8f), RoundedCornerShape(50))
                     .fillMaxHeight()
-                    .fillMaxWidth((3600000 - remainingTime).div(3600000f))
+                    .fillMaxWidth((900000 - remainingTime).div(900000f))
             )
             Row(
                 modifier = Modifier
