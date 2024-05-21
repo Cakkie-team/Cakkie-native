@@ -46,5 +46,7 @@ data class User(
     val updatedAt: String = "",
     val userType: String = "",
     val username: String = "",
-    val websocketId: String? = null
+    val websocketId: String? = null,
+    val referrals: Int = 0,
+    val balance: Double = 0.0
 ) : Parcelable
