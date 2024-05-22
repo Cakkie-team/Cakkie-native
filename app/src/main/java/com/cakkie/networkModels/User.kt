@@ -15,4 +15,5 @@ data class LoginResponse(
 data class UserResponse(
     val data: List<User> = listOf(),
     val meta: Pagination = Pagination(),
+    val total: Double = 0.0
 )

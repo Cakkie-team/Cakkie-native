@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.BrowserDestination
+import com.cakkie.ui.screens.destinations.LeaderBoardDestination
 import com.cakkie.ui.screens.destinations.ReferralDestination
 import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
@@ -62,6 +63,7 @@ import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.formatNumber
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -75,7 +77,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
-import java.text.DecimalFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -87,12 +88,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun Earn(navigator: DestinationsNavigator) {
     val viewModal: WalletViewModel = koinViewModel()
-    val dec = DecimalFormat("#,##0.00")
     val user = viewModal.user.observeAsState().value
     val balance = viewModal.balance.observeAsState(listOf()).value
     val context = LocalContext.current as Activity
-    val spkBalance = dec.format(
-        balance.find { it.symbol == "SPK" }?.balance ?: 0.0
+    val spkBalance = formatNumber(
+        balance.find { it.symbol == "SPK" }?.balance ?: 0.0, 3
     ).split(".")
     var couldMine by remember { mutableStateOf(false) }
 
@@ -140,7 +140,7 @@ fun Earn(navigator: DestinationsNavigator) {
                 .toEpochMilli()
         var spkPerMillis = (user?.earningRate ?: 0.0) / 900000
         var totalSpkMined = spkPerMillis * 900000
-        var totalSpkMinedStr = dec.format(totalSpkMined)
+        var totalSpkMinedStr = formatNumber(totalSpkMined)
         mindedSpk = "$totalSpkMinedStr SPK"
         while (Instant.now().toEpochMilli() < targetMillis) {
             val currentTime = Instant.now().toEpochMilli()
@@ -155,7 +155,7 @@ fun Earn(navigator: DestinationsNavigator) {
             //calculate total spk from remaining time
             spkPerMillis = (user?.earningRate ?: 0.0) / 900000
             totalSpkMined = spkPerMillis * (900000 - remainingMillis)
-            totalSpkMinedStr = dec.format(totalSpkMined)
+            totalSpkMinedStr = formatNumber(totalSpkMined)
             mindedSpk = "$totalSpkMinedStr SPK"
             remainingTime = remainingMillis
 //            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
@@ -336,6 +336,16 @@ fun Earn(navigator: DestinationsNavigator) {
                 color = CakkieBrown,
                 fontSize = 18.sp
             )
+            IconButton(modifier = Modifier
+                .align(Alignment.CenterEnd),
+                onClick = { navigator.navigate(LeaderBoardDestination) }) {
+                Image(
+                    painter = painterResource(id = R.drawable.leaderboard),
+                    contentDescription = "leaderboard",
+                    modifier = Modifier
+                        .size(24.dp)
+                )
+            }
         }
 
         Box(
@@ -409,7 +419,7 @@ fun Earn(navigator: DestinationsNavigator) {
                             .padding(horizontal = 16.dp, vertical = 5.dp)
                     ) {
                         Text(
-                            text = "+" + dec.format(user?.earningRate ?: 0.0),
+                            text = "+" + formatNumber(user?.earningRate ?: 0.0),
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieOrange,
                             fontSize = 16.sp,
@@ -436,7 +446,7 @@ fun Earn(navigator: DestinationsNavigator) {
                     CakkieBrown002.copy(0.4f),
                     RoundedCornerShape(50)
                 )
-                .width(200.dp)
+                .fillMaxWidth(0.7f)
                 .height(30.dp)
                 .clip(RoundedCornerShape(50)),
             contentAlignment = Alignment.Center
@@ -606,13 +616,13 @@ fun Earn(navigator: DestinationsNavigator) {
                             uriHandle.openUri(it.url)
                             state = "Verifying"
                             scope.launch {
-                                delay(30000)
+                                delay(10000)
                                 Toaster(
                                     context,
                                     "Be sure to complete to task",
                                     R.drawable.logo
                                 ).show()
-                                delay(30000)
+                                delay(10000)
                                 viewModal.mine(it.title).addOnSuccessListener {
                                     viewModal.getProfile()
                                     viewModal.getBalance()

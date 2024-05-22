@@ -21,7 +21,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -50,6 +49,7 @@ import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieOrange
+import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.ShimmerParams
@@ -57,9 +57,8 @@ import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.text.DecimalFormat
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun LeaderBoard(navigator: DestinationsNavigator) {
@@ -70,7 +69,6 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
     }
 
     val history = leads.sortedByDescending { it.balance }
-    val dec = DecimalFormat("#,##0.00")
 //    val adView = remember {
 //        AdView(context).apply {
 //            adUnitId = "ca-app-pub-8613748949810587/1273874365"
@@ -119,25 +117,29 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
                     )
                 }
                 Text(
-                    text = stringResource(id = R.string.your_referrals),
+                    text = stringResource(id = R.string.leaderboard),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.align(Alignment.Center),
                     fontSize = 18.sp
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+//            Text(
+//                text = stringResource(id = R.string.total_share),
+//                style = MaterialTheme.typography.bodyLarge,
+////                modifier = Modifier.align(Alignment.CenterHorizontally),
+//                fontSize = 18.sp
+//            )
             Text(
-                text = stringResource(id = R.string.your_friends),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(start = 16.dp)
+                text = formatNumber(res?.total ?: 0.0, 3) + " SPK",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 40.sp,
             )
             Spacer(modifier = Modifier.height(10.dp))
             if (history.isNotEmpty()) {
                 LazyColumn(
                     Modifier
-                        .fillMaxHeight(0.65f)
+                        .fillMaxHeight()
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
@@ -157,7 +159,7 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 GlideImage(
                                     imageModel = it.profileImage.replace(
                                         Regex("\\bhttp://"),
@@ -166,10 +168,9 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
                                     contentDescription = "profile image",
                                     modifier = Modifier
                                         .background(CakkieBackground, CircleShape)
-                                        .size(40.dp)
-                                        .padding(end = 5.dp)
+                                        .size(35.dp)
                                         .clip(shape = CircleShape),
-                                    contentScale = ContentScale.Fit,
+                                    contentScale = ContentScale.Crop,
                                     shimmerParams = ShimmerParams(
                                         baseColor = CakkieBrown.copy(0.8f),
                                         highlightColor = CakkieBackground,
@@ -178,44 +179,61 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
                                         tilt = 20f
                                     ),
                                 )
+                                Spacer(modifier = Modifier.width(5.dp))
                                 Column {
                                     Text(
-                                        text = it.name,
+                                        text = it.username,
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontSize = 18.sp
                                     )
-
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(vertical = 3.dp)
-                                    ) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.invite),
+                                            contentDescription = "task Icon",
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(3.dp))
                                         Text(
-                                            text = "+" + dec.format(it.earningRate),
+                                            text = it.referrals.toString(),
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = CakkieBrown,
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold
                                         )
-                                        Spacer(modifier = Modifier.width(5.dp))
-                                        Text(
-                                            text = "SPK/15mins",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = CakkieOrange,
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.align(Alignment.Top)
-                                        )
                                     }
                                 }
 
                             }
-
-                            Text(
-                                text = "${history.indexOf(it) + 1}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = "${formatNumber(it.balance)} SPK",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    verticalAlignment = Alignment.Bottom
+                                ) {
+                                    Text(
+                                        text = "+" + formatNumber(it.earningRate),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBrown,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Text(
+                                        text = "SPK/15mins",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieOrange,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.Top)
+                                    )
+                                }
+                            }
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                     }
@@ -258,3 +276,4 @@ fun LeaderBoard(navigator: DestinationsNavigator) {
         )
     }
 }
+
