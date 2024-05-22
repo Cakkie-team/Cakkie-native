@@ -71,6 +71,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -177,35 +178,40 @@ fun Earn(navigator: DestinationsNavigator) {
         mutableIntStateOf(0)
     }
 
-//    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-//        override fun onAdClicked() {
-//            // Called when a click is recorded for an ad.
-//            Timber.d("Ad was clicked.")
-//        }
-//
-//        override fun onAdDismissedFullScreenContent() {
-//            // Called when ad is dismissed.
-//            // Set the ad reference to null so you don't show the ad a second time.
-//            Timber.d("Ad dismissed fullscreen content.")
-//            rewardedAd = null
-//        }
-//
-//        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-//            // Called when ad fails to show.
-//            Timber.e("Ad failed to show fullscreen content.")
-//            rewardedAd = null
-//        }
-//
-//        override fun onAdImpression() {
-//            // Called when an impression is recorded for an ad.
-//            Timber.d("Ad recorded an impression.")
-//        }
-//
-//        override fun onAdShowedFullScreenContent() {
-//            // Called when ad is shown.
-//            Timber.d("Ad showed fullscreen content.")
-//        }
-//    }
+    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdClicked() {
+            // Called when a click is recorded for an ad.
+            Timber.d("Ad was clicked.")
+        }
+
+        override fun onAdDismissedFullScreenContent() {
+            // Called when ad is dismissed.
+            // Set the ad reference to null so you don't show the ad a second time.
+            Timber.d("Ad dismissed fullscreen content.")
+            rewardedAd = null
+            viewModal.mine()
+                .addOnSuccessListener {
+                    viewModal.getProfile()
+                    viewModal.getBalance()
+                }
+        }
+
+        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+            // Called when ad fails to show.
+            Timber.e("Ad failed to show fullscreen content.")
+            rewardedAd = null
+        }
+
+        override fun onAdImpression() {
+            // Called when an impression is recorded for an ad.
+            Timber.d("Ad recorded an impression.")
+        }
+
+        override fun onAdShowedFullScreenContent() {
+            // Called when ad is shown.
+            Timber.d("Ad showed fullscreen content.")
+        }
+    }
 
     interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdClicked() {
@@ -217,6 +223,7 @@ fun Earn(navigator: DestinationsNavigator) {
             // Called when ad is dismissed.
             Timber.d("Ad dismissed fullscreen content.")
             interstitialAd = null
+            gettingAd = false
         }
 
         override fun onAdFailedToShowFullScreenContent(p0: AdError) {
@@ -228,6 +235,7 @@ fun Earn(navigator: DestinationsNavigator) {
         override fun onAdImpression() {
             // Called when an impression is recorded for an ad.
             Timber.d("Ad recorded an impression.")
+            gettingAd = false
             viewModal.mine()
                 .addOnSuccessListener {
                     viewModal.getProfile()
@@ -239,6 +247,7 @@ fun Earn(navigator: DestinationsNavigator) {
         override fun onAdShowedFullScreenContent() {
             // Called when ad is shown.
             Timber.d("Ad showed fullscreen content.")
+            gettingAd = false
         }
     }
     LaunchedEffect(key1 = retryCount) {
@@ -253,41 +262,41 @@ fun Earn(navigator: DestinationsNavigator) {
             ).show()
         }
 
-//        if (rewardedAd == null && retryCount <= 5) {
-//            val adRequest = AdRequest.Builder().build()
-//            RewardedAd.load(
-//                context,
-//                if (retryCount % 2 == 0) "ca-app-pub-8613748949810587/7282817310" else "ca-app-pub-8613748949810587/1943587076",
-//                adRequest,
-//                object : RewardedAdLoadCallback() {
-//                    override fun onAdFailedToLoad(adError: LoadAdError) {
-//                        Timber.d(adError.toString())
-//                        rewardedAd = null
-//                        retryCount += 1
-//                    }
-//
-//                    override fun onAdLoaded(ad: RewardedAd) {
-//                        Timber.d("Ad was loaded.")
-//                        rewardedAd = ad
-//                        if (gettingAd) {
-//                            ad.show(context) { rewardItem ->
-//                                gettingAd = false
-//                                // Handle the reward.
-////                        val rewardAmount = rewardItem.amount
-////                        val rewardType = rewardItem.type
-//                                viewModal.mine()
-//                                    .addOnSuccessListener {
-//                                        viewModal.getProfile()
-//                                        viewModal.getBalance()
-//                                    }
-//                                Timber.d("User earned the reward.")
-//                            }
-//                        }
-//                    }
-//                })
-//        }
+        if (rewardedAd == null && retryCount <= 5 && couldMine) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                context,
+                if (retryCount % 2 == 0) "ca-app-pub-8613748949810587/7282817310" else "ca-app-pub-8613748949810587/1943587076",
+                adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Timber.d(adError.toString())
+                        rewardedAd = null
+                        retryCount += 1
+                    }
 
-        if (interstitialAd == null && retryCount <= 5) {
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        Timber.d("Ad was loaded.")
+                        rewardedAd = ad
+                        if (gettingAd) {
+                            ad.show(context) { rewardItem ->
+                                gettingAd = false
+                                // Handle the reward.
+//                        val rewardAmount = rewardItem.amount
+//                        val rewardType = rewardItem.type
+                                viewModal.mine()
+                                    .addOnSuccessListener {
+                                        viewModal.getProfile()
+                                        viewModal.getBalance()
+                                    }
+                                Timber.d("User earned the reward.")
+                            }
+                        }
+                    }
+                })
+        }
+
+        if (interstitialAd == null && retryCount <= 5 && !couldMine) {
             val adRequest = AdRequest.Builder().build()
             InterstitialAd.load(
                 context,
@@ -336,16 +345,6 @@ fun Earn(navigator: DestinationsNavigator) {
                 color = CakkieBrown,
                 fontSize = 18.sp
             )
-            IconButton(modifier = Modifier
-                .align(Alignment.CenterEnd),
-                onClick = { navigator.navigate(LeaderBoardDestination) }) {
-                Image(
-                    painter = painterResource(id = R.drawable.leaderboard),
-                    contentDescription = "leaderboard",
-                    modifier = Modifier
-                        .size(24.dp)
-                )
-            }
         }
 
         Box(
@@ -436,6 +435,18 @@ fun Earn(navigator: DestinationsNavigator) {
                         )
                     }
                 }
+            }
+            IconButton(modifier = Modifier
+//                .padding(10.dp)
+                .align(Alignment.TopEnd),
+                onClick = { navigator.navigate(LeaderBoardDestination) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.leaderboard),
+                    contentDescription = "leaderboard",
+                    modifier = Modifier
+                        .size(24.dp),
+                    tint = CakkieBackground
+                )
             }
         }
 
@@ -682,33 +693,32 @@ fun Earn(navigator: DestinationsNavigator) {
             onClick = {
                 if (!gettingAd) {
                     retryCount = 0
-//                    if(couldMine){
-//                    rewardedAd?.let { ad ->
-//                        ad.show(context) { rewardItem ->
-//                            gettingAd = false
-//                            // Handle the reward.
-////                        val rewardAmount = rewardItem.amount
-////                        val rewardType = rewardItem.type
-//                            viewModal.mine()
-//                                .addOnSuccessListener {
-//                                    viewModal.getProfile()
-//                                    viewModal.getBalance()
-//                                }
-//                            Timber.d("User earned the reward.")
-//                        }
-//                    } ?: run {
-////                    gettingAd = false
-////                    Toaster(
-////                        context,
-////                        "Ad wasn't ready yet, wait for 3secs and try again",
-////                        R.drawable.logo
-////                    ).show()
-//                        Timber.d("The rewarded ad wasn't ready yet.")
-//                    }
-//                    }
-
-                    interstitialAd?.show(context)
-                    gettingAd = false
+                    if (couldMine) {
+                        rewardedAd?.let { ad ->
+                            ad.show(context) { rewardItem ->
+                                gettingAd = false
+                                // Handle the reward.
+//                        val rewardAmount = rewardItem.amount
+//                        val rewardType = rewardItem.type
+                                viewModal.mine()
+                                    .addOnSuccessListener {
+                                        viewModal.getProfile()
+                                        viewModal.getBalance()
+                                    }
+                                Timber.d("User earned the reward.")
+                            }
+                        } ?: run {
+//                    gettingAd = false
+//                    Toaster(
+//                        context,
+//                        "Ad wasn't ready yet, wait for 3secs and try again",
+//                        R.drawable.logo
+//                    ).show()
+                            Timber.d("The rewarded ad wasn't ready yet.")
+                        }
+                    } else {
+                        interstitialAd?.show(context)
+                    }
                 }
                 gettingAd = true
             },
