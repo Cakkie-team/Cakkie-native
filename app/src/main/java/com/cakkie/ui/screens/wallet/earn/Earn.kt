@@ -304,8 +304,8 @@ fun Earn(navigator: DestinationsNavigator) {
                         Timber.d("Ad was loaded.")
                         interstitialAd = ad
                         if (gettingAd) {
-                            ad.show(context)
                             gettingAd = false
+                            ad.show(context)
                         }
                     }
                 })
