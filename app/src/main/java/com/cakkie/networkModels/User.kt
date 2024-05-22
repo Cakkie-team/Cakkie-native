@@ -10,3 +10,9 @@ data class LoginResponse(
     val token: String = "",
     val user: User = User()
 )
+
+@Serializable
+data class UserResponse(
+    val data: List<User> = listOf(),
+    val meta: Pagination = Pagination(),
+)

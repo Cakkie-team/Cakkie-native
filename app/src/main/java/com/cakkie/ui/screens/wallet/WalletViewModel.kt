@@ -12,6 +12,7 @@ import com.cakkie.networkModels.DepositResponse
 import com.cakkie.networkModels.LoginResponse
 import com.cakkie.networkModels.Transaction
 import com.cakkie.networkModels.TransactionResponse
+import com.cakkie.networkModels.UserResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ class WalletViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _balance = MutableLiveData<List<Balance>>()
     private val _transaction = MutableLiveData<TransactionResponse>()
+    private val _leaderBoard = MutableLiveData<UserResponse>()
     private val _user = MutableLiveData<User>()
     private val _referrals = MutableLiveData<List<User>>()
 
@@ -29,6 +31,7 @@ class WalletViewModel : ViewModel(), KoinComponent {
     val balance = _balance
     val transaction = _transaction
     val referrals = _referrals
+    val leaderBoard = _leaderBoard
 
     fun getBalance() {
         NetworkCalls.getObjectList<Balance>(
@@ -120,6 +123,15 @@ class WalletViewModel : ViewModel(), KoinComponent {
             endpoint = Endpoints.GET_REFERRALS
         ).addOnSuccessListener {
             _referrals.value = it
+        }
+    }
+
+    fun getLeaderBoard(page: Int = 0, pageSize: Int = 20) {
+        NetworkCalls.get<UserResponse>(
+            endpoint = Endpoints.GET_LEADERBOARD(page, pageSize),
+            body = listOf()
+        ).addOnSuccessListener {
+            _leaderBoard.value = it
         }
     }
 

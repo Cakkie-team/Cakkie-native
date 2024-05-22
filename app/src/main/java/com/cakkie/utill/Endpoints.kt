@@ -104,6 +104,8 @@ object Endpoints {
     val GET_REWARD = { title: String -> "$BASE_URL/wallet/get-reward/$title" } /* get reward  GET*/
     val GET_CONVERSION_RATE =
         { symbol: String, amount: Double -> "$BASE_URL/wallet/conversion-rate/$symbol/$amount" } /* get conversion  GET*/
+    val GET_LEADERBOARD =
+        { page: Int, size: Int -> "$BASE_URL/wallet/leaderboard?page=$page" }/* get leaderboard  GET*/ /*todo:  fix page size*/
 
 
     /**
