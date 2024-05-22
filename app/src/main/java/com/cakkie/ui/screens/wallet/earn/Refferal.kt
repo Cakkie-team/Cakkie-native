@@ -3,8 +3,11 @@ package com.cakkie.ui.screens.wallet.earn
 
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -41,10 +48,14 @@ import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
+import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.skydoves.landscapist.ShimmerParams
+import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.koinViewModel
+import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -54,7 +65,8 @@ fun Referral(navigator: DestinationsNavigator) {
     val user = viewModel.user.observeAsState().value
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    val history = viewModel.referrals.observeAsState().value ?: emptyList()
+    val history = (viewModel.referrals.observeAsState().value
+        ?: emptyList()).sortedByDescending { it.earningRate }
 
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
         putExtra(
@@ -65,6 +77,7 @@ fun Referral(navigator: DestinationsNavigator) {
     }
     val shareIntent = Intent.createChooser(sendIntent, "Share your referral code")
 
+    val dec = DecimalFormat("#,##0.00")
 //    val adView = remember {
 //        AdView(context).apply {
 //            adUnitId = "ca-app-pub-8613748949810587/1273874365"
@@ -110,16 +123,78 @@ fun Referral(navigator: DestinationsNavigator) {
             LazyColumn(
                 Modifier
                     .fillMaxHeight(0.65f)
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
                 items(
                     items = history,
                 ) {
-                    Text(
-                        text = "${history.indexOf(it) + 1}. ${it.name}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 18.sp
-                    )
+                    Row(
+                        Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row {
+                            GlideImage(
+                                imageModel = it.profileImage.replace(
+                                    Regex("\\bhttp://"),
+                                    "https://"
+                                ),
+                                contentDescription = "profile image",
+                                modifier = Modifier
+                                    .background(CakkieBackground, CircleShape)
+                                    .size(40.dp)
+                                    .padding(end = 5.dp)
+                                    .clip(shape = CircleShape),
+                                contentScale = ContentScale.Fit,
+                                shimmerParams = ShimmerParams(
+                                    baseColor = CakkieBrown.copy(0.8f),
+                                    highlightColor = CakkieBackground,
+                                    durationMillis = 1000,
+                                    dropOff = 0.5f,
+                                    tilt = 20f
+                                ),
+                            )
+                            Column {
+                                Text(
+                                    text = it.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 18.sp
+                                )
+
+                                Row(
+                                    modifier = Modifier
+                                        .padding(vertical = 3.dp)
+                                ) {
+                                    Text(
+                                        text = "+" + dec.format(it.earningRate),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieBrown,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(
+                                        text = "SPK/15mins",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = CakkieOrange,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.Top)
+                                    )
+                                }
+                            }
+
+                        }
+
+                        Text(
+                            text = "${history.indexOf(it) + 1}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }

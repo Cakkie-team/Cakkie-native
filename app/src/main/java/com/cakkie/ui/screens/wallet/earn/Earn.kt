@@ -411,7 +411,7 @@ fun Earn(navigator: DestinationsNavigator) {
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = "SPK/hr",
+                            text = "SPK/15mins",
                             style = MaterialTheme.typography.bodyLarge,
                             color = CakkieBackground,
                             fontSize = 16.sp,
