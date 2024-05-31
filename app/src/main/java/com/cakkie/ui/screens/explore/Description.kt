@@ -147,6 +147,74 @@ fun Description(
         }
 
         Spacer(modifier = Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth(0.5f)) {
+                Text(
+                    text = stringResource(id = R.string.flavour) + ":",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Text(
+                    text = item.meta.flavour.ifEmpty { "N/A" },
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            Column(Modifier.fillMaxWidth(0.5f)) {
+                Text(
+                    text = stringResource(id = R.string.shape) + ":",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Text(
+                    text = item.meta.shape.ifEmpty { "N/A" },
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(id = R.string.quantity) + ":",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Text(
+                    text = item.meta.quantity.ifEmpty { "N/A" },
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+//            Column(Modifier.fillMaxWidth(0.5f)) {
+//                Text(
+//                    text = stringResource(id = R.string.shape) + ":",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.SemiBold,
+//                    modifier = Modifier.padding(horizontal = 16.dp)
+//                )
+//                Text(
+//                    text = item.meta.shape.ifEmpty { "N/A" },
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontSize = 14.sp,
+//                    modifier = Modifier.padding(horizontal = 16.dp)
+//                )
+//            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         Text(
             text = stringResource(id = R.string.availability) + ":",
             style = MaterialTheme.typography.bodyLarge,
