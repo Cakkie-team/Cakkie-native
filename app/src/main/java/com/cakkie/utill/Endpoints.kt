@@ -53,6 +53,10 @@ object Endpoints {
     const val UPDATE_SHOP = "$BASE_URL/shop"  /* update shop  PUT*/
     val VERIFY_SHOP_NAME =
         { name: String -> "$BASE_URL/shop/verify/$name" } /* verify shop name  GET*/
+    val GET_REQUESTS =
+        { page: Int, size: Int -> "$BASE_URL/shop/requests?page=$page&pageSize=$size" }/* get my request  GET*/
+    val GET_CONTRACTS =
+        { page: Int, size: Int -> "$BASE_URL/shop/contracts?page=$page&pageSize=$size" }/* get my contracts  GET*/
 
     /**
      * Listing

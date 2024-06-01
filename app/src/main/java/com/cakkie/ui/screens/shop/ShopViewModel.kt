@@ -13,6 +13,8 @@ import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.Order
+import com.cakkie.networkModels.OrderResponse
 import com.cakkie.networkModels.ShopResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
@@ -29,10 +31,12 @@ class ShopViewModel : ViewModel(), KoinComponent {
     private val _user = MutableLiveData<User>()
     private val _shop = MutableLiveData<ShopModel>()
     private val _listings = MutableLiveData<ListingResponse>()
+    private val _orders = MutableLiveData<OrderResponse>()
 
     val user = _user
     val shop = _shop
     val listings = _listings
+    val orders = _orders
 
     private fun getUser() {
         viewModelScope.launch {
@@ -241,8 +245,27 @@ class ShopViewModel : ViewModel(), KoinComponent {
         _listings.value = it
     }
 
+    fun getRequests(page: Int = 0, size: Int = 20) = NetworkCalls.get<OrderResponse>(
+        endpoint = Endpoints.GET_REQUESTS(page, size),
+        body = listOf()
+    ).addOnSuccessListener {
+        _orders.value = it
+    }
+
+    fun getContracts(page: Int = 0, size: Int = 20) = NetworkCalls.get<OrderResponse>(
+        endpoint = Endpoints.GET_CONTRACTS(page, size),
+        body = listOf()
+    ).addOnSuccessListener {
+        _orders.value = it
+    }
+
     fun getListing(id: String) = NetworkCalls.get<Listing>(
         endpoint = Endpoints.GET_LISTING(id),
+        body = listOf()
+    )
+
+    fun getOrder(id: String) = NetworkCalls.get<Order>(
+        endpoint = Endpoints.GET_ORDER(id),
         body = listOf()
     )
 
