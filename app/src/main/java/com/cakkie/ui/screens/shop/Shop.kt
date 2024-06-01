@@ -224,16 +224,16 @@ fun Shop(navigator: DestinationsNavigator) {
                 pageCount = pageState.pageCount,
                 tabs = listOf(
                     stringResource(id = R.string.listings),
+                    stringResource(id = R.string.requests),
                     stringResource(id = R.string.contracts),
-                    stringResource(id = R.string.proposals),
-                    stringResource(id = R.string.requests)
+                    stringResource(id = R.string.proposals)
                 )
             )
             HorizontalPager(state = pageState) {
                 when (it) {
-                    1 -> Contracts()
-                    2 -> Proposals()
-                    3 -> Requests(navigator)
+                    2 -> Contracts()
+                    3 -> Proposals()
+                    1 -> Requests(navigator)
                     0 -> Listings(navigator)
                 }
             }
