@@ -34,11 +34,9 @@ import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun Requests(navigator: DestinationsNavigator) {
-    val viewModel: ShopViewModel = koinViewModel()
+fun Requests(viewModel: ShopViewModel, navigator: DestinationsNavigator) {
     val orderRes = viewModel.orders.observeAsState(OrderResponse()).value
     val orders = remember {
         mutableStateListOf<Order>()

@@ -84,6 +84,8 @@ fun Shop(navigator: DestinationsNavigator) {
         } else {
             viewModel.getMyShop()
             viewModel.getMyListings()
+            viewModel.getRequests()
+            viewModel.getContracts()
         }
     }
 
@@ -233,8 +235,8 @@ fun Shop(navigator: DestinationsNavigator) {
                 when (it) {
                     2 -> Contracts()
                     3 -> Proposals()
-                    1 -> Requests(navigator)
-                    0 -> Listings(navigator)
+                    1 -> Requests(viewModel, navigator)
+                    0 -> Listings(viewModel, navigator)
                 }
             }
         }

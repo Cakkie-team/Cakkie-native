@@ -32,11 +32,13 @@ class ShopViewModel : ViewModel(), KoinComponent {
     private val _shop = MutableLiveData<ShopModel>()
     private val _listings = MutableLiveData<ListingResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
+    private val _contracts = MutableLiveData<OrderResponse>()
 
     val user = _user
     val shop = _shop
     val listings = _listings
     val orders = _orders
+    val contracts = _contracts
 
     private fun getUser() {
         viewModelScope.launch {
@@ -256,7 +258,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         endpoint = Endpoints.GET_CONTRACTS(page, size),
         body = listOf()
     ).addOnSuccessListener {
-        _orders.value = it
+        _contracts.value = it
     }
 
     fun getListing(id: String) = NetworkCalls.get<Listing>(
