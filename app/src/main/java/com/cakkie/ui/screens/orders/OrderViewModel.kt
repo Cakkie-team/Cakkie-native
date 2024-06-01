@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
+import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
@@ -28,6 +29,18 @@ class OrderViewModel : ViewModel(), KoinComponent {
         ).addOnSuccessListener {
             _orders.value = it
         }
+
+    fun getOrder(id: String) = NetworkCalls.get<Order>(
+        endpoint = Endpoints.GET_ORDER(id),
+        body = listOf()
+    )
+
+    fun cancelOrder(id: String, reason: String) = NetworkCalls.put<Order>(
+        endpoint = Endpoints.CANCEL_ORDER(id),
+        body = listOf(
+            Pair("reason", reason)
+        )
+    )
 
     private fun getUser() {
         viewModelScope.launch {

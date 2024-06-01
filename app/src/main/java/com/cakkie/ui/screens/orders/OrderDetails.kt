@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -49,13 +50,18 @@ import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.CancelOrderDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDateTime
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -64,12 +70,21 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
-fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
+fun OrderDetails(
+    item: Order,
+    cancelResultRecipient: ResultRecipient<CancelOrderDestination, Boolean>,
+    navigator: DestinationsNavigator
+) {
+    val viewModel: OrderViewModel = koinViewModel()
+    var order by remember {
+        mutableStateOf(item)
+    }
+    val context = LocalContext.current
     val meta = listOf(
-        Pair("Size", "${item.meta.size} inches"),
-        Pair("Flavour", item.meta.flavour),
-        Pair("Price", "N ${item.unitPrice * item.quantity}"),
-        Pair("Quantity", item.quantity.toString()),
+        Pair("Size", "${order.meta.size} inches"),
+        Pair("Flavour", order.meta.flavour),
+        Pair("Price", "N ${order.unitPrice * order.quantity}"),
+        Pair("Quantity", order.quantity.toString()),
     )
     val openDialog = remember {
         mutableStateOf(false)
@@ -86,9 +101,9 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
         mutableStateOf("")
     }
 
-    LaunchedEffect(key1 = item.waitTime) {
+    LaunchedEffect(key1 = order.waitTime) {
         val targetDateTime = LocalDateTime.parse(
-            item.waitTime.ifEmpty { item.createdAt },
+            order.waitTime.ifEmpty { order.createdAt },
             DateTimeFormatter.ISO_DATE_TIME
         )
 
@@ -114,6 +129,38 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
 
         // Countdown finished
         canCancel = true
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getOrder(order.id)
+            .addOnSuccessListener {
+                order = it
+            }
+            .addOnFailureListener {
+                Toaster(
+                    context,
+                    it.localizedMessage ?: "Unable to retrive order",
+                    R.drawable.logo
+                ).show()
+            }
+    }
+    cancelResultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.getOrder(item.id)
+                    .addOnSuccessListener {
+                        order = it
+                    }
+                    .addOnFailureListener {
+                        Toaster(
+                            context,
+                            it.localizedMessage ?: "Unable to retrive order",
+                            R.drawable.logo
+                        ).show()
+                    }
+            }
+        }
     }
     Column(
         modifier = Modifier
@@ -167,13 +214,13 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
 
                 )
             Text(
-                text = " ${item.shop.name}",
+                text = " ${order.shop.name}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = CakkieBrown
             )
         }
         Text(
-            text = "on ${item.createdAt.formatDateTime()}",
+            text = "on ${order.createdAt.formatDateTime()}",
             style = MaterialTheme.typography.bodyLarge,
             color = TextColorDark.copy(alpha = 0.7f)
         )
@@ -185,7 +232,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = item.description,
+            text = order.description,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -243,7 +290,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = item.deliveryAddress,
+                    text = order.deliveryAddress,
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -271,7 +318,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
-                        text = item.status.lowercase(),
+                        text = order.status.lowercase(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -297,14 +344,14 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
         ) {
             CakkieButton(
                 text = stringResource(
-                    id = when (item.status) {
+                    id = when (order.status) {
                         "PENDING" -> R.string.cancel
                         else -> R.string.generate_code
                     }
                 ),
-                enabled = (item.status == "PENDING" && canCancel) || item.status == "ARRIVED",
+                enabled = (order.status == "PENDING" && canCancel) || order.status == "ARRIVED",
             ) {
-                if (item.status == "PENDING") {
+                if (order.status == "PENDING") {
                     openDialog.value = true
                 } else {
                     showCode = true
@@ -345,11 +392,12 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     )
                     .clip(RoundedCornerShape(8.dp))
                     .fillMaxWidth(0.8f)
-                    .padding(horizontal = 16.dp)
+//                    .padding(horizontal = 16.dp)
                     .background(CakkieBackground, shape = RoundedCornerShape(8.dp))
             ) {
                 Column(
                     Modifier
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -376,7 +424,7 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                     )
                     Row {
                         Button(
-                            onClick = { },
+                            onClick = { openDialog.value = false },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = CakkieBrown,
                                 containerColor = Color.Transparent
@@ -388,7 +436,10 @@ fun OrderDetails(item: Order, navigator: DestinationsNavigator) {
                             )
                         }
                         Button(
-                            onClick = { },
+                            onClick = {
+                                openDialog.value = false
+                                navigator.navigate(CancelOrderDestination(item.id))
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = CakkieBrown,
                                 containerColor = Color.Transparent

@@ -125,7 +125,10 @@ object Endpoints {
             "$BASE_URL/order?page=$page&pageSize=$size${
                 if (status.isNullOrEmpty()) "" else "&status=${status.uppercase()}"
             }"
-        } /* get order  GET*/
+        } /* get orders  GET*/
+    val CANCEL_ORDER = { id: String -> "$BASE_URL/order/cancel/$id" } /* cancel order */
+    val GET_ORDER = { id: String -> "$BASE_URL/order/$id" } /* get order */
+
 
     /**
      * Location

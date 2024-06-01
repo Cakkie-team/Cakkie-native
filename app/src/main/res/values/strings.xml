@@ -336,6 +336,8 @@
     <string name="confirm_transaction_pin">Confirm Transaction Pin</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="total_share">Total Share</string>
+    <string name="if_you_cancel_order">This action will cancel your purchase and you will be refunded back to you wallet, do you which to continue?</string>
+    <string name="please_tell_us_why">Please tell us why</string>
 
 
 </resources>
