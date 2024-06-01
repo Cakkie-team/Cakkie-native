@@ -27,6 +27,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.theme.CakkieBlue
+import com.cakkie.ui.theme.CakkieYellow
+import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.formatDateTime
 
@@ -77,12 +79,18 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
                     .size(width = 96.dp, height = 32.dp),
                 shape = MaterialTheme.shapes.small,
                 colors = CardDefaults.cardColors(
-                    containerColor = CakkieBlue
+                    containerColor = when (item.status.lowercase()) {
+                        "pending" -> CakkieYellow
+                        "cancelled" -> Error
+                        "completed" -> CakkieBlue
+                        "declined" -> Error
+                        else -> CakkieYellow
+                    }
                 )
             ) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = item.status,
+                        text = item.status.lowercase(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
                     )

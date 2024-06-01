@@ -120,7 +120,7 @@ fun Orders(navigator: DestinationsNavigator) {
                     "Pending",
                     "Inprogress",
                     "Approved",
-                    "Canceled",
+                    "Cancelled",
                     "Delivered",
                     "Released",
                     "Ready",

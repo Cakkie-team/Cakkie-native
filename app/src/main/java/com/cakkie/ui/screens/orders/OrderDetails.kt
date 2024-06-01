@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -310,11 +311,18 @@ fun OrderDetails(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Row {
-                    Image(
+                    Icon(
                         painter = painterResource(
-                            id = R.drawable.done
+                            id = when (order.status.lowercase()) {
+                                "pending" -> R.drawable.done
+                                "cancelled" -> R.drawable.cancel
+                                "completed" -> R.drawable.approved
+                                "declined" -> R.drawable.cancel
+                                else -> R.drawable.progress
+                            }
                         ),
-                        contentDescription = ""
+                        contentDescription = "",
+                        tint = CakkieBrown
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
