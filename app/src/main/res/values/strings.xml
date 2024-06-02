@@ -145,6 +145,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="are_you_sure_you_want_to_cancel_this_order">Are You Sure you want to cancel this order?</string>
+    <string name="are_you_sure_you_want_to_decline_this_request">Are You Sure you want to decline this request?</string>
     <string name="pending">Pending</string>
     <string name="pending_acceptance">Pending Acceptance</string>
     <string name="completed">Completed</string>
@@ -338,6 +339,10 @@
     <string name="total_share">Total Share</string>
     <string name="if_you_cancel_order">This action will cancel your purchase and you will be refunded back to you wallet, do you which to continue?</string>
     <string name="please_tell_us_why">Please tell us why</string>
+    <string name="requested_by">"Requested by"</string>
+    <string name="accept">Accept</string>
+    <string name="ready">Ready</string>
+    <string name="reject">Reject</string>
 
 
 </resources>

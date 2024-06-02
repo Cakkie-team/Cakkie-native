@@ -58,6 +58,7 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDateTime
+import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
@@ -84,7 +85,7 @@ fun OrderDetails(
     val meta = listOf(
         Pair("Size", "${order.meta.size} inches"),
         Pair("Flavour", order.meta.flavour),
-        Pair("Price", "N ${order.unitPrice * order.quantity}"),
+        Pair("Price", "N ${formatNumber(order.unitPrice * order.quantity)}"),
         Pair("Quantity", order.quantity.toString()),
     )
     val openDialog = remember {
@@ -110,7 +111,11 @@ fun OrderDetails(
 
         // Add 2 hours to the target time
         val targetMillis =
-            targetDateTime.plusHours(1).plusMinutes(30).atZone(ZoneId.systemDefault()).toInstant()
+            targetDateTime
+                .plusHours(1)
+                .plusMinutes(30)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
                 .toEpochMilli()
         remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
         while (Instant.now().toEpochMilli() < targetMillis) {
@@ -119,11 +124,16 @@ fun OrderDetails(
 
 //            Timber.d("Remaining time: $remainingMillis")
 
-            val hours = remainingMillis / (1000 * 60 * 60)
+            val days = remainingMillis / (1000 * 60 * 60 * 24)
+            val hours = (remainingMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
             val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
-            val seconds = ((remainingMillis % (1000 * 60 * 60)) % (1000 * 60)) / 1000
+            val seconds = (remainingMillis % (1000 * 60)) / 1000
 
-            remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            remainingTime = if (days > 0) {
+                String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds)
+            } else {
+                String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            }
 
             delay(1000) // Delay for 1 second
         }
