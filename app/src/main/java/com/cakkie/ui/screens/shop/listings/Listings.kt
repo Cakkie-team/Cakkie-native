@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,9 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,31 +36,33 @@ import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.PreviewListingDestination
-import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
-fun Listings(viewModel: ShopViewModel, navigator: DestinationsNavigator) {
-    val listings = viewModel.listings.observeAsState(ListingResponse()).value
-    val post = remember {
-        mutableStateListOf<Listing>()
-    }
+fun Listings(
+    listings: ListingResponse, post: SnapshotStateList<Listing>,
+    navigator: DestinationsNavigator, onLoadMore: () -> Unit
+) {
 
     LaunchedEffect(key1 = listings.data) {
-        post.addAll(listings?.data?.filterNot { res ->
+        if (listings.meta.currentPage == 0) {
+            post.clear()
+        }
+        post.addAll(listings.data.filterNot { res ->
             post.any { it.id == res.id }
-        } ?: emptyList())
+        })
     }
     Box(modifier = Modifier.fillMaxSize()) {
         if (post.isEmpty()) {
             Column(
                 Modifier
                     .fillMaxWidth(0.8f)
-                    .align(Alignment.Center),
+                    .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(100.dp))
                 Text(
                     text = stringResource(id = R.string.nothing_to_show),
                     style = MaterialTheme.typography.bodyLarge,
@@ -83,20 +82,19 @@ fun Listings(viewModel: ShopViewModel, navigator: DestinationsNavigator) {
                     color = TextColorInactive,
                     textAlign = TextAlign.Center
                 )
-
-            }
-
-            CakkieButton(
-                text = stringResource(id = R.string.create_listing),
-                modifier = Modifier
-//                .fillMaxWidth(0.8f)
-                    .offset(y = (-30).dp)
-                    .align(Alignment.BottomCenter)
-            ) {
-                navigator.navigate(ChooseMediaDestination(R.string.images)) {
-                    launchSingleTop = true
+                Spacer(modifier = Modifier.height(50.dp))
+                CakkieButton(
+                    text = stringResource(id = R.string.create_listing),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    navigator.navigate(ChooseMediaDestination(R.string.images)) {
+                        launchSingleTop = true
+                    }
                 }
             }
+
+
         } else {
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -163,7 +161,7 @@ fun Listings(viewModel: ShopViewModel, navigator: DestinationsNavigator) {
                     items(post, key = { it.id }) { listing ->
                         val index = post.indexOf(listing)
                         if (index > post.lastIndex - 2 && listings.data.isNotEmpty()) {
-                            viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
+                            onLoadMore.invoke()
                         }
                         ListingItem(item = listing) {
                             navigator.navigate(

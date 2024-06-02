@@ -33,6 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +47,11 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.data.db.models.Listing
+import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
+import com.cakkie.networkModels.Order
+import com.cakkie.networkModels.OrderResponse
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.EditShopDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
@@ -71,6 +77,18 @@ fun Shop(navigator: DestinationsNavigator) {
     val shop = viewModel.shop.observeAsState(ShopModel()).value
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
+    val orderRes = viewModel.orders.observeAsState(OrderResponse()).value
+    val contractRes = viewModel.contracts.observeAsState(OrderResponse()).value
+    val orders = remember {
+        mutableStateListOf<Order>()
+    }
+    val contracts = remember {
+        mutableStateListOf<Order>()
+    }
+    val listings = viewModel.listings.observeAsState(ListingResponse()).value
+    val post = remember {
+        mutableStateListOf<Listing>()
+    }
     //check if user is has a shop
     LaunchedEffect(key1 = user) {
         if (user?.hasShop == false) {
@@ -233,13 +251,20 @@ fun Shop(navigator: DestinationsNavigator) {
             )
             HorizontalPager(state = pageState) {
                 when (it) {
-                    2 -> Contracts()
+                    2 -> Contracts(contractRes, contracts, navigator) {
+                        viewModel.getContracts(contractRes.meta.nextPage, contractRes.meta.pageSize)
+                    }
                     3 -> Proposals()
-                    1 -> Requests(viewModel, navigator)
-                    0 -> Listings(viewModel, navigator)
+                    1 -> Requests(orderRes, orders, navigator) {
+                        viewModel.getRequests(orderRes.meta.nextPage, orderRes.meta.pageSize)
+                    }
+
+                    0 -> Listings(listings, post, navigator) {
+                        viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
+                    }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(50.dp))
     }
 }
