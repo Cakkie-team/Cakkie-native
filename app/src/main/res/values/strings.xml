@@ -338,11 +338,13 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="total_share">Total Share</string>
     <string name="if_you_cancel_order">This action will cancel your purchase and you will be refunded back to you wallet, do you which to continue?</string>
+    <string name="if_you_decline_request">This action will decline this request and it can not be undo, do you which to continue?</string>
     <string name="please_tell_us_why">Please tell us why</string>
     <string name="requested_by">"Requested by"</string>
     <string name="accept">Accept</string>
     <string name="ready">Ready</string>
     <string name="reject">Reject</string>
+    <string name="decline_Request">Decline Request</string>
 
 
 </resources>

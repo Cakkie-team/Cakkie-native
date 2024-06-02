@@ -42,6 +42,13 @@ class OrderViewModel : ViewModel(), KoinComponent {
         )
     )
 
+    fun declineOrder(id: String, reason: String) = NetworkCalls.put<Order>(
+        endpoint = Endpoints.DECLINE_ORDER(id),
+        body = listOf(
+            Pair("reason", reason)
+        )
+    )
+
     private fun getUser() {
         viewModelScope.launch {
             userRepository.getUser().asLiveData().observeForever {

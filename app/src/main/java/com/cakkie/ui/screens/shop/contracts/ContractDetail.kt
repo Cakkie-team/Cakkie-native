@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,6 +55,7 @@ import com.cakkie.networkModels.Order
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.CancelOrderDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
+import com.cakkie.ui.screens.destinations.DeclineContractDestination
 import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -433,6 +433,8 @@ fun ContractDetail(
                         text = stringResource(
                             id = when (order.status) {
                                 "PENDING" -> R.string.accept
+                                "CANCELLED" -> R.string.accept
+                                "DECLINED" -> R.string.accept
                                 else -> R.string.ready
                             }
                         ),
@@ -466,11 +468,11 @@ fun ContractDetail(
 //                    )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    text = "Reveal code to delivery agent only when you receive your order",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontStyle = FontStyle.Italic,
-                )
+//                Text(
+//                    text = "Reveal code to delivery agent only when you receive your order",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontStyle = FontStyle.Italic,
+//                )
             }
         }
     }
@@ -535,7 +537,7 @@ fun ContractDetail(
                         Button(
                             onClick = {
                                 openDialog.value = false
-                                navigator.navigate(CancelOrderDestination(item.id))
+                                navigator.navigate(DeclineContractDestination(item.id))
                             },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = CakkieBrown,
