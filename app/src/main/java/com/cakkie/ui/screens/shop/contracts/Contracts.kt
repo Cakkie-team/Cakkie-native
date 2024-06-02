@@ -25,6 +25,7 @@ import com.cakkie.R
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ContractDetailDestination
 import com.cakkie.ui.screens.orders.components.OrdersItem
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
@@ -93,6 +94,7 @@ fun Contracts(
                         onLoadMore.invoke()
                     }
                     OrdersItem(order) {
+                        navigator.navigate(ContractDetailDestination(order))
                     }
                 }
             }
