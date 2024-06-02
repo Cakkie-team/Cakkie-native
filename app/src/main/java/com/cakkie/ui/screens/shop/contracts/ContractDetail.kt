@@ -53,6 +53,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.AcceptRequestDestination
 import com.cakkie.ui.screens.destinations.CancelOrderDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.destinations.DeclineContractDestination
@@ -442,7 +443,7 @@ fun ContractDetail(
                         color = CakkieGreen
                     ) {
                         if (order.status == "PENDING") {
-//                            openDialog.value = true
+                            navigator.navigate(AcceptRequestDestination(item.id))
                         } else {
 //                            showCode = true
                         }
