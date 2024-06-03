@@ -431,9 +431,9 @@ fun ContractDetail(
                                     id = when (order.status.lowercase()) {
                                         "pending" -> R.drawable.done
                                         "cancelled" -> R.drawable.cancel
-                                        "completed" -> R.drawable.approved
                                         "declined" -> R.drawable.cancel
-                                        else -> R.drawable.progress
+                                        "inprogress" -> R.drawable.progress
+                                        else -> R.drawable.approved
                                     }
                                 ),
                                 contentDescription = "",
@@ -516,6 +516,7 @@ fun ContractDetail(
                         "ACCEPTED" -> "Congratulations, you order has been accepted for delivery, expect the driver."
                         "ARRIVEDSHOP" -> "The driver is here, please hand over the item in good condition."
                         "SHIPPING" -> "Order in transit, well done."
+                        "READY" -> "Sit tight, a delivery agent will arrived your location soon."
                         "ARRIVED" -> "The driver has arrived the customer's destination"
                         else -> ""
                     },
