@@ -132,6 +132,8 @@ object Endpoints {
         } /* get orders  GET*/
     val CANCEL_ORDER = { id: String -> "$BASE_URL/order/cancel/$id" } /* cancel order */
     val DECLINE_ORDER = { id: String -> "$BASE_URL/order/reject/$id" } /* reject order */
+    val ACCEPT_ORDER =
+        { id: String, time: String -> "$BASE_URL/order/accept/$id/$time" } /* accept order */
     val GET_ORDER = { id: String -> "$BASE_URL/order/$id" } /* get order */
 
 

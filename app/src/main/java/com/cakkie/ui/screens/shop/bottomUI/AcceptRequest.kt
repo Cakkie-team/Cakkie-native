@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
@@ -42,9 +41,7 @@ import java.util.Calendar
 @Composable
 fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
     val viewModel: OrderViewModel = koinViewModel()
-    var reason by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+
     val context = LocalContext.current
     var processing by remember {
         mutableStateOf(false)
@@ -110,10 +107,9 @@ fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
             .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.accept_request),
         processing = processing,
-        enabled = reason.text.isNotEmpty()
     ) {
         processing = true
-        viewModel.declineOrder(id, reason.text)
+        viewModel.acceptOrder(id, totalHours.toString())
             .addOnSuccessListener {
                 processing = false
                 Toaster(
