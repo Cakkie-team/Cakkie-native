@@ -54,6 +54,11 @@ class OrderViewModel : ViewModel(), KoinComponent {
         body = listOf()
     )
 
+    fun readyOrder(id: String) = NetworkCalls.put<Order>(
+        endpoint = Endpoints.READY_ORDER(id),
+        body = listOf()
+    )
+
     private fun getUser() {
         viewModelScope.launch {
             userRepository.getUser().asLiveData().observeForever {

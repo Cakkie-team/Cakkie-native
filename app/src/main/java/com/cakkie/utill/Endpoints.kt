@@ -135,6 +135,7 @@ object Endpoints {
     val ACCEPT_ORDER =
         { id: String, time: String -> "$BASE_URL/order/accept/$id/$time" } /* accept order */
     val GET_ORDER = { id: String -> "$BASE_URL/order/$id" } /* get order */
+    val READY_ORDER = { id: String -> "$BASE_URL/order/ready/$id" } /* ready order */
 
 
     /**

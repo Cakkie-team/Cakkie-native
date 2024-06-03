@@ -57,6 +57,7 @@ import com.cakkie.ui.screens.destinations.AcceptRequestDestination
 import com.cakkie.ui.screens.destinations.CancelOrderDestination
 import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.destinations.DeclineContractDestination
+import com.cakkie.ui.screens.destinations.ReadyOrderDestination
 import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -87,6 +88,7 @@ fun ContractDetail(
     item: Order,
     cancelResultRecipient: ResultRecipient<CancelOrderDestination, Boolean>,
     acceptResultRecipient: ResultRecipient<AcceptRequestDestination, Boolean>,
+    readyResultRecipient: ResultRecipient<ReadyOrderDestination, Boolean>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: OrderViewModel = koinViewModel()
@@ -186,6 +188,24 @@ fun ContractDetail(
         }
     }
     acceptResultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.getOrder(item.id)
+                    .addOnSuccessListener {
+                        order = it
+                    }
+                    .addOnFailureListener {
+                        Toaster(
+                            context,
+                            it.localizedMessage ?: "Unable to retrieve order",
+                            R.drawable.logo
+                        ).show()
+                    }
+            }
+        }
+    }
+    readyResultRecipient.onNavResult { result ->
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
@@ -455,16 +475,17 @@ fun ContractDetail(
                                 "PENDING" -> R.string.accept
                                 "CANCELLED" -> R.string.accept
                                 "DECLINED" -> R.string.accept
-                                else -> R.string.ready
+                                "INPROGRESS" -> R.string.ready
+                                else -> R.string.rate
                             }
                         ),
-                        enabled = !(order.status == "DECLINED" || order.status == "CANCELLED"),
+                        enabled = (order.status == "PENDING" || order.status == "INPROGRESS"),
                         color = CakkieGreen
                     ) {
                         if (order.status == "PENDING") {
                             navigator.navigate(AcceptRequestDestination(item.id))
                         } else {
-//                            showCode = true
+                            navigator.navigate(ReadyOrderDestination(item.id))
                         }
                     }
                     Spacer(modifier = Modifier.width(20.dp))
