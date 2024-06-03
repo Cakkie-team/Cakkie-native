@@ -65,6 +65,7 @@ fun CakkieInputField(
     isAddress: Boolean = false,
     onLocationClick: (LocationResult) -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit = {},
     isEditable: Boolean = true,
     showEditIcon: Boolean = false,
     location: Location? = null,
@@ -155,6 +156,7 @@ fun CakkieInputField(
                     LaunchedEffect(interactionSource) {
                         interactionSource.interactions.collect {
                             if (it is PressInteraction.Release) {
+                                onClick.invoke()
                                 if (isAddress) {
                                     showSearch = !showSearch
                                 }

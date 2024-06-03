@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,13 +23,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.Toaster
@@ -37,6 +36,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
+import java.util.Calendar
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
@@ -49,6 +49,14 @@ fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
     var processing by remember {
         mutableStateOf(false)
     }
+    val currentDate = Calendar.getInstance()
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
+    LaunchedEffect(Unit) {
+        selectedDate.add(Calendar.HOUR_OF_DAY, 12)
+    }
+    val diffInMillis = selectedDate.timeInMillis - currentDate.timeInMillis
+
+    val totalHours = diffInMillis / (1000 * 60 * 60)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,14 +92,12 @@ fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
             modifier = Modifier,
         )
         Spacer(modifier = Modifier.height(4.dp))
-        CakkieInputField(
-            value = reason,
-            onValueChange = { reason = it },
-            placeholder = "24 hours",
-            keyboardType = KeyboardType.Text,
-            modifier = Modifier
-                .clip(RoundedCornerShape(3.dp)),
-            showEditIcon = true
+        DateTimePicker(
+            label = "Select Date and Time",
+            selectedDate = selectedDate,
+            onDateTimeSelected = { newDate ->
+                selectedDate = newDate
+            }
         )
 
     }

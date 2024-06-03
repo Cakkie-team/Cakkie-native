@@ -347,7 +347,7 @@
     <string name="reject">Reject</string>
     <string name="decline_Request">Decline Request</string>
     <string name="accept_request">Accept Request</string>
-    <string name="how_long_will_this_take">How long will this take?</string>
+    <string name="how_long_will_this_take">When will this be ready?</string>
 
 
 </resources>
