@@ -86,6 +86,7 @@ import java.time.format.DateTimeFormatter
 fun ContractDetail(
     item: Order,
     cancelResultRecipient: ResultRecipient<CancelOrderDestination, Boolean>,
+    acceptResultRecipient: ResultRecipient<AcceptRequestDestination, Boolean>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: OrderViewModel = koinViewModel()
@@ -177,7 +178,25 @@ fun ContractDetail(
                     .addOnFailureListener {
                         Toaster(
                             context,
-                            it.localizedMessage ?: "Unable to retrive order",
+                            it.localizedMessage ?: "Unable to retrieve order",
+                            R.drawable.logo
+                        ).show()
+                    }
+            }
+        }
+    }
+    acceptResultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.getOrder(item.id)
+                    .addOnSuccessListener {
+                        order = it
+                    }
+                    .addOnFailureListener {
+                        Toaster(
+                            context,
+                            it.localizedMessage ?: "Unable to retrieve order",
                             R.drawable.logo
                         ).show()
                     }
@@ -469,11 +488,19 @@ fun ContractDetail(
 //                    )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-//                Text(
-//                    text = "Reveal code to delivery agent only when you receive your order",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    fontStyle = FontStyle.Italic,
-//                )
+                Text(
+                    text = when (order.status) {
+                        "COMPLETED" -> "Congregations on completing this order, leave a feedback"
+                        "INPROGRESS" -> "Mark order as ready when you're set to send it off for delivery."
+                        "ACCEPTED" -> "Congratulations, you order has been accepted for delivery, expect the driver."
+                        "ARRIVEDSHOP" -> "The driver is here, please hand over the item in good condition."
+                        "SHIPPING" -> "Order in transit, well done."
+                        "ARRIVED" -> "The driver has arrived the customer's destination"
+                        else -> ""
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                )
             }
         }
     }

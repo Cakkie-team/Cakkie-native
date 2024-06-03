@@ -23,13 +23,13 @@ import java.util.Calendar
 fun DateTimePicker(
     label: String,
     selectedDate: Calendar,
-    onDateTimeSelected: (Calendar) -> Unit
+    onDateTimeSelected: (Calendar, Int) -> Unit
 ) {
     val context = LocalContext.current
     val currentDate = Calendar.getInstance()
     var dateText by remember { mutableStateOf(TextFieldValue("")) }
     var timeText by remember { mutableStateOf(TextFieldValue("")) }
-    var diffText by remember { mutableStateOf("") }
+    var diffText by remember { mutableStateOf(Pair("", 0)) }
 
     LaunchedEffect(selectedDate) {
         dateText = TextFieldValue(
@@ -39,14 +39,15 @@ fun DateTimePicker(
         )
         timeText =
             TextFieldValue("${selectedDate.get(Calendar.HOUR_OF_DAY)}:${selectedDate.get(Calendar.MINUTE)}")
-        updateDifferenceText(currentDate, selectedDate)?.let {
+        updateDifferenceText(currentDate, selectedDate).let {
             diffText = it
+            onDateTimeSelected(selectedDate, it.second)
         }
     }
 
 
     CakkieInputField(
-        value = TextFieldValue(diffText),
+        value = TextFieldValue(diffText.first),
         onValueChange = { },
         placeholder = "Select Date and Time",
         keyboardType = KeyboardType.Text,
@@ -69,9 +70,9 @@ fun DateTimePicker(
                             selectedDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
                             selectedDate.set(Calendar.MINUTE, minute)
                             timeText = TextFieldValue("$hourOfDay:$minute")
-                            onDateTimeSelected(selectedDate)
-                            updateDifferenceText(currentDate, selectedDate)?.let {
+                            updateDifferenceText(currentDate, selectedDate).let {
                                 diffText = it
+                                onDateTimeSelected(selectedDate, it.second)
                             }
                         },
                         selectedDate.get(Calendar.HOUR_OF_DAY),
@@ -91,16 +92,18 @@ fun DateTimePicker(
     )
 }
 
-fun updateDifferenceText(currentDate: Calendar, selectedDate: Calendar): String? {
+fun updateDifferenceText(currentDate: Calendar, selectedDate: Calendar): Pair<String, Int> {
     val diffInMillis = selectedDate.timeInMillis - currentDate.timeInMillis
-    if (diffInMillis <= 0) return null
+    if (diffInMillis <= 0) return Pair("", 0)
 
     val days = diffInMillis / (1000 * 60 * 60 * 24)
     val hours = (diffInMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-
-    return if (days > 0) {
-        "$days days and $hours hours from now"
-    } else {
-        "$hours hours from now"
-    }
+    val totalHours = diffInMillis / (1000 * 60 * 60)
+    return Pair(
+        if (days > 0) {
+            "$days days and $hours hours from now"
+        } else {
+            "$hours hours from now"
+        }, totalHours.toInt()
+    )
 }

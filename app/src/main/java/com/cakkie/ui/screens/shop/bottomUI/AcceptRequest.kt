@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,9 +52,10 @@ fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
     LaunchedEffect(Unit) {
         selectedDate.add(Calendar.HOUR_OF_DAY, 12)
     }
-    val diffInMillis = selectedDate.timeInMillis - currentDate.timeInMillis
 
-    val totalHours = diffInMillis / (1000 * 60 * 60)
+    var totalHours by remember {
+        mutableIntStateOf(0)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,10 +94,18 @@ fun AcceptRequest(id: String, onComplete: ResultBackNavigator<Boolean>) {
         DateTimePicker(
             label = "Select Date and Time",
             selectedDate = selectedDate,
-            onDateTimeSelected = { newDate ->
+            onDateTimeSelected = { newDate, newHours ->
                 selectedDate = newDate
+                totalHours = newHours
             }
         )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Total of $totalHours hours",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier,
+        )
+
 
     }
     Spacer(modifier = Modifier.height(15.dp))
