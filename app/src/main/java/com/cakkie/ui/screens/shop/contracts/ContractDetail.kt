@@ -511,7 +511,7 @@ fun ContractDetail(
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = when (order.status) {
-                        "COMPLETED" -> "Congregations on completing this order, leave a feedback"
+                        "COMPLETED" -> "Congratulations on completing this order, leave a feedback"
                         "INPROGRESS" -> "Mark order as ready when you're set to send it off for delivery."
                         "ACCEPTED" -> "Congratulations, you order has been accepted for delivery, expect the driver."
                         "ARRIVEDSHOP" -> "The driver is here, please hand over the item in good condition."

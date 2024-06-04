@@ -261,7 +261,7 @@
     <string name="start_now_by_posting_a_listing_to_earn_requests">Get started now by posting a listing to earn a request from a customer.</string>
     <string name="get_started_now_by_checking_out_our_available_jobs_to_write">Get started now by checking out available jobs to write your first proposal.</string>
     <string name="selected">%s selected</string>
-    <string name="media_permission_denied">Media permision denied</string>
+    <string name="media_permission_denied">Media permission denied</string>
     <string name="media_permission_required">Media permission required</string>
     <string name="grant_permission">Grant permission</string>
     <string name="video">Video</string>
@@ -327,7 +327,7 @@
     <string name="send_a_thank_note">Send a Thanks Note</string>
     <string name="report_">Report %1$s?</string>
     <string name="waiting_time">Waiting time</string>
-    <string name="delivery_address">Delvery address</string>
+    <string name="delivery_address">Delivery address</string>
     <string name="message_support">Message Support</string>
     <string name="generate_code">Reveal Code</string>
     <string name="set_delivery_address">Set delivery address</string>
@@ -337,10 +337,10 @@
     <string name="confirm_transaction_pin">Confirm Transaction Pin</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="total_share">Total Share</string>
-    <string name="if_you_cancel_order">This action will cancel your purchase and you will be refunded back to you wallet, do you which to continue?</string>
-    <string name="if_you_decline_request">This action will decline this request and it can not be undo, do you which to continue?</string>
-    <string name="if_you_ready">You are about to mark this order as ready and signal all nearby delivery agent to your location for pick up. This can not be undo, do you which to continue?</string>
-    <string name="if_you_accept_request">You are about to accept this request. This can not be undo, do you which to continue?</string>
+    <string name="if_you_cancel_order">This action will cancel your purchase and you will be refunded back to your wallet. Do you wish to continue?</string>
+    <string name="if_you_decline_request">This action will decline this request and it cannot be undone. Do you wish to continue?</string>
+    <string name="if_you_ready">You are about to mark this order as ready and signal all nearby delivery agents to your location for pickup. This action cannot be undone. Do you wish to continue?</string>
+    <string name="if_you_accept_request">You are about to accept this request. This cannot be undone. Do you wish to continue?</string>
     <string name="please_tell_us_why">Please tell us why</string>
     <string name="requested_by">"Requested by"</string>
     <string name="accept">Accept</string>
@@ -350,6 +350,14 @@
     <string name="accept_request">Accept Request</string>
     <string name="how_long_will_this_take">When will this be ready?</string>
     <string name="rate">Rate</string>
+    <string name="all_jobs">All Jobs</string>
+    <string name="post_a_job">Post A Job</string>
+    <string name="my_jobs">My Jobs</string>
+    <string name="small_chops">Small chops needed urgently</string>
+    <string name="minutes_ago">2 mins ago</string>
+    <string name="chpos_message">I need about 30 spring rolls and 20 samosa jfhuhf uvhbv dgjvub uiuvhbaj uefndkdkl...</string>
+    <string name="view_to_apply">View to Apply</string>
+    <string name="Lagos_Nigeria">Lagos State</string>
 
 
 </resources>
