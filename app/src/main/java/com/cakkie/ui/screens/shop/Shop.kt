@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.shop
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -22,8 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -32,9 +33,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -53,9 +59,9 @@ import com.cakkie.data.db.models.ShopModel
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.ui.components.PageTabs
-import com.cakkie.ui.screens.destinations.EditShopDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
+import com.cakkie.ui.screens.destinations.ShopSettingsDestination
 import com.cakkie.ui.screens.shop.contracts.Contracts
 import com.cakkie.ui.screens.shop.contracts.Proposals
 import com.cakkie.ui.screens.shop.listings.Listings
@@ -86,6 +92,7 @@ fun Shop(navigator: DestinationsNavigator) {
         mutableStateListOf<Order>()
     }
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
+    var maxLines by rememberSaveable { mutableIntStateOf(2) }
     val post = remember {
         mutableStateListOf<Listing>()
     }
@@ -178,7 +185,7 @@ fun Shop(navigator: DestinationsNavigator) {
                 }
                 OutlinedButton(
                     onClick = {
-                        navigator.navigate(EditShopDestination)
+                        navigator.navigate(ShopSettingsDestination)
                     },
                     modifier = Modifier
                         .size(width = 70.dp, height = 34.dp),
@@ -190,12 +197,11 @@ fun Shop(navigator: DestinationsNavigator) {
                     shape = RoundedCornerShape(20)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit, contentDescription = "",
+                        imageVector = Icons.Default.Settings, contentDescription = "",
                         modifier = Modifier,
                         tint = CakkieBrown
                     )
                 }
-
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -216,8 +222,20 @@ fun Shop(navigator: DestinationsNavigator) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 12.sp,
                 color = CakkieBrown,
-                modifier = Modifier
+                modifier = Modifier,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis
             )
+            if (maxLines == 2) {
+                Text(
+                    text = stringResource(id = R.string.see_more),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .clickable { maxLines = Int.MAX_VALUE },
+                    color = CakkieBrown
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -254,6 +272,7 @@ fun Shop(navigator: DestinationsNavigator) {
                     2 -> Contracts(contractRes, contracts, navigator) {
                         viewModel.getContracts(contractRes.meta.nextPage, contractRes.meta.pageSize)
                     }
+
                     3 -> Proposals()
                     1 -> Requests(orderRes, orders, navigator) {
                         viewModel.getRequests(orderRes.meta.nextPage, orderRes.meta.pageSize)
