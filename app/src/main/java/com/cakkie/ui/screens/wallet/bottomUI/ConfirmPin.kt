@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -41,6 +42,7 @@ import androidx.compose.ui.window.Popup
 import com.cakkie.R
 import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
@@ -71,6 +73,8 @@ fun ConfirmPin(
     var currencies by remember { mutableStateOf(emptyList<CurrencyRate>()) }
     var currency by remember { mutableStateOf(currencyRate) }
     var onSelectCurrency by remember { mutableStateOf(false) }
+    var coupon by remember { mutableStateOf(TextFieldValue("")) }
+    var onAddCoupon by remember { mutableStateOf(false) }
 
     //countdown timer
     var timer by remember {
@@ -164,6 +168,58 @@ fun ConfirmPin(
         fontSize = 26.sp
     )
 
+    AnimatedVisibility(visible = onAddCoupon) {
+        Row(
+            Modifier
+                .padding(16.dp)
+                .background(CakkieBackground)
+        ) {
+            CakkieInputField(
+                value = coupon,
+                onValueChange = { coupon = it },
+                placeholder = "Enter Coupon Code",
+                keyboardType = KeyboardType.Text,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(start = 10.dp)
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            CakkieButton(
+                Modifier
+                    .height(50.dp)
+                    .padding(horizontal = 10.dp),
+                text = stringResource(id = R.string.apply),
+                enabled = coupon.text.isNotEmpty(),
+                processing = processing
+            ) {
+                processing = true
+//                            viewModel.addCoupon(coupon.text)
+//                                .addOnSuccessListener {
+//                                    processing = false
+//                                    Toaster(context, it.message, R.drawable.logo).show()
+//                                    onAddCoupon = false
+//                                }
+//                                .addOnFailureListener {
+//                                    processing = false
+//                                    Toaster(context, it, R.drawable.logo).show()
+//                                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+
+    }
+    Text(
+        text = if (onAddCoupon) "Cancel" else "Add Coupon",
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier
+            .padding(horizontal = 32.dp)
+            .clickable { onAddCoupon = !onAddCoupon },
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        color = CakkieBrown,
+        textAlign = TextAlign.End,
+        textDecoration = TextDecoration.Underline,
+    )
 
     Spacer(modifier = Modifier.height(15.dp))
 
@@ -173,7 +229,7 @@ fun ConfirmPin(
                 0 -> pin
                 1 -> pinConfirm
                 else -> otp
-            }, onValueChange = {}, readOnly = true
+            }, onValueChange = {}, readOnly = false
         )
         AnimatedVisibility(step == 2) {
             Spacer(modifier = Modifier.height(10.dp))
@@ -353,7 +409,8 @@ fun ConfirmPin(
                             onComplete.navigateBack(
                                 currency.copy(
                                     pin = pinConfirm.text,
-                                    symbol = currency.symbol
+                                    symbol = currency.symbol,
+                                    coupon = coupon.text
                                 )
                             )
                         }.addOnFailureListener {
@@ -427,5 +484,6 @@ fun ConfirmPin(
         }
 
     }
+
 
 }
