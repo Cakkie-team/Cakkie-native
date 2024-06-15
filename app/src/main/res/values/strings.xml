@@ -360,6 +360,9 @@
     <string name="Lagos_Nigeria">Lagos State</string>
     <string name="manage_subscription">Manage Subscriptions</string>
     <string name="shop_settings">Shop Settings</string>
+    <string name="annually">Annually</string>
+    <string name="monthly">Monthly</string>
+    <string name="subscribe">Subscribe</string>
 
 
 </resources>

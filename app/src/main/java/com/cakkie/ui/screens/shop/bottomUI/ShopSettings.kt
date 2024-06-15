@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.EditShopDestination
+import com.cakkie.ui.screens.destinations.SubscriptionDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -73,7 +74,7 @@ fun ShopSettings(navigator: DestinationsNavigator) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            Modifier.clickable { },
+            Modifier.clickable { navigator.navigate(SubscriptionDestination) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

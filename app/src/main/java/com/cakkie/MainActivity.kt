@@ -51,6 +51,7 @@ import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.OrdersDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.SplashScreenDestination
+import com.cakkie.ui.screens.destinations.SubscriptionDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.BackgroundImageId
 import com.cakkie.ui.theme.CakkieBackground
@@ -148,6 +149,7 @@ class MainActivity : ComponentActivity() {
                                         CakespirationDestination -> 16.dp
                                         ExploreScreenDestination -> 20.dp
                                         CommentDestination -> 16.dp
+                                        SubscriptionDestination -> 10.dp
                                         else -> 26.dp
                                     }
                                 )
