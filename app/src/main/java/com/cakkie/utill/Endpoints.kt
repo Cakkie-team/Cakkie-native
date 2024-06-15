@@ -110,7 +110,7 @@ object Endpoints {
         { symbol: String, amount: Double -> "$BASE_URL/wallet/conversion-rate/$symbol/$amount" } /* get conversion  GET*/
     val GET_LEADERBOARD =
         { page: Int, size: Int -> "$BASE_URL/wallet/leaderboard?page=$page" }/* get leaderboard  GET*/ /*todo:  fix page size*/
-
+    const val GET_PREFERENCE = "$BASE_URL/wallet/preference" /* get preference  GET*/
 
     /**
      * Chat

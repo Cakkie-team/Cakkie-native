@@ -15,6 +15,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
+import com.cakkie.networkModels.PreferenceModel
 import com.cakkie.networkModels.ShopResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
@@ -33,12 +34,14 @@ class ShopViewModel : ViewModel(), KoinComponent {
     private val _listings = MutableLiveData<ListingResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
     private val _contracts = MutableLiveData<OrderResponse>()
+    private val _preference = MutableLiveData<PreferenceModel>()
 
     val user = _user
     val shop = _shop
     val listings = _listings
     val orders = _orders
     val contracts = _contracts
+    val preference = _preference
 
     private fun getUser() {
         viewModelScope.launch {
@@ -46,6 +49,13 @@ class ShopViewModel : ViewModel(), KoinComponent {
                 _user.value = it
             }
         }
+    }
+
+    private fun getPreference() = NetworkCalls.get<PreferenceModel>(
+        endpoint = Endpoints.GET_PREFERENCE,
+        body = listOf()
+    ).addOnSuccessListener {
+        _preference.value = it
     }
 
 
@@ -289,6 +299,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
         getProfile()
         getUser()
         getMyShop()
+        getPreference()
 //        getMyListings()
     }
 }
