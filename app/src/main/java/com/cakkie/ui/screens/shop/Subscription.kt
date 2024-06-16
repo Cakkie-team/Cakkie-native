@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,24 +39,72 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.ShopModel
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.PreferenceModel
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 
 @Destination
 @Composable
-fun Subscription(navigator: DestinationsNavigator) {
+fun Subscription(
+    confirmPinResult: ResultRecipient<ConfirmPinDestination, CurrencyRate>,
+    navigator: DestinationsNavigator
+) {
     val viewModel: ShopViewModel = koinViewModel()
     val shop = viewModel.shop.observeAsState(ShopModel()).value
     val preference = viewModel.preference.observeAsState(PreferenceModel()).value
     var subType by remember {
         mutableIntStateOf(0)
+    }
+    var processing by remember {
+        mutableStateOf(false)
+    }
+
+
+    confirmPinResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                processing = true
+//                if (user != null) {
+//                    viewModel.createOrder(
+//                        item.id,
+//                        item.shopId,
+//                        1,
+//                        item.price[sizes.indexOf(selectedSize)].toDouble(),
+//                        user.address,
+//                        1000.00,
+//                        user.latitude,
+//                        user.longitude,
+//                        result.value.symbol,
+//                        item.name,
+//                        item.media.first(),
+//                        item.description,
+//                        result.value.pin,
+//                        meta = listOf(
+//                            Pair("shape", item.meta.shape),
+//                            Pair("flavour", item.meta.flavour),
+//                            Pair("size", selectedSize),
+//                        )
+//                    ).addOnSuccessListener {
+//                        processing = false
+//                        navigator.navigate(OrdersDestination)
+//                    }.addOnFailureListener {
+//                        processing = false
+//                        Toaster(context, it, R.drawable.logo).show()
+//                    }
+//                }
+            }
+        }
     }
 
     Column {

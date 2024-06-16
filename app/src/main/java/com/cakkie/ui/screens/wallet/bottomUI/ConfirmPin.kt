@@ -183,10 +183,10 @@ fun ConfirmPin(
             CakkieInputField(
                 value = coupon,
                 onValueChange = { coupon = it },
-                placeholder = "Enter Coupon Code",
+                placeholder = "Enter Coupon",
                 keyboardType = KeyboardType.Text,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(0.6f)
                     .padding(start = 10.dp)
             )
             Spacer(modifier = Modifier.height(5.dp))
@@ -223,7 +223,12 @@ fun ConfirmPin(
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier
             .padding(horizontal = 32.dp)
-            .clickable { onAddCoupon = !onAddCoupon },
+            .clickable {
+                if (couponAmount > 0.0) {
+                    couponAmount = 0.0
+                    coupon = TextFieldValue("")
+                } else onAddCoupon = !onAddCoupon
+            },
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         color = CakkieBrown,
