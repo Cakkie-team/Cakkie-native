@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Balance
+import com.cakkie.networkModels.CouponRes
 import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.DepositResponse
 import com.cakkie.networkModels.LoginResponse
@@ -134,6 +135,20 @@ class WalletViewModel : ViewModel(), KoinComponent {
             _leaderBoard.value = it
         }
     }
+
+    fun addCoupon(
+        code: String,
+        currencySymbol: String,
+        amount: Double
+    ) = NetworkCalls.post<CouponRes>(
+        endpoint = Endpoints.RESOLVE_COUPON,
+        body = listOf(
+            Pair("code", code),
+            Pair("currencySymbol", currencySymbol),
+            Pair("amount", amount)
+        )
+    )
+
 
     init {
         getProfile()

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
@@ -75,6 +77,7 @@ fun ConfirmPin(
     var onSelectCurrency by remember { mutableStateOf(false) }
     var coupon by remember { mutableStateOf(TextFieldValue("")) }
     var onAddCoupon by remember { mutableStateOf(false) }
+    var couponAmount by remember { mutableDoubleStateOf(0.0) }
 
     //countdown timer
     var timer by remember {
@@ -161,7 +164,10 @@ fun ConfirmPin(
         )
     }
     Text(
-        text = "-${currency.amount} ${currency.symbol}",
+        text = "-${
+            if (couponAmount > 0.0) formatNumber(couponAmount)
+            else currency.amount
+        } ${currency.symbol}",
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(horizontal = 32.dp),
         fontWeight = FontWeight.SemiBold,
@@ -193,23 +199,27 @@ fun ConfirmPin(
                 processing = processing
             ) {
                 processing = true
-//                            viewModel.addCoupon(coupon.text)
-//                                .addOnSuccessListener {
-//                                    processing = false
-//                                    Toaster(context, it.message, R.drawable.logo).show()
-//                                    onAddCoupon = false
-//                                }
-//                                .addOnFailureListener {
-//                                    processing = false
-//                                    Toaster(context, it, R.drawable.logo).show()
-//                                }
+                viewModel.addCoupon(
+                    coupon.text,
+                    currency.symbol,
+                    currency.amount.replace(",", "").toDouble()
+                ).addOnSuccessListener {
+                    processing = false
+                    couponAmount = it.payableAmount
+                    onAddCoupon = false
+                }.addOnFailureListener {
+                    processing = false
+                    Toaster(context, it, R.drawable.logo).show()
+                }
             }
             Spacer(modifier = Modifier.height(5.dp))
         }
 
     }
     Text(
-        text = if (onAddCoupon) "Cancel" else "Add Coupon",
+        text = if (onAddCoupon) "Cancel"
+        else if (couponAmount > 0.0) "Remove coupon"
+        else "Add Coupon",
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier
             .padding(horizontal = 32.dp)

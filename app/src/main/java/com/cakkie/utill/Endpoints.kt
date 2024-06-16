@@ -111,6 +111,8 @@ object Endpoints {
     val GET_LEADERBOARD =
         { page: Int, size: Int -> "$BASE_URL/wallet/leaderboard?page=$page" }/* get leaderboard  GET*/ /*todo:  fix page size*/
     const val GET_PREFERENCE = "$BASE_URL/wallet/preference" /* get preference  GET*/
+    const val RESOLVE_COUPON = "$BASE_URL/wallet/resolve-coupon" /* resolve coupon  POST*/
+
 
     /**
      * Chat

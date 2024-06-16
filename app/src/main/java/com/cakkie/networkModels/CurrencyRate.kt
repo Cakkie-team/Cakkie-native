@@ -23,3 +23,10 @@ data class CurrencyRate(
     val pin: String = "",
     val coupon: String = "",
 ) : Parcelable
+
+@Serializable
+@Parcelize
+data class CouponRes(
+    val payableAmount: Double = 0.0,
+    val currency: CurrencyRate = CurrencyRate(),
+) : Parcelable
