@@ -26,6 +26,7 @@ import com.cakkie.R
 import com.cakkie.ui.screens.destinations.EditShopDestination
 import com.cakkie.ui.screens.destinations.SubscriptionDestination
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
@@ -52,9 +53,12 @@ fun ShopSettings(navigator: DestinationsNavigator) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            Modifier.clickable {
-                navigator.navigate(EditShopDestination)
-            },
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .clickable {
+                    navigator.navigate(EditShopDestination)
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -72,9 +76,20 @@ fun ShopSettings(navigator: DestinationsNavigator) {
                 fontSize = 16.sp,
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(
+            Modifier
+                .clip(RoundedCornerShape(50))
+//                .height(8.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = CakkieLightBrown,
+            thickness = 1.dp,
+        )
         Row(
-            Modifier.clickable { navigator.navigate(SubscriptionDestination) },
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .clickable { navigator.navigate(SubscriptionDestination) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -92,6 +107,15 @@ fun ShopSettings(navigator: DestinationsNavigator) {
                 fontSize = 16.sp,
             )
         }
+        Divider(
+            Modifier
+                .clip(RoundedCornerShape(50))
+//                .height(8.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = CakkieLightBrown,
+            thickness = 1.dp,
+        )
         Spacer(modifier = Modifier.height(26.dp))
 
     }

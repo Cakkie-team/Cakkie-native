@@ -44,6 +44,7 @@ import com.cakkie.ui.screens.destinations.AssetDetailsDestination
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChatListDestination
 import com.cakkie.ui.screens.destinations.CommentDestination
+import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.EditVideoDestination
 import com.cakkie.ui.screens.destinations.ExploreScreenDestination
@@ -150,6 +151,7 @@ class MainActivity : ComponentActivity() {
                                         ExploreScreenDestination -> 20.dp
                                         CommentDestination -> 16.dp
                                         SubscriptionDestination -> 10.dp
+                                        ConfirmPinDestination -> 10.dp
                                         else -> 26.dp
                                     }
                                 )

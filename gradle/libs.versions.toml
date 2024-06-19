@@ -54,6 +54,7 @@ room = "2.6.0"
 # Timber
 shimmerVersion = "0.5.0"
 socketIoClientVersion = "1.0.0"
+threetenabpVersion = "1.4.4"
 timber = "5.0.1"
 kotlinStdlibJdk7Version = "1.9.20-RC2"
 toolbarComposeVersion = "2.3.5"
@@ -111,6 +112,7 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 sdk = { module = "com.appodeal.ads:sdk", version.ref = "sdkVersion" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmerVersion" }
 socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClientVersion" }
+threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabpVersion" }
 toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }

@@ -32,13 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.data.db.models.ShopModel
 import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.PreferenceModel
 import com.cakkie.ui.components.CakkieButton
@@ -46,12 +46,16 @@ import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
 import com.cakkie.ui.theme.CakkieLightBrown
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.temporal.ChronoUnit
 
 @Destination
 @Composable
@@ -60,7 +64,7 @@ fun Subscription(
     navigator: DestinationsNavigator
 ) {
     val viewModel: ShopViewModel = koinViewModel()
-    val shop = viewModel.shop.observeAsState(ShopModel()).value
+    val shop = viewModel.shop.observeAsState().value
     val preference = viewModel.preference.observeAsState(PreferenceModel()).value
     var subType by remember {
         mutableIntStateOf(0)
@@ -68,6 +72,29 @@ fun Subscription(
     var processing by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
+    var isTopUp by remember {
+        mutableStateOf(false)
+    }
+
+    // Current date and time in ISO format
+    val currentDateTime = LocalDateTime.now()
+
+// Parse the premium expiration date
+    val premiumExpiresAt =
+        shop?.premiumExpiresAt?.takeIf { it.isNotEmpty() } ?: currentDateTime.format(
+            DateTimeFormatter.ISO_DATE_TIME
+        )
+
+    val targetDateTime = try {
+        LocalDateTime.parse(premiumExpiresAt, DateTimeFormatter.ISO_DATE_TIME)
+    } catch (e: Exception) {
+        // Handle any parsing exceptions and fallback to current date time or a default value
+        currentDateTime
+    }
+
+// Calculate the number of days left
+    val daysLeft = ChronoUnit.DAYS.between(currentDateTime, targetDateTime).toInt()
 
 
     confirmPinResult.onNavResult { result ->
@@ -75,40 +102,37 @@ fun Subscription(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 processing = true
-//                if (user != null) {
-//                    viewModel.createOrder(
-//                        item.id,
-//                        item.shopId,
-//                        1,
-//                        item.price[sizes.indexOf(selectedSize)].toDouble(),
-//                        user.address,
-//                        1000.00,
-//                        user.latitude,
-//                        user.longitude,
-//                        result.value.symbol,
-//                        item.name,
-//                        item.media.first(),
-//                        item.description,
-//                        result.value.pin,
-//                        meta = listOf(
-//                            Pair("shape", item.meta.shape),
-//                            Pair("flavour", item.meta.flavour),
-//                            Pair("size", selectedSize),
-//                        )
-//                    ).addOnSuccessListener {
-//                        processing = false
-//                        navigator.navigate(OrdersDestination)
-//                    }.addOnFailureListener {
-//                        processing = false
-//                        Toaster(context, it, R.drawable.logo).show()
-//                    }
-//                }
+                val allowedSymbols = setOf("NGN", "ICING")
+
+                if (result.value.symbol.trim() !in allowedSymbols) {
+                    Toaster(
+                        context,
+                        "Sorry ${result.value.symbol} is not allowed for subscription",
+                        R.drawable.logo
+                    ).show()
+                    processing = false
+                } else {
+                    viewModel.subscribeShop(
+                        result.value.pin,
+                        result.value.coupon.trim(),
+                        result.value.symbol.trim(),
+                        if (subType == 0) 12
+                        else 1,
+                    ).addOnSuccessListener {
+                        processing = false
+                        viewModel.getMyShop()
+                    }.addOnFailureListener {
+                        processing = false
+                        Toaster(context, it, R.drawable.logo).show()
+                    }
+
+                }
             }
         }
     }
 
     Column {
-        if (shop.isPremium) {
+        if ((shop?.isPremium == false || isTopUp).not()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,7 +179,7 @@ fun Subscription(
             }
         }
         Column(Modifier.verticalScroll(rememberScrollState())) {
-            if (!shop.isPremium) {
+            if (shop?.isPremium == false || isTopUp) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Box(
                     modifier = Modifier
@@ -239,43 +263,17 @@ fun Subscription(
                     }
                 }
             } else {
-                Box(
+                //text for premium users
+                Text(
+                    text = "You are already a premium user",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = CakkieBrown,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color.White, shape = MaterialTheme.shapes.medium)
-                ) {
-                    Row(
-                        Modifier
-                            .padding(start = 10.dp, end = 18.dp, top = 10.dp, bottom = 10.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = true,
-                                onCheckedChange = {},
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = CakkieBrown,
-                                    uncheckedColor = CakkieBrown002
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = stringResource(id = R.string.annually),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        Text(
-                            text = "NGN${formatNumber(preference.premiumYearlyFee)}/month",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                }
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
                 Spacer(modifier = Modifier.height(20.dp))
                 Box(
                     Modifier
@@ -286,15 +284,25 @@ fun Subscription(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "30 days left",
+                        text = "$daysLeft days left",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         fontSize = 26.sp
                     )
                 }
+
+                //your subscription details
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "Your subscription has the following benefits",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             listOf(
                 "Premium membership badge",
                 "Unlimited access to all features",
@@ -304,7 +312,7 @@ fun Subscription(
             ).forEach {
                 Row(
                     Modifier
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
@@ -332,13 +340,30 @@ fun Subscription(
                     .height(50.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
-                text = stringResource(id = R.string.subscribe),
-                processing = false,
+                text = stringResource(id = if ((shop?.isPremium == false || isTopUp).not()) R.string.top_up else R.string.subscribe),
+                processing = processing,
+                enabled = preference.premiumMonthlyFee > 0,
             ) {
-//            navigator.navigate(SubscriptionSuccess)
+                if ((shop?.isPremium == false || isTopUp).not()) {
+                    isTopUp = true
+                } else {
+                    navigator.navigate(
+                        ConfirmPinDestination(
+                            CurrencyRate(
+                                amount = if (subType == 0) formatNumber(
+                                    preference.premiumYearlyFee.times(
+                                        12
+                                    )
+                                )
+                                else formatNumber(preference.premiumMonthlyFee),
+                                symbol = "NGN"
+                            )
+                        )
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }

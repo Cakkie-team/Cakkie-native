@@ -17,6 +17,7 @@ import com.cakkie.socket.SocketClient
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Headers
 import com.google.android.gms.ads.MobileAds
+import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +41,7 @@ class CakkieApp : Application() {
             modules(appModule)
             androidContext(this@CakkieApp)
         }
-
+        AndroidThreeTen.init(this)
         //initialize admob
         MobileAds.initialize(this) {}
 

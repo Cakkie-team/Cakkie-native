@@ -295,6 +295,18 @@ class ShopViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun subscribeShop(pin: String, coupon: String, currencySymbol: String, months: Int) =
+        NetworkCalls.post<ShopModel>(
+            endpoint = Endpoints.SUBSCRIBE_SHOP,
+            body = listOf(
+                Pair("pin", pin),
+                Pair("couponCode", coupon),
+                Pair("currencySymbol", currencySymbol),
+                Pair("months", months)
+            )
+        )
+
+
     init {
         getProfile()
         getUser()

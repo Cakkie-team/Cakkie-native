@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 
@@ -46,6 +47,9 @@ fun MoreOptions() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -62,8 +66,19 @@ fun MoreOptions() {
                 fontSize = 16.sp,
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(
+            Modifier
+                .clip(RoundedCornerShape(50))
+//                .height(8.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = CakkieLightBrown,
+            thickness = 1.dp,
+        )
         Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -80,8 +95,19 @@ fun MoreOptions() {
                 fontSize = 16.sp,
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(
+            Modifier
+                .clip(RoundedCornerShape(50))
+//                .height(8.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = CakkieLightBrown,
+            thickness = 1.dp,
+        )
         Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -98,6 +124,15 @@ fun MoreOptions() {
                 fontSize = 16.sp,
             )
         }
+        Divider(
+            Modifier
+                .clip(RoundedCornerShape(50))
+//                .height(8.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            color = CakkieLightBrown,
+            thickness = 1.dp,
+        )
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

@@ -244,7 +244,7 @@ fun ConfirmPin(
                 0 -> pin
                 1 -> pinConfirm
                 else -> otp
-            }, onValueChange = {}, readOnly = false
+            }, onValueChange = {}, readOnly = true
         )
         AnimatedVisibility(step == 2) {
             Spacer(modifier = Modifier.height(10.dp))
