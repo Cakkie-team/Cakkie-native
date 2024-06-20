@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,21 +45,27 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.cakkie.R
+import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.VideoPlayer
 import com.cakkie.ui.screens.destinations.CreateCakespirationDestination
+import com.cakkie.ui.screens.destinations.UpgradeShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
+import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.utill.toJson
 import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.koinViewModel
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @OptIn(UnstableApi::class)
 @Destination
 @Composable
 fun EditVideo(file: String, navigator: DestinationsNavigator) {
+    val viewModel: ShopViewModel = koinViewModel()
+    val shop = viewModel.shop.observeAsState(ShopModel()).value
     var isMuted by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
     val media = file.toObject(MediaModel::class.java)
@@ -112,7 +119,13 @@ fun EditVideo(file: String, navigator: DestinationsNavigator) {
         ) {
             Card(
                 onClick = {
-                    navigator.navigate(CreateCakespirationDestination(file = media.toJson()))
+                    if (shop.isPremium) {
+                        navigator.navigate(CreateCakespirationDestination(file = media.toJson()))
+                    } else {
+                        navigator.navigate(UpgradeShopDestination) {
+                            launchSingleTop = true
+                        }
+                    }
                 },
                 modifier = Modifier
                     .width(74.dp)

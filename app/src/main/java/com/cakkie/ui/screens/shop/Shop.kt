@@ -278,7 +278,7 @@ fun Shop(navigator: DestinationsNavigator) {
                         viewModel.getRequests(orderRes.meta.nextPage, orderRes.meta.pageSize)
                     }
 
-                    0 -> Listings(listings, post, navigator) {
+                    0 -> Listings(shop, listings, post, navigator) {
                         viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
                     }
                 }

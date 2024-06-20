@@ -62,7 +62,6 @@ import coil.compose.AsyncImagePainter
 import com.cakkie.BottomState.hideNav
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
-import com.cakkie.data.db.models.ShopModel
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.screens.destinations.CakespirationDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
@@ -71,7 +70,6 @@ import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.ReactivateAccountDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
-import com.cakkie.ui.screens.destinations.UpgradeShopDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -95,7 +93,6 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
     val user = viewModel.user.observeAsState().value
-    val shop = viewModel.shop.observeAsState(ShopModel()).value
     val listings = viewModel.listings.observeAsState().value
     val cakespiration = viewModel.cakespiration.observeAsState().value
     val post = remember {
@@ -128,12 +125,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         if (scrollFraction > 20) {
             prevScroll = scrollFraction
         }
-    }
 
-    LaunchedEffect(user) {
-        if (user?.hasShop == true) {
-            viewModel.getMyShop()
-        }
     }
 
     //note scroll offset
@@ -342,10 +334,6 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                         .clickable {
                                             if (user?.hasShop == true) {
                                                 navigator.navigate(ChooseMediaDestination(R.string.videos)) {
-                                                    launchSingleTop = true
-                                                }
-                                            } else if (shop.isPremium) {
-                                                navigator.navigate(UpgradeShopDestination) {
                                                     launchSingleTop = true
                                                 }
                                             } else {

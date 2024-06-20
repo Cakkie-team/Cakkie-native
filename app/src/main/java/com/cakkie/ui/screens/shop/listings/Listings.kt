@@ -33,15 +33,18 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
+import com.cakkie.data.db.models.ShopModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.PreviewListingDestination
+import com.cakkie.ui.screens.destinations.UpgradeShopDestination
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun Listings(
+    shop: ShopModel,
     listings: ListingResponse, post: SnapshotStateList<Listing>,
     navigator: DestinationsNavigator, onLoadMore: () -> Unit
 ) {
@@ -135,8 +138,14 @@ fun Listings(
                             .background(Color.White)
                             .height(40.dp)
                             .clickable {
-                                navigator.navigate(ChooseMediaDestination(R.string.videos)) {
-                                    launchSingleTop = true
+                                if (shop.isPremium) {
+                                    navigator.navigate(ChooseMediaDestination(R.string.videos)) {
+                                        launchSingleTop = true
+                                    }
+                                } else {
+                                    navigator.navigate(UpgradeShopDestination) {
+                                        launchSingleTop = true
+                                    }
                                 }
                             }
                             .weight(1f),
