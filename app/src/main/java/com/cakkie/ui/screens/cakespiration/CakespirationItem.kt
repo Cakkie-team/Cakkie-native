@@ -1,6 +1,5 @@
 package com.cakkie.ui.screens.cakespiration
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,6 +56,7 @@ import com.cakkie.ui.screens.destinations.MoreOptionsDestination
 import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
+import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieYellow
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.toObject
@@ -62,7 +65,7 @@ import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CakespirationItem(
     item: Listing,
@@ -296,25 +299,43 @@ fun CakespirationItem(
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                Modifier
-                    .fillMaxWidth(0.6f)
-                    .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(40))
-                    .clip(RoundedCornerShape(40)),
-                verticalAlignment = Alignment.CenterVertically
+//            Row(
+//                Modifier
+//                    .fillMaxWidth(0.6f)
+//                    .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(40))
+//                    .clip(RoundedCornerShape(40)),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.music),
+//                    contentDescription = "music",
+//                    modifier = Modifier
+//                        .padding(6.dp)
+//                        .size(18.dp)
+//                )
+//                Text(
+//                    text = "Imagine Dragons - Believer",
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = CakkieBackground,
+//                )
+//            }
+            Card(
+                onClick = {
+
+                },
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(30.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = CakkieBrown)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.music),
-                    contentDescription = "music",
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .size(18.dp)
-                )
-                Text(
-                    text = "Imagine Dragons - Believer",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = CakkieBackground,
-                )
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = stringResource(id = R.string.send_request),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBackground
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(14.dp))
         }

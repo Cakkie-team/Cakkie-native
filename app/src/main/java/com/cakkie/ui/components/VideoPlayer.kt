@@ -71,6 +71,7 @@ fun VideoPlayer(
     }
 
     var isVideoLoaded by remember { mutableStateOf(false) }
+    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
 
     LaunchedEffect(key1 = isPlaying) {
         _isPlaying = isPlaying
