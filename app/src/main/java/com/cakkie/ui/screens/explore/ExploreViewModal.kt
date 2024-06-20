@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ListingResponse
+import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.ListingRepository
 import com.cakkie.data.repositories.UserRepository
@@ -41,6 +42,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val _cakespiration = MutableLiveData<ListingResponse>()
     private val listingRepository: ListingRepository by inject()
     private val _pagination = MutableLiveData(Pagination())
+    private val _shop = MutableLiveData<ShopModel>()
 
 
     val listings = _listings
@@ -48,6 +50,7 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     val pagination = _pagination
     val user = _user
     val socket = socketClient.socket
+    val shop = _shop
 
     private fun getUser() {
         viewModelScope.launch {
@@ -197,6 +200,13 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             Pair("meta", JsonBody.generate(meta))
         )
     )
+
+    fun getMyShop() = NetworkCalls.get<ShopModel>(
+        endpoint = Endpoints.CREATE_SHOP,
+        body = listOf()
+    ).addOnSuccessListener {
+        _shop.value = it
+    }
 
     init {
         getProfile()

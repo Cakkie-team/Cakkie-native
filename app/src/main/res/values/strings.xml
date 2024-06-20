@@ -366,6 +366,8 @@
     <string name="subscription">Subscription</string>
     <string name="apply">Apply</string>
     <string name="top_up">Top Up</string>
+    <string name="upgrade_shop">Upgrade Shop</string>
+    <string name="ready_to_explore">Ready to explore new possibilities?\n Upgrade your shop to enjoy premium benefits.</string>
 
 
 </resources>
