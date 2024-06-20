@@ -453,7 +453,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                         isMuted = isMuted,
                         onMute = { isMuted = it },
                         progressiveMediaSource = progressiveMediaSource,
-                        index = index,
+//                        index = index,
                         viewModal = viewModel
                     )
                 }

@@ -1,10 +1,12 @@
 package com.cakkie.ui.components
 
+import android.net.Uri
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -31,12 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -55,9 +59,7 @@ fun VideoPlayer(
     isCakespiration: Boolean = false
 ) {
     val context = LocalContext.current
-    var _isPlaying by remember {
-        mutableStateOf(isPlaying)
-    }
+    var _isPlaying by remember { mutableStateOf(isPlaying) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = mute) {
@@ -68,25 +70,34 @@ fun VideoPlayer(
         }
     }
 
-    exoPlayer.playWhenReady = _isPlaying
-    exoPlayer.videoScalingMode =
-        C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-    exoPlayer.volume = if (mute) 0f else 1f
-    exoPlayer.prepare()
-    LaunchedEffect(isPlaying) {
+    var isVideoLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = isPlaying) {
         _isPlaying = isPlaying
-        if (isPlaying) {
-            exoPlayer.pause()
-        } else {
+        exoPlayer.playWhenReady = _isPlaying
+        if (_isPlaying) {
+            exoPlayer.prepare()
             exoPlayer.play()
+        } else {
+            exoPlayer.pause()
         }
     }
-    Box(
-        modifier = modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    DisposableEffect(exoPlayer) {
+        val playerListener = object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                isVideoLoaded = playbackState == Player.STATE_READY
+            }
+        }
+
+        exoPlayer.addListener(playerListener)
+
+        onDispose {
+            exoPlayer.removeListener(playerListener)
+            exoPlayer.release()
+        }
+    }
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
         AndroidView(factory = {
             PlayerView(context).apply {
                 hideController()
@@ -99,6 +110,10 @@ fun VideoPlayer(
                 )
             }
         })
+
+        if (!isVideoLoaded) {
+            VideoThumbnail(exoPlayer.currentMediaItem?.localConfiguration?.uri ?: Uri.EMPTY)
+        }
         if (exoPlayer.isLoading && exoPlayer.isPlaying.not()) {
             CircularProgressIndicator(
                 strokeWidth = 2.dp,
@@ -107,22 +122,18 @@ fun VideoPlayer(
             )
         }
 
-
-        //mute and unmute
         IconButton(
             onClick = {
                 onMute.invoke(exoPlayer.volume > 0f)
-            }, modifier = Modifier
-                .align(Alignment.TopEnd)
+            },
+            modifier = Modifier.align(Alignment.TopEnd)
         ) {
             Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Black.copy(0.5f)
-                ), shape = CircleShape
+                colors = CardDefaults.cardColors(containerColor = Color.Black.copy(0.5f)),
+                shape = CircleShape
             ) {
                 Icon(
-                    painter =
-                    painterResource(id = if (!mute) R.drawable.sound else R.drawable.mute),
+                    painter = painterResource(id = if (!mute) R.drawable.sound else R.drawable.mute),
                     contentDescription = "Speaker",
                     tint = CakkieBackground,
                     modifier = Modifier
@@ -132,21 +143,18 @@ fun VideoPlayer(
             }
         }
 
-        //play and pause
         if (_isPlaying.not() && isCakespiration.not()) {
             Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = CakkieBrown
-                ), shape = CircleShape,
+                colors = CardDefaults.cardColors(containerColor = CakkieBrown),
+                shape = CircleShape,
                 onClick = {
                     _isPlaying = !_isPlaying
-                }, modifier = Modifier
-                    .align(Alignment.Center)
+                },
+                modifier = Modifier.align(Alignment.Center)
             ) {
                 Icon(
-                    painter =
-                    painterResource(id = R.drawable.play),
-                    contentDescription = "Speaker",
+                    painter = painterResource(id = R.drawable.play),
+                    contentDescription = "Play",
                     tint = CakkieBackground,
                     modifier = Modifier
                         .size(60.dp)
@@ -174,4 +182,19 @@ fun VideoPlayer(
             exoPlayer.release()
         }
     }
+}
+
+
+@kotlin.OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun VideoThumbnail(
+    videoUri: Uri,
+    modifier: Modifier = Modifier
+) {
+    GlideImage(
+        model = videoUri,
+        contentDescription = "Video Thumbnail",
+        modifier = modifier.fillMaxWidth(),
+        contentScale = ContentScale.Crop
+    )
 }

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Parcelize
 data class CurrencyRate(
     val amount: String = "",
-    val contractAddr: String = "",
+    val contractAddr: String? = "",
     val createdAt: String = "",
     val exchangeRate: Double = 0.0,
     val icon: String = "",
