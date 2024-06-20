@@ -35,12 +35,14 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -128,7 +130,6 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
 
     }
 
-    //note scroll offset
 
 
     LaunchedEffect(Unit) {
@@ -182,6 +183,44 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                 launchSingleTop = true
             }
         }
+    }
+
+    //note scroll offset
+    var isScrollingFast by remember { mutableStateOf(false) }
+//    var isScrolling by remember { mutableStateOf(false) }
+    var lastScrollTime by remember { mutableLongStateOf(0L) }
+    var lastScrollPosition by remember { mutableIntStateOf(0) }
+    // Update visibleItem when scrolling stops
+//    LaunchedEffect(listState) {
+//        snapshotFlow { listState.isScrollInProgress }
+//            .distinctUntilChanged()
+//            .collect { scrolling ->
+//                isScrolling = scrolling
+//                if (!scrolling) {
+//                    // Scrolling has stopped, update visibleItem
+////                    val firstVisibleItem = lazyListState.firstVisibleItemIndex
+////                    val firstVisibleItemOffset = lazyListState.firstVisibleItemScrollOffset
+////                    visibleItem = if (firstVisibleItemOffset == 0) {
+////                        firstVisibleItem
+////                    } else {
+////                        firstVisibleItem + 1
+////                    }
+//                }
+//            }
+//    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .collect { currentScrollPosition ->
+                val currentTime = System.currentTimeMillis()
+                val timeDiff = currentTime - lastScrollTime
+                if (timeDiff > 0) {
+                    val speed = (currentScrollPosition - lastScrollPosition).toFloat() / timeDiff
+                    isScrollingFast = speed > 0.3 // Adjust the threshold as needed
+                }
+                lastScrollPosition = currentScrollPosition
+                lastScrollTime = currentTime
+            }
     }
 
     Box(
@@ -449,7 +488,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
 //                       user = user,
                         navigator = navigator,
                         item = listing,
-                        shouldPlay = index == visibleItem,
+                        shouldPlay = index == visibleItem && !isScrollingFast,
                         isMuted = isMuted,
                         onMute = { isMuted = it },
                         progressiveMediaSource = progressiveMediaSource,
