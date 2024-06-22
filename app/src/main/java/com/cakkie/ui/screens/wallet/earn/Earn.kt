@@ -1,6 +1,7 @@
 package com.cakkie.ui.screens.wallet.earn
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -572,6 +573,88 @@ fun Earn(navigator: DestinationsNavigator) {
                         "Increase your earnings when you invite your friends."
                     ),
                     TaskM(
+                        "Repost pinned post",
+                        "https://x.com/cakkiefoods",
+                        R.drawable.x,
+                        "Repost pinned post on X to earn 1000SPK"
+                    ),
+                    TaskM(
+                        "Post on facebook",
+                        "https://web.facebook.com/cakkiefoods",
+                        R.drawable.facebook,
+                        "Spread the news about onboarding backers to earn 1000SPK"
+                    ) {
+                        //navigate to facebook to post
+                        val post =
+                            """
+                            Attention Bakers and Pastry Chefs!
+                            Are you ready to take your passion to the next level?
+                            Bringing to you the ultimate app designed just for you with all the amazing perks and benefits!
+                            
+                            Download the app through this link to get started 
+                            https://cakkie.com?referral=${user?.referralCode}
+                            
+                            #cakkiefoods #cakes #bakeYourWayToSuccess
+                        """.trimIndent()
+                        val intent = Intent(Intent.ACTION_SEND)
+                        intent.type = "text/plain"
+                        intent.putExtra(Intent.EXTRA_TEXT, post)
+                        intent.setPackage("com.facebook.katana")
+                        // Check if Instagram is installed before starting the activity
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toaster(
+                                context,
+                                "Instagram is not installed on your device",
+                                R.drawable.logo
+                            ).show()
+                        }
+//                        if (intent.resolveActivity(context.packageManager) != null) {
+//                        } else {
+//                            Toaster(
+//                                context,
+//                                "Instagram is not installed on your device",
+//                                R.drawable.logo
+//                            ).show()
+//                        }
+                    },
+                    TaskM(
+                        "Post on X",
+                        "https://x.com/cakkiefoods",
+                        R.drawable.x,
+                        "Spread the news about onboarding backers to earn 1000SPK"
+                    ) {
+                        //navigate to X to post
+                        val post =
+                            "Bake your way to success effortlessly by downloading and using the Cakkie app, a platform designed for everything sweet .\n" +
+                                    "https://cakkie.com?referral=${user?.referralCode}\n" +
+                                    "\n" +
+                                    "#cakkiefoods #cakes #bakers #PastryChef #bakeYourWayToSuccess"
+                        val intent = Intent(Intent.ACTION_SEND)
+                        intent.type = "text/plain"
+                        intent.putExtra(Intent.EXTRA_TEXT, post)
+                        intent.setPackage("com.twitter.android")
+                        // Check if x is installed before starting the activity
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toaster(
+                                context,
+                                "Instagram is not installed on your device",
+                                R.drawable.logo
+                            ).show()
+                        }
+//                        if (intent.resolveActivity(context.packageManager) != null) {
+//                        } else {
+//                            Toaster(
+//                                context,
+//                                "X is not installed on your device",
+//                                R.drawable.logo
+//                            ).show()
+//                        }
+                    },
+                    TaskM(
                         "Follow us on X",
                         "https://x.com/cakkiefoods",
                         R.drawable.x,
@@ -626,7 +709,12 @@ fun Earn(navigator: DestinationsNavigator) {
                     when (it.title) {
                         "Invite a friend" -> navigator.navigate(ReferralDestination)
                         else -> {
-                            uriHandle.openUri(it.url)
+                            it.action()
+                            if (it.title !in listOf(
+                                    "Post on facebook",
+                                    "Post on X"
+                                )
+                            ) uriHandle.openUri(it.url)
                             state = "Verifying"
                             scope.launch {
                                 delay(10000)
@@ -807,5 +895,6 @@ data class TaskM(
     val title: String,
     val url: String = "",
     val icon: Int,
-    val description: String
+    val description: String,
+    val action: () -> Unit = {}
 )
