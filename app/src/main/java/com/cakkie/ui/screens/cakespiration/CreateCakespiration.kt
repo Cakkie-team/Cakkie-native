@@ -52,6 +52,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import com.cakkie.R
+import com.cakkie.networkModels.FileModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.VideoPlayer
@@ -61,7 +62,6 @@ import com.cakkie.ui.screens.destinations.CreateCakespirationDestination
 import com.cakkie.ui.screens.destinations.EditVideoDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
-import com.cakkie.ui.screens.shop.listings.FileModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive

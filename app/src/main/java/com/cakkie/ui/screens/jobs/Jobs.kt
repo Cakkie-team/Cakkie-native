@@ -2,7 +2,6 @@ package com.cakkie.ui.screens.jobs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,11 +25,12 @@ import com.cakkie.R
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
-fun Jobs() {
+fun Jobs(navigator: DestinationsNavigator) {
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
     val pageState = rememberPagerState(pageCount = { 4 })
@@ -74,7 +74,7 @@ fun Jobs() {
             HorizontalPager(state = pageState) {
                 when (it) {
                     2 -> AllJobs()
-                    1 -> Box(modifier = Modifier)
+                    1 -> CreateJob(navigator = navigator)
                     0 -> AllJobs()
                 }
             }

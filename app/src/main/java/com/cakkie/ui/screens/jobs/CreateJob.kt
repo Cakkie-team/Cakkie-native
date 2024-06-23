@@ -1,4 +1,4 @@
-package com.cakkie.ui.screens.shop.listings
+package com.cakkie.ui.screens.jobs
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -75,9 +75,6 @@ import com.cakkie.networkModels.FileModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.HorizontalPagerIndicator
-import com.cakkie.ui.screens.destinations.ChooseMediaDestination
-import com.cakkie.ui.screens.destinations.CreateListingDestination
-import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBackground
@@ -87,10 +84,8 @@ import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
-import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -101,12 +96,14 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Destination
 @Composable
-fun CreateListing(files: String, navigator: DestinationsNavigator) {
+fun CreateJob(navigator: DestinationsNavigator) {
     val viewModel: ShopViewModel = koinViewModel()
     val context = LocalContext.current
     val shop = viewModel.shop.observeAsState().value
     //convert string to list of media
-    val media = files.toObjectList(MediaModel::class.java)
+    val media = remember {
+        mutableStateListOf<MediaModel>()
+    }
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var pageCount by remember {
@@ -686,15 +683,15 @@ fun CreateListing(files: String, navigator: DestinationsNavigator) {
                             )
                         ).addOnSuccessListener {
                             processing = false
-                            navigator.navigate(ShopDestination) {
-                                popUpTo(ChooseMediaDestination) {
-                                    inclusive = true
-                                }
-                                popUpTo(CreateListingDestination) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
+//                            navigator.navigate(ShopDestination) {
+//                                popUpTo(ChooseMediaDestination) {
+//                                    inclusive = true
+//                                }
+//                                popUpTo(CreateListingDestination) {
+//                                    inclusive = true
+//                                }
+//                                launchSingleTop = true
+//                            }
                         }.addOnFailureListener { exception ->
                             processing = false
                             Toaster(context, exception, R.drawable.logo)

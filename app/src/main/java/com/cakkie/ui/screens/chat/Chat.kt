@@ -66,6 +66,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Conversation
+import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.Message
 import com.cakkie.networkModels.MessageResponse
 import com.cakkie.ui.screens.destinations.AwardContractDestination
@@ -73,7 +74,6 @@ import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
 import com.cakkie.ui.screens.destinations.ReportDestination
 import com.cakkie.ui.screens.shop.MediaModel
-import com.cakkie.ui.screens.shop.listings.FileModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
