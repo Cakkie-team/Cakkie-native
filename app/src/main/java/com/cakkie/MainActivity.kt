@@ -16,7 +16,9 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,15 +28,20 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import com.bumptech.glide.Glide
 import com.cakkie.BottomState.hideNav
 import com.cakkie.navigations.BottomNav
@@ -107,6 +114,8 @@ class MainActivity : ComponentActivity() {
         if (extra != null) {
             Timber.d("Notification: $extra")
         }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
@@ -185,9 +194,11 @@ class MainActivity : ComponentActivity() {
 //                                        )
                                     )
                                 )
+                                val isKeyboardOpen by keyboardAsState()
+
                                 BottomNav(
                                     navController = navController,
-                                    state = !hideNav.value && when (currentDestination) {
+                                    state = (!hideNav.value && !isKeyboardOpen) && when (currentDestination) {
                                         ExploreScreenDestination -> true
                                         JobsDestination -> true
                                         ShopDestination -> true
@@ -333,4 +344,10 @@ fun rememberBottomSheetNavigator(
     return remember(sheetState) {
         BottomSheetNavigator(sheetState = sheetState)
     }
+}
+
+@Composable
+fun keyboardAsState(): State<Boolean> {
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    return rememberUpdatedState(isImeVisible)
 }

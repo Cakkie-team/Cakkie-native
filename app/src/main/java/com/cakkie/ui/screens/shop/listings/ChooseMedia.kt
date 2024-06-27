@@ -299,7 +299,7 @@ fun ChooseMedia(
                     .fillMaxWidth(0.8f)
                     .align(Alignment.BottomCenter)
             ) {
-                if (from == "chat") {
+                if (from.isNotEmpty()) {
                     onComplete.navigateBack(files.toList().toJson())
                 } else {
                     //check if files has video and decide to navigate to create listing

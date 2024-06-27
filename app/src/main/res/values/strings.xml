@@ -369,6 +369,8 @@
     <string name="upgrade_shop">Upgrade Shop</string>
     <string name="ready_to_explore">Ready to explore new possibilities?\n Upgrade your shop to enjoy premium benefits.</string>
     <string name="send_request">Send Request</string>
+    <string name="add_photos">Add Photos</string>
+    <string name="product">Product</string>
 
 
 </resources>

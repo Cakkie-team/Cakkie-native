@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -23,19 +26,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.ui.components.PageTabs
+import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
-fun Jobs(navigator: DestinationsNavigator) {
+fun Jobs(
+    fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
+    navigator: DestinationsNavigator
+) {
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
     val pageState = rememberPagerState(pageCount = { 4 })
+    val media = remember {
+        mutableStateListOf<MediaModel>()
+    }
     Column(Modifier) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -50,7 +62,7 @@ fun Jobs(navigator: DestinationsNavigator) {
                 contentScale = ContentScale.FillWidth
             )
             Spacer(modifier = Modifier.width(6.dp))
-            androidx.compose.material.Text(
+            Text(
                 text = stringResource(id = R.string.jobs),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
@@ -74,7 +86,7 @@ fun Jobs(navigator: DestinationsNavigator) {
             HorizontalPager(state = pageState) {
                 when (it) {
                     2 -> AllJobs()
-                    1 -> CreateJob(navigator = navigator)
+                    1 -> CreateJob(media, fileRecipient, navigator = navigator)
                     0 -> AllJobs()
                 }
             }

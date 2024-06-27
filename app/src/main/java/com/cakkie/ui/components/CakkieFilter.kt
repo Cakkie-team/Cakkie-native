@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Divider
@@ -31,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -41,6 +41,7 @@ import com.cakkie.ui.theme.TextColorDark
 fun CakkieFilter(
     value: String,
     options: List<String> = listOf("All", "Pending", "Success", "Failed"),
+    width: Dp = 120.dp,
     onValueChange: (String) -> Unit
 ) {
     var expanded by remember {
@@ -52,10 +53,10 @@ fun CakkieFilter(
             .border(
                 width = 1.dp,
                 color = CakkieBrown,
-                shape = RoundedCornerShape(8)
+                shape = MaterialTheme.shapes.small
             )
-            .clip(RoundedCornerShape(8))
-            .width(120.dp),
+            .clip(MaterialTheme.shapes.small)
+            .width(width),
         contentAlignment = Alignment.TopCenter
     ) {
         Row(
@@ -91,7 +92,7 @@ fun CakkieFilter(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .width(width = 120.dp)
+                .width(width)
                 .heightIn(max = 300.dp)
                 .background(CakkieBackground)
         ) {
