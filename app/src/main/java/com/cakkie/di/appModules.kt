@@ -9,6 +9,7 @@ import com.cakkie.socket.SocketClient
 import com.cakkie.ui.screens.auth.AuthViewModel
 import com.cakkie.ui.screens.chat.ChatViewModel
 import com.cakkie.ui.screens.explore.ExploreViewModal
+import com.cakkie.ui.screens.jobs.JobsViewModel
 import com.cakkie.ui.screens.notification.NotificationViewModel
 import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.screens.profile.ProfileViewModel
@@ -78,6 +79,11 @@ val appModule = module {
     //inject WalletViewModel
     viewModel {
         WalletViewModel()
+    }
+
+    //inject JobViewModel
+    viewModel {
+        JobsViewModel()
     }
     // Database
     single {

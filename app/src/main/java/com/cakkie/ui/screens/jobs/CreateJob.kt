@@ -526,7 +526,9 @@ fun CreateJob(
                 Spacer(modifier = Modifier.height(30.dp))
                 CakkieButton(
                     text = stringResource(id = R.string.review),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .align(Alignment.CenterHorizontally),
                     enabled = canProceed,
                     processing = processing
                 ) {
