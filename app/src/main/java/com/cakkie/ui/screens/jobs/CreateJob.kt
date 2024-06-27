@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,6 +27,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,13 +73,15 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.FileModel
+import com.cakkie.networkModels.JobModel
+import com.cakkie.networkModels.Meta
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
-import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
@@ -97,15 +103,16 @@ import java.util.Locale
 @Destination
 @Composable
 fun CreateJob(
+    viewModel: JobsViewModel = koinViewModel(),
     media: SnapshotStateList<MediaModel> = remember {
         mutableStateListOf()
     },
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     navigator: DestinationsNavigator
 ) {
-    val viewModel: ShopViewModel = koinViewModel()
     val context = LocalContext.current
     val shop = viewModel.shop.observeAsState().value
+    val user = viewModel.user.observeAsState().value
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var pageCount by remember {
@@ -119,11 +126,11 @@ fun CreateJob(
     var description by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    val prices = remember {
-        mutableStateListOf(TextFieldValue(""))
+    val prices by remember {
+        mutableStateOf(TextFieldValue(""))
     }
-    var sizes = remember {
-        TextFieldValue("4 inches H, 20cm W")
+    var sizes by remember {
+        mutableStateOf(TextFieldValue("4 inches H, 20cm W"))
     }
     var quantity by remember {
         mutableStateOf(TextFieldValue("1"))
@@ -145,7 +152,7 @@ fun CreateJob(
 
     val coroutineScope = rememberCoroutineScope()
     val canProceed = name.text.isNotEmpty() && description.text.isNotEmpty()
-            && prices.all { it.text.isNotEmpty() } && sizes.text.isNotEmpty()
+            && prices.text.isNotEmpty() && sizes.text.isNotEmpty()
 
     var processing by remember {
         mutableStateOf(false)
@@ -321,6 +328,46 @@ fun CreateJob(
                                 }
                             )
 
+                            R.string.location_for_delivery -> Box(
+                                Modifier
+                                    .padding(start = 20.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = CakkieBrown,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                    .height(35.dp)
+                                    .clip(MaterialTheme.shapes.small),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Row(
+                                    Modifier
+                                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            navigator.navigate(SetDeliveryAddressDestination)
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = user?.address ?: "Set Address",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier,
+                                        color = TextColorDark
+                                    )
+
+                                    Icon(
+                                        imageVector = Icons.Filled.LocationOn,
+                                        contentDescription = "Dropdown Icon",
+                                        tint = CakkieBrown,
+                                        modifier = Modifier
+//                    .rotate(if (expanded) 180f else 0f)
+                                            .size(20.dp)
+                                    )
+                                }
+                            }
+
                             else -> BasicTextField(
                                 value = when (prop) {
                                     R.string.quantity -> quantity
@@ -361,6 +408,7 @@ fun CreateJob(
                                     Text(
                                         text = when (prop) {
                                             R.string.quantity -> quantity.text.ifEmpty { "0 pieces" }
+                                            R.string.proposed_price -> prices.text.ifEmpty { "10000" }
                                             else -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
@@ -369,6 +417,7 @@ fun CreateJob(
                                         modifier = Modifier.padding(8.dp),
                                         color = if (when (prop) {
                                                 R.string.quantity -> quantity.text.isEmpty()
+                                                R.string.proposed_price -> prices.text.isEmpty()
                                                 else -> false
                                             }
                                         ) TextColorInactive else TextColorDark,
@@ -476,7 +525,7 @@ fun CreateJob(
 
                 Spacer(modifier = Modifier.height(30.dp))
                 CakkieButton(
-                    text = stringResource(id = R.string.done),
+                    text = stringResource(id = R.string.review),
                     modifier = Modifier.fillMaxWidth(),
                     enabled = canProceed,
                     processing = processing
@@ -513,6 +562,32 @@ fun CreateJob(
                                 Toaster(context, exception.message.toString(), R.drawable.logo)
                                 it.file.delete()
                             }
+                        }
+                        if (user != null) {
+                            JobModel(
+                                user.address,
+                                user.city,
+                                user.country,
+                                selectedDate.toString(),
+                                "NGN",
+                                selectedDate.toString(),
+                                description.text,
+                                "",
+                                user.latitude,
+                                user.longitude,
+                                fileUrls.map { it.url },
+                                meta = Meta(
+                                    flavour = flavour.text,
+                                    quantity.text,
+                                    shape.text,
+                                    sizes.text
+                                ),
+                                product.text,
+                                0.0,
+                                prices.text.toDouble(),
+                                user.state,
+                                name.text,
+                            )
                         }
 //                        viewModel.createListing(
 //                            name = name.text,

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
@@ -16,9 +17,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,21 +26,24 @@ import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.cakkie.BottomState.hideNav
 import com.cakkie.navigations.BottomNav
@@ -114,7 +116,7 @@ class MainActivity : ComponentActivity() {
         if (extra != null) {
             Timber.d("Notification: $extra")
         }
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val bottomSheetNavigator = rememberBottomSheetNavigator(skipHalfExpanded = true)
@@ -165,19 +167,20 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             ) {
+                                val isKeyboardOpen by keyboardAsState()
                                 DestinationsNavHost(
                                     navGraph = NavGraphs.root,
                                     navController = navController,
                                     modifier = Modifier
                                         .padding(
-                                            bottom =
-                                            when (currentDestination) {
-                                                JobsDestination -> 50.dp
-                                                ShopDestination -> 50.dp
-                                                ChatListDestination -> 50.dp
-                                                OrdersDestination -> 50.dp
-                                                else -> 0.dp
-                                            }
+                                            bottom = if (isKeyboardOpen) 0.dp else
+                                                when (currentDestination) {
+                                                    JobsDestination -> 50.dp
+                                                    ShopDestination -> 50.dp
+                                                    ChatListDestination -> 50.dp
+                                                    OrdersDestination -> 50.dp
+                                                    else -> 0.dp
+                                                }
                                         )
                                         .fillMaxSize(),
                                     engine = rememberAnimatedNavHostEngine(
@@ -194,7 +197,7 @@ class MainActivity : ComponentActivity() {
 //                                        )
                                     )
                                 )
-                                val isKeyboardOpen by keyboardAsState()
+
 
                                 BottomNav(
                                     navController = navController,
@@ -348,6 +351,24 @@ fun rememberBottomSheetNavigator(
 
 @Composable
 fun keyboardAsState(): State<Boolean> {
-    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    return rememberUpdatedState(isImeVisible)
+//    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+//    return rememberUpdatedState(isImeVisible)
+    var isKeyboardOpen by remember {
+        mutableStateOf(false)
+    }
+    val view = LocalView.current
+    val viewTreeObserver = view.viewTreeObserver
+    DisposableEffect(viewTreeObserver) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+            // ... do anything you want here with `isKeyboardOpen`
+        }
+
+        viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose {
+            viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+    return rememberUpdatedState(isKeyboardOpen)
 }

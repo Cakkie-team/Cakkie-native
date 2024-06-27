@@ -25,26 +25,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.data.db.models.User
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun Jobs(
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
+    addressRecipient: ResultRecipient<SetDeliveryAddressDestination, User>,
     navigator: DestinationsNavigator
 ) {
+    val viewModel: JobsViewModel = koinViewModel()
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
     val pageState = rememberPagerState(pageCount = { 4 })
     val media = remember {
         mutableStateListOf<MediaModel>()
+    }
+
+    addressRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.getProfile()
+            }
+        }
     }
     Column(Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -86,7 +101,7 @@ fun Jobs(
             HorizontalPager(state = pageState) {
                 when (it) {
                     2 -> AllJobs()
-                    1 -> CreateJob(media, fileRecipient, navigator = navigator)
+                    1 -> CreateJob(viewModel, media, fileRecipient, navigator = navigator)
                     0 -> AllJobs()
                 }
             }
