@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -71,6 +72,7 @@ import com.cakkie.networkModels.FileModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.screens.shop.ShopViewModel
@@ -87,6 +89,7 @@ import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.util.Calendar
 import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -123,21 +126,22 @@ fun CreateJob(
         TextFieldValue("4 inches H, 20cm W")
     }
     var quantity by remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue("1"))
     }
     var shape by remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue("Round"))
     }
-    var availability by remember {
-        mutableStateOf(TextFieldValue("Please note that under normal circumstances, this cake requires a minimum of 24 hours to prepare and will be delivered to you within 24 hours after preparation."))
-    }
+
     var flavour by remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue("Vanilla"))
     }
     var product by remember {
         mutableStateOf(TextFieldValue("Cake"))
     }
-
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
+    LaunchedEffect(Unit) {
+        selectedDate.add(Calendar.HOUR_OF_DAY, 12)
+    }
 
     val coroutineScope = rememberCoroutineScope()
     val canProceed = name.text.isNotEmpty() && description.text.isNotEmpty()
@@ -228,6 +232,9 @@ fun CreateJob(
                     R.string.quantity,
                     R.string.shape,
                     R.string.flavour,
+                    R.string.proposed_price,
+                    R.string.expected_completion_date,
+                    R.string.location_for_delivery,
                 ).forEach { prop ->
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -273,23 +280,62 @@ fun CreateJob(
                                 sizes = TextFieldValue(it)
                             }
 
+                            R.string.shape -> CakkieFilter(
+                                shape.text,
+                                options = listOf(
+                                    "Round",
+                                    "Oval",
+                                    "Squared",
+                                    "Star",
+                                    "Heart",
+                                    "Triangle",
+                                    "Specified in description"
+                                ),
+                                screenWidth * 0.5f
+                            ) {
+                                shape = TextFieldValue(it)
+                            }
+
+                            R.string.flavour -> CakkieFilter(
+                                flavour.text,
+                                options = listOf(
+                                    "Vanilla",
+                                    "Chocolate",
+                                    "Strawberry",
+                                    "Red Velvet",
+                                    "Coconut",
+                                    "Fruity",
+                                    "Specified in description"
+                                ),
+                                screenWidth * 0.5f
+                            ) {
+                                flavour = TextFieldValue(it)
+                            }
+
+                            R.string.expected_completion_date -> DateTimePicker(
+                                label = "Select Date and Time",
+                                selectedDate = selectedDate,
+                                onDateTimeSelected = { newDate, newHours ->
+                                    selectedDate = newDate
+//                                    totalHours = newHours
+                                }
+                            )
+
                             else -> BasicTextField(
                                 value = when (prop) {
                                     R.string.quantity -> quantity
-                                    R.string.shape -> shape
-                                    R.string.flavour -> flavour
                                     else -> TextFieldValue("")
                                 },
                                 onValueChange = {
                                     when (prop) {
                                         R.string.quantity -> quantity = it
-                                        R.string.shape -> shape = it
-                                        R.string.flavour -> flavour = it
                                     }
                                 },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                                modifier = Modifier.width(screenWidth * 0.5f)
+                                modifier = Modifier
+                                    .width(screenWidth * 0.5f)
+                                    .height(35.dp)
                             ) {
                                 Row(
                                     Modifier
@@ -302,11 +348,19 @@ fun CreateJob(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
+                                    if (prop == R.string.proposed_price) {
+                                        Text(
+                                            text = "NGN",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextColorInactive,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
                                     Text(
                                         text = when (prop) {
                                             R.string.quantity -> quantity.text.ifEmpty { "0 pieces" }
-                                            R.string.shape -> shape.text.ifEmpty { "Round" }
-                                            R.string.flavour -> flavour.text.ifEmpty { "Vanilla" }
                                             else -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
@@ -315,8 +369,6 @@ fun CreateJob(
                                         modifier = Modifier.padding(8.dp),
                                         color = if (when (prop) {
                                                 R.string.quantity -> quantity.text.isEmpty()
-                                                R.string.shape -> shape.text.isEmpty()
-                                                R.string.flavour -> flavour.text.isEmpty()
                                                 else -> false
                                             }
                                         ) TextColorInactive else TextColorDark,

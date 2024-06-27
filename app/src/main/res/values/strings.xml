@@ -371,6 +371,8 @@
     <string name="send_request">Send Request</string>
     <string name="add_photos">Add Photos</string>
     <string name="product">Product</string>
+    <string name="expected_completion_date">Expected completion date</string>
+    <string name="location_for_delivery">Location for Delivery</string>
 
 
 </resources>
