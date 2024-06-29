@@ -11,4 +11,13 @@ data class Meta(
     val quantity: String = "",
     val shape: String = "",
     val size: String = "",
-) : Parcelable
+) : Parcelable {
+    fun toListOfPairs(): List<Pair<String, String>> {
+        return listOf(
+            "Flavour" to flavour,
+            "Quantity" to quantity,
+            "Shape" to shape,
+            "Size" to size
+        )
+    }
+}

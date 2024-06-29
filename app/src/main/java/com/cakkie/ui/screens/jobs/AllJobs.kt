@@ -27,6 +27,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.cakkie.R
 import com.cakkie.networkModels.JobModel
 import com.cakkie.networkModels.JobResponse
+import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -109,9 +110,9 @@ fun AllJobs(
                         onLoadMore.invoke()
                     }
                     JobsItems(item = job) {
-//                        navigator.navigate("jobDetails") {
-//                            launchSingleTop = true
-//                        }
+                        navigator.navigate(JobDetailsDestination(job.id, job)) {
+                            launchSingleTop = true
+                        }
                     }
 
                 }

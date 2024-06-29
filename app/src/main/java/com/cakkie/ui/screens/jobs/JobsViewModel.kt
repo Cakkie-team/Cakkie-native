@@ -114,8 +114,8 @@ class JobsViewModel : ViewModel(), KoinComponent {
     }
 
 
-    fun getListing(id: String) = NetworkCalls.get<Listing>(
-        endpoint = Endpoints.GET_LISTING(id),
+    fun getJob(id: String) = NetworkCalls.get<JobModel>(
+        endpoint = Endpoints.GET_JOB(id),
         body = listOf()
     )
 

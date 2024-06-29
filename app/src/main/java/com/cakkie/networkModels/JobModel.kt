@@ -1,6 +1,7 @@
 package com.cakkie.networkModels
 
 import android.os.Parcelable
+import com.cakkie.data.db.models.User
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -27,7 +28,8 @@ data class JobModel(
     val status: String = "",
     val title: String = "",
     val updatedAt: String = "",
-    val userId: String = ""
+    val userId: String = "",
+    val user: User = User(),
 ) : Parcelable
 
 @Serializable
