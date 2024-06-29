@@ -88,7 +88,14 @@ object Endpoints {
      * Notification
      */
     val GET_NOTIFICATIONS =
-        { page: Int, size: Int -> "$BASE_URL/notification?page=$page" }/* get notifications  GET*/ /*todo:  fix page size*/
+        { page: Int, size: Int -> "$BASE_URL/notification?page=$page&pageSize=$size" }/* get notifications  GET*/
+
+
+    /**
+     * Jobs
+     */
+    val GET_JOBS =
+        { page: Int, size: Int -> "$BASE_URL/job?page=$page&pageSize=$size" }/* get jobs  GET*/
 
 
     /**

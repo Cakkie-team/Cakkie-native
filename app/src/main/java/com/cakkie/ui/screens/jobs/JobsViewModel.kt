@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.cakkie.data.db.models.Listing
-import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.JobModel
+import com.cakkie.networkModels.JobResponse
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.networkModels.PreferenceModel
@@ -26,14 +26,14 @@ class JobsViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _user = MutableLiveData<User>()
     private val _shop = MutableLiveData<ShopModel>()
-    private val _listings = MutableLiveData<ListingResponse>()
+    private val _jobRes = MutableLiveData<JobResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
     private val _contracts = MutableLiveData<OrderResponse>()
     private val _preference = MutableLiveData<PreferenceModel>()
 
     val user = _user
     val shop = _shop
-    val listings = _listings
+    val jobRes = _jobRes
     val orders = _orders
     val contracts = _contracts
     val preference = _preference
@@ -106,11 +106,11 @@ class JobsViewModel : ViewModel(), KoinComponent {
         _shop.value = it
     }
 
-    fun getMyListings(page: Int = 0, size: Int = 20) = NetworkCalls.get<ListingResponse>(
-        endpoint = Endpoints.GET_MY_LISTINGS(page, size),
+    fun getJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
+        endpoint = Endpoints.GET_JOBS(page, size),
         body = listOf()
     ).addOnSuccessListener {
-        _listings.value = it
+        _jobRes.value = it
     }
 
 

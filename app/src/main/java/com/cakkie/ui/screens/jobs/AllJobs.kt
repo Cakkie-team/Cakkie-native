@@ -15,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,15 +25,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.cakkie.R
+import com.cakkie.networkModels.JobModel
+import com.cakkie.networkModels.JobResponse
 import com.cakkie.ui.theme.CakkieLightBrown
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun AllJobs(
-//    listings: ListingResponse, post: SnapshotStateList<Listing>,
-//    navigator: DestinationsNavigator, onLoadMore: () -> Unit
+    jobRes: JobResponse, jobs: SnapshotStateList<JobModel>,
+    navigator: DestinationsNavigator, onLoadMore: () -> Unit
 ) {
-    val jobs = listOf<String>()
+
+    LaunchedEffect(key1 = jobRes.data) {
+        if (jobRes.meta.currentPage == 0) {
+            jobs.clear()
+        }
+        jobs.addAll(jobRes.data.filterNot { res ->
+            jobs.any { it.id == res.id }
+        })
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,13 +104,15 @@ fun AllJobs(
 //            }
                 }
                 items(jobs, key = { it }) { job ->
-//            val index = post.indexOf(listing)
-//            if (index > post.lastIndex - 2 && listings.data.isNotEmpty()) {
-//                onLoadMore.invoke()
-//
-//            }
-
-                    JobsItems(item = "")
+                    val index = jobs.indexOf(job)
+                    if (index > jobs.lastIndex - 2 && jobRes.data.isNotEmpty()) {
+                        onLoadMore.invoke()
+                    }
+                    JobsItems(item = job) {
+//                        navigator.navigate("jobDetails") {
+//                            launchSingleTop = true
+//                        }
+                    }
 
                 }
             }

@@ -14,6 +14,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -26,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.JobModel
+import com.cakkie.networkModels.JobResponse
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
@@ -52,7 +56,10 @@ fun Jobs(
     val media = remember {
         mutableStateListOf<MediaModel>()
     }
-
+    val jobRes = viewModel.jobRes.observeAsState(JobResponse()).value
+    val jobs = remember {
+        mutableStateListOf<JobModel>()
+    }
     addressRecipient.onNavResult { result ->
         when (result) {
             is NavResult.Canceled -> {}
@@ -60,6 +67,10 @@ fun Jobs(
                 viewModel.getProfile()
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getJobs()
     }
     Column(Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -100,9 +111,14 @@ fun Jobs(
 
             HorizontalPager(state = pageState) {
                 when (it) {
-                    2 -> AllJobs()
+                    2 -> AllJobs(jobRes, jobs, navigator) {
+                        viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
+                    }
+
                     1 -> CreateJob(viewModel, media, fileRecipient, navigator = navigator)
-                    0 -> AllJobs()
+                    0 -> AllJobs(jobRes, jobs, navigator) {
+//                        viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
+                    }
                 }
             }
         }

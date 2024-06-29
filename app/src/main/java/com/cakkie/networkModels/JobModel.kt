@@ -29,3 +29,9 @@ data class JobModel(
     val updatedAt: String = "",
     val userId: String = ""
 ) : Parcelable
+
+@Serializable
+data class JobResponse(
+    val data: List<JobModel> = listOf(),
+    val meta: Pagination = Pagination(),
+)

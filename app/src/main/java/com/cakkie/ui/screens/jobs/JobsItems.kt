@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.jobs
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,17 +27,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
+import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 
 @Composable
 fun JobsItems(
-    item: Any,
-
+    item: JobModel,
+    onClick: (() -> Unit)
     ) {
 
     Box(
         Modifier
+            .clickable { onClick.invoke() }
             .fillMaxWidth()
             .background(Color.White)
     ) {
