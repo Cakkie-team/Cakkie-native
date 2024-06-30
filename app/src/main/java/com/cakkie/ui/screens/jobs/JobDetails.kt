@@ -391,7 +391,9 @@ fun JobDetails(
                     )
                     Row {
                         Text(
-                            text = if (job.hasApplied) stringResource(id = R.string.applied) else stringResource(
+                            text = if (job.hasApplied) stringResource(
+                                id = R.string.applied
+                            ) else stringResource(
                                 id = R.string.you_have_not_appl
                             ),
                             style = MaterialTheme.typography.bodyLarge,
@@ -399,7 +401,9 @@ fun JobDetails(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Image(
-                            painter = painterResource(id = R.drawable.not),
+                            painter = painterResource(
+                                id = if (job.hasApplied) R.drawable.approved else R.drawable.not
+                            ),
                             contentDescription = "not",
                             modifier = Modifier.size(24.dp)
                         )
