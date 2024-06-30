@@ -30,6 +30,9 @@ data class JobModel(
     val updatedAt: String = "",
     val userId: String = "",
     val user: User = User(),
+    val hasApplied: Boolean = false,
+    val totalProposal: Int = 0,
+    val hasEnoughBalance: Boolean = false,
 ) : Parcelable
 
 @Serializable

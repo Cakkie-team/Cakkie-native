@@ -376,6 +376,12 @@
     <string name="review">Review</string>
     <string name="job_description">Job Description</string>
     <string name="job_by">Job by</string>
+    <string name="completion_date">Completion date</string>
+    <string name="insuficint_balance">Oops, Sorry! You have less than %1$s Icing</string>
+    <string name="add_more_icing">Add more icing now</string>
+    <string name="applied">Applied</string>
+    <string name="you_have_not_appl">You have not applied to this job</string>
+    <string name="apply_now">Apply Now</string>
 
 
 </resources>

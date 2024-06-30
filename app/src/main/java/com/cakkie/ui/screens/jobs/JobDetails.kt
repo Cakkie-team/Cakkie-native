@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -47,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,11 +68,14 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.JobModel
+import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDateTime
+import com.cakkie.utill.formatNumber
 import com.cakkie.utill.isVideoUrl
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -100,16 +106,13 @@ fun JobDetails(
             job = it
         }.addOnFailureListener {
             Toaster(
-                context,
-                it.localizedMessage ?: "Something went wrong",
-                R.drawable.logo
+                context, it.localizedMessage ?: "Something went wrong", R.drawable.logo
             )
         }
     }
 
     Column(
-        Modifier
-            .fillMaxSize()
+        Modifier.fillMaxSize()
     ) {
 //        Spacer(modifier = Modifier.height(20.dp))
         Box(Modifier.fillMaxWidth()) {
@@ -165,7 +168,7 @@ fun JobDetails(
             }
 
             Text(
-                text = "Applications: 1-2",
+                text = "Applications: ${job.totalProposal} - ${job.totalProposal.plus(2)}",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -190,20 +193,18 @@ fun JobDetails(
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState),
                 contentPadding = PaddingValues(horizontal = 8.dp),
             ) {
-                items(
-                    items = media.ifEmpty {
-                        job.media.map {
-                            MediaModel(
-                                uri = it,
-                                dateAdded = System.currentTimeMillis(),
-                                isVideo = it.isVideoUrl(),
-                                mediaMimeType = it.substringAfterLast("."),
-                                name = it.substringAfterLast("/"),
-                            )
+                items(items = media.ifEmpty {
+                    job.media.map {
+                        MediaModel(
+                            uri = it,
+                            dateAdded = System.currentTimeMillis(),
+                            isVideo = it.isVideoUrl(),
+                            mediaMimeType = it.substringAfterLast("."),
+                            name = it.substringAfterLast("/"),
+                        )
 
-                        }
                     }
-                ) { media ->
+                }) { media ->
                     Box(
                         modifier = Modifier
                             .height(169.dp)
@@ -223,22 +224,19 @@ fun JobDetails(
                         )
                         if (media.isVideo) {
                             val exoPlayer = remember {
-                                ExoPlayer.Builder(context)
-                                    .build()
-                                    .apply {
-                                        val defaultDataSourceFactory =
-                                            DefaultDataSource.Factory(context)
-                                        val dataSourceFactory: DataSource.Factory =
-                                            DefaultDataSource.Factory(
-                                                context,
-                                                defaultDataSourceFactory
-                                            )
-                                        val source =
-                                            ProgressiveMediaSource.Factory(dataSourceFactory)
-                                                .createMediaSource(MediaItem.fromUri(media.uri.toUri()))
-                                        setMediaSource(source)
-                                        prepare()
-                                    }
+                                ExoPlayer.Builder(context).build().apply {
+                                    val defaultDataSourceFactory =
+                                        DefaultDataSource.Factory(context)
+                                    val dataSourceFactory: DataSource.Factory =
+                                        DefaultDataSource.Factory(
+                                            context, defaultDataSourceFactory
+                                        )
+                                    val source =
+                                        ProgressiveMediaSource.Factory(dataSourceFactory)
+                                            .createMediaSource(MediaItem.fromUri(media.uri.toUri()))
+                                    setMediaSource(source)
+                                    prepare()
+                                }
                             }
                             exoPlayer.playWhenReady = false
                             exoPlayer.videoScalingMode =
@@ -288,8 +286,7 @@ fun JobDetails(
                 Text(
                     text = stringResource(id = R.string.see_more),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .clickable { maxLines = Int.MAX_VALUE },
+                    modifier = Modifier.clickable { maxLines = Int.MAX_VALUE },
                     color = CakkieBrown
                 )
             }
@@ -311,16 +308,173 @@ fun JobDetails(
                         Text(
                             text = it.first,
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
+                            color = CakkieBrown
                         )
                         Text(
                             text = it.second,
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.completion_date),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = job.deadline.formatDateTime(),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(8.dp))
+            ) {
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.proposed_price),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = job.currencySymbol + formatNumber(job.salary),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.location),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = job.city,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(8.dp))
+            ) {
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.status),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Row {
+                        Text(
+                            text = if (job.hasApplied) stringResource(id = R.string.applied) else stringResource(
+                                id = R.string.you_have_not_appl
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.widthIn(max = 150.dp),
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.not),
+                            contentDescription = "not",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+                Row(
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.proposal_fee),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown
+                    )
+                    Text(
+                        text = formatNumber(job.proposalFee),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+
+            if (job.hasEnoughBalance.not()) {
+                Column(
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .width(250.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.insuficint_balance, job.proposalFee),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Error,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(text = stringResource(id = R.string.add_more_icing),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieBrown,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+//                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                            }
+                    )
+
+                }
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CakkieButton(
+                    text = stringResource(id = R.string.apply_now),
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f),
+                    enabled = job.hasEnoughBalance,
+                ) {
+
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = "share",
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
