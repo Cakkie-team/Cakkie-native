@@ -382,6 +382,7 @@
     <string name="applied">Applied</string>
     <string name="you_have_not_appl">You have not applied to this job</string>
     <string name="apply_now">Apply Now</string>
+    <string name="edit_">Edit...</string>
 
 
 </resources>

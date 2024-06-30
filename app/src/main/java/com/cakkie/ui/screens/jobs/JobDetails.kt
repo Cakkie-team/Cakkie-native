@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,19 +68,25 @@ import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
+import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.formatDateTime
 import com.cakkie.utill.formatNumber
 import com.cakkie.utill.isVideoUrl
+import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
+import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -88,14 +95,17 @@ import org.koin.androidx.compose.koinViewModel
 fun JobDetails(
     id: String,
     item: JobModel = JobModel(),
-    media: List<MediaModel> = listOf(),
+    files: String = "",
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
     val viewModel: JobsViewModel = koinViewModel()
+    val user = viewModel.user.observeAsState().value
     var job by rememberSaveable {
         mutableStateOf(item)
     }
+    //convert string to list of media
+    val media = files.toObjectList(MediaModel::class.java)
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
@@ -455,29 +465,85 @@ fun JobDetails(
                 }
             }
 
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            if (media.size > 0) {
                 CakkieButton(
                     text = stringResource(id = R.string.apply_now),
                     modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(0.8f),
-                    enabled = job.hasEnoughBalance,
                 ) {
-
+                    if (user != null) {
+                        val fileUrls = media.map {
+                            val file = context.createTmpFileFromUri(
+                                uri = it.uri.toUri(),
+                                fileName = it.name.replace(" ", "").take(10)
+                            )!!
+                            FileModel(
+                                file = file,
+                                url = Endpoints.FILE_URL(
+                                    "${
+                                        user.username.lowercase(Locale.ROOT).replace(" ", "")
+                                    }/${file.name.replace(" ", "")}.${
+                                        it.mediaMimeType.split("/").last()
+                                    }"
+                                ),
+                                mediaMimeType = it.mediaMimeType.split("/").last()
+                            )
+                        }
+                        fileUrls.forEach {
+                            viewModel.uploadImage(
+                                image = it.file,
+                                path = user.username.lowercase(Locale.ROOT).replace(" ", ""),
+                                fileName = "${it.file.name}.${it.mediaMimeType}"
+                            ).addOnSuccessListener { resp ->
+                                Timber.d(resp)
+                                it.file.delete()
+                            }.addOnFailureListener { exception ->
+                                Timber.d(exception)
+                                Toaster(context, exception.message.toString(), R.drawable.logo)
+                                it.file.delete()
+                            }
+                        }
+                    }
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.share),
-                        contentDescription = "share",
+
+                Text(text = stringResource(id = R.string.edit_),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = CakkieBrown,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+//                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                        }
+                )
+
+            } else {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CakkieButton(
+                        text = stringResource(id = R.string.apply_now),
                         modifier = Modifier
-                            .size(24.dp)
-                    )
-                }
-            }
+                            .fillMaxWidth(0.8f),
+                        enabled = job.hasEnoughBalance && job.hasApplied.not(),
+                    ) {
 
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.share),
+                            contentDescription = "share",
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    }
+                }
+
+            }
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

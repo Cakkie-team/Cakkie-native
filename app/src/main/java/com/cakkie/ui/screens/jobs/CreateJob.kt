@@ -72,7 +72,6 @@ import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
-import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.JobModel
 import com.cakkie.networkModels.Meta
 import com.cakkie.ui.components.CakkieButton
@@ -80,23 +79,21 @@ import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
-import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
-import com.cakkie.utill.createTmpFileFromUri
+import com.cakkie.utill.toJson
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 import java.util.Calendar
-import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -126,7 +123,7 @@ fun CreateJob(
     var description by remember {
         mutableStateOf(TextFieldValue(""))
     }
-    val prices by remember {
+    var prices by remember {
         mutableStateOf(TextFieldValue(""))
     }
     var sizes by remember {
@@ -371,11 +368,13 @@ fun CreateJob(
                             else -> BasicTextField(
                                 value = when (prop) {
                                     R.string.quantity -> quantity
+                                    R.string.proposed_price -> prices
                                     else -> TextFieldValue("")
                                 },
                                 onValueChange = {
                                     when (prop) {
                                         R.string.quantity -> quantity = it
+                                        R.string.proposed_price -> prices = it
                                     }
                                 },
                                 singleLine = true,
@@ -534,39 +533,9 @@ fun CreateJob(
                 ) {
                     processing = true
                     if (shop != null) {
-                        val fileUrls = media.map {
-                            val file = context.createTmpFileFromUri(
-                                uri = it.uri.toUri(),
-                                fileName = it.name.replace(" ", "").take(10)
-                            )!!
-                            FileModel(
-                                file = file,
-                                url = Endpoints.FILE_URL(
-                                    "${
-                                        shop.name.lowercase(Locale.ROOT).replace(" ", "")
-                                    }/${file.name.replace(" ", "")}.${
-                                        it.mediaMimeType.split("/").last()
-                                    }"
-                                ),
-                                mediaMimeType = it.mediaMimeType.split("/").last()
-                            )
-                        }
-                        fileUrls.forEach {
-                            viewModel.uploadImage(
-                                image = it.file,
-                                path = shop.name.lowercase(Locale.ROOT).replace(" ", ""),
-                                fileName = "${it.file.name}.${it.mediaMimeType}"
-                            ).addOnSuccessListener { resp ->
-                                Timber.d(resp)
-                                it.file.delete()
-                            }.addOnFailureListener { exception ->
-                                Timber.d(exception)
-                                Toaster(context, exception.message.toString(), R.drawable.logo)
-                                it.file.delete()
-                            }
-                        }
+
                         if (user != null) {
-                            JobModel(
+                            val job = JobModel(
                                 user.address,
                                 user.city,
                                 user.country,
@@ -577,7 +546,7 @@ fun CreateJob(
                                 "",
                                 user.latitude,
                                 user.longitude,
-                                fileUrls.map { it.url },
+                                media.map { it.uri },
                                 meta = Meta(
                                     flavour = flavour.text,
                                     quantity.text,
@@ -590,6 +559,16 @@ fun CreateJob(
                                 user.state,
                                 name.text,
                             )
+                            navigator.navigate(
+                                JobDetailsDestination(
+                                    "",
+                                    job,
+                                    media.toList().toJson()
+                                )
+                            ) {
+                                launchSingleTop = true
+                            }
+
                         }
 //                        viewModel.createListing(
 //                            name = name.text,
