@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,7 +56,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -71,35 +71,41 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.cakkie.ActivityStates.temp
 import com.cakkie.R
 import com.cakkie.networkModels.JobModel
-import com.cakkie.networkModels.Meta
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieFilter
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.JobDetailsDestination
+import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.formatNumber
 import com.cakkie.utill.toJson
 import com.cakkie.utill.toObjectList
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
-@Destination
+//@Destination
 @Composable
 fun CreateJob(
+    item: MutableState<JobModel>,
     viewModel: JobsViewModel = koinViewModel(),
     media: SnapshotStateList<MediaModel> = remember {
         mutableStateListOf()
@@ -116,40 +122,16 @@ fun CreateJob(
         mutableIntStateOf(1)
     }
     val pageState = rememberPagerState(pageCount = { pageCount })
+    val job = item.value
 
-    var name by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-    var description by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-    var prices by remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-    var sizes by remember {
-        mutableStateOf(TextFieldValue("4 inches H, 20cm W"))
-    }
-    var quantity by remember {
-        mutableStateOf(TextFieldValue("1"))
-    }
-    var shape by remember {
-        mutableStateOf(TextFieldValue("Round"))
-    }
-
-    var flavour by remember {
-        mutableStateOf(TextFieldValue("Vanilla"))
-    }
-    var product by remember {
-        mutableStateOf(TextFieldValue("Cake"))
-    }
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     LaunchedEffect(Unit) {
         selectedDate.add(Calendar.HOUR_OF_DAY, 12)
     }
 
     val coroutineScope = rememberCoroutineScope()
-    val canProceed = name.text.isNotEmpty() && description.text.isNotEmpty()
-            && prices.text.isNotEmpty() && sizes.text.isNotEmpty()
+    val canProceed = job.title.isNotEmpty() && job.description.isNotEmpty()
+            && job.salary > 0 && job.meta.size.isNotEmpty()
 
     var processing by remember {
         mutableStateOf(false)
@@ -159,6 +141,9 @@ fun CreateJob(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
+                if (temp.value != null) {
+                    item.value = temp.value as JobModel
+                }
                 media.addAll(result.value.toObjectList(MediaModel::class.java))
             }
         }
@@ -185,18 +170,18 @@ fun CreateJob(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 CakkieInputField(
-                    value = name,
+                    value = job.title,
                     onValueChange = {
                         //limit name to 20 characters
-                        if (it.text.length <= 20) {
-                            name = it
+                        if (it.length <= 20) {
+                            item.value = job.copy(title = it)
                         }
                     },
                     placeholder = stringResource(id = R.string.add_a_title),
                     keyboardType = KeyboardType.Text
                 )
                 Text(
-                    text = "${name.text.length}/20",
+                    text = "${job.title.length}/20",
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     modifier = Modifier.align(Alignment.End)
@@ -210,11 +195,11 @@ fun CreateJob(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 CakkieInputField(
-                    value = description,
+                    value = job.description,
                     onValueChange = {
                         //limit description to 500 characters
-                        if (it.text.length <= 500) {
-                            description = it
+                        if (it.length <= 500) {
+                            item.value = job.copy(description = it)
                         }
                     },
                     placeholder = stringResource(id = R.string.carefully_add_details_to_your_listing_to),
@@ -223,7 +208,7 @@ fun CreateJob(
                     modifier = Modifier.height(100.dp)
                 )
                 Text(
-                    text = "${description.text.length}/500",
+                    text = "${job.description.length}/500",
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     modifier = Modifier.align(Alignment.End)
@@ -256,7 +241,7 @@ fun CreateJob(
 
                         when (prop) {
                             R.string.product -> CakkieFilter(
-                                product.text,
+                                job.productType,
                                 options = listOf(
                                     "Cake",
                                     "Pastries",
@@ -265,11 +250,11 @@ fun CreateJob(
                                 ),
                                 screenWidth * 0.5f
                             ) {
-                                product = TextFieldValue(it)
+                                item.value = job.copy(productType = it)
                             }
 
                             R.string.size -> CakkieFilter(
-                                sizes.text,
+                                job.meta.size,
                                 options = listOf(
                                     "4 inches H, 20cm W",
                                     "4 inches H, 40cm W",
@@ -281,11 +266,11 @@ fun CreateJob(
                                 ),
                                 screenWidth * 0.5f
                             ) {
-                                sizes = TextFieldValue(it)
+                                item.value = job.copy(meta = job.meta.copy(size = it))
                             }
 
                             R.string.shape -> CakkieFilter(
-                                shape.text,
+                                job.meta.shape,
                                 options = listOf(
                                     "Round",
                                     "Oval",
@@ -297,11 +282,11 @@ fun CreateJob(
                                 ),
                                 screenWidth * 0.5f
                             ) {
-                                shape = TextFieldValue(it)
+                                item.value = job.copy(meta = job.meta.copy(shape = it))
                             }
 
                             R.string.flavour -> CakkieFilter(
-                                flavour.text,
+                                job.meta.flavour,
                                 options = listOf(
                                     "Vanilla",
                                     "Chocolate",
@@ -313,7 +298,7 @@ fun CreateJob(
                                 ),
                                 screenWidth * 0.5f
                             ) {
-                                flavour = TextFieldValue(it)
+                                item.value = job.copy(meta = job.meta.copy(flavour = it))
                             }
 
                             R.string.expected_completion_date -> DateTimePicker(
@@ -367,18 +352,27 @@ fun CreateJob(
 
                             else -> BasicTextField(
                                 value = when (prop) {
-                                    R.string.quantity -> quantity
-                                    R.string.proposed_price -> prices
-                                    else -> TextFieldValue("")
+                                    R.string.quantity -> job.meta.quantity
+                                    R.string.proposed_price -> job.salary.toString()
+                                    else -> ""
                                 },
                                 onValueChange = {
                                     when (prop) {
-                                        R.string.quantity -> quantity = it
-                                        R.string.proposed_price -> prices = it
+                                        R.string.quantity -> item.value =
+                                            job.copy(meta = job.meta.copy(quantity = it))
+
+                                        R.string.proposed_price -> item.value =
+                                            job.copy(salary = it.ifEmpty { "0" }.toDouble())
                                     }
                                 },
                                 singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = when (prop) {
+                                        R.string.quantity -> KeyboardType.Number
+                                        R.string.proposed_price -> KeyboardType.Number
+                                        else -> KeyboardType.Text
+                                    }
+                                ),
                                 modifier = Modifier
                                     .width(screenWidth * 0.5f)
                                     .height(35.dp)
@@ -406,8 +400,8 @@ fun CreateJob(
                                     }
                                     Text(
                                         text = when (prop) {
-                                            R.string.quantity -> quantity.text.ifEmpty { "0 pieces" }
-                                            R.string.proposed_price -> prices.text.ifEmpty { "10000" }
+                                            R.string.quantity -> job.meta.quantity.ifEmpty { "0 pieces" }
+                                            R.string.proposed_price -> formatNumber(job.salary)
                                             else -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
@@ -415,8 +409,8 @@ fun CreateJob(
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(8.dp),
                                         color = if (when (prop) {
-                                                R.string.quantity -> quantity.text.isEmpty()
-                                                R.string.proposed_price -> prices.text.isEmpty()
+                                                R.string.quantity -> job.meta.quantity.isEmpty()
+                                                R.string.proposed_price -> job.salary == 0.0
                                                 else -> false
                                             }
                                         ) TextColorInactive else TextColorDark,
@@ -510,7 +504,14 @@ fun CreateJob(
                                     modifier = Modifier
                                         .height(169.dp)
                                         .clickable {
-                                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                                            temp.value = job
+                                            navigator.navigate(ChooseMediaDestination(from = "job")) {
+                                                popUpTo(JobsDestination) {
+                                                    saveState = true
+                                                }
+                                                restoreState = true
+                                                launchSingleTop = true
+                                            }
                                         }
                                         .clip(MaterialTheme.shapes.medium)
                                         .padding(horizontal = 8.dp)
@@ -535,40 +536,29 @@ fun CreateJob(
                     if (shop != null) {
 
                         if (user != null) {
-                            val job = JobModel(
-                                user.address,
-                                user.city,
-                                user.country,
-                                selectedDate.toString(),
-                                "NGN",
-                                selectedDate.toString(),
-                                description.text,
-                                "",
-                                user.latitude,
-                                user.longitude,
-                                media.map { it.uri },
-                                meta = Meta(
-                                    flavour = flavour.text,
-                                    quantity.text,
-                                    shape.text,
-                                    sizes.text
-                                ),
-                                product.text,
-                                0.0,
-                                prices.text.toDouble(),
-                                user.state,
-                                name.text,
+                            val dateFormat = SimpleDateFormat(
+                                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                                Locale.getDefault()
+                            )
+                            val currentDate = dateFormat.format(Date())
+                            val deadlineDate = dateFormat.format(selectedDate.time)
+
+                            item.value = job.copy(
+                                createdAt = currentDate,
+                                deadline = deadlineDate,
+                                currencySymbol = "NGN",
+                                updatedAt = currentDate,
+                                media = media.map { it.uri },
                             )
                             navigator.navigate(
                                 JobDetailsDestination(
-                                    "",
+                                    "create",
                                     job,
                                     media.toList().toJson()
                                 )
                             ) {
                                 launchSingleTop = true
                             }
-
                         }
 //                        viewModel.createListing(
 //                            name = name.text,

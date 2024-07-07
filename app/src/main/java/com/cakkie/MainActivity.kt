@@ -331,6 +331,9 @@ class MainActivity : ComponentActivity() {
 object BottomState {
     var hideNav = mutableStateOf(false)
 }
+object ActivityStates {
+    var temp = mutableStateOf<Any?>(null)
+}
 
 @ExperimentalMaterialNavigationApi
 @OptIn(ExperimentalMaterialApi::class)

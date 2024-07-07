@@ -1,7 +1,7 @@
 [versions]
 accompanistPermissionsVersion = "0.19.0"
 accompanistPlaceholderMaterialVersion = "0.32.0"
-agp = "8.3.2"
+agp = "8.5.0"
 appUpdateVersion = "2.1.0"
 coilGif = "2.1.0"
 commonsIoVersion = "2.13.0"

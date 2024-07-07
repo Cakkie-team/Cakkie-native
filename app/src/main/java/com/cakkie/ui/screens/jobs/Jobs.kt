@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,10 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.data.db.models.User
+import com.cakkie.networkModels.JobEdit
 import com.cakkie.networkModels.JobModel
 import com.cakkie.networkModels.JobResponse
+import com.cakkie.networkModels.Meta
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
@@ -47,6 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 fun Jobs(
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     addressRecipient: ResultRecipient<SetDeliveryAddressDestination, User>,
+    onEdit: ResultRecipient<JobDetailsDestination, JobEdit>,
     navigator: DestinationsNavigator
 ) {
     val viewModel: JobsViewModel = koinViewModel()
@@ -60,6 +65,7 @@ fun Jobs(
     val jobs = remember {
         mutableStateListOf<JobModel>()
     }
+    val user = viewModel.user.observeAsState().value
     addressRecipient.onNavResult { result ->
         when (result) {
             is NavResult.Canceled -> {}
@@ -68,9 +74,48 @@ fun Jobs(
             }
         }
     }
+    val job = remember {
+        mutableStateOf(
+            JobModel(
+                currencySymbol = "NGN",
+                description = "",
+                meta = Meta(
+                    flavour = "Vanilla",
+                    quantity = "1",
+                    shape = "Round",
+                    size = "4 inches H, 20cm W"
+                ),
+                productType = "Cake",
+            )
+        )
+    }
+
+    onEdit.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                job.value = result.value.job
+                media.addAll(result.value.media)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getJobs()
+    }
+    LaunchedEffect(user) {
+        if (user != null) {
+            job.value = job.value.copy(
+                state = user.state,
+                address = user.address,
+                city = user.city,
+                country = user.country,
+                latitude = user.latitude,
+                longitude = user.longitude,
+                userId = user.id,
+                user = user,
+            )
+        }
     }
     Column(Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -115,7 +160,7 @@ fun Jobs(
                         viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
                     }
 
-                    1 -> CreateJob(viewModel, media, fileRecipient, navigator = navigator)
+                    1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
                     0 -> AllJobs(jobRes, jobs, navigator) {
 //                        viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
                     }

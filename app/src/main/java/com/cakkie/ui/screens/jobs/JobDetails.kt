@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.jobs
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,6 +70,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.FileModel
+import com.cakkie.networkModels.JobEdit
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
@@ -84,6 +86,7 @@ import com.cakkie.utill.isVideoUrl
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.util.Locale
@@ -96,6 +99,7 @@ fun JobDetails(
     id: String,
     item: JobModel = JobModel(),
     files: String = "",
+    onEdit: ResultBackNavigator<JobEdit>,
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
@@ -112,14 +116,28 @@ fun JobDetails(
 
 //    var isMuted by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(key1 = id) {
-        viewModel.getJob(id).addOnSuccessListener {
-            job = it
-        }.addOnFailureListener {
-            Toaster(
-                context, it.localizedMessage ?: "Something went wrong", R.drawable.logo
-            )
+        if (id != "create") {
+            viewModel.getJob(id).addOnSuccessListener {
+                job = it
+            }.addOnFailureListener {
+                Toaster(
+                    context, it.localizedMessage ?: "Something went wrong", R.drawable.logo
+                )
+            }
+        } else {
+            job = item
         }
     }
+
+    //handle back press to trigger onEdit if id is create
+    BackHandler {
+        if (id == "create") {
+            onEdit.navigateBack(JobEdit(job, media))
+        } else {
+            navigator.popBackStack()
+        }
+    }
+
 
     Column(
         Modifier.fillMaxSize()
@@ -177,11 +195,13 @@ fun JobDetails(
                 )
             }
 
-            Text(
-                text = "Applications: ${job.totalProposal} - ${job.totalProposal.plus(2)}",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            )
+            if (id != "create") {
+                Text(
+                    text = "Applications: ${job.totalProposal} - ${job.totalProposal.plus(2)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
         Column(
             Modifier
@@ -465,9 +485,9 @@ fun JobDetails(
                 }
             }
 
-            if (media.size > 0) {
+            if (id == "create") {
                 CakkieButton(
-                    text = stringResource(id = R.string.apply_now),
+                    text = stringResource(id = R.string.post),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(0.8f),
@@ -515,6 +535,7 @@ fun JobDetails(
                         .padding(10.dp)
                         .align(Alignment.CenterHorizontally)
                         .clickable {
+                            onEdit.navigateBack(JobEdit(job, media))
 //                            navigator.navigate(ChooseMediaDestination(from = "job"))
                         }
                 )

@@ -2,6 +2,7 @@ package com.cakkie.networkModels
 
 import android.os.Parcelable
 import com.cakkie.data.db.models.User
+import com.cakkie.ui.screens.shop.MediaModel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -40,3 +41,9 @@ data class JobResponse(
     val data: List<JobModel> = listOf(),
     val meta: Pagination = Pagination(),
 )
+
+@Parcelize
+data class JobEdit(
+    val job: JobModel = JobModel(),
+    val media: List<MediaModel> = listOf(),
+) : Parcelable

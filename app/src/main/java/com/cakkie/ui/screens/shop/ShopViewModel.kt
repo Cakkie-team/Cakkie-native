@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.shop
 
 import android.content.Context
 import android.net.Uri
+import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,7 @@ import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
 import com.cakkie.utill.locationModels.LocationResult
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
@@ -316,10 +318,11 @@ class ShopViewModel : ViewModel(), KoinComponent {
     }
 }
 
+@Parcelize
 data class MediaModel(
     val uri: String,
     val dateAdded: Long,
     val isVideo: Boolean,
     val mediaMimeType: String,
     val name: String
-)
+) : Parcelable
