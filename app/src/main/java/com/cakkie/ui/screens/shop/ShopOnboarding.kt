@@ -2,6 +2,8 @@ package com.cakkie.ui.screens.shop
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,28 +45,60 @@ fun ShopOnboarding(navigator: DestinationsNavigator) {
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
     val pagerState = rememberPagerState(pageCount = { 3 })
+    val uriHandle = LocalUriHandler.current
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(30.dp))
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = stringResource(
-                    id = R.string.cakkie_logo
-                ),
-                modifier = Modifier
-                    .size(27.dp),
-                contentScale = ContentScale.FillWidth
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = stringResource(id = R.string.shop),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 16.sp,
-                color = CakkieBrown,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = stringResource(
+                        id = R.string.cakkie_logo
+                    ),
+                    modifier = Modifier
+                        .size(27.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(id = R.string.shop),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 16.sp,
+                    color = CakkieBrown,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    uriHandle.openUri("https://chat.whatsapp.com/Ll8zKZG32f9E5yObJGjmeu")
+                }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.whatsapp_icon),
+                    contentDescription = stringResource(
+                        id = R.string.cakkie_logo
+                    ),
+                    modifier = Modifier
+                        .size(24.dp),
+                    contentScale = ContentScale.FillWidth
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(id = R.string.join_forum),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 14.sp,
+                    color = CakkieBrown,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 //        Spacer(modifier = Modifier.fillMaxHeight(0.08f))
         HorizontalPager(state = pagerState) {

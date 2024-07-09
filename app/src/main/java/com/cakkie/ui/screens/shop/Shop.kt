@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.shop
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -113,6 +116,7 @@ fun Shop(navigator: DestinationsNavigator) {
             viewModel.getContracts()
         }
     }
+    val uriHandle = LocalUriHandler.current
 
     val pageState = rememberPagerState(pageCount = { 4 })
     Column(
@@ -137,70 +141,98 @@ fun Shop(navigator: DestinationsNavigator) {
             )
 
             Spacer(modifier = Modifier.width(8.dp))
-            Row(
-                Modifier
-                    .align(Alignment.Bottom)
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    Modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clickable {
+                            uriHandle.openUri("https://chat.whatsapp.com/Ll8zKZG32f9E5yObJGjmeu")
+                        }
                 ) {
-                    Text(
-                        text = shop.followers.toString(),
+                    Image(
+                        painter = painterResource(id = R.drawable.whatsapp_icon),
+                        contentDescription = stringResource(
+                            id = R.string.cakkie_logo
+                        ),
+                        modifier = Modifier
+                            .size(24.dp),
+                        contentScale = ContentScale.FillWidth
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    androidx.compose.material.Text(
+                        text = stringResource(id = R.string.join_forum),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBrown
-                    )
-                    Text(
-                        text = stringResource(id = R.string.followers),
-                        style = MaterialTheme.typography.labelMedium
+                        fontSize = 14.sp,
+                        color = CakkieBrown,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
-                Divider(
-                    color = CakkieBrown,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
+                Row(
+                    Modifier
+//                        .align(Alignment.Bottom)
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        Modifier,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = shop.followers.toString(),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown
+                        )
+                        Text(
+                            text = stringResource(id = R.string.followers),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                    Divider(
+                        color = CakkieBrown,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(1.dp)
+                    )
 
-                OutlinedButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .size(width = 70.dp, height = 34.dp),
-                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieBackground,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(20)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share, contentDescription = "",
-                        modifier = Modifier,
-                        tint = CakkieBrown
-                    )
-                }
-                OutlinedButton(
-                    onClick = {
-                        navigator.navigate(ShopSettingsDestination)
-                    },
-                    modifier = Modifier
-                        .size(width = 70.dp, height = 34.dp),
-                    border = BorderStroke(1.dp, color = CakkieLightBrown),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CakkieBackground,
-                        contentColor = CakkieBrown
-                    ),
-                    shape = RoundedCornerShape(20)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings, contentDescription = "",
-                        modifier = Modifier,
-                        tint = CakkieBrown
-                    )
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier
+                            .size(width = 70.dp, height = 34.dp),
+                        border = BorderStroke(1.dp, color = CakkieLightBrown),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CakkieBackground,
+                            contentColor = CakkieBrown
+                        ),
+                        shape = RoundedCornerShape(20)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share, contentDescription = "",
+                            modifier = Modifier,
+                            tint = CakkieBrown
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            navigator.navigate(ShopSettingsDestination)
+                        },
+                        modifier = Modifier
+                            .size(width = 70.dp, height = 34.dp),
+                        border = BorderStroke(1.dp, color = CakkieLightBrown),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CakkieBackground,
+                            contentColor = CakkieBrown
+                        ),
+                        shape = RoundedCornerShape(20)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings, contentDescription = "",
+                            modifier = Modifier,
+                            tint = CakkieBrown
+                        )
+                    }
                 }
             }
         }
