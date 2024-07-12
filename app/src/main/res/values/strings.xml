@@ -385,6 +385,15 @@
     <string name="edit_">Edit...</string>
     <string name="join_forum">Join Forum</string>
     <string name="title">Title</string>
+    <string name="write_a_few_words_here">Write a few words here that makes you the exceptional choice</string>
+    <string name="write_a_proposal">Write a Proposal</string>
+    <string name="propose_a_price">Propose a price</string>
+    <string name="proposed_price_by_buyer">Budget</string>
+    <string name="proposed_price_by_you">Propose a price</string>
+    <string name="proposed_completion">Propose completion date</string>
+    <string name="proposed_date">Proposed deadline</string>
+    <string name="proposed_a_date">Propose a deadline</string>
+    <string name="please_ensure_you">Please ensure your review your application before submission</string>
 
 
 </resources>

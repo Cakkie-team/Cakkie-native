@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -26,8 +27,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,12 +79,17 @@ import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.JobEdit
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.components.CakkieButton
-import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.Error
+import com.cakkie.ui.theme.TextColorDark
+import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
@@ -94,6 +104,8 @@ import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -120,6 +132,20 @@ fun JobDetails(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
     var processing by rememberSaveable { mutableStateOf(false) }
+    var applying by rememberSaveable { mutableStateOf(false) }
+    var message by rememberSaveable { mutableStateOf("") }
+    var proposedPrice by rememberSaveable { mutableStateOf("") }
+    var proposedDeadline by rememberSaveable { mutableStateOf("") }
+
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
+    LaunchedEffect(Unit) {
+        val dateFormat = SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            Locale.getDefault()
+        )
+        selectedDate.time = dateFormat.parse(job.deadline)!!
+        proposedDeadline = job.deadline
+    }
 
 //    var isMuted by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(key1 = id) {
@@ -200,7 +226,7 @@ fun JobDetails(
                         media = fileUrls.map { it.url },
                         description = job.description,
                         pin = result.value.pin,
-                        meta = job.meta.toListOfPairs()
+                        meta = job.meta.toListOfPairs().map { it.first.lowercase() to it.second }
                     ).addOnSuccessListener {
                         processing = false
                         navigator.navigate(JobDetailsDestination(it.id, it)) {
@@ -317,16 +343,16 @@ fun JobDetails(
                         modifier = Modifier
                             .height(169.dp)
                             .clip(MaterialTheme.shapes.medium)
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 5.dp)
                             .background(Color.White.copy(alpha = 0.6f))
-                            .width(screenWidth * if (job.media.size > 1) 0.9f else 1f)
+                            .width(screenWidth * if (job.media.size > 1) 0.80f else 0.90f)
                     ) {
                         GlideImage(
                             model = media.uri.toUri(),
                             contentDescription = "Media",
                             modifier = Modifier
-                                .height(169.dp)
-                                .blur(radius = 10.dp)
+                                .height(179.dp)
+                                .blur(radius = if (media.isVideo) 10.dp else 0.dp)
                                 .fillMaxWidth(),
                             contentScale = ContentScale.Crop,
                         )
@@ -364,20 +390,6 @@ fun JobDetails(
                             DisposableEffect(Unit) {
                                 onDispose { exoPlayer.release() }
                             }
-                        } else {
-                            GlideImage(
-                                model = media.uri.toUri(),
-                                contentDescription = "Media",
-                                modifier = Modifier
-                                    .height(169.dp)
-                                    .clickable {
-                                        navigator.navigate(ChooseMediaDestination(from = "job"))
-                                    }
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .padding(horizontal = 8.dp)
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Crop,
-                            )
                         }
                     }
                 }
@@ -546,6 +558,7 @@ fun JobDetails(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(0.8f),
+                    processing = processing
                 ) {
                     navigator.navigate(
                         ConfirmPinDestination(
@@ -571,7 +584,7 @@ fun JobDetails(
                         }
                 )
 
-            } else {
+            } else if (applying.not()) {
                 if (job.hasEnoughBalance.not()) {
                     Column(
                         Modifier
@@ -611,9 +624,9 @@ fun JobDetails(
                         text = stringResource(id = R.string.apply_now),
                         modifier = Modifier
                             .fillMaxWidth(0.8f),
-                        enabled = job.hasEnoughBalance && job.hasApplied.not(),
+                        enabled = !job.hasEnoughBalance && job.hasApplied.not(),
                     ) {
-
+                        applying = true
                     }
                     IconButton(onClick = { /*TODO*/ }) {
                         Image(
@@ -625,6 +638,246 @@ fun JobDetails(
                     }
                 }
 
+            }
+
+            if (applying) {
+                Column(Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Divider(Modifier.fillMaxWidth(), thickness = 4.dp, color = CakkieLightBrown)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.write_a_proposal),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    CakkieInputField(
+                        value = message,
+                        onValueChange = {
+                            //limit description to 500 characters
+                            if (it.length <= 500) {
+                                message = it
+                            }
+                        },
+                        placeholder = stringResource(id = R.string.write_a_few_words_here),
+                        keyboardType = KeyboardType.Text,
+                        singleLine = false,
+                        modifier = Modifier.height(100.dp)
+                    )
+                    Text(
+                        text = "${message.length}/500",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 13.sp,
+                        modifier = Modifier.align(Alignment.End)
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.propose_a_price),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(id = R.string.proposed_price_by_buyer),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(35.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = CakkieBrown,
+                                        shape = MaterialTheme.shapes.small
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = job.currencySymbol,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextColorInactive,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+
+                                Text(
+                                    text = formatNumber(job.salary),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(8.dp),
+                                    color = TextColorInactive,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.weight(0.2f))
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(id = R.string.proposed_price_by_you),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            BasicTextField(
+                                value = proposedPrice,
+                                onValueChange = {
+                                    proposedPrice = it
+                                },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(35.dp)
+                            ) {
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .border(
+                                            width = 1.dp,
+                                            color = CakkieBrown,
+                                            shape = MaterialTheme.shapes.small
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = job.currencySymbol,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextColorInactive,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+
+                                    Text(
+                                        text = formatNumber(proposedPrice.ifEmpty { "0" }
+                                            .toDouble()),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(8.dp),
+                                        color = TextColorDark,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.proposed_completion),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(id = R.string.proposed_date),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(35.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = CakkieBrown,
+                                        shape = MaterialTheme.shapes.small
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = job.deadline.formatDateTime(),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(8.dp),
+                                    color = TextColorInactive,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.weight(0.2f))
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(id = R.string.proposed_a_date),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            DateTimePicker(
+                                label = "Select Date and Time",
+                                selectedDate = selectedDate,
+                                paddingStart = 0.dp,
+                                onDateTimeSelected = { newDate, newHours ->
+                                    selectedDate = newDate
+                                    val dateFormat = SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                                        Locale.getDefault()
+                                    )
+                                    proposedDeadline = dateFormat.format(selectedDate.time)
+//                                    totalHours = newHours
+                                }
+                            )
+                        }
+                    }
+
+                }
+
+                Column(
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(
+                            id = R.string.please_ensure_you,
+                        ),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CakkieGreen,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    CakkieButton(
+                        text = stringResource(id = R.string.submit),
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f),
+                        enabled = message.isNotEmpty() && proposedPrice.isNotEmpty(),
+                    ) {
+
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(20.dp))
         }

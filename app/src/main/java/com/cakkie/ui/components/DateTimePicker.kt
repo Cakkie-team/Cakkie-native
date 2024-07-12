@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
@@ -38,6 +39,7 @@ import java.util.Calendar
 fun DateTimePicker(
     label: String,
     selectedDate: Calendar,
+    paddingStart: Dp = 20.dp,
     onDateTimeSelected: (Calendar, Int) -> Unit
 ) {
     val context = LocalContext.current
@@ -62,7 +64,7 @@ fun DateTimePicker(
 
     Box(
         Modifier
-            .padding(start = 20.dp)
+            .padding(start = paddingStart)
             .border(
                 width = 1.dp,
                 color = CakkieBrown,

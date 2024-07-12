@@ -401,7 +401,7 @@ fun CreateJob(
                                         Text(
                                             text = "NGN",
                                             style = MaterialTheme.typography.bodyLarge,
-                                            fontSize = 12.sp,
+                                            fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextColorInactive,
                                             modifier = Modifier.padding(8.dp)
@@ -440,7 +440,7 @@ fun CreateJob(
                                             else -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
-                                        fontSize = 12.sp,
+                                        fontSize = 14.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier
                                             .weight(1f)
@@ -511,7 +511,7 @@ fun CreateJob(
                                 .clip(MaterialTheme.shapes.medium)
                                 .padding(horizontal = 4.dp)
                                 .background(Color.White.copy(alpha = 0.6f))
-                                .width(screenWidth * if (media.size > 1) 0.78f else 0.87f)
+                                .width(screenWidth * if (media.size > 1) 0.85f else 0.90f)
                         ) {
                             GlideImage(
                                 model = it.uri.toUri(),
@@ -576,7 +576,7 @@ fun CreateJob(
                                             }
                                         }
                                         .clip(MaterialTheme.shapes.medium)
-                                        .padding(horizontal = 8.dp)
+//                                        .padding(horizontal = 8.dp)
                                         .fillMaxWidth(),
                                     contentScale = ContentScale.Crop,
                                 )
