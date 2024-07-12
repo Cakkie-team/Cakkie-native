@@ -4,13 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.JobModel
 import com.cakkie.networkModels.JobResponse
-import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.networkModels.PreferenceModel
 import com.cakkie.networkModels.Proposal
@@ -132,7 +130,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
     }
 
     fun myJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
-        endpoint = Endpoints.GET_JOBS(page, size),
+        endpoint = Endpoints.GET_MY_JOBS(page, size),
         body = listOf()
     ).addOnSuccessListener {
         _jobRes.value = it
@@ -142,16 +140,6 @@ class JobsViewModel : ViewModel(), KoinComponent {
     fun getJob(id: String) = NetworkCalls.get<JobModel>(
         endpoint = Endpoints.GET_JOB(id),
         body = listOf()
-    )
-
-    fun getOrder(id: String) = NetworkCalls.get<Order>(
-        endpoint = Endpoints.GET_ORDER(id),
-        body = listOf()
-    )
-
-    fun setAvailability(id: String, available: Boolean) = NetworkCalls.put<Listing>(
-        endpoint = Endpoints.GET_LISTING(id),
-        body = listOf(Pair("available", available))
     )
 
     fun getProfile() = NetworkCalls.get<User>(

@@ -24,18 +24,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.formatDateTime
 
 @Composable
 fun JobsItems(
     item: JobModel,
     onClick: (() -> Unit)
-    ) {
+) {
 
     Box(
         Modifier
@@ -57,7 +59,13 @@ fun JobsItems(
                     .fillMaxWidth(0.6f),
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.cupcake),
+                    painter = painterResource(
+                        id = when (item.productType) {
+                            "small_chops" -> R.drawable.cupcake
+                            "cupcake" -> R.drawable.cupcake
+                            else -> R.drawable.cupcake
+                        }
+                    ),
                     contentDescription = "cupcake",
                     modifier = Modifier
                         .size(24.dp)
@@ -66,21 +74,23 @@ fun JobsItems(
                 )
                 Column(Modifier.padding(start = 5.dp)) {
                     Text(
-                        text = stringResource(id = R.string.small_chops),
+                        text = item.title,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stringResource(id = R.string.minutes_ago),
+                        text = item.createdAt.formatDateTime(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp,
                         color = TextColorInactive
                     )
                     Text(
-                        text = stringResource(id = R.string.chpos_message),
+                        text = item.description,
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 12.sp,
-                        color = TextColorInactive
+                        color = TextColorInactive,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -95,7 +105,7 @@ fun JobsItems(
                     color = CakkieBrown
                 )
                 Text(
-                    text = stringResource(id = R.string.Lagos_Nigeria),
+                    text = item.state,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     color = CakkieBrown

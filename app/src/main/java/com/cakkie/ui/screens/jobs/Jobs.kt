@@ -107,6 +107,7 @@ fun Jobs(
 
     LaunchedEffect(Unit) {
         viewModel.getJobs()
+        viewModel.myJobs()
     }
     LaunchedEffect(user) {
         if (user != null) {
@@ -161,12 +162,12 @@ fun Jobs(
 
             HorizontalPager(state = pageState) {
                 when (it) {
-                    2 -> MyJobs(myJobRes, myJobs, navigator) {
+                    0 -> MyJobs(myJobRes, myJobs, navigator) {
                         viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
                     }
 
                     1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
-                    0 -> AllJobs(jobRes, jobs, navigator) {
+                    2 -> AllJobs(jobRes, jobs, navigator) {
                         viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
                     }
                 }
