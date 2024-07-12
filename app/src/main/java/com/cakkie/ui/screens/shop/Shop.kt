@@ -168,6 +168,7 @@ fun Shop(navigator: DestinationsNavigator) {
                         fontWeight = FontWeight.SemiBold
                     )
                 }
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     Modifier
 //                        .align(Alignment.Bottom)

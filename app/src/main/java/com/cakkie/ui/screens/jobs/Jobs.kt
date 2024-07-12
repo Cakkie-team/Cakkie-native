@@ -81,7 +81,7 @@ fun Jobs(
                 description = "",
                 meta = Meta(
                     flavour = "Vanilla",
-                    quantity = "1",
+                    quantity = "",
                     shape = "Round",
                     size = "4 inches H, 20cm W"
                 ),

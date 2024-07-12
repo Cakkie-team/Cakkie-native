@@ -83,6 +83,7 @@ import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.destinations.JobsDestination
 import com.cakkie.ui.screens.destinations.SetDeliveryAddressDestination
 import com.cakkie.ui.screens.shop.MediaModel
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
@@ -95,6 +96,7 @@ import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -126,7 +128,16 @@ fun CreateJob(
 
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     LaunchedEffect(Unit) {
-        selectedDate.add(Calendar.HOUR_OF_DAY, 12)
+        Timber.d("Selected Date: ${job.deadline}")
+        if (job.deadline.isEmpty()) {
+            selectedDate.add(Calendar.HOUR_OF_DAY, 12)
+        } else {
+            val dateFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                Locale.getDefault()
+            )
+            selectedDate.time = dateFormat.parse(job.deadline)!!
+        }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -163,7 +174,7 @@ fun CreateJob(
                 Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.listing_name),
+                    text = stringResource(id = R.string.title) + " *",
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -352,8 +363,8 @@ fun CreateJob(
 
                             else -> BasicTextField(
                                 value = when (prop) {
-                                    R.string.quantity -> job.meta.quantity
-                                    R.string.proposed_price -> job.salary.toString()
+                                    R.string.quantity -> item.value.meta.quantity
+                                    R.string.proposed_price -> item.value.salary.toString()
                                     else -> ""
                                 },
                                 onValueChange = {
@@ -398,16 +409,44 @@ fun CreateJob(
                                             modifier = Modifier.padding(8.dp)
                                         )
                                     }
+                                    if (prop == R.string.quantity) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(MaterialTheme.shapes.small)
+                                                .clickable {
+                                                    val quantity = job.meta.quantity.ifEmpty { "0" }
+                                                    if (quantity.toInt() > 0) {
+                                                        item.value = job.copy(
+                                                            meta = job.meta.copy(
+                                                                quantity = (quantity.toInt() - 1).toString()
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                                .background(CakkieBrown)
+                                                .size(35.dp), contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "-",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontSize = 30.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = CakkieBackground,
+                                            )
+                                        }
+                                    }
                                     Text(
                                         text = when (prop) {
-                                            R.string.quantity -> job.meta.quantity.ifEmpty { "0 pieces" }
+                                            R.string.quantity -> job.meta.quantity.ifEmpty { "0" }
                                             R.string.proposed_price -> formatNumber(job.salary)
                                             else -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(8.dp),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(8.dp),
                                         color = if (when (prop) {
                                                 R.string.quantity -> job.meta.quantity.isEmpty()
                                                 R.string.proposed_price -> job.salary == 0.0
@@ -415,6 +454,31 @@ fun CreateJob(
                                             }
                                         ) TextColorInactive else TextColorDark,
                                     )
+                                    if (prop == R.string.quantity) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(MaterialTheme.shapes.small)
+                                                .clickable {
+                                                    item.value = job.copy(
+                                                        meta = job.meta.copy(
+                                                            quantity = (job.meta.quantity
+                                                                .ifEmpty { "0" }
+                                                                .toInt() + 1).toString()
+                                                        )
+                                                    )
+                                                }
+                                                .background(CakkieBrown)
+                                                .size(35.dp), contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "+",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontSize = 30.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = CakkieBackground,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -447,9 +511,9 @@ fun CreateJob(
                             modifier = Modifier
                                 .height(169.dp)
                                 .clip(MaterialTheme.shapes.medium)
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = 4.dp)
                                 .background(Color.White.copy(alpha = 0.6f))
-                                .width(screenWidth * if (media.size > 1) 0.8f else 0.9f)
+                                .width(screenWidth * if (media.size > 1) 0.78f else 0.87f)
                         ) {
                             GlideImage(
                                 model = it.uri.toUri(),
@@ -534,15 +598,15 @@ fun CreateJob(
                 ) {
                     processing = true
                     if (shop != null) {
-
+                        val dateFormat = SimpleDateFormat(
+                            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                            Locale.getDefault()
+                        )
+                        val currentDate = dateFormat.format(Date())
+                        val deadlineDate = dateFormat.format(selectedDate.time)
                         if (user != null) {
-                            val dateFormat = SimpleDateFormat(
-                                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-                                Locale.getDefault()
-                            )
-                            val currentDate = dateFormat.format(Date())
-                            val deadlineDate = dateFormat.format(selectedDate.time)
 
+                            Timber.d("Selected Date: ${deadlineDate}")
                             item.value = job.copy(
                                 createdAt = currentDate,
                                 deadline = deadlineDate,
@@ -553,7 +617,13 @@ fun CreateJob(
                             navigator.navigate(
                                 JobDetailsDestination(
                                     "create",
-                                    job,
+                                    job.copy(
+                                        createdAt = currentDate,
+                                        deadline = deadlineDate,
+                                        currencySymbol = "NGN",
+                                        updatedAt = currentDate,
+                                        media = media.map { it.uri },
+                                    ),
                                     media.toList().toJson()
                                 )
                             ) {
