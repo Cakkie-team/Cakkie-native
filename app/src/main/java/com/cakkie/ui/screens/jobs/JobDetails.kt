@@ -69,11 +69,14 @@ import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
+import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.JobEdit
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.ConfirmPinDestination
+import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
@@ -86,7 +89,9 @@ import com.cakkie.utill.isVideoUrl
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultBackNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.util.Locale
@@ -100,6 +105,7 @@ fun JobDetails(
     item: JobModel = JobModel(),
     files: String = "",
     onEdit: ResultBackNavigator<JobEdit>,
+    confirmPinResult: ResultRecipient<ConfirmPinDestination, CurrencyRate>,
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
@@ -113,6 +119,7 @@ fun JobDetails(
     val listState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
+    var processing by rememberSaveable { mutableStateOf(false) }
 
 //    var isMuted by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(key1 = id) {
@@ -135,6 +142,77 @@ fun JobDetails(
             onEdit.navigateBack(JobEdit(job, media))
         } else {
             navigator.popBackStack()
+        }
+    }
+
+
+    confirmPinResult.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                processing = true
+                if (user != null) {
+                    val fileUrls = media.map {
+                        val file = context.createTmpFileFromUri(
+                            uri = it.uri.toUri(),
+                            fileName = it.name.replace(" ", "").take(10)
+                        )!!
+                        FileModel(
+                            file = file,
+                            url = Endpoints.FILE_URL(
+                                "${
+                                    user.username.lowercase(Locale.ROOT).replace(" ", "")
+                                }/${file.name.replace(" ", "")}.${
+                                    it.mediaMimeType.split("/").last()
+                                }"
+                            ),
+                            mediaMimeType = it.mediaMimeType.split("/").last()
+                        )
+                    }
+                    fileUrls.forEach {
+                        viewModel.uploadImage(
+                            image = it.file,
+                            path = user.username.lowercase(Locale.ROOT).replace(" ", ""),
+                            fileName = "${it.file.name}.${it.mediaMimeType}"
+                        ).addOnSuccessListener { resp ->
+                            Timber.d(resp)
+                            it.file.delete()
+                        }.addOnFailureListener { exception ->
+                            Timber.d(exception)
+                            Toaster(context, exception.message.toString(), R.drawable.logo)
+                            it.file.delete()
+                        }
+                    }
+
+                    viewModel.createJob(
+                        salary = result.value.amount.toDouble(),
+                        productType = job.productType,
+                        deadline = job.deadline,
+                        proposalFee = job.proposalFee,
+                        address = job.address,
+                        city = job.city,
+                        state = job.state,
+                        country = job.country,
+                        latitude = job.latitude,
+                        longitude = job.longitude,
+                        currencySymbol = result.value.symbol,
+                        title = job.title,
+                        media = fileUrls.map { it.url },
+                        description = job.description,
+                        pin = result.value.pin,
+                        meta = job.meta.toListOfPairs()
+                    ).addOnSuccessListener {
+                        processing = false
+                        navigator.navigate(JobDetailsDestination(it.id, it)) {
+                            launchSingleTop = true
+                        }
+                    }.addOnFailureListener { exception ->
+                        processing = false
+                        Toaster(context, exception, R.drawable.logo)
+                        Timber.d(exception)
+                    }
+                }
+            }
         }
     }
 
@@ -402,129 +480,82 @@ fun JobDetails(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(8.dp))
-            ) {
-                Row(
+
+            if (id != "create") {
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(
                     Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxWidth()
+                        .background(Color.White, RoundedCornerShape(8.dp))
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.status),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBrown
-                    )
-                    Row {
+                    Row(
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(
-                            text = if (job.hasApplied) stringResource(
-                                id = R.string.applied
-                            ) else stringResource(
-                                id = R.string.you_have_not_appl
-                            ),
+                            text = stringResource(id = R.string.status),
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.widthIn(max = 150.dp),
+                            color = CakkieBrown
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Image(
-                            painter = painterResource(
-                                id = if (job.hasApplied) R.drawable.approved else R.drawable.not
-                            ),
-                            contentDescription = "not",
-                            modifier = Modifier.size(24.dp)
+                        Row {
+                            Text(
+                                text = if (job.hasApplied) stringResource(
+                                    id = R.string.applied
+                                ) else stringResource(
+                                    id = R.string.you_have_not_appl
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.widthIn(max = 150.dp),
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Image(
+                                painter = painterResource(
+                                    id = if (job.hasApplied) R.drawable.approved else R.drawable.not
+                                ),
+                                contentDescription = "not",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                    Row(
+                        Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.proposal_fee),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown
+                        )
+                        Text(
+                            text = formatNumber(job.proposalFee),
+                            style = MaterialTheme.typography.bodyLarge,
                         )
                     }
                 }
-                Row(
-                    Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.proposal_fee),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBrown
-                    )
-                    Text(
-                        text = formatNumber(job.proposalFee),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
             }
 
-            if (job.hasEnoughBalance.not()) {
-                Column(
-                    Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(250.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = stringResource(id = R.string.insuficint_balance, job.proposalFee),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Error,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(text = stringResource(id = R.string.add_more_icing),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = CakkieBrown,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .clickable {
-//                            navigator.navigate(ChooseMediaDestination(from = "job"))
-                            }
-                    )
-
-                }
-            }
 
             if (id == "create") {
+                Spacer(modifier = Modifier.height(20.dp))
                 CakkieButton(
                     text = stringResource(id = R.string.post),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(0.8f),
                 ) {
-                    if (user != null) {
-                        val fileUrls = media.map {
-                            val file = context.createTmpFileFromUri(
-                                uri = it.uri.toUri(),
-                                fileName = it.name.replace(" ", "").take(10)
-                            )!!
-                            FileModel(
-                                file = file,
-                                url = Endpoints.FILE_URL(
-                                    "${
-                                        user.username.lowercase(Locale.ROOT).replace(" ", "")
-                                    }/${file.name.replace(" ", "")}.${
-                                        it.mediaMimeType.split("/").last()
-                                    }"
-                                ),
-                                mediaMimeType = it.mediaMimeType.split("/").last()
+                    navigator.navigate(
+                        ConfirmPinDestination(
+                            CurrencyRate(
+                                symbol = job.currencySymbol,
+                                amount = job.salary.toString()
                             )
-                        }
-                        fileUrls.forEach {
-                            viewModel.uploadImage(
-                                image = it.file,
-                                path = user.username.lowercase(Locale.ROOT).replace(" ", ""),
-                                fileName = "${it.file.name}.${it.mediaMimeType}"
-                            ).addOnSuccessListener { resp ->
-                                Timber.d(resp)
-                                it.file.delete()
-                            }.addOnFailureListener { exception ->
-                                Timber.d(exception)
-                                Toaster(context, exception.message.toString(), R.drawable.logo)
-                                it.file.delete()
-                            }
-                        }
-                    }
+                        )
+                    )
+
                 }
 
                 Text(text = stringResource(id = R.string.edit_),
@@ -541,6 +572,36 @@ fun JobDetails(
                 )
 
             } else {
+                if (job.hasEnoughBalance.not()) {
+                    Column(
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .width(250.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = stringResource(
+                                id = R.string.insuficint_balance,
+                                job.proposalFee
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Error,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(text = stringResource(id = R.string.add_more_icing),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clickable {
+//                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                                }
+                        )
+
+                    }
+                }
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

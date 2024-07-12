@@ -42,7 +42,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -140,7 +139,6 @@ fun CreateJob(
         }
     }
 
-    val coroutineScope = rememberCoroutineScope()
     val canProceed = job.title.isNotEmpty() && job.description.isNotEmpty()
             && job.salary > 0 && job.meta.size.isNotEmpty()
 
@@ -415,7 +413,7 @@ fun CreateJob(
                                                 .clip(MaterialTheme.shapes.small)
                                                 .clickable {
                                                     val quantity = job.meta.quantity.ifEmpty { "0" }
-                                                    if (quantity.toInt() > 0) {
+                                                    if (quantity.toInt() > 1) {
                                                         item.value = job.copy(
                                                             meta = job.meta.copy(
                                                                 quantity = (quantity.toInt() - 1).toString()
@@ -630,35 +628,6 @@ fun CreateJob(
                                 launchSingleTop = true
                             }
                         }
-//                        viewModel.createListing(
-//                            name = name.text,
-//                            description = description.text,
-//                            prices = prices.map { it.text.toInt() },
-//                            sizes = sizes.text,
-//                            media = fileUrls.map { it.url },
-//                            shopId = shop.id,
-//                            availability = availability.text,
-//                            meta = listOf(
-//                                Pair("quantity", quantity.text),
-//                                Pair("shape", shape.text),
-//                                Pair("flavour", flavour.text)
-//                            )
-//                        ).addOnSuccessListener {
-//                            processing = false
-////                            navigator.navigate(ShopDestination) {
-////                                popUpTo(ChooseMediaDestination) {
-////                                    inclusive = true
-////                                }
-////                                popUpTo(CreateListingDestination) {
-////                                    inclusive = true
-////                                }
-////                                launchSingleTop = true
-////                            }
-//                        }.addOnFailureListener { exception ->
-//                            processing = false
-//                            Toaster(context, exception, R.drawable.logo)
-//                            Timber.d(exception)
-//                        }
                     } else {
                         Toaster(
                             context,

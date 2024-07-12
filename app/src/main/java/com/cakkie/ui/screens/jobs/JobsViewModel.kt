@@ -55,7 +55,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
 
 
     fun createJob(
-        salary: String,
+        salary: Double,
         productType: String,
         deadline: String,
         proposalFee: Double,
@@ -72,11 +72,11 @@ class JobsViewModel : ViewModel(), KoinComponent {
         pin: String,
         meta: List<Pair<String, Any?>>
     ) = NetworkCalls.post<JobModel>(
-        endpoint = Endpoints.CREATE_ORDER,
+        endpoint = Endpoints.CREATE_JOB,
         body = listOf(
             Pair("salary", salary),
             Pair("productType", productType),
-            Pair("quantity", deadline),
+            Pair("deadline", deadline),
             Pair("city", city),
             Pair("state", state),
             Pair("country", country),
