@@ -28,6 +28,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
     private val _user = MutableLiveData<User>()
     private val _shop = MutableLiveData<ShopModel>()
     private val _jobRes = MutableLiveData<JobResponse>()
+    private val _myJobRes = MutableLiveData<JobResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
     private val _contracts = MutableLiveData<OrderResponse>()
     private val _preference = MutableLiveData<PreferenceModel>()
@@ -35,6 +36,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
     val user = _user
     val shop = _shop
     val jobRes = _jobRes
+    val myJobRes = _myJobRes
     val orders = _orders
     val contracts = _contracts
     val preference = _preference
@@ -123,6 +125,13 @@ class JobsViewModel : ViewModel(), KoinComponent {
     }
 
     fun getJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
+        endpoint = Endpoints.GET_JOBS(page, size),
+        body = listOf()
+    ).addOnSuccessListener {
+        _jobRes.value = it
+    }
+
+    fun myJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
         endpoint = Endpoints.GET_JOBS(page, size),
         body = listOf()
     ).addOnSuccessListener {

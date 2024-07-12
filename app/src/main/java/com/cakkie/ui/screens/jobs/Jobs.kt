@@ -65,6 +65,11 @@ fun Jobs(
     val jobs = remember {
         mutableStateListOf<JobModel>()
     }
+
+    val myJobRes = viewModel.myJobRes.observeAsState(JobResponse()).value
+    val myJobs = remember {
+        mutableStateListOf<JobModel>()
+    }
     val user = viewModel.user.observeAsState().value
     addressRecipient.onNavResult { result ->
         when (result) {
@@ -156,13 +161,13 @@ fun Jobs(
 
             HorizontalPager(state = pageState) {
                 when (it) {
-                    2 -> AllJobs(jobRes, jobs, navigator) {
-                        viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
+                    2 -> MyJobs(myJobRes, myJobs, navigator) {
+                        viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
                     }
 
                     1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
                     0 -> AllJobs(jobRes, jobs, navigator) {
-//                        viewModel.getMyListings(listings.meta.nextPage, listings.meta.pageSize)
+                        viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
                     }
                 }
             }
