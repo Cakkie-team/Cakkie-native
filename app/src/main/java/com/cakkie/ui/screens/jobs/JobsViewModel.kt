@@ -13,6 +13,7 @@ import com.cakkie.networkModels.JobResponse
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.networkModels.PreferenceModel
+import com.cakkie.networkModels.Proposal
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
@@ -90,6 +91,21 @@ class JobsViewModel : ViewModel(), KoinComponent {
             Pair("media", media),
             Pair("description", description),
             Pair("meta", JsonBody.generate(meta))
+        )
+    )
+
+
+    fun submitProposal(
+        deadline: String,
+        proposalAmount: Double,
+        message: String,
+        jobId: String
+    ) = NetworkCalls.post<Proposal>(
+        endpoint = Endpoints.SUBMIT_PROPOSAL(jobId),
+        body = listOf(
+            Pair("proposedPrice", proposalAmount),
+            Pair("message", message),
+            Pair("proposedDeadline", deadline),
         )
     )
 

@@ -394,6 +394,11 @@
     <string name="proposed_date">Proposed deadline</string>
     <string name="proposed_a_date">Propose a deadline</string>
     <string name="please_ensure_you">Please ensure your review your application before submission</string>
+    <string name="you_have_not_hired">You have not hired yet</string>
+    <string name="work_in_progress">Work in Progress</string>
+    <string name="view_appl">View Applications</string>
+    <string name="check_out_all_appl">Check out all the applications for your job</string>
+    <string name="applicants">%1$s Applicants</string>
 
 
 </resources>

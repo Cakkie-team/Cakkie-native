@@ -97,7 +97,8 @@ object Endpoints {
     val GET_JOBS =
         { page: Int, size: Int -> "$BASE_URL/job?page=$page&pageSize=$size" }/* get jobs  GET*/
     val GET_JOB = { id: String -> "$BASE_URL/job/$id" } /* get job  GET*/
-    val CREATE_JOB = "$BASE_URL/job" /* create job  POST*/
+    const val CREATE_JOB = "$BASE_URL/job" /* create job  POST*/
+    val SUBMIT_PROPOSAL = { id: String -> "$BASE_URL/job/$id/proposal" } /* submit proposal  POST*/
 
 
     /**

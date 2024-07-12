@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -513,10 +515,17 @@ fun JobDetails(
                         )
                         Row {
                             Text(
-                                text = if (job.hasApplied) stringResource(
-                                    id = R.string.applied
-                                ) else stringResource(
-                                    id = R.string.you_have_not_appl
+                                text = stringResource(
+                                    id = if (job.userId == user?.id) {
+                                        when (job.status) {
+                                            "COMPLETED" -> R.string.completed
+                                            "PENDING" -> R.string.you_have_not_hired
+                                            else -> R.string.work_in_progress
+                                        }
+                                    } else {
+                                        if (job.hasApplied) R.string.applied
+                                        else R.string.you_have_not_appl
+                                    }
                                 ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.widthIn(max = 150.dp),
@@ -524,7 +533,16 @@ fun JobDetails(
                             Spacer(modifier = Modifier.width(10.dp))
                             Image(
                                 painter = painterResource(
-                                    id = if (job.hasApplied) R.drawable.approved else R.drawable.not
+                                    id = if (job.userId == user?.id) {
+                                        when (job.status) {
+                                            "COMPLETED" -> R.drawable.approved
+                                            "PENDING" -> R.drawable.not
+                                            else -> R.drawable.done
+                                        }
+                                    } else {
+                                        if (job.hasApplied) R.drawable.approved
+                                        else R.drawable.not
+                                    }
                                 ),
                                 contentDescription = "not",
                                 modifier = Modifier.size(24.dp)
@@ -584,6 +602,87 @@ fun JobDetails(
                         }
                 )
 
+            } else if (job.userId == user?.id) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(Modifier.fillMaxWidth()) {
+                    Column(
+                        Modifier
+                            .clickable {
+//                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                            }
+                            .border(
+                                1.dp,
+                                CakkieBrown,
+                                RoundedCornerShape(5.dp, 5.dp, 0.dp, 0.dp)
+                            )
+                            .height(96.dp)
+                            .background(Color.White, RoundedCornerShape(5.dp, 5.dp, 0.dp, 0.dp))
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.view_appl),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CakkieBrown,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(10.dp, 10.dp, 0.dp, 5.dp)
+                        )
+                        Text(
+                            text = stringResource(id = R.string.check_out_all_appl),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TextColorInactive,
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(10.dp, 2.dp, 10.dp, 10.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Text(
+                                text = stringResource(id = R.string.applicants, job.totalProposal),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = TextColorDark,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp,
+                            )
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.arrow_back),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .rotate(180f),
+                                tint = CakkieBrown
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(
+                        Modifier
+                            .background(
+                                if (job.status == "PENDING") CakkieLightBrown else CakkieGreen,
+                                RoundedCornerShape(5.dp, 5.dp, 0.dp, 0.dp)
+                            )
+                            .weight(0.45f)
+                            .height(96.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.awarded),
+                            contentDescription = "",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
+                        )
+                    }
+                }
             } else if (applying.not()) {
                 if (job.hasEnoughBalance.not()) {
                     Column(
@@ -874,8 +973,23 @@ fun JobDetails(
                         modifier = Modifier
                             .fillMaxWidth(0.8f),
                         enabled = message.isNotEmpty() && proposedPrice.isNotEmpty(),
+                        processing = processing
                     ) {
-
+                        processing = true
+                        viewModel.submitProposal(
+                            deadline = proposedDeadline,
+                            proposalAmount = proposedPrice.toDouble(),
+                            message = message,
+                            jobId = job.id
+                        ).addOnSuccessListener {
+                            applying = false
+                            processing = false
+                            Toaster(context, "Proposal submitted successfully", R.drawable.logo)
+                        }.addOnFailureListener {
+                            applying = false
+                            processing = false
+                            Toaster(context, it, R.drawable.logo)
+                        }
                     }
                 }
             }
