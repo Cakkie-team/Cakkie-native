@@ -57,7 +57,7 @@ fun Jobs(
     val viewModel: JobsViewModel = koinViewModel()
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
-    val pageState = rememberPagerState(pageCount = { 4 })
+    val pageState = rememberPagerState(pageCount = { 3 })
     val media = remember {
         mutableStateListOf<MediaModel>()
     }
@@ -105,7 +105,7 @@ fun Jobs(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(user) {
         viewModel.getJobs()
         viewModel.myJobs()
     }
@@ -162,12 +162,12 @@ fun Jobs(
 
             HorizontalPager(state = pageState) {
                 when (it) {
-                    0 -> MyJobs(myJobRes, myJobs, navigator) {
+                    2 -> MyJobs(myJobRes, myJobs, navigator) {
                         viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
                     }
 
                     1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
-                    2 -> AllJobs(jobRes, jobs, navigator) {
+                    0 -> AllJobs(jobRes, jobs, navigator) {
                         viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
                     }
                 }
