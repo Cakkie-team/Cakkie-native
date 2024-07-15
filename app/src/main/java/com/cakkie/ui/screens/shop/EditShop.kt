@@ -285,7 +285,7 @@ fun EditShop(
                 }
                 AsyncImage(
                     model = imageUri
-                        ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
+                        ?: fileUrl.ifEmpty { "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png" },
                     contentDescription = "cover",
                     contentScale = ContentScale.Crop,
                     onState = {
@@ -310,7 +310,7 @@ fun EditShop(
                 ) {
                     AsyncImage(
                         model = imageUri
-                            ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
+                            ?: fileUrl.ifEmpty { "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png" },
                         contentDescription = "shop logo",
                         contentScale = ContentScale.Crop,
                         onState = {

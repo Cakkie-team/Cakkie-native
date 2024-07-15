@@ -359,7 +359,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                                     .clip(shape = RoundedCornerShape(8.dp))
                             ) {
                                 AsyncImage(
-                                    model = "https://source.unsplash.com/100x150/?cake?video",
+                                    model = "https://cdn.cakkie.com/imgs/cake.jpg",
                                     contentDescription = "cake",
                                     onState = {
                                         //update isLoaded

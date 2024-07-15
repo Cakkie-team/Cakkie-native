@@ -78,7 +78,7 @@ fun Reviews() {
                     .fillMaxWidth(),
             ) {
                 GlideImage(
-                    model = "https://source.unsplash.com/60x60/?profile",
+                    model = "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png",
                     contentDescription = "profile pic",
                     modifier = Modifier
                         .size(32.dp)

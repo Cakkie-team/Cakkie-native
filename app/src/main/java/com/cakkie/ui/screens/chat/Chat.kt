@@ -242,7 +242,7 @@ fun Chat(
                 }
                 AsyncImage(
                     model = conver?.display?.image?.replace(Regex("\\bhttp://"), "https://")
-                        ?: "https://source.unsplash.com/80x80/?profile",
+                        ?: "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png",
                     contentDescription = "profile pic",
                     onState = {
                         //update isLoaded

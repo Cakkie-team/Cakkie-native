@@ -236,7 +236,7 @@ fun ChangeProfile(
             Box(contentAlignment = Alignment.Center) {
                 GlideImage(
                     model = imageUri
-                        ?: fileUrl.ifEmpty { "https://source.unsplash.com/100x150/?cake?logo" },
+                        ?: fileUrl.ifEmpty { "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png" },
                     contentDescription = "cake logo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

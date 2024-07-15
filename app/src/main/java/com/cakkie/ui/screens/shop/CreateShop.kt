@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,6 +57,7 @@ import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
+import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.Toaster
@@ -257,13 +259,15 @@ fun CreateShop(navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(28.dp))
 
             Box(contentAlignment = Alignment.Center) {
+                Timber.d("image uri: $imageUri")
                 GlideImage(
-                    model = imageUri ?: "https://source.unsplash.com/100x150/?cake?logo",
+                    model = imageUri ?: "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png",
                     contentDescription = "cake logo",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(64.dp)
                         .clip(shape = CircleShape)
+                        .background(CakkieLightBrown, CircleShape)
                         .clickable {
                             galleryLauncher.launch("image/*")
                         }
@@ -279,7 +283,9 @@ fun CreateShop(navigator: DestinationsNavigator) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = uploadMessage,
+                text = uploadMessage.ifEmpty {
+                    if (imageUri == null) "Choose a logo for your business" else ""
+                },
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
                 color = CakkieBrown,

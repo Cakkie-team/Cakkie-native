@@ -249,11 +249,12 @@ fun CakespirationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 GlideImage(
-                    model = listing.shop.image.ifEmpty { "https://source.unsplash.com/60x60/?profile" },
+                    model = listing.shop.image.ifEmpty { "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png" },
                     contentDescription = "shop logo",
                     modifier = Modifier
                         .size(38.dp)
                         .clip(shape = CircleShape)
+                        .background(CakkieBrown)
                         .clickable {
                             navigator.navigate(
                                 ProfileDestination(
