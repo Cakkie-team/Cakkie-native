@@ -85,6 +85,7 @@ import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.JobDetailsDestination
+import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
@@ -725,7 +726,15 @@ fun JobDetails(
                             .fillMaxWidth(0.8f),
                         enabled = !job.hasEnoughBalance && job.hasApplied.not(),
                     ) {
-                        applying = true
+                        if (user?.hasShop == true) {
+                            applying = true
+                        } else {
+                            //navigate to create shop screen
+                            navigator.navigate(ShopDestination) {
+                                launchSingleTop = true
+                            }
+
+                        }
                     }
                     IconButton(onClick = { /*TODO*/ }) {
                         Image(
