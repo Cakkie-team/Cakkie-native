@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun Proposals(
+    id: String,
     navigator: DestinationsNavigator
 ) {
     val viewModel: JobsViewModel = koinViewModel()
@@ -51,14 +56,22 @@ fun Proposals(
         mutableStateListOf<Proposal>()
     }
 
+    var loading by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(key1 = proposalsRes?.data) {
+        loading = false
         if (proposalsRes.meta.currentPage == 0) {
             proposals.clear()
         }
         proposals.addAll(proposalsRes.data.filterNot { res ->
             proposals.any { it.id == res.id }
         })
-
+    }
+    LaunchedEffect(key1 = id) {
+        loading = true
+        viewModel.getProposals(id)
     }
     Column(
         modifier = Modifier
@@ -134,7 +147,7 @@ fun Proposals(
                 items(proposals, key = { it }) { proposal ->
                     val index = proposals.indexOf(proposal)
                     if (index > proposals.lastIndex - 2 && proposalsRes.data.isNotEmpty()) {
-                        //todo: get proposals
+                        viewModel.getProposals(id, proposalsRes.meta.nextPage)
                     }
                     ProposalItem(item = proposal) {
 //                        navigator.navigate(JobDetailsDestination(job.id, job)) {
@@ -142,6 +155,28 @@ fun Proposals(
 //                        }
                     }
 
+                }
+
+                //add a loading indicator
+                if (loading) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(50.dp),
+                                color = CakkieBrown,
+                                strokeWidth = 2.dp,
+                                trackColor = CakkieBrown.copy(alpha = 0.4f)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                    }
                 }
             }
         }

@@ -610,7 +610,7 @@ fun JobDetails(
                     Column(
                         Modifier
                             .clickable {
-                                navigator.navigate(ProposalsDestination)
+                                navigator.navigate(ProposalsDestination(job.id))
                             }
                             .border(
                                 1.dp,

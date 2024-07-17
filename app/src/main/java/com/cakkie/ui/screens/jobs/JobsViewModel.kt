@@ -132,6 +132,14 @@ class JobsViewModel : ViewModel(), KoinComponent {
         _jobRes.value = it
     }
 
+    fun getProposals(id: String, page: Int = 0, size: Int = 20) =
+        NetworkCalls.get<ProposalResponse>(
+            endpoint = Endpoints.GET_PROPOSALS(id, page, size),
+            body = listOf()
+        ).addOnSuccessListener {
+            _proposals.value = it
+        }
+
     fun myJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
         endpoint = Endpoints.GET_MY_JOBS(page, size),
         body = listOf()
