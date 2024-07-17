@@ -737,7 +737,7 @@ fun JobDetails(
                         text = stringResource(id = R.string.apply_now),
                         modifier = Modifier
                             .fillMaxWidth(0.8f),
-                        enabled = !job.hasEnoughBalance && job.hasApplied.not(),
+                        enabled = job.hasEnoughBalance && job.hasApplied.not(),
                     ) {
                         if (user?.hasShop == true) {
                             applying = true
@@ -1006,11 +1006,16 @@ fun JobDetails(
                         ).addOnSuccessListener {
                             applying = false
                             processing = false
-                            Toaster(context, "Proposal submitted successfully", R.drawable.logo)
+                            viewModel.getJob(job.id)
+                            Toaster(
+                                context,
+                                "Proposal submitted successfully",
+                                R.drawable.logo
+                            ).show()
                         }.addOnFailureListener {
                             applying = false
                             processing = false
-                            Toaster(context, it, R.drawable.logo)
+                            Toaster(context, it, R.drawable.logo).show()
                         }
                     }
                 }

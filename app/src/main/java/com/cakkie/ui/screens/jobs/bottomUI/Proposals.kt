@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -60,6 +61,11 @@ fun Proposals(
         mutableStateOf(false)
     }
 
+    LaunchedEffect(key1 = id) {
+        loading = true
+        viewModel.getProposals(id)
+    }
+
     LaunchedEffect(key1 = proposalsRes?.data) {
         loading = false
         if (proposalsRes.meta.currentPage == 0) {
@@ -68,10 +74,7 @@ fun Proposals(
         proposals.addAll(proposalsRes.data.filterNot { res ->
             proposals.any { it.id == res.id }
         })
-    }
-    LaunchedEffect(key1 = id) {
-        loading = true
-        viewModel.getProposals(id)
+
     }
     Column(
         modifier = Modifier
@@ -92,6 +95,7 @@ fun Proposals(
         Column(
             modifier = Modifier
 //                .pullRefresh(state = state)
+                .heightIn(min = 400.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top

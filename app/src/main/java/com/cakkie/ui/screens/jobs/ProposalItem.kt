@@ -1,6 +1,5 @@
 package com.cakkie.ui.screens.jobs
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,12 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Proposal
 import com.cakkie.ui.theme.CakkieBrown
@@ -34,6 +34,7 @@ import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.formatDateTime
 import com.cakkie.utill.formatNumber
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProposalItem(
     item: Proposal,
@@ -59,14 +60,15 @@ fun ProposalItem(
                 Modifier
                     .fillMaxWidth(0.6f),
             ) {
-                Image(
-                    painter = painterResource(
-                        id = R.drawable.cupcake
-                    ),
-                    contentDescription = "cupcake",
+                GlideImage(
+                    model = item.shop.image.replace(Regex("\\bhttp://"), "https://"),
+                    contentDescription = "profile pic",
                     modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape),
+                        .size(30.dp)
+                        .clip(shape = CircleShape)
+                        .clickable {
+
+                        },
                     contentScale = ContentScale.Crop
                 )
                 Column(Modifier.padding(start = 5.dp)) {

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.cakkie.R
 import com.cakkie.networkModels.JobModel
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.formatDateTime
 
@@ -99,17 +100,23 @@ fun JobsItems(
                     .padding(end = 10.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.view_to_apply),
+                    text = stringResource(
+                        id =
+                        if (item.hasApplied) R.string.applied
+                        else R.string.view_to_apply
+                    ),
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
-                    color = CakkieBrown
+                    color = if (item.hasApplied) CakkieGreen else CakkieBrown
                 )
-                Text(
-                    text = item.state,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 12.sp,
-                    color = CakkieBrown
-                )
+                if (item.hasApplied.not()) {
+                    Text(
+                        text = item.state,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 12.sp,
+                        color = CakkieBrown
+                    )
+                }
             }
         }
     }
