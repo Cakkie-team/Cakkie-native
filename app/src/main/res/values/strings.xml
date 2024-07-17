@@ -399,6 +399,8 @@
     <string name="view_appl">View Applications</string>
     <string name="check_out_all_appl">Check out all the applications for your job</string>
     <string name="applicants">%1$s Applicants</string>
+    <string name="delete_job">Delete Job</string>
+    <string name="view_application">View Application</string>
 
 
 </resources>

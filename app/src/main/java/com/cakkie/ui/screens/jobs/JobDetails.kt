@@ -85,6 +85,7 @@ import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.DateTimePicker
 import com.cakkie.ui.screens.destinations.ConfirmPinDestination
 import com.cakkie.ui.screens.destinations.JobDetailsDestination
+import com.cakkie.ui.screens.destinations.ProposalsDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.shop.MediaModel
 import com.cakkie.ui.theme.CakkieBrown
@@ -609,7 +610,7 @@ fun JobDetails(
                     Column(
                         Modifier
                             .clickable {
-//                            navigator.navigate(ChooseMediaDestination(from = "job"))
+                                navigator.navigate(ProposalsDestination)
                             }
                             .border(
                                 1.dp,
@@ -682,6 +683,18 @@ fun JobDetails(
                                 .fillMaxSize()
                                 .padding(10.dp)
                         )
+                    }
+                }
+                if (job.totalProposal == 0) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    CakkieButton(
+                        text = stringResource(id = R.string.delete_job),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth(0.8f),
+                        color = Error
+                    ) {
+
                     }
                 }
             } else if (applying.not()) {

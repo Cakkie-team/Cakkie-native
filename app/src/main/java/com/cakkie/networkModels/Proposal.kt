@@ -1,7 +1,12 @@
 package com.cakkie.networkModels
 
+import android.os.Parcelable
 import com.cakkie.data.db.models.ShopModel
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
+@Parcelize
 data class Proposal(
     val id: String = "",
     val shop: ShopModel = ShopModel(),
@@ -14,4 +19,10 @@ data class Proposal(
     val proposedDeadline: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
+) : Parcelable
+
+@Serializable
+data class ProposalResponse(
+    val data: List<Proposal> = listOf(),
+    val meta: Pagination = Pagination(),
 )

@@ -12,6 +12,7 @@ import com.cakkie.networkModels.JobResponse
 import com.cakkie.networkModels.OrderResponse
 import com.cakkie.networkModels.PreferenceModel
 import com.cakkie.networkModels.Proposal
+import com.cakkie.networkModels.ProposalResponse
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.JsonBody
 import com.cakkie.utill.NetworkCalls
@@ -29,6 +30,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
     private val _myJobRes = MutableLiveData<JobResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
     private val _contracts = MutableLiveData<OrderResponse>()
+    private val _proposals = MutableLiveData<ProposalResponse>()
     private val _preference = MutableLiveData<PreferenceModel>()
 
     val user = _user
@@ -36,6 +38,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
     val jobRes = _jobRes
     val myJobRes = _myJobRes
     val orders = _orders
+    val proposals = _proposals
     val contracts = _contracts
     val preference = _preference
 
@@ -133,7 +136,7 @@ class JobsViewModel : ViewModel(), KoinComponent {
         endpoint = Endpoints.GET_MY_JOBS(page, size),
         body = listOf()
     ).addOnSuccessListener {
-        _jobRes.value = it
+        _myJobRes.value = it
     }
 
 

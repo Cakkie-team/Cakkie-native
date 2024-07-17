@@ -2,23 +2,31 @@ package com.cakkie.ui.screens.jobs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,9 +51,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun Jobs(
@@ -105,6 +115,17 @@ fun Jobs(
         }
     }
 
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        viewModel.getJobs()
+        viewModel.myJobs()
+        delay(1000)
+        refreshing = false
+    }
+
+    val state = rememberPullRefreshState(refreshing, ::refresh)
     LaunchedEffect(user) {
         viewModel.getJobs()
         viewModel.myJobs()
@@ -159,16 +180,21 @@ fun Jobs(
                     stringResource(id = R.string.my_jobs),
                 )
             )
+            Box(
+                modifier = Modifier
+                    .pullRefresh(state = state)
+                    .fillMaxSize()
+            ) {
+                HorizontalPager(state = pageState) {
+                    when (it) {
+                        2 -> MyJobs(myJobRes, myJobs, navigator) {
+                            viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
+                        }
 
-            HorizontalPager(state = pageState) {
-                when (it) {
-                    2 -> MyJobs(myJobRes, myJobs, navigator) {
-                        viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
-                    }
-
-                    1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
-                    0 -> AllJobs(jobRes, jobs, navigator) {
-                        viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
+                        1 -> CreateJob(job, viewModel, media, fileRecipient, navigator = navigator)
+                        0 -> AllJobs(jobRes, jobs, navigator) {
+                            viewModel.getJobs(jobRes.meta.nextPage, jobRes.meta.pageSize)
+                        }
                     }
                 }
             }
