@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -38,6 +39,7 @@ import com.cakkie.utill.formatNumber
 @Composable
 fun ProposalItem(
     item: Proposal,
+    currencySymbol: String,
     onClick: (() -> Unit)
 ) {
 
@@ -83,6 +85,7 @@ fun ProposalItem(
                         fontSize = 12.sp,
                         color = TextColorInactive
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = item.message,
                         style = MaterialTheme.typography.bodyLarge,
@@ -95,7 +98,8 @@ fun ProposalItem(
             }
             Column(
                 Modifier
-                    .padding(end = 10.dp)
+                    .padding(end = 10.dp),
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
                     text = stringResource(id = R.string.view_application),
@@ -104,10 +108,11 @@ fun ProposalItem(
                     color = CakkieBrown
                 )
                 Text(
-                    text = formatNumber(item.proposedPrice),
+                    text = formatNumber(item.proposedPrice) + " $currencySymbol",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 12.sp,
-                    color = CakkieBrown
+                    fontSize = 14.sp,
+                    color = CakkieBrown,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }

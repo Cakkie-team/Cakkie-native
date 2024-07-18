@@ -49,6 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun Proposals(
     id: String,
+    symbol: String,
     navigator: DestinationsNavigator
 ) {
     val viewModel: JobsViewModel = koinViewModel()
@@ -153,7 +154,7 @@ fun Proposals(
                     if (index > proposals.lastIndex - 2 && proposalsRes.data.isNotEmpty()) {
                         viewModel.getProposals(id, proposalsRes.meta.nextPage)
                     }
-                    ProposalItem(item = proposal) {
+                    ProposalItem(item = proposal, symbol) {
 //                        navigator.navigate(JobDetailsDestination(job.id, job)) {
 //                            launchSingleTop = true
 //                        }

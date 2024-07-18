@@ -610,7 +610,7 @@ fun JobDetails(
                     Column(
                         Modifier
                             .clickable {
-                                navigator.navigate(ProposalsDestination(job.id))
+                                navigator.navigate(ProposalsDestination(job.id, job.currencySymbol))
                             }
                             .border(
                                 1.dp,

@@ -80,7 +80,7 @@ fun Jobs(
     val myJobs = remember {
         mutableStateListOf<JobModel>()
     }
-    val user = viewModel.user.observeAsState().value
+    val user = viewModel.user.observeAsState(User()).value
     addressRecipient.onNavResult { result ->
         when (result) {
             is NavResult.Canceled -> {}
@@ -187,7 +187,7 @@ fun Jobs(
             ) {
                 HorizontalPager(state = pageState) {
                     when (it) {
-                        2 -> MyJobs(myJobRes, myJobs, navigator) {
+                        2 -> MyJobs(myJobRes, myJobs, user, navigator) {
                             viewModel.myJobs(myJobRes.meta.nextPage, myJobRes.meta.pageSize)
                         }
 

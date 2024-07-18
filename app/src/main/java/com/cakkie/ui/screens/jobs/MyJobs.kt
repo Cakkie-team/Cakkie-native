@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.data.db.models.User
 import com.cakkie.networkModels.JobModel
 import com.cakkie.networkModels.JobResponse
 import com.cakkie.ui.screens.destinations.JobDetailsDestination
@@ -33,6 +34,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun MyJobs(
     jobRes: JobResponse, jobs: SnapshotStateList<JobModel>,
+    user: User = User(),
     navigator: DestinationsNavigator, onLoadMore: () -> Unit
 ) {
 
@@ -107,7 +109,7 @@ fun MyJobs(
                     if (index > jobs.lastIndex - 2 && jobRes.data.isNotEmpty()) {
                         onLoadMore.invoke()
                     }
-                    JobsItems(item = job) {
+                    JobsItems(item = job, user) {
                         navigator.navigate(JobDetailsDestination(job.id, job)) {
                             launchSingleTop = true
                         }
