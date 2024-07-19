@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.explore
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,9 +38,9 @@ import com.cakkie.ui.theme.TextColorInactive
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Reviews() {
+fun Reviews(shopId: String) {
     val reviews by remember {
-        mutableStateOf(listOf<String>())
+        mutableStateOf(listOf<String>("", ""))
     }
     Column(Modifier.fillMaxSize()) {
         if (reviews.isEmpty()) {
@@ -64,7 +65,7 @@ fun Reviews() {
                 Text(
                     text = stringResource(id = R.string.sorry_no_reviews_yet),
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextColorInactive,
                     textAlign = TextAlign.Center
@@ -74,7 +75,7 @@ fun Reviews() {
         reviews.forEach { _ ->
             Row(
                 Modifier
-                    .padding(horizontal = 16.dp)
+//                    .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
             ) {
                 GlideImage(
@@ -83,6 +84,7 @@ fun Reviews() {
                     modifier = Modifier
                         .size(32.dp)
                         .clip(shape = CircleShape)
+                        .background(CakkieBrown, CircleShape)
                         .clickable {
 
                         }
@@ -99,7 +101,7 @@ fun Reviews() {
                                 text = "Cake Paradise",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 12.sp
+                                fontSize = 14.sp
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -127,7 +129,7 @@ fun Reviews() {
                         text = "This is so lovely \uD83D\uDE0D \n if you haven't tried it yet, you're missing out! \uD83D\uDE0B \n" +
                                 "#CakeLove #DessertParadise",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 12.sp
+                        fontSize = 14.sp
                     )
                 }
             }

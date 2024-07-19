@@ -277,7 +277,9 @@ fun ItemDetails(
             HorizontalPager(state = pageState) {
                 when (it) {
                     0 -> Description(user, listing, navigator, viewModel, confirmPinResult)
-                    1 -> Reviews()
+                    1 -> Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Reviews(listing.shopId)
+                    }
                 }
             }
         }

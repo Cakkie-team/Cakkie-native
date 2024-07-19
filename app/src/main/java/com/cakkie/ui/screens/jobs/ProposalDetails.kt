@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,10 +48,13 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
 import com.cakkie.networkModels.Proposal
 import com.cakkie.networkModels.ProposalResponse
+import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.explore.Reviews
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDateTime
+import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -74,7 +78,8 @@ fun ProposalDetails(
     var jobId by remember {
         mutableStateOf(item?.id)
     }
-
+    val config = LocalConfiguration.current
+    val width = config.screenWidthDp.dp
     var loading by remember {
         mutableStateOf(false)
     }
@@ -204,14 +209,15 @@ fun ProposalDetails(
             Row {
                 IconButton(
                     onClick = { /*TODO*/ },
-                    enabled = index > 0
+                    enabled = index > 0,
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.arrow_back),
                         contentDescription = "Prev",
                         modifier = Modifier
                             .size(24.dp),
-                        contentScale = ContentScale.FillWidth
+                        contentScale = ContentScale.FillWidth,
+                        alpha = if (index > 0) 1f else 0.5f
                     )
                 }
 
@@ -225,30 +231,93 @@ fun ProposalDetails(
                         modifier = Modifier
                             .rotate(180f)
                             .size(24.dp),
-                        contentScale = ContentScale.FillWidth
+                        contentScale = ContentScale.FillWidth,
+                        alpha = if (index < proposals.size - 1) 1f else 0.5f
                     )
                 }
             }
         }
 
 
-        LazyColumn(
-            Modifier.fillMaxSize(),
+        LazyRow(
+            Modifier.padding(horizontal = 16.dp),
             state = listState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
         ) {
             items(items = proposals, key = { it.id }) { prop ->
-                val index = proposals.indexOf(prop)
-                if (index > proposals.lastIndex - 2 && proposalsRes?.meta?.nextPage != null && jobId != null) {
+                val indx = proposals.indexOf(prop)
+                if (indx > proposals.lastIndex - 2 && proposalsRes?.meta?.nextPage != null && jobId != null) {
                     viewModel.getProposals(
                         jobId!!,
                         proposalsRes.meta.nextPage,
                         proposalsRes.meta.pageSize
                     )
                 }
+                Column(Modifier.width(width - 32.dp)) {
+                    Text(
+                        text = prop.message,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 14.sp,
+//                        color = TextColorInactive
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    listOf(
+                        R.string.proposed_price,
+                        R.string.proposed_completion,
+//                        R.string.location,
+                    ).forEach {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(id = it),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                                color = CakkieBrown,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Text(
+                                text = when (it) {
+                                    R.string.proposed_price -> formatNumber(prop.proposedPrice) + " $currencySymbol"
+                                    R.string.proposed_completion -> prop.proposedDeadline.formatDateTime()
+//                                    R.string.location -> prop.
+                                    else -> ""
+                                },
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp,
+                                color = CakkieBrown
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    CakkieButton(
+                        text = stringResource(id = R.string.send_a_message),
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .align(Alignment.CenterHorizontally)
+                    ) {
+
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = stringResource(id = R.string.reviews),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 14.sp,
+                        color = CakkieBrown,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Reviews(prop.shopId)
+                }
             }
         }
     }
-    Spacer(modifier = Modifier.height(10.dp))
-
+    Spacer(modifier = Modifier.height(20.dp))
 }
