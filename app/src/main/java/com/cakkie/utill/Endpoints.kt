@@ -103,6 +103,7 @@ object Endpoints {
     val SUBMIT_PROPOSAL = { id: String -> "$BASE_URL/job/$id/proposal" } /* submit proposal  POST*/
     val GET_PROPOSALS =
         { id: String, page: Int, size: Int -> "$BASE_URL/job/$id/proposals?page=$page&pageSize=$size" } /* get proposals  GET*/
+    val GET_PROPOSAL = { id: String -> "$BASE_URL/job/proposals/$id" } /*get proposal*/
 
 
     /**

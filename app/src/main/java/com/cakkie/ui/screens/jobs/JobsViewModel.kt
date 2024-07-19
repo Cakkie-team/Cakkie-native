@@ -140,6 +140,10 @@ class JobsViewModel : ViewModel(), KoinComponent {
             _proposals.value = it
         }
 
+    fun getProposal(id: String) = NetworkCalls.get<Proposal>(
+        endpoint = Endpoints.GET_PROPOSAL(id),
+        body = listOf()
+    )
     fun myJobs(page: Int = 0, size: Int = 20) = NetworkCalls.get<JobResponse>(
         endpoint = Endpoints.GET_MY_JOBS(page, size),
         body = listOf()

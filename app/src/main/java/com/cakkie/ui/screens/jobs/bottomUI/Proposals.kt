@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.cakkie.R
 import com.cakkie.networkModels.Proposal
 import com.cakkie.networkModels.ProposalResponse
+import com.cakkie.ui.screens.destinations.ProposalDetailsDestination
 import com.cakkie.ui.screens.jobs.JobsViewModel
 import com.cakkie.ui.screens.jobs.ProposalItem
 import com.cakkie.ui.theme.CakkieBrown
@@ -155,9 +156,15 @@ fun Proposals(
                         viewModel.getProposals(id, proposalsRes.meta.nextPage)
                     }
                     ProposalItem(item = proposal, symbol) {
-//                        navigator.navigate(JobDetailsDestination(job.id, job)) {
-//                            launchSingleTop = true
-//                        }
+                        navigator.navigate(
+                            ProposalDetailsDestination(
+                                proposal.id,
+                                symbol,
+                                proposal
+                            )
+                        ) {
+                            launchSingleTop = true
+                        }
                     }
 
                 }
