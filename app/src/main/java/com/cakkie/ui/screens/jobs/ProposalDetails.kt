@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -164,7 +163,7 @@ fun ProposalDetails(
                     .align(Alignment.Center)
             )
         }
-        Box(modifier = Modifier.padding(20.dp)) {
+        Box(modifier = Modifier.padding(start = 20.dp)) {
             GlideImage(
                 model = currentItem.shop.image.ifEmpty {
                     "https://cdn.cakkie.com/imgs/Cakkie%20Icon%20(6).png"
@@ -180,7 +179,7 @@ fun ProposalDetails(
                 contentScale = ContentScale.Crop
             )
         }
-
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             Modifier
                 .fillMaxWidth()
@@ -207,11 +206,12 @@ fun ProposalDetails(
                     onClick = { /*TODO*/ },
                     enabled = index > 0
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.arrow_back),
-                        contentDescription = "Back",
-                        modifier = Modifier.width(30.dp),
-                        tint = CakkieBrown
+                        contentDescription = "Prev",
+                        modifier = Modifier
+                            .size(24.dp),
+                        contentScale = ContentScale.FillWidth
                     )
                 }
 
@@ -219,13 +219,13 @@ fun ProposalDetails(
                     onClick = { /*TODO*/ },
                     enabled = index < proposals.size - 1
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.arrow_back),
-                        contentDescription = "Back",
+                        contentDescription = "Next",
                         modifier = Modifier
                             .rotate(180f)
-                            .width(30.dp),
-                        tint = CakkieBrown
+                            .size(24.dp),
+                        contentScale = ContentScale.FillWidth
                     )
                 }
             }
