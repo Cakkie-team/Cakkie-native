@@ -104,6 +104,7 @@ object Endpoints {
     val GET_PROPOSALS =
         { id: String, page: Int, size: Int -> "$BASE_URL/job/$id/proposals?page=$page&pageSize=$size" } /* get proposals  GET*/
     val GET_PROPOSAL = { id: String -> "$BASE_URL/job/proposals/$id" } /*get proposal*/
+    val AWARD_CONTRACT = { id: String -> "$BASE_URL/job/award/$id" } /* award contract  POST*/
 
 
     /**

@@ -109,7 +109,7 @@ fun Chat(
     idIsProposal: Boolean = false,
     shopId: String? = null,
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
-    awardResult: ResultRecipient<AwardContractDestination, String>,
+    awardResult: ResultRecipient<AwardContractDestination, Proposal>,
     congratsResult: ResultRecipient<ReceiveContractDestination, String>,
     navigator: DestinationsNavigator
 ) {
@@ -183,6 +183,7 @@ fun Chat(
                 Timber.d("awarded: $it")
                 val updatedProposal = it[0].toString().toObject(Proposal::class.java)
                 proposal = updatedProposal
+                navigator.navigate(ReceiveContractDestination)
             }
             onDispose {
                 viewModel.socket.off("support-${user.id}")
@@ -227,7 +228,7 @@ fun Chat(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-//                navigator.navigate(ReceiveContractDestination)
+                proposal = result.value
             }
         }
     }

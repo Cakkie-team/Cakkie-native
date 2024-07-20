@@ -32,6 +32,7 @@ import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.OtpInput
 import com.cakkie.ui.screens.jobs.JobsViewModel
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
@@ -41,7 +42,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AwardContract(
     proposal: Proposal,
-    onComplete: ResultBackNavigator<String>,
+    onComplete: ResultBackNavigator<Proposal>,
 ) {
 
     val viewModel: JobsViewModel = koinViewModel()
@@ -107,7 +108,23 @@ fun AwardContract(
             text = stringResource(id = R.string.sure),
             enabled = pin.text.length == 4
         ) {
-            onComplete.navigateBack(result = "it")
+            processing = true
+            viewModel.awardContract(
+                proposalId = proposal.id,
+                pin = pin.text,
+                jobId = proposal.jobId
+            ).addOnSuccessListener {
+                processing = false
+                Toaster(
+                    context,
+                    "Job awarded successfully!",
+                    R.drawable.logo
+                ).show()
+                onComplete.navigateBack(result = it)
+            }.addOnFailureListener {
+                processing = false
+                Toaster(context, it, R.drawable.logo).show()
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))

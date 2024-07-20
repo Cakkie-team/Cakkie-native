@@ -112,6 +112,18 @@ class JobsViewModel : ViewModel(), KoinComponent {
         )
     )
 
+    fun awardContract(
+        proposalId: String,
+        pin: String,
+        jobId: String
+    ) = NetworkCalls.post<Proposal>(
+        endpoint = Endpoints.AWARD_CONTRACT(jobId),
+        body = listOf(
+            Pair("pin", pin),
+            Pair("proposalId", proposalId)
+        )
+    )
+
 
     fun uploadImage(image: File, path: String, fileName: String) =
         NetworkCalls.uploadFile(
