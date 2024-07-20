@@ -127,7 +127,7 @@ fun JobsItems(
                             },
                             item.totalProposal
                         )
-                    } else item.state,
+                    } else item.status,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 12.sp,
                     color = if (item.hasApplied) CakkieGreen else CakkieBrown
