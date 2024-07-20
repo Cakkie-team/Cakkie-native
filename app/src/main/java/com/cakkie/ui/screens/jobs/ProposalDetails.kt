@@ -49,6 +49,7 @@ import com.cakkie.R
 import com.cakkie.networkModels.Proposal
 import com.cakkie.networkModels.ProposalResponse
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.ChatDestination
 import com.cakkie.ui.screens.explore.Reviews
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
@@ -302,7 +303,15 @@ fun ProposalDetails(
                             .fillMaxWidth(0.8f)
                             .align(Alignment.CenterHorizontally)
                     ) {
-
+                        navigator.navigate(
+                            ChatDestination(
+                                prop.id,
+                                idIsProposal = true,
+                                shopId = prop.shopId
+                            )
+                        ) {
+                            launchSingleTop = true
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))

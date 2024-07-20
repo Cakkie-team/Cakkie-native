@@ -105,6 +105,8 @@ import java.util.Locale
 fun Chat(
     id: String,
     conversation: Conversation? = null,
+    idIsProposal: Boolean = false,
+    shopId: String? = null,
     fileRecipient: ResultRecipient<ChooseMediaDestination, String>,
     awardResult: ResultRecipient<AwardContractDestination, String>,
     congratsResult: ResultRecipient<ReceiveContractDestination, String>,
@@ -129,8 +131,12 @@ fun Chat(
     val chatState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     LaunchedEffect(user) {
-        if (id == "support" && user != null) {
-            viewModel.getSupport(user.id)
+        if (user != null) {
+            if (id == "support") {
+                viewModel.getSupport(user.id)
+            } else {
+                viewModel.getConvr(id, user.id)
+            }
         }
     }
 
@@ -151,8 +157,14 @@ fun Chat(
                 val newConv = it[0].toString().toObject(Conversation::class.java)
                 conver = newConv
             }
+            viewModel.socket.on("convr-${user.id}") {
+                Timber.d("convr: $it")
+                val newConv = it[0].toString().toObject(Conversation::class.java)
+                conver = newConv
+            }
             onDispose {
                 viewModel.socket.off("support-${user.id}")
+                viewModel.socket.off("convr-${user.id}")
             }
         }
     }
@@ -564,9 +576,10 @@ fun Chat(
                                     if (conver == null) {
                                         viewModel.startChat(
                                             forAdmins = id == "support",
-                                            shopId = null,
+                                            shopId = shopId,
                                             content = message.text,
-                                            media = fileUrls.ifEmpty { null }?.first()?.url
+                                            media = fileUrls.ifEmpty { null }?.first()?.url,
+                                            proposalId = if (idIsProposal) id else null
                                         ).addOnSuccessListener {
                                             conver = it
                                             message = TextFieldValue("")

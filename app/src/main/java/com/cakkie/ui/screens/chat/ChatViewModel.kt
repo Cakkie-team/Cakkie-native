@@ -43,13 +43,15 @@ class ChatViewModel : ViewModel(), KoinComponent {
         shopId: String?,
         content: String,
         media: String?,
+        proposalId: String?
     ) = NetworkCalls.post<Conversation>(
         endpoint = Endpoints.START_CHAT,
         body = listOf(
             "forAdmins" to forAdmins,
             "shopId" to shopId,
             "content" to content,
-            "media" to media
+            "media" to media,
+            "proposalId" to proposalId
         )
     )
 
@@ -66,6 +68,13 @@ class ChatViewModel : ViewModel(), KoinComponent {
         val data = JSONObject()
         data.put("id", id)
         socketClient.socket.emit("getSupport", data)
+    }
+
+    fun getConvr(id: String, useId: String) {
+        val data = JSONObject()
+        data.put("id", id)
+        data.put("userId", useId)
+        socketClient.socket.emit("getConvr", data)
     }
 
     fun readChat(userId: String, messageId: String) {

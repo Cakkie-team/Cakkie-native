@@ -217,7 +217,10 @@ fun ChatList(navigator: DestinationsNavigator) {
                                 .padding(vertical = 10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 var isLoading by remember {
                                     mutableStateOf(false)
                                 }

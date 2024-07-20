@@ -3,6 +3,7 @@ package com.cakkie.networkModels
 import android.os.Parcelable
 import com.cakkie.data.db.models.User
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,6 +20,8 @@ data class Conversation(
     val updatedAt: String = "",
     val unreadCount: Int = 0,
     val display: Display = Display(),
+    @SerialName("Proposal")
+    val proposal: Proposal? = null,
 ) : Parcelable
 
 @Serializable
