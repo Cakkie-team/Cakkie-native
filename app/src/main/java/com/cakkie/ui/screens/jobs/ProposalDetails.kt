@@ -301,7 +301,8 @@ fun ProposalDetails(
                         text = stringResource(id = R.string.send_a_message),
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
+                        enabled = prop.status == "PENDING" || prop.status == "AWARDED"
                     ) {
                         navigator.navigate(
                             ChatDestination(

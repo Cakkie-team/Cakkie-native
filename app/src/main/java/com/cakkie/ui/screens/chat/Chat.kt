@@ -72,6 +72,8 @@ import com.cakkie.networkModels.MessageResponse
 import com.cakkie.networkModels.Proposal
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
+import com.cakkie.ui.screens.destinations.ContractDetailDestination
+import com.cakkie.ui.screens.destinations.OrderDetailsDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
 import com.cakkie.ui.screens.destinations.ReportDestination
 import com.cakkie.ui.screens.shop.MediaModel
@@ -229,6 +231,9 @@ fun Chat(
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
                 proposal = result.value
+                if (user != null) {
+                    viewModel.getConvr(id, user.id)
+                }
             }
         }
     }
@@ -336,13 +341,37 @@ fun Chat(
                                 )
                             )
                         }
+
+                        if (proposal?.status == "PENDING") {
+                            if (user?.id == conver?.byUserId) navigator.navigate(
+                                AwardContractDestination(
+                                    proposal = proposal!!
+                                )
+                            )
+//                            else {}
+                        } else if (conver?.Order != null) {
+                            Timber.d("Order: ${conver?.Order}")
+                            if (user?.id == conver?.byUserId) navigator.navigate(
+                                OrderDetailsDestination(
+                                    conver?.Order!!.id
+                                )
+                            )
+                            else navigator.navigate(
+                                ContractDetailDestination(conver?.Order!!.id)
+                            )
+                        }
                     }
                     .background(CakkieBrown002)
                     .height(40.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Award Contract",
+                    text = if (proposal?.status == "PENDING") {
+                        if (user?.id == conver?.byUserId) "Award Contract"
+                        else "Awaiting Contract Award"
+                    } else {
+                        "View Order"
+                    },
                     color = CakkieBackground,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
@@ -524,136 +553,140 @@ fun Chat(
             }
 //            Spacer(modifier = Modifier.padding(8.dp))
         }
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = CardDefaults.elevatedShape,
-            colors = CardDefaults.cardColors(
-                containerColor = CakkieBackground
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp
-            )
+        if ((proposal != null && proposal!!.status in listOf("PENDING", "AWARDED"))
+            || proposal == null
         ) {
-            Row(Modifier.fillMaxWidth()) {
-                TextField(
-                    value = message,
-                    onValueChange = { message = it },
-                    placeholder = {
-                        Text(
-                            text = "Type a message",
-                            color = TextColorInactive,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 14.sp
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    leadingIcon = {
-                        IconButton(onClick = {
-                            navigator.navigate(ChooseMediaDestination(from = "chat"))
-                        }) {
-                            Image(
-                                painter = painterResource(id = R.drawable.fluent_attach),
-                                contentDescription = "Back",
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier.width(24.dp)
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = CardDefaults.elevatedShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieBackground
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                )
+            ) {
+                Row(Modifier.fillMaxWidth()) {
+                    TextField(
+                        value = message,
+                        onValueChange = { message = it },
+                        placeholder = {
+                            Text(
+                                text = "Type a message",
+                                color = TextColorInactive,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 14.sp
                             )
-                        }
-                    },
-                    trailingIcon = {
-                        AnimatedVisibility(visible = message.text.isNotEmpty() || files.isNotEmpty()) {
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        leadingIcon = {
                             IconButton(onClick = {
-                                if (user != null) {
-                                    val fileUrls = files.map {
-                                        val file = context.createTmpFileFromUri(
-                                            uri = it.uri.toUri(),
-                                            fileName = it.name.replace(" ", "").take(10)
-                                        )!!
-                                        FileModel(
-                                            file = file,
-                                            url = Endpoints.FILE_URL(
-                                                "${
-                                                    user.username.lowercase(Locale.ROOT)
-                                                        .replace(" ", "")
-                                                }/${file.name.replace(" ", "")}.${
-                                                    it.mediaMimeType.split("/").last()
-                                                }"
-                                            ),
-                                            mediaMimeType = it.mediaMimeType.split("/").last()
-                                        )
-                                    }
-                                    fileUrls.forEach {
-                                        viewModel.uploadImage(
-                                            image = it.file,
-                                            path = user.username.lowercase(Locale.ROOT)
-                                                .replace(" ", ""),
-                                            fileName = "${it.file.name}.${it.mediaMimeType}"
-                                        ).addOnSuccessListener { resp ->
-                                            Timber.d(resp)
-                                            it.file.delete()
-                                        }.addOnFailureListener { exception ->
-                                            Timber.d(exception)
-                                            Toaster(
-                                                context,
-                                                exception.message.toString(),
-                                                R.drawable.logo
-                                            )
-                                            it.file.delete()
-                                        }
-                                    }
-                                    if (conver == null) {
-                                        viewModel.startChat(
-                                            forAdmins = id == "support",
-                                            shopId = shopId,
-                                            content = message.text,
-                                            media = fileUrls.ifEmpty { null }?.first()?.url,
-                                            proposalId = if (idIsProposal) id else null
-                                        ).addOnSuccessListener {
-                                            conver = it
-                                            message = TextFieldValue("")
-                                            replyTo = null
-                                            files = emptyList()
-                                        }.addOnFailureListener {
-                                            Toaster(
-                                                context,
-                                                it,
-                                                R.drawable.logo
-                                            ).show()
-                                        }
-                                    } else {
-
-                                        viewModel.sendMessages(
-                                            userId = user.id,
-                                            conversationId = conver!!.id,
-                                            text = message.text,
-                                            media = fileUrls.ifEmpty { null }?.first()?.url,
-                                            replyTo = replyTo?.id
-                                        )
-                                        message = TextFieldValue("")
-                                        replyTo = null
-                                        files = emptyList()
-                                    }
-                                }
+                                navigator.navigate(ChooseMediaDestination(from = "chat"))
                             }) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.send_fill),
+                                    painter = painterResource(id = R.drawable.fluent_attach),
                                     contentDescription = "Back",
                                     contentScale = ContentScale.FillWidth,
                                     modifier = Modifier.width(24.dp)
                                 )
                             }
-                        }
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = CakkieBrown,
-                        textColor = TextColorDark
+                        },
+                        trailingIcon = {
+                            AnimatedVisibility(visible = message.text.isNotEmpty() || files.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    if (user != null) {
+                                        val fileUrls = files.map {
+                                            val file = context.createTmpFileFromUri(
+                                                uri = it.uri.toUri(),
+                                                fileName = it.name.replace(" ", "").take(10)
+                                            )!!
+                                            FileModel(
+                                                file = file,
+                                                url = Endpoints.FILE_URL(
+                                                    "${
+                                                        user.username.lowercase(Locale.ROOT)
+                                                            .replace(" ", "")
+                                                    }/${file.name.replace(" ", "")}.${
+                                                        it.mediaMimeType.split("/").last()
+                                                    }"
+                                                ),
+                                                mediaMimeType = it.mediaMimeType.split("/").last()
+                                            )
+                                        }
+                                        fileUrls.forEach {
+                                            viewModel.uploadImage(
+                                                image = it.file,
+                                                path = user.username.lowercase(Locale.ROOT)
+                                                    .replace(" ", ""),
+                                                fileName = "${it.file.name}.${it.mediaMimeType}"
+                                            ).addOnSuccessListener { resp ->
+                                                Timber.d(resp)
+                                                it.file.delete()
+                                            }.addOnFailureListener { exception ->
+                                                Timber.d(exception)
+                                                Toaster(
+                                                    context,
+                                                    exception.message.toString(),
+                                                    R.drawable.logo
+                                                )
+                                                it.file.delete()
+                                            }
+                                        }
+                                        if (conver == null) {
+                                            viewModel.startChat(
+                                                forAdmins = id == "support",
+                                                shopId = shopId,
+                                                content = message.text,
+                                                media = fileUrls.ifEmpty { null }?.first()?.url,
+                                                proposalId = if (idIsProposal) id else null
+                                            ).addOnSuccessListener {
+                                                conver = it
+                                                message = TextFieldValue("")
+                                                replyTo = null
+                                                files = emptyList()
+                                            }.addOnFailureListener {
+                                                Toaster(
+                                                    context,
+                                                    it,
+                                                    R.drawable.logo
+                                                ).show()
+                                            }
+                                        } else {
+
+                                            viewModel.sendMessages(
+                                                userId = user.id,
+                                                conversationId = conver!!.id,
+                                                text = message.text,
+                                                media = fileUrls.ifEmpty { null }?.first()?.url,
+                                                replyTo = replyTo?.id
+                                            )
+                                            message = TextFieldValue("")
+                                            replyTo = null
+                                            files = emptyList()
+                                        }
+                                    }
+                                }) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.send_fill),
+                                        contentDescription = "Back",
+                                        contentScale = ContentScale.FillWidth,
+                                        modifier = Modifier.width(24.dp)
+                                    )
+                                }
+                            }
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = CakkieBrown,
+                            textColor = TextColorDark
+                        )
                     )
-                )
+                }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

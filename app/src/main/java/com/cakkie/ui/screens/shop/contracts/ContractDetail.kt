@@ -85,7 +85,8 @@ import java.time.format.DateTimeFormatter
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun ContractDetail(
-    item: Order,
+    id: String,
+    item: Order = Order(),
     cancelResultRecipient: ResultRecipient<CancelOrderDestination, Boolean>,
     acceptResultRecipient: ResultRecipient<AcceptRequestDestination, Boolean>,
     readyResultRecipient: ResultRecipient<ReadyOrderDestination, Boolean>,
@@ -118,46 +119,48 @@ fun ContractDetail(
     }
 
     LaunchedEffect(key1 = order.waitTime) {
-        val targetDateTime = LocalDateTime.parse(
-            order.waitTime.ifEmpty { order.createdAt },
-            DateTimeFormatter.ISO_DATE_TIME
-        )
+        if (order.createdAt.isNotEmpty()) {
+            val targetDateTime = LocalDateTime.parse(
+                order.waitTime.ifEmpty { order.createdAt },
+                DateTimeFormatter.ISO_DATE_TIME
+            )
 
-        // Add 2 hours to the target time
-        val targetMillis =
-            targetDateTime
-                .plusHours(1)
-                .plusMinutes(30)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-        remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
-        while (Instant.now().toEpochMilli() < targetMillis) {
-            val currentTime = Instant.now().toEpochMilli()
-            val remainingMillis = targetMillis - currentTime
+            // Add 2 hours to the target time
+            val targetMillis =
+                targetDateTime
+                    .plusHours(1)
+                    .plusMinutes(30)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+            remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
+            while (Instant.now().toEpochMilli() < targetMillis) {
+                val currentTime = Instant.now().toEpochMilli()
+                val remainingMillis = targetMillis - currentTime
 
 //            Timber.d("Remaining time: $remainingMillis")
 
-            val days = remainingMillis / (1000 * 60 * 60 * 24)
-            val hours = (remainingMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
-            val seconds = (remainingMillis % (1000 * 60)) / 1000
+                val days = remainingMillis / (1000 * 60 * 60 * 24)
+                val hours = (remainingMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
+                val seconds = (remainingMillis % (1000 * 60)) / 1000
 
-            remainingTime = if (days > 0) {
-                String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds)
-            } else {
-                String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                remainingTime = if (days > 0) {
+                    String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds)
+                } else {
+                    String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                }
+
+                delay(1000) // Delay for 1 second
             }
 
-            delay(1000) // Delay for 1 second
+            // Countdown finished
+            canCancel = true
         }
-
-        // Countdown finished
-        canCancel = true
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getOrder(order.id)
+    LaunchedEffect(id) {
+        viewModel.getOrder(id)
             .addOnSuccessListener {
                 order = it
             }
@@ -173,7 +176,7 @@ fun ContractDetail(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.getOrder(item.id)
+                viewModel.getOrder(id)
                     .addOnSuccessListener {
                         order = it
                     }
@@ -191,7 +194,7 @@ fun ContractDetail(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.getOrder(item.id)
+                viewModel.getOrder(id)
                     .addOnSuccessListener {
                         order = it
                     }
@@ -209,7 +212,7 @@ fun ContractDetail(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.getOrder(item.id)
+                viewModel.getOrder(id)
                     .addOnSuccessListener {
                         order = it
                     }
@@ -242,7 +245,7 @@ fun ContractDetail(
                     },
             )
             Text(
-                text = item.title,
+                text = order.title,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
@@ -260,7 +263,7 @@ fun ContractDetail(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 GlideImage(
-                    model = item.user.profileImage.replace(Regex("\\bhttp://"), "https://"),
+                    model = order.user.profileImage.replace(Regex("\\bhttp://"), "https://"),
                     contentDescription = "",
                     modifier = Modifier
                         .size(40.dp)
@@ -287,20 +290,22 @@ fun ContractDetail(
                     )
                 }
             }
-            IconButton(
-                onClick = {
-                    navigator.navigate(ChatDestination("chat"))
-                }, modifier = Modifier
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.chat),
-                    contentDescription = stringResource(
-                        id = R.string.chat
-                    ),
-                    modifier = Modifier
-                        .size(27.dp),
-                    tint = TextColorDark
-                )
+            if (order.conversationId.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        navigator.navigate(ChatDestination(order.conversationId))
+                    }, modifier = Modifier
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.chat),
+                        contentDescription = stringResource(
+                            id = R.string.chat
+                        ),
+                        modifier = Modifier
+                            .size(27.dp),
+                        tint = TextColorDark
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -315,7 +320,7 @@ fun ContractDetail(
                 mutableStateOf(false)
             }
             AsyncImage(
-                model = item.image,
+                model = order.image,
                 contentDescription = "order image",
                 onState = {
                     //update isLoaded
@@ -449,7 +454,7 @@ fun ContractDetail(
                     Column(Modifier.weight(1f)) {
                         Text(
                             text = stringResource(
-                                id = if (item.status == "PENDING") R.string.waiting_time
+                                id = if (order.status == "PENDING") R.string.waiting_time
                                 else R.string.deadline
                             ),
                             style = MaterialTheme.typography.bodyLarge,
@@ -483,9 +488,9 @@ fun ContractDetail(
                         color = CakkieGreen
                     ) {
                         if (order.status == "PENDING") {
-                            navigator.navigate(AcceptRequestDestination(item.id))
+                            navigator.navigate(AcceptRequestDestination(id))
                         } else {
-                            navigator.navigate(ReadyOrderDestination(item.id))
+                            navigator.navigate(ReadyOrderDestination(id))
                         }
                     }
                     Spacer(modifier = Modifier.width(20.dp))
@@ -587,7 +592,7 @@ fun ContractDetail(
                         Button(
                             onClick = {
                                 openDialog.value = false
-                                navigator.navigate(DeclineContractDestination(item.id))
+                                navigator.navigate(DeclineContractDestination(id))
                             },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = CakkieBrown,

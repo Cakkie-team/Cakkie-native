@@ -94,7 +94,7 @@ fun Contracts(
                         onLoadMore.invoke()
                     }
                     OrdersItem(order) {
-                        navigator.navigate(ContractDetailDestination(order))
+                        navigator.navigate(ContractDetailDestination(order.id, order))
                     }
                 }
             }

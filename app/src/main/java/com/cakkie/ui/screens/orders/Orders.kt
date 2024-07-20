@@ -167,7 +167,7 @@ fun Orders(navigator: DestinationsNavigator) {
                         )
                     }
                     OrdersItem(it) {
-                        navigator.navigate(OrderDetailsDestination(it))
+                        navigator.navigate(OrderDetailsDestination(it.id, it))
                     }
                 }
             }

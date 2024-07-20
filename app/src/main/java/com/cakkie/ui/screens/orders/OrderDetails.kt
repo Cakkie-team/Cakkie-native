@@ -73,7 +73,8 @@ import java.time.format.DateTimeFormatter
 @com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun OrderDetails(
-    item: Order,
+    id: String,
+    item: Order = Order(),
     cancelResultRecipient: ResultRecipient<CancelOrderDestination, Boolean>,
     navigator: DestinationsNavigator
 ) {
@@ -104,46 +105,48 @@ fun OrderDetails(
     }
 
     LaunchedEffect(key1 = order.waitTime) {
-        val targetDateTime = LocalDateTime.parse(
-            order.waitTime.ifEmpty { order.createdAt },
-            DateTimeFormatter.ISO_DATE_TIME
-        )
+        if (order.createdAt.isNotEmpty()) {
+            val targetDateTime = LocalDateTime.parse(
+                order.waitTime.ifEmpty { order.createdAt },
+                DateTimeFormatter.ISO_DATE_TIME
+            )
 
-        // Add 2 hours to the target time
-        val targetMillis =
-            targetDateTime
-                .plusHours(1)
-                .plusMinutes(30)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-        remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
-        while (Instant.now().toEpochMilli() < targetMillis) {
-            val currentTime = Instant.now().toEpochMilli()
-            val remainingMillis = targetMillis - currentTime
+            // Add 2 hours to the target time
+            val targetMillis =
+                targetDateTime
+                    .plusHours(1)
+                    .plusMinutes(30)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+            remainingTime = String.format("%02d:%02d:%02d", 0, 0, 0)
+            while (Instant.now().toEpochMilli() < targetMillis) {
+                val currentTime = Instant.now().toEpochMilli()
+                val remainingMillis = targetMillis - currentTime
 
 //            Timber.d("Remaining time: $remainingMillis")
 
-            val days = remainingMillis / (1000 * 60 * 60 * 24)
-            val hours = (remainingMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
-            val seconds = (remainingMillis % (1000 * 60)) / 1000
+                val days = remainingMillis / (1000 * 60 * 60 * 24)
+                val hours = (remainingMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                val minutes = (remainingMillis % (1000 * 60 * 60)) / (1000 * 60)
+                val seconds = (remainingMillis % (1000 * 60)) / 1000
 
-            remainingTime = if (days > 0) {
-                String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds)
-            } else {
-                String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                remainingTime = if (days > 0) {
+                    String.format("%d days %02d:%02d:%02d", days, hours, minutes, seconds)
+                } else {
+                    String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                }
+
+                delay(1000) // Delay for 1 second
             }
 
-            delay(1000) // Delay for 1 second
+            // Countdown finished
+            canCancel = true
         }
-
-        // Countdown finished
-        canCancel = true
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getOrder(order.id)
+    LaunchedEffect(id) {
+        viewModel.getOrder(id)
             .addOnSuccessListener {
                 order = it
             }
@@ -159,7 +162,7 @@ fun OrderDetails(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                viewModel.getOrder(item.id)
+                viewModel.getOrder(id)
                     .addOnSuccessListener {
                         order = it
                     }
@@ -377,7 +380,7 @@ fun OrderDetails(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = item.id.takeLast(6),
+                text = id.takeLast(6),
                 style = MaterialTheme.typography.bodyLarge,
                 color = CakkieBrown,
                 fontSize = 30.sp,
@@ -456,7 +459,7 @@ fun OrderDetails(
                         Button(
                             onClick = {
                                 openDialog.value = false
-                                navigator.navigate(CancelOrderDestination(item.id))
+                                navigator.navigate(CancelOrderDestination(id))
                             },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = CakkieBrown,
