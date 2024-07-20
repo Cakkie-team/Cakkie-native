@@ -331,17 +331,15 @@ fun JobDetails(
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState),
                 contentPadding = PaddingValues(horizontal = 8.dp),
             ) {
-                items(items = media.ifEmpty {
-                    job.media.map {
-                        MediaModel(
-                            uri = it,
-                            dateAdded = System.currentTimeMillis(),
-                            isVideo = it.isVideoUrl(),
-                            mediaMimeType = it.substringAfterLast("."),
-                            name = it.substringAfterLast("/"),
-                        )
+                items(items = media + job.media.map {
+                    MediaModel(
+                        uri = it,
+                        dateAdded = System.currentTimeMillis(),
+                        isVideo = it.isVideoUrl(),
+                        mediaMimeType = it.substringAfterLast("."),
+                        name = it.substringAfterLast("/"),
+                    )
 
-                    }
                 }) { media ->
                     Box(
                         modifier = Modifier

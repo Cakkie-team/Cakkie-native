@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.cakkie.data.db.models.Listing
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
@@ -163,6 +164,10 @@ class JobsViewModel : ViewModel(), KoinComponent {
         _myJobRes.value = it
     }
 
+    fun getListing(id: String) = NetworkCalls.get<Listing>(
+        endpoint = Endpoints.GET_LISTING(id),
+        body = listOf()
+    )
 
     fun getJob(id: String) = NetworkCalls.get<JobModel>(
         endpoint = Endpoints.GET_JOB(id),
