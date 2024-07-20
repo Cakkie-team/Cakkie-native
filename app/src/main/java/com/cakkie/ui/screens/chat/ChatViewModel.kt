@@ -8,6 +8,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Conversation
 import com.cakkie.networkModels.ConversationResponse
+import com.cakkie.networkModels.Proposal
 import com.cakkie.socket.SocketClient
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
@@ -135,6 +136,11 @@ class ChatViewModel : ViewModel(), KoinComponent {
             userRepository.createUser(it)
         }
     }
+
+    fun getProposal(id: String) = NetworkCalls.get<Proposal>(
+        endpoint = Endpoints.GET_PROPOSAL(id),
+        body = listOf()
+    )
 
     init {
         getProfile()

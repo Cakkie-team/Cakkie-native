@@ -24,25 +24,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.cakkie.R
+import com.cakkie.networkModels.Proposal
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.components.OtpInput
+import com.cakkie.ui.screens.jobs.JobsViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun AwardContract(
-    name: String,
+    proposal: Proposal,
     onComplete: ResultBackNavigator<String>,
 ) {
+
+    val viewModel: JobsViewModel = koinViewModel()
     val context = LocalContext.current
     var processing by remember {
         mutableStateOf(false)
     }
 
+    var pin by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
 
     Column(
         modifier = Modifier
@@ -76,20 +86,26 @@ fun AwardContract(
 //
 //            )
             Text(
-                text = stringResource(id = R.string.contract_confirmation, name),
+                text = stringResource(id = R.string.contract_confirmation, proposal.shop.name),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier,
                 fontWeight = FontWeight.SemiBold,
             )
         }
-
+        Spacer(modifier = Modifier.height(10.dp))
+        OtpInput(value = pin, onValueChange = {
+            if (it.text.length <= 4) {
+                pin = it
+            }
+        })
         Spacer(modifier = Modifier.height(20.dp))
 
         CakkieButton(
             Modifier
                 .fillMaxWidth(),
             processing = processing,
-            text = stringResource(id = R.string.sure)
+            text = stringResource(id = R.string.sure),
+            enabled = pin.text.length == 4
         ) {
             onComplete.navigateBack(result = "it")
         }

@@ -69,6 +69,7 @@ import com.cakkie.networkModels.Conversation
 import com.cakkie.networkModels.FileModel
 import com.cakkie.networkModels.Message
 import com.cakkie.networkModels.MessageResponse
+import com.cakkie.networkModels.Proposal
 import com.cakkie.ui.screens.destinations.AwardContractDestination
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ReceiveContractDestination
@@ -128,6 +129,9 @@ fun Chat(
     val chats = remember {
         mutableStateListOf<Message>()
     }
+    var proposal by remember {
+        mutableStateOf<Proposal?>(null)
+    }
     val chatState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     LaunchedEffect(user) {
@@ -143,6 +147,18 @@ fun Chat(
     LaunchedEffect(conver) {
         if (conver != null) {
             viewModel.getMessages(conver!!.id)
+
+            if (conver?.proposalId != null) {
+                viewModel.getProposal(conver!!.proposalId!!).addOnSuccessListener {
+                    proposal = it
+                }.addOnFailureListener {
+                    Toaster(
+                        context,
+                        it.localizedMessage ?: "Something went wrong: proposal",
+                        R.drawable.logo
+                    )
+                }
+            }
         }
     }
     LaunchedEffect(key1 = chatRes) {
@@ -162,9 +178,16 @@ fun Chat(
                 val newConv = it[0].toString().toObject(Conversation::class.java)
                 conver = newConv
             }
+
+            viewModel.socket.on("awarded") {
+                Timber.d("awarded: $it")
+                val updatedProposal = it[0].toString().toObject(Proposal::class.java)
+                proposal = updatedProposal
+            }
             onDispose {
                 viewModel.socket.off("support-${user.id}")
                 viewModel.socket.off("convr-${user.id}")
+                viewModel.socket.off("awarded")
             }
         }
     }
@@ -204,7 +227,7 @@ fun Chat(
         when (result) {
             is NavResult.Canceled -> {}
             is NavResult.Value -> {
-                navigator.navigate(ReceiveContractDestination)
+//                navigator.navigate(ReceiveContractDestination)
             }
         }
     }
@@ -300,12 +323,18 @@ fun Chat(
                 )
             }
         }
-        AnimatedVisibility(visible = false) {
+        AnimatedVisibility(visible = proposal != null) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navigator.navigate(AwardContractDestination(name = "Sweet bites"))
+                        if (proposal != null) {
+                            navigator.navigate(
+                                AwardContractDestination(
+                                    proposal = proposal!!
+                                )
+                            )
+                        }
                     }
                     .background(CakkieBrown002)
                     .height(40.dp),
