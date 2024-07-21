@@ -200,7 +200,7 @@ fun PropDetail(
             Box(
                 modifier = Modifier
                     .heightIn(max = 180.dp)
-                    .clip(MaterialTheme.shapes.medium)
+//                    .clip(MaterialTheme.shapes.medium)
 //                    .padding(horizontal = 5.dp)
                     .background(Color.White.copy(alpha = 0.6f))
                     .fillMaxWidth()

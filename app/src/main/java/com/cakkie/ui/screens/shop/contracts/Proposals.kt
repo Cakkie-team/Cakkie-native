@@ -38,6 +38,7 @@ import com.cakkie.R
 import com.cakkie.networkModels.Proposal
 import com.cakkie.networkModels.ProposalResponse
 import com.cakkie.ui.components.CakkieButton
+import com.cakkie.ui.screens.destinations.PropDetailDestination
 import com.cakkie.ui.theme.CakkieBlue
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieGreen
@@ -112,7 +113,7 @@ fun Proposals(
                         onLoadMore.invoke()
                     }
                     ProposalItem(proposal) {
-//                        navigator.navigate(ContractDetailDestination(proposal.id, proposal))
+                        navigator.navigate(PropDetailDestination(proposal.id, proposal))
                     }
                 }
             }
