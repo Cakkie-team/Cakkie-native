@@ -55,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -359,19 +360,28 @@ fun CreateJob(
                                 }
                             }
 
-                            else -> BasicTextField(
-                                value = when (prop) {
-                                    R.string.quantity -> item.value.meta.quantity
-                                    R.string.proposed_price -> item.value.salary.toString()
-                                    else -> ""
-                                },
+                            else -> {
+                                var value by remember {
+                                    mutableStateOf(
+                                        TextFieldValue(
+                                            when (prop) {
+                                                R.string.quantity -> item.value.meta.quantity
+                                                R.string.proposed_price -> item.value.salary.toString()
+                                                else -> ""
+                                            }
+                                        )
+                                    )
+                                }
+                                BasicTextField(
+                                    value = value,
                                 onValueChange = {
+                                    value = it
                                     when (prop) {
                                         R.string.quantity -> item.value =
-                                            job.copy(meta = job.meta.copy(quantity = it))
+                                            job.copy(meta = job.meta.copy(quantity = it.text))
 
                                         R.string.proposed_price -> item.value =
-                                            job.copy(salary = it.ifEmpty { "0" }.toDouble())
+                                            job.copy(salary = it.text.ifEmpty { "0" }.toDouble())
                                     }
                                 },
                                 singleLine = true,
@@ -478,6 +488,7 @@ fun CreateJob(
                                         }
                                     }
                                 }
+                            }
                             }
                         }
                     }

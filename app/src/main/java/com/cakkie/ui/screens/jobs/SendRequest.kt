@@ -56,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -183,13 +184,15 @@ fun SendRequest(
     }
 
     LaunchedEffect(key1 = listing) {
-        job = job.copy(
-            title = listing.name,
-            description = listing.description,
+        if (job.title.isEmpty()) {
+            job = job.copy(
+                title = listing.name,
+                description = listing.description,
 //            meta = listing.meta,
-            salary = listing.price[0].toDouble(),
-            media = listing.media,
-        )
+                salary = listing.price[0].toDouble(),
+                media = listing.media,
+            )
+        }
     }
     LaunchedEffect(user) {
         if (user != null) {
@@ -466,122 +469,136 @@ fun SendRequest(
                                 }
                             }
 
-                            else -> BasicTextField(
-                                value = when (prop) {
-                                    R.string.quantity -> job.meta.quantity
-                                    R.string.proposed_price -> job.salary.toString()
-                                    else -> ""
-                                },
-                                onValueChange = {
-                                    when (prop) {
-                                        R.string.quantity -> job =
-                                            job.copy(meta = job.meta.copy(quantity = it))
+                            else -> {
+                                var value by remember {
+                                    mutableStateOf(
+                                        TextFieldValue(
+                                            when (prop) {
+                                                R.string.quantity -> job.meta.quantity
+                                                R.string.proposed_price -> job.salary.toString()
+                                                else -> ""
+                                            }
+                                        )
+                                    )
+                                }
+                                BasicTextField(
+                                    value = value,
+                                    onValueChange = {
+                                        value = it
+                                        when (prop) {
+                                            R.string.quantity -> job =
+                                                job.copy(meta = job.meta.copy(quantity = it.text))
 
-                                        R.string.proposed_price -> job =
-                                            job.copy(salary = it.ifEmpty { "0" }.toDouble())
-                                    }
-                                },
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = when (prop) {
-                                        R.string.quantity -> KeyboardType.Number
-                                        R.string.proposed_price -> KeyboardType.Number
-                                        else -> KeyboardType.Text
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .width(screenWidth * 0.5f)
-                                    .height(35.dp)
-                            ) {
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .border(
-                                            width = 1.dp,
-                                            color = CakkieBrown,
-                                            shape = MaterialTheme.shapes.small
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                            R.string.proposed_price -> job =
+                                                job.copy(salary = it.text.ifEmpty { "0" }
+                                                    .toDouble())
+                                        }
+                                    },
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = when (prop) {
+                                            R.string.quantity -> KeyboardType.Number
+                                            R.string.proposed_price -> KeyboardType.Number
+                                            else -> KeyboardType.Text
+                                        }
+                                    ),
+                                    modifier = Modifier
+                                        .width(screenWidth * 0.5f)
+                                        .height(35.dp)
                                 ) {
-                                    if (prop == R.string.proposed_price) {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .border(
+                                                width = 1.dp,
+                                                color = CakkieBrown,
+                                                shape = MaterialTheme.shapes.small
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        if (prop == R.string.proposed_price) {
+                                            Text(
+                                                text = "NGN",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextColorInactive,
+                                                modifier = Modifier.padding(8.dp)
+                                            )
+                                        }
+                                        if (prop == R.string.quantity) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .clip(MaterialTheme.shapes.small)
+                                                    .clickable {
+                                                        val quantity =
+                                                            job.meta.quantity.ifEmpty { "0" }
+                                                        if (quantity.toInt() > 1) {
+                                                            job = job.copy(
+                                                                meta = job.meta.copy(
+                                                                    quantity = (quantity.toInt() - 1).toString()
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                    .background(CakkieBrown)
+                                                    .size(35.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = "-",
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    fontSize = 30.sp,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = CakkieBackground,
+                                                )
+                                            }
+                                        }
                                         Text(
-                                            text = "NGN",
+                                            text = when (prop) {
+                                                R.string.quantity -> job.meta.quantity.ifEmpty { "0" }
+                                                R.string.proposed_price -> formatNumber(job.salary)
+                                                else -> ""
+                                            },
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = TextColorInactive,
-                                            modifier = Modifier.padding(8.dp)
-                                        )
-                                    }
-                                    if (prop == R.string.quantity) {
-                                        Box(
                                             modifier = Modifier
-                                                .clip(MaterialTheme.shapes.small)
-                                                .clickable {
-                                                    val quantity = job.meta.quantity.ifEmpty { "0" }
-                                                    if (quantity.toInt() > 1) {
+                                                .weight(1f)
+                                                .padding(8.dp),
+                                            color = if (when (prop) {
+                                                    R.string.quantity -> job.meta.quantity.isEmpty()
+                                                    R.string.proposed_price -> job.salary == 0.0
+                                                    else -> false
+                                                }
+                                            ) TextColorInactive else TextColorDark,
+                                        )
+                                        if (prop == R.string.quantity) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .clip(MaterialTheme.shapes.small)
+                                                    .clickable {
                                                         job = job.copy(
                                                             meta = job.meta.copy(
-                                                                quantity = (quantity.toInt() - 1).toString()
+                                                                quantity = (job.meta.quantity
+                                                                    .ifEmpty { "0" }
+                                                                    .toInt() + 1).toString()
                                                             )
                                                         )
                                                     }
-                                                }
-                                                .background(CakkieBrown)
-                                                .size(35.dp), contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "-",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                fontSize = 30.sp,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = CakkieBackground,
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        text = when (prop) {
-                                            R.string.quantity -> job.meta.quantity.ifEmpty { "0" }
-                                            R.string.proposed_price -> formatNumber(job.salary)
-                                            else -> ""
-                                        },
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(8.dp),
-                                        color = if (when (prop) {
-                                                R.string.quantity -> job.meta.quantity.isEmpty()
-                                                R.string.proposed_price -> job.salary == 0.0
-                                                else -> false
+                                                    .background(CakkieBrown)
+                                                    .size(35.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = "+",
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    fontSize = 30.sp,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = CakkieBackground,
+                                                )
                                             }
-                                        ) TextColorInactive else TextColorDark,
-                                    )
-                                    if (prop == R.string.quantity) {
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(MaterialTheme.shapes.small)
-                                                .clickable {
-                                                    job = job.copy(
-                                                        meta = job.meta.copy(
-                                                            quantity = (job.meta.quantity
-                                                                .ifEmpty { "0" }
-                                                                .toInt() + 1).toString()
-                                                        )
-                                                    )
-                                                }
-                                                .background(CakkieBrown)
-                                                .size(35.dp), contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "+",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                fontSize = 30.sp,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = CakkieBackground,
-                                            )
                                         }
                                     }
                                 }
@@ -738,7 +755,8 @@ fun SendRequest(
                                         updatedAt = currentDate,
 //                                        media = media.map { it.uri },
                                     ),
-                                    media.toList().toJson()
+                                    media.toList().toJson(),
+                                    listingId = listing.id
                                 )
                             ) {
                                 launchSingleTop = true

@@ -75,7 +75,8 @@ class JobsViewModel : ViewModel(), KoinComponent {
         media: List<String>,
         description: String,
         pin: String,
-        meta: List<Pair<String, Any?>>
+        meta: List<Pair<String, Any?>>,
+        listingId: String
     ) = NetworkCalls.post<JobModel>(
         endpoint = Endpoints.CREATE_JOB,
         body = listOf(
@@ -94,7 +95,8 @@ class JobsViewModel : ViewModel(), KoinComponent {
             Pair("title", title),
             Pair("media", media),
             Pair("description", description),
-            Pair("meta", JsonBody.generate(meta))
+            Pair("meta", JsonBody.generate(meta)),
+            Pair("listingId", listingId)
         )
     )
 

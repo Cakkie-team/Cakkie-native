@@ -120,6 +120,7 @@ fun JobDetails(
     id: String,
     item: JobModel = JobModel(),
     files: String = "",
+    listingId: String = "",
     onEdit: ResultBackNavigator<JobEdit>,
     confirmPinResult: ResultRecipient<ConfirmPinDestination, CurrencyRate>,
     navigator: DestinationsNavigator,
@@ -227,10 +228,11 @@ fun JobDetails(
                         longitude = job.longitude,
                         currencySymbol = result.value.symbol,
                         title = job.title,
-                        media = fileUrls.map { it.url },
+                        media = fileUrls.map { it.url } + job.media,
                         description = job.description,
                         pin = result.value.pin,
-                        meta = job.meta.toListOfPairs().map { it.first.lowercase() to it.second }
+                        meta = job.meta.toListOfPairs().map { it.first.lowercase() to it.second },
+                        listingId = listingId
                     ).addOnSuccessListener {
                         processing = false
                         navigator.navigate(JobDetailsDestination(it.id, it)) {
