@@ -61,6 +61,8 @@ import com.cakkie.data.db.models.ListingResponse
 import com.cakkie.data.db.models.ShopModel
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
+import com.cakkie.networkModels.Proposal
+import com.cakkie.networkModels.ProposalResponse
 import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.ShopOnboardingDestination
@@ -88,11 +90,15 @@ fun Shop(navigator: DestinationsNavigator) {
     val height = config.screenHeightDp.dp
     val orderRes = viewModel.orders.observeAsState(OrderResponse()).value
     val contractRes = viewModel.contracts.observeAsState(OrderResponse()).value
+    val proposalRes = viewModel.proposals.observeAsState(ProposalResponse()).value
     val orders = remember {
         mutableStateListOf<Order>()
     }
     val contracts = remember {
         mutableStateListOf<Order>()
+    }
+    val proposals = remember {
+        mutableStateListOf<Proposal>()
     }
     val listings = viewModel.listings.observeAsState(ListingResponse()).value
     var maxLines by rememberSaveable { mutableIntStateOf(2) }
@@ -114,6 +120,7 @@ fun Shop(navigator: DestinationsNavigator) {
             viewModel.getMyListings()
             viewModel.getRequests()
             viewModel.getContracts()
+            viewModel.getProposals()
         }
     }
     val uriHandle = LocalUriHandler.current
@@ -306,7 +313,10 @@ fun Shop(navigator: DestinationsNavigator) {
                         viewModel.getContracts(contractRes.meta.nextPage, contractRes.meta.pageSize)
                     }
 
-                    3 -> Proposals()
+                    3 -> Proposals(proposalRes, proposals, navigator) {
+                        viewModel.getProposals(proposalRes.meta.nextPage, proposalRes.meta.pageSize)
+                    }
+
                     1 -> Requests(orderRes, orders, navigator) {
                         viewModel.getRequests(orderRes.meta.nextPage, orderRes.meta.pageSize)
                     }

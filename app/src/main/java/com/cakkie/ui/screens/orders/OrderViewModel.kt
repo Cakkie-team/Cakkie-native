@@ -8,6 +8,7 @@ import com.cakkie.data.db.models.User
 import com.cakkie.data.repositories.UserRepository
 import com.cakkie.networkModels.Order
 import com.cakkie.networkModels.OrderResponse
+import com.cakkie.networkModels.Proposal
 import com.cakkie.utill.Endpoints
 import com.cakkie.utill.NetworkCalls
 import kotlinx.coroutines.launch
@@ -32,6 +33,11 @@ class OrderViewModel : ViewModel(), KoinComponent {
 
     fun getOrder(id: String) = NetworkCalls.get<Order>(
         endpoint = Endpoints.GET_ORDER(id),
+        body = listOf()
+    )
+
+    fun getProposal(id: String) = NetworkCalls.get<Proposal>(
+        endpoint = Endpoints.GET_PROPOSAL(id),
         body = listOf()
     )
 

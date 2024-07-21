@@ -402,6 +402,7 @@
     <string name="delete_job">Delete Job</string>
     <string name="view_application">View Application</string>
     <string name="view_job">View Job</string>
+    <string name="proposal_to">"Proposal to "</string>
 
 
 </resources>

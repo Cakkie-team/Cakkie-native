@@ -19,6 +19,7 @@ data class Proposal(
     val proposedDeadline: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
+    val job: JobModel = JobModel(),
 ) : Parcelable
 
 @Serializable

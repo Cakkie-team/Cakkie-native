@@ -22,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.networkModels.Order
 import com.cakkie.ui.theme.CakkieBlue
+import com.cakkie.ui.theme.CakkieGreen
 import com.cakkie.ui.theme.CakkieYellow
 import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
@@ -55,7 +57,8 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
                 contentDescription = "",
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier
@@ -80,9 +83,9 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
                 shape = MaterialTheme.shapes.small,
                 colors = CardDefaults.cardColors(
                     containerColor = when (item.status.lowercase()) {
-                        "pending" -> CakkieYellow
+                        "pending" -> CakkieBlue
                         "cancelled" -> Error
-                        "completed" -> CakkieBlue
+                        "completed" -> CakkieGreen
                         "declined" -> Error
                         else -> CakkieYellow
                     }
@@ -90,7 +93,7 @@ fun OrdersItem(item: Order, onClick: () -> Unit) {
             ) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = item.status.lowercase(),
+                        text = item.status.lowercase().replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
                     )

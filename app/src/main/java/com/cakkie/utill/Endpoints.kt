@@ -57,6 +57,8 @@ object Endpoints {
         { page: Int, size: Int -> "$BASE_URL/shop/requests?page=$page&pageSize=$size" }/* get my request  GET*/
     val GET_CONTRACTS =
         { page: Int, size: Int -> "$BASE_URL/shop/contracts?page=$page&pageSize=$size" }/* get my contracts  GET*/
+    val GET_SHOP_PROPOSALS =
+        { page: Int, size: Int -> "$BASE_URL/shop/proposals?page=$page&pageSize=$size" }/* get my proposals  GET*/
 
     /**
      * Listing
