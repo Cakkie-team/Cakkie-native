@@ -40,6 +40,7 @@ data class Order(
     val title: String = "",
     val description: String = "",
     val image: String = "",
+    val jobId: String = "",
 ) : Parcelable
 
 

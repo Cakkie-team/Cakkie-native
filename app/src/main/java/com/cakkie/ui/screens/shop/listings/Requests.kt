@@ -27,6 +27,7 @@ import com.cakkie.networkModels.OrderResponse
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.screens.destinations.ChooseMediaDestination
 import com.cakkie.ui.screens.destinations.ContractDetailDestination
+import com.cakkie.ui.screens.destinations.JobDetailsDestination
 import com.cakkie.ui.screens.orders.components.OrdersItem
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.TextColorInactive
@@ -97,7 +98,15 @@ fun Requests(
                         onLoadMore.invoke()
                     }
                     OrdersItem(order) {
-                        navigator.navigate(ContractDetailDestination(order.id, order))
+                        if (order.jobId.isNotEmpty()) {
+                            navigator.navigate(JobDetailsDestination(order.jobId)) {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navigator.navigate(ContractDetailDestination(order.id, order)) {
+                                launchSingleTop = true
+                            }
+                        }
                     }
                 }
             }

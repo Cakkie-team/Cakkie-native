@@ -1,6 +1,8 @@
 package com.cakkie.ui.screens.shop.contracts
 
 import android.os.Build
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,9 +49,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Popup
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
+import androidx.core.net.toUri
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.cakkie.R
@@ -66,9 +78,7 @@ import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatDateTime
 import com.cakkie.utill.formatNumber
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.shimmer
-import com.google.accompanist.placeholder.placeholder
+import com.cakkie.utill.isVideoUrl
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
@@ -80,6 +90,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @OptIn(ExperimentalGlideComposeApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @com.ramcosta.composedestinations.annotation.Destination
@@ -316,27 +327,58 @@ fun ContractDetail(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(10.dp))
-            var isLoading by remember {
-                mutableStateOf(false)
-            }
-            AsyncImage(
-                model = order.image,
-                contentDescription = "order image",
-                onState = {
-                    //update isLoaded
-                    isLoading = it is AsyncImagePainter.State.Loading
-                },
+            Box(
                 modifier = Modifier
-//                .clickable { expanded = !expanded }
                     .heightIn(max = 180.dp)
-                    .placeholder(
-                        visible = isLoading,
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = CakkieBrown.copy(0.8f)
-                    )
-                    .fillMaxWidth(),
-                contentScale = ContentScale.FillWidth,
-            )
+                    .clip(MaterialTheme.shapes.medium)
+//                    .padding(horizontal = 5.dp)
+                    .background(Color.White.copy(alpha = 0.6f))
+                    .fillMaxWidth()
+            ) {
+                GlideImage(
+                    model = order.image,
+                    contentDescription = "Media",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(radius = if (order.image.isVideoUrl()) 10.dp else 0.dp),
+                    contentScale = ContentScale.Crop,
+                )
+                if (order.image.isVideoUrl()) {
+                    val exoPlayer = remember {
+                        ExoPlayer.Builder(context).build().apply {
+                            val defaultDataSourceFactory =
+                                DefaultDataSource.Factory(context)
+                            val dataSourceFactory: DataSource.Factory =
+                                DefaultDataSource.Factory(
+                                    context, defaultDataSourceFactory
+                                )
+                            val source =
+                                ProgressiveMediaSource.Factory(dataSourceFactory)
+                                    .createMediaSource(MediaItem.fromUri(order.image.toUri()))
+                            setMediaSource(source)
+                            prepare()
+                        }
+                    }
+                    exoPlayer.playWhenReady = false
+                    exoPlayer.videoScalingMode =
+                        C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+                    AndroidView(factory = {
+                        PlayerView(context).apply {
+                            hideController()
+                            useController = true
+                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                            player = exoPlayer
+                            layoutParams = FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                        }
+                    })
+                    DisposableEffect(Unit) {
+                        onDispose { exoPlayer.release() }
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Column(
                 Modifier
@@ -477,7 +519,11 @@ fun ContractDetail(
                         Modifier.fillMaxWidth(0.6f),
                         text = stringResource(
                             id = when (order.status) {
-                                "PENDING" -> R.string.accept
+                                "PENDING" -> {
+                                    if (order.jobId.isNotEmpty()) R.string.view_job
+                                    else R.string.accept
+                                }
+
                                 "CANCELLED" -> R.string.accept
                                 "DECLINED" -> R.string.accept
                                 "INPROGRESS" -> R.string.ready

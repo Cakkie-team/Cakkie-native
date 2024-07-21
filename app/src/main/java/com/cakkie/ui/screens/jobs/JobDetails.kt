@@ -144,12 +144,14 @@ fun JobDetails(
 
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     LaunchedEffect(Unit) {
-        val dateFormat = SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            Locale.getDefault()
-        )
-        selectedDate.time = dateFormat.parse(job.deadline)!!
-        proposedDeadline = job.deadline
+        if (id == "create") {
+            val dateFormat = SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                Locale.getDefault()
+            )
+            selectedDate.time = dateFormat.parse(job.deadline)!!
+            proposedDeadline = job.deadline
+        }
     }
 
 //    var isMuted by rememberSaveable { mutableStateOf(true) }
