@@ -54,6 +54,7 @@ import com.cakkie.networkModels.Message
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieBrown002
+import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.toObject
@@ -142,9 +143,30 @@ fun ChatItem(
             .padding(vertical = 4.dp)
             .background(if (selected) CakkieOrange.copy(alpha = 0.3f) else Color.Transparent)
             .fillMaxWidth(),
-        horizontalArrangement = if (item.userId != user?.id) Arrangement.Start else Arrangement.End
+        horizontalArrangement = if (item.type == "EVENT") Arrangement.Center
+        else if (item.userId != user?.id) Arrangement.Start else Arrangement.End
     ) {
-        if (item.isDeleted) {
+        Timber.d("chat item: ${item.type}")
+        if (item.type == "EVENT") {
+            Card(
+                Modifier
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                shape = CardDefaults.elevatedShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = CakkieLightBrown,
+                ),
+//                elevation = CardDefaults.cardElevation(
+//                    defaultElevation = 8.dp
+//                )
+            ) {
+                Text(
+                    text = item.text,
+                    color = CakkieBackground,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(10.dp),
+                )
+            }
+        } else if (item.isDeleted) {
             Card(
                 Modifier
                     .padding(horizontal = 16.dp, vertical = 4.dp),

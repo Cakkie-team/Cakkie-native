@@ -97,6 +97,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -185,7 +186,12 @@ fun Chat(
                 Timber.d("awarded: $it")
                 val updatedProposal = it[0].toString().toObject(Proposal::class.java)
                 proposal = updatedProposal
-                navigator.navigate(ReceiveContractDestination)
+                //navigate on main thread
+                if (updatedProposal.job.userId != user.id) {
+                    scope.launch(Dispatchers.Main) {
+                        navigator.navigate(ReceiveContractDestination)
+                    }
+                }
             }
             onDispose {
                 viewModel.socket.off("support-${user.id}")
@@ -334,13 +340,13 @@ fun Chat(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        if (proposal != null) {
-                            navigator.navigate(
-                                AwardContractDestination(
-                                    proposal = proposal!!
-                                )
-                            )
-                        }
+//                        if (proposal != null) {
+//                            navigator.navigate(
+//                                AwardContractDestination(
+//                                    proposal = proposal!!
+//                                )
+//                            )
+//                        }
 
                         if (proposal?.status == "PENDING") {
                             if (user?.id == conver?.byUserId) navigator.navigate(
@@ -553,9 +559,7 @@ fun Chat(
             }
 //            Spacer(modifier = Modifier.padding(8.dp))
         }
-        if ((proposal != null && proposal!!.status in listOf("PENDING", "AWARDED"))
-            || proposal == null
-        ) {
+        if (conver?.isActive == true || conver == null) {
             Card(
                 Modifier
                     .fillMaxWidth()

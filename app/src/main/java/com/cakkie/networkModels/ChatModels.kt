@@ -46,7 +46,8 @@ data class Message(
     val text: String = "",
     val updatedAt: String = "",
     val userId: String = "",
-    val user: User = User()
+    val user: User = User(),
+    val type: String = "MESSAGE",
 ) : Parcelable
 
 
