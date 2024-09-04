@@ -217,14 +217,14 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(28.dp))
             CakkieInputField(
                 value = firstName,
-                onValueChange = { firstName = it },
+                onValueChange = { firstName = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.firstName),
                 keyboardType = KeyboardType.Text,
             )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = lastName,
-                onValueChange = { lastName = it },
+                onValueChange = { lastName = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.LastName),
                 keyboardType = KeyboardType.Text,
             )
@@ -232,7 +232,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = userName,
-                onValueChange = { userName = it },
+                onValueChange = { userName = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.Username),
                 keyboardType = KeyboardType.Text,
             )
@@ -240,7 +240,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = address,
-                onValueChange = { address = it },
+                onValueChange = { address = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.address_City_State),
                 keyboardType = KeyboardType.Text,
                 isAddress = true,
@@ -253,14 +253,14 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.password),
                 keyboardType = KeyboardType.Password,
             )
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = referralCode,
-                onValueChange = { referralCode = it },
+                onValueChange = { referralCode = it.copy(text = it.text.trim()) },
                 placeholder = stringResource(id = R.string.refferal_code),
                 keyboardType = KeyboardType.Text,
             )
