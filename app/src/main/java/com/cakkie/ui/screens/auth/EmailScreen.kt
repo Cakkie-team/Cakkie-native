@@ -90,7 +90,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { email = it},
             placeholder = stringResource(id = R.string.email),
             keyboardType = KeyboardType.Email,
             isError = !isEmailValid
@@ -114,11 +114,11 @@ fun EmailScreen(navigator: DestinationsNavigator) {
             isEmailValid = emailRegex.matches(input = email.text)
             if (isEmailValid) {
                 processing = true
-                viewModel.checkEmail(email.text).addOnSuccessListener { user ->
+                viewModel.checkEmail(email.text.lowercase()).addOnSuccessListener { user ->
                     processing = false
 //                    Timber.d(user.toString())
                     //navigate to login screen
-                    navigator.navigate(LoginScreenDestination(user.email)) {
+                    navigator.navigate(LoginScreenDestination(user.email.lowercase())) {
                         launchSingleTop = true
                     }
                 }.addOnFailureListener { exception ->
@@ -131,7 +131,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
                     processing = false
                     Timber.d(exception.message)
                     //navigate to sign up screen
-                    navigator.navigate(SignUpScreenDestination(email = email.text)) {
+                    navigator.navigate(SignUpScreenDestination(email = email.text.lowercase())) {
                         launchSingleTop = true
                     }
                 }
