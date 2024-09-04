@@ -43,6 +43,7 @@ import com.android.installreferrer.api.ReferrerDetails
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
+import com.cakkie.ui.components.CustomWebView
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -96,6 +97,7 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
         )
     }
 
+    var showWebView by remember { mutableStateOf(false) }
     val currentLocation = activity.getCurrentLocation()
 
     val canProceed = firstName.text.isNotBlank() &&
@@ -292,7 +294,14 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.clickable {
-                            navigator.navigate(BrowserDestination("https://www.cakkie.com/terms-and-conditions"))
+                            navigator.navigate(
+                                BrowserDestination(
+                                    url = "https://www.cakkie.com/terms-and-conditions",
+
+                                )
+                            ) {
+                                launchSingleTop = true
+                            }
                         },
                         fontSize = 12.sp
                     )
@@ -308,11 +317,15 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
                         color = CakkieBrown,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.clickable {
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://www.cakkie.com/privacy-policy")
-                            )
-                            context.startActivity(intent)
+                            navigator.navigate(
+                                BrowserDestination(
+                                    url = "https://www.cakkie.com/privacy-policy",
+
+                                    )
+                            ) {
+                                launchSingleTop = true
+                            }
+
                         },
                         fontSize = 12.sp
                     )
