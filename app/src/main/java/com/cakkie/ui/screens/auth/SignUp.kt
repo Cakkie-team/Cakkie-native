@@ -1,8 +1,6 @@
 package com.cakkie.ui.screens.auth
 
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +41,6 @@ import com.android.installreferrer.api.ReferrerDetails
 import com.cakkie.R
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
-import com.cakkie.ui.components.CustomWebView
 import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.destinations.OtpScreenDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -53,6 +50,7 @@ import com.cakkie.utill.getCurrentLocation
 import com.cakkie.utill.locationModels.LocationResult
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -85,6 +83,11 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
         mutableStateOf<LocationResult?>(null)
     }
 
+    var isUsernameTaken by remember {
+        mutableStateOf(false
+        )
+    }
+
     val context = LocalContext.current
     val activity = context as Activity
     var processing by remember {
@@ -97,14 +100,28 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
         )
     }
 
-    var showWebView by remember { mutableStateOf(false) }
     val currentLocation = activity.getCurrentLocation()
-
+    LaunchedEffect(userName.text) {
+        if (userName.text.isNotBlank()) {
+          delay(500L)
+            viewModel.checkUserName(userName.text)
+                .addOnSuccessListener { isFree ->
+                    Timber.d("Username availability: ${isFree.username}")
+//                    isUsernameTaken = !isFree.username.equals(userName.text, ignoreCase = true)
+                    isUsernameTaken = true
+                }
+                .addOnFailureListener { exception ->
+                    Timber.d("Username check failed: $exception")
+                    isUsernameTaken = false // Assume taken if check fails
+                }
+        }
+    }
     val canProceed = firstName.text.isNotBlank() &&
             lastName.text.isNotBlank() &&
             userName.text.isNotBlank() &&
             address.text.isNotBlank() &&
             password.text.isNotBlank() && isChecked
+
 
 
     LaunchedEffect(key1 = Unit) {
@@ -234,10 +251,33 @@ fun SignUpScreen(email: String, navigator: DestinationsNavigator) {
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
                 value = userName,
-                onValueChange = { userName = it.copy(text = it.text.trim()) },
+                onValueChange = {
+                    userName = it.copy(text = it.text.trim())
+                    isUsernameTaken = false
+//                    if (userName.text.isNotBlank()) {
+//                        // Check if the username is available
+//                        viewModel.checkUserName(userName.text.lowercase())
+//                            .addOnSuccessListener { isFree ->
+//                                isUsernameTaken = !isUsernameTaken
+//                                // Set to true if not free
+//                                Timber.d("Username available: $isFree")
+//                            }
+//                            .addOnFailureListener { exception ->
+//                                Timber.d("Username check failed: $exception")
+//                                isUsernameTaken = true // Assume taken if check fails
+//                            }
+//                    }
+                },
                 placeholder = stringResource(id = R.string.Username),
                 keyboardType = KeyboardType.Text,
             )
+            if (isUsernameTaken && userName.text.isNotBlank()) {
+                Text(
+                    text = stringResource(id = R.string.username_taken),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
             CakkieInputField(
