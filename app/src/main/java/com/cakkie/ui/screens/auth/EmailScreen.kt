@@ -57,6 +57,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
     var isEmailValid by remember {
         mutableStateOf(true)
     }
+
     var processing by remember {
         mutableStateOf(false)
     }
