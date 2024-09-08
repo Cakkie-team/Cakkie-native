@@ -1,7 +1,11 @@
 package com.cakkie.ui.screens.shop.listings
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.os.Build
+//import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +65,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalPermissionsApi::class)
 @Destination
@@ -83,19 +88,39 @@ fun ChooseMedia(
     val files = remember {
         mutableStateListOf<MediaModel>()
     }
+//    val permissionState = rememberMultiplePermissionsState(
+//        permissions = listOf(
+//            READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_EXTERNAL_STORAGE
+//        )
+//    )
     val permissionState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            READ_MEDIA_IMAGES, READ_MEDIA_VIDEO
-        )
+        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO)
+        } else {
+            listOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
+        }
     )
 
     LaunchedEffect(key1 = permissionState) {
-        if (permissionState.allPermissionsGranted) {
-            medias.addAll(viewModel.getMedias(context))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (permissionState.allPermissionsGranted) {
+                Timber.d("All permissions granted for Android 13+")
+                medias.addAll(viewModel.getMedias(context))
+            } else {
+                Timber.d("Permissions not granted for Android 13+")
+                permissionState.launchMultiplePermissionRequest()
+            }
         } else {
-            permissionState.launchMultiplePermissionRequest()
+            if (permissionState.allPermissionsGranted) {
+                Timber.d("All permissions granted for Android 12 and below")
+                medias.addAll(viewModel.getMedias(context))
+            } else {
+                Timber.d("Permissions not granted for Android 12 and below")
+                permissionState.launchMultiplePermissionRequest()
+            }
         }
     }
+
 
 //    Timber.d(medias.toString())
     Column(Modifier.fillMaxSize()) {
@@ -282,10 +307,12 @@ fun ChooseMedia(
                         fontSize = 16.sp,
                         color = CakkieBrown,
                     )
+
                     CakkieButton(
                         text = stringResource(id = R.string.grant_permission),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
+                        Timber.d("Permission:${permissionState.allPermissionsGranted}")
                         permissionState.launchMultiplePermissionRequest()
                     }
                 }
