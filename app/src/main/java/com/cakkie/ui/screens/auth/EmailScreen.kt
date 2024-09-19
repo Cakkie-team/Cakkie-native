@@ -91,7 +91,7 @@ fun EmailScreen(navigator: DestinationsNavigator) {
         Spacer(modifier = Modifier.height(40.dp))
         CakkieInputField(
             value = email,
-            onValueChange = { email = it},
+            onValueChange = { email = it.copy(text = it.text.trim())},
             placeholder = stringResource(id = R.string.email),
             keyboardType = KeyboardType.Email,
             isError = !isEmailValid
