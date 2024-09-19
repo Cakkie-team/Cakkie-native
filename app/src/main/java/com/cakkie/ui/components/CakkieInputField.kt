@@ -170,7 +170,7 @@ fun CakkieInputField(
                 if (keyboardType == KeyboardType.Password) {
                     if (visible) {
                         Image(
-                            painter = painterResource(id = R.drawable.eye_closed),
+                            painter = painterResource(id = R.drawable.eye_open),
                             contentDescription = "eye closed",
                             modifier = Modifier
                                 .size(24.dp)
@@ -180,7 +180,7 @@ fun CakkieInputField(
                         )
                     } else {
                         Image(
-                            painter = painterResource(id = R.drawable.eye_open),
+                            painter = painterResource(id = R.drawable.eye_closed),
                             contentDescription = "eye closed",
                             modifier = Modifier
                                 .size(24.dp)
@@ -423,7 +423,7 @@ fun CakkieInputField(
                 if (keyboardType == KeyboardType.Password) {
                     if (visible) {
                         Image(
-                            painter = painterResource(id = R.drawable.eye_closed),
+                            painter = painterResource(id = R.drawable.eye_open),
                             contentDescription = "eye closed",
                             modifier = Modifier
                                 .size(24.dp)
@@ -433,7 +433,7 @@ fun CakkieInputField(
                         )
                     } else {
                         Image(
-                            painter = painterResource(id = R.drawable.eye_open),
+                            painter = painterResource(id = R.drawable.eye_closed),
                             contentDescription = "eye closed",
                             modifier = Modifier
                                 .size(24.dp)
