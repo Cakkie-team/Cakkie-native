@@ -1,7 +1,10 @@
 package com.cakkie.ui.screens.browser
 
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
@@ -24,8 +27,9 @@ fun Browser(
     onComplete: ResultBackNavigator<Boolean>
 ) {
     var backEnabled by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(true) } // Add loading state
+    var isLoading by remember { mutableStateOf(true) }
     var webView: WebView? = null
+
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
@@ -35,23 +39,50 @@ fun Browser(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 webViewClient = object : WebViewClient() {
+
                     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                        isLoading = true // Set loading state to true when page starts loading
+                        isLoading = true
                         backEnabled = view.canGoBack()
                     }
 
                     override fun onPageFinished(view: WebView?, url: String?) {
-                        isLoading = false // Set loading state to false when page finishes loading
+                        isLoading = false
+                    }
+
+                    // Override URL loading to detect unsupported schemes
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        val url = request?.url?.toString() ?: return false
+
+                        // Handle unsupported schemes (non-http or non-https links)
+                        return if (isUnsupportedScheme(url)) {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                            true // We've handled the URL ourselves
+                        } else {
+                            false // Let the WebView handle it
+                        }
+                    }
+
+                    // Helper function to determine if a URL uses an unsupported scheme
+                    private fun isUnsupportedScheme(url: String): Boolean {
+                        val uri = Uri.parse(url)
+                        val scheme = uri.scheme
+                        return scheme != "http" && scheme != "https"
                     }
                 }
                 settings.javaScriptEnabled = true
-                // Other settings...
-
                 loadUrl(url)
                 webView = this
             }
-        }, update = {
+        },
+        update = {
             if (it.url?.contains("https://cakkie.com?verify=true") == true) {
+                onComplete.navigateBack(result = true)
+            }
+            if (it.url == "https://cakkie.com") {
                 onComplete.navigateBack(result = true)
             }
             webView = it
@@ -62,8 +93,6 @@ fun Browser(
     }
 
     if (isLoading) {
-        // Show loading indicator while the page is loading
-        // You can replace this with your custom loading indicator
         CircularProgressIndicator(Modifier.fillMaxSize(0.6f))
     }
 }

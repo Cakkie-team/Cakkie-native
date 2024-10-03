@@ -6,8 +6,9 @@ object Endpoints {
     /**
      * Base url
      **/
-    //    private const val BASE_URL = "http://64.227.6.106/api/v1"  /*test base url*/
-    private const val BASE_URL = "https://api.cakkie.com" /*val live base url*/
+    private const val BASE_URL = "https://dev.api.cakkie.com"  /*test base url*/
+
+    //    private const val BASE_URL = "https://api.cakkie.com" /*val live base url*/
     const val SOCKET_URL =
         BASE_URL /*val live base url*/
     private const val KEY = "AIzaSyDu70nrGBsZTGWdxGm0rLPvAzDwlwMy_B8"

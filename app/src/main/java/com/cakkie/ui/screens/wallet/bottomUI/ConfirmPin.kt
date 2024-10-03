@@ -2,6 +2,7 @@ package com.cakkie.ui.screens.wallet.bottomUI
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,6 +49,7 @@ import com.cakkie.networkModels.CurrencyRate
 import com.cakkie.ui.components.CakkieButton
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.OtpInput
+import com.cakkie.ui.screens.destinations.BrowserDestination
 import com.cakkie.ui.screens.wallet.WalletViewModel
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
@@ -52,7 +57,10 @@ import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.formatNumber
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultBackNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -62,7 +70,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ConfirmPin(
     currencyRate: CurrencyRate,
-    onComplete: ResultBackNavigator<CurrencyRate>
+    onComplete: ResultBackNavigator<CurrencyRate>,
+    onDone: ResultRecipient<BrowserDestination, Boolean>,
+    navigator: DestinationsNavigator
 ) {
     val viewModel: WalletViewModel = koinViewModel()
     val user = viewModel.user.observeAsState().value
@@ -88,6 +98,14 @@ fun ConfirmPin(
         mutableStateOf(true)
     }
 
+    val enabled = when (step) {
+        0 -> pin.text.length == 4
+        1 -> if (pin.text.isNotEmpty()) pin.text == pinConfirm.text
+        else pinConfirm.text.length == 4
+
+        else -> otp.text.length == 4
+    }
+
     LaunchedEffect(key1 = onSelectCurrency) {
         viewModel.getConversionRate(
             currencyRate.symbol,
@@ -97,7 +115,21 @@ fun ConfirmPin(
         }
     }
 
-
+    onDone.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                currency = currencies.find { it.symbol == "ICING" } ?: currency
+                onComplete.navigateBack(
+                    currency.copy(
+                        pin = pinConfirm.text,
+                        symbol = currency.symbol,
+                        coupon = coupon.text
+                    )
+                )
+            }
+        }
+    }
 
     LaunchedEffect(key1 = timerRunning) {
         timer = 60
@@ -375,6 +407,89 @@ fun ConfirmPin(
         }
     }
 
+    Spacer(modifier = Modifier.height(16.dp))
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Image(
+            painter = painterResource(id = R.drawable.pay_solana),
+            contentDescription = "",
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .width(250.dp)
+                .padding(horizontal = 32.dp)
+                .clickable {
+                    if (enabled) {
+                        when (step) {
+                            0 -> {
+                                step = 1
+                            }
+
+                            1 -> {
+                                if (user?.pin == null) {
+                                    step = 2
+                                    viewModel
+                                        .resendOtp(email = user?.email ?: "")
+                                        .addOnSuccessListener {
+                                            timerRunning = true
+                                            Toaster(
+                                                context = context,
+                                                message = "Otp Sent",
+                                                image = R.drawable.logo
+                                            ).show()
+                                        }
+                                        .addOnFailureListener {
+                                            Toaster(
+                                                context = context,
+                                                message = "Otp Resend Failed",
+                                                image = R.drawable.logo
+                                            ).show()
+                                        }
+                                } else {
+                                    processing = true
+                                    viewModel
+                                        .verifyPin(pinConfirm.text)
+                                        .addOnSuccessListener {
+                                            processing = false
+                                            navigator.navigate(
+                                                BrowserDestination(
+                                                    "https://cakkie.com/solana-pay?desc=${"cakkie"}&userId=${user.id}&currencySymbol=${currency.symbol}&price=${
+                                                        if (couponAmount > 0.0) formatNumber(
+                                                            couponAmount
+                                                        )
+                                                        else currency.amount
+                                                    }"
+                                                )
+                                            )
+                                        }
+                                        .addOnFailureListener {
+                                            processing = false
+                                            Toaster(context, it, R.drawable.logo).show()
+                                        }
+                                }
+                            }
+
+                            2 -> {
+                                processing = true
+                                viewModel
+                                    .resetPin(pin.text, pinConfirm.text, otp.text)
+                                    .addOnSuccessListener {
+                                        processing = false
+                                        Toaster(context, it.message, R.drawable.logo).show()
+                                        step = 1
+                                        viewModel.getProfile()
+                                    }
+                                    .addOnFailureListener {
+                                        processing = false
+                                        Toaster(context, it, R.drawable.logo).show()
+                                    }
+                            }
+                        }
+                    } else {
+                        Toaster(context, "Pay attention to pin", R.drawable.logo).show()
+                    }
+                }
+        )
+    }
+
     Spacer(modifier = Modifier.height(26.dp))
     CakkieButton(
         Modifier
@@ -382,13 +497,7 @@ fun ConfirmPin(
             .fillMaxWidth()
             .padding(horizontal = 32.dp),
         text = stringResource(id = R.string.proceed),
-        enabled = when (step) {
-            0 -> pin.text.length == 4
-            1 -> if (pin.text.isNotEmpty()) pin.text == pinConfirm.text
-            else pinConfirm.text.length == 4
-
-            else -> otp.text.length == 4
-        },
+        enabled = enabled,
         processing = processing
     ) {
         when (step) {
@@ -451,6 +560,8 @@ fun ConfirmPin(
             }
         }
     }
+
+
     Spacer(modifier = Modifier.height(17.dp))
 
     AnimatedVisibility(visible = onSelectCurrency) {
