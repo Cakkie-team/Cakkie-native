@@ -196,7 +196,7 @@ fun LoginScreen(email: String, navigator: DestinationsNavigator) {
                 color = CakkieBrown,
                 modifier = Modifier.clickable {
                     //navigate to sign up screen
-                    navigator.navigate(SignUpScreenDestination(email))
+                    navigator.navigate(EmailScreenDestination())
                 }
             )
         }

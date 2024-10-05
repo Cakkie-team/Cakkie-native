@@ -6,9 +6,9 @@ object Endpoints {
     /**
      * Base url
      **/
+//    private const val BASE_URL = "http://64.227.6.106/api/v1"  /*test base url*/
     private const val BASE_URL = "https://dev.api.cakkie.com"  /*test base url*/
-
-    //    private const val BASE_URL = "https://api.cakkie.com" /*val live base url*/
+//   private const val BASE_URL = "https://api.cakkie.com" /*val live base url*/
     const val SOCKET_URL =
         BASE_URL /*val live base url*/
     private const val KEY = "AIzaSyDu70nrGBsZTGWdxGm0rLPvAzDwlwMy_B8"
@@ -17,6 +17,7 @@ object Endpoints {
      * Authentication
      **/
     val CHECK_EMAIL = { email: String -> "$BASE_URL/auth/check-email/$email" } /* GET request */
+    val CHECK_USERNAME = { username: String -> "$BASE_URL/auth/check-username/$username" } /* GET request */
     const val LOGIN = "$BASE_URL/auth/sign-in" /* POST request */
     const val SIGNUP = "$BASE_URL/auth/sign-up" /* POST request */
     const val VERIFY_OTP = "$BASE_URL/auth/verify-account" /* POST request */

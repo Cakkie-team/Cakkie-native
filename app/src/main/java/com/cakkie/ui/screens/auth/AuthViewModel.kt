@@ -25,6 +25,8 @@ class AuthViewModel(private val settings: Settings) : ViewModel(), KoinComponent
     fun checkEmail(email: String) =
         NetworkCalls.get<User>(endpoint = Endpoints.CHECK_EMAIL(email), body = listOf())
 
+    fun checkUserName(username: String) =
+        NetworkCalls.get<User>(endpoint = Endpoints.CHECK_USERNAME(username), body = listOf())
     //login
     fun login(email: String, password: String) =
         NetworkCalls.post<LoginResponse>(

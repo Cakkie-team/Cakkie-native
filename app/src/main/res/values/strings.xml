@@ -11,7 +11,7 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="do_not_have_account">Don\'t have an account? </string>
-    <string name="create_account">Create an account</string>
+    <string name="create_account">Enter Another Email</string>
     <string name="forget_password">Forget Password</string>
     <string name="sorry_password_is_incorrect">Sorry password is incorrect</string>
     <string name="new_device_detected">New Device Detected</string>
@@ -403,6 +403,8 @@
     <string name="view_application">View Application</string>
     <string name="view_job">View Job</string>
     <string name="proposal_to">"Proposal to "</string>
+    <string name="username_taken">Username is taken</string>
+    <string name="username_free">Username is free</string>
 
 
 </resources>
