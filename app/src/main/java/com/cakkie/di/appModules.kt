@@ -13,6 +13,7 @@ import com.cakkie.ui.screens.jobs.JobsViewModel
 import com.cakkie.ui.screens.notification.NotificationViewModel
 import com.cakkie.ui.screens.orders.OrderViewModel
 import com.cakkie.ui.screens.profile.ProfileViewModel
+import com.cakkie.ui.screens.search.SearchViewModel
 import com.cakkie.ui.screens.settings.SettingsViewModel
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.screens.splash.SplashViewModel
@@ -84,6 +85,11 @@ val appModule = module {
     //inject JobViewModel
     viewModel {
         JobsViewModel()
+    }
+
+    //inject SearchViewModel
+    viewModel {
+        SearchViewModel()
     }
     // Database
     single {
