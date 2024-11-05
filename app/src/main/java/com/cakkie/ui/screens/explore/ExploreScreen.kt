@@ -71,6 +71,7 @@ import com.cakkie.ui.screens.destinations.ExploreScreenDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
 import com.cakkie.ui.screens.destinations.NotificationDestination
 import com.cakkie.ui.screens.destinations.ReactivateAccountDestination
+import com.cakkie.ui.screens.destinations.SearchScreenDestination
 import com.cakkie.ui.screens.destinations.ShopDestination
 import com.cakkie.ui.screens.destinations.WalletDestination
 import com.cakkie.ui.theme.CakkieBackground
@@ -285,6 +286,13 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        IconButton(onClick = { navigator.navigate(SearchScreenDestination) }) {
+                            Image(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = "search",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                         IconButton(onClick = { navigator.navigate(NotificationDestination) }) {
                             Image(
                                 painter = painterResource(id = R.drawable.notification),

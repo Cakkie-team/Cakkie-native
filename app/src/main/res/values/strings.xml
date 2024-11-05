@@ -209,6 +209,7 @@
     <string name="change_password_delete_account">Change Password, Delete Account, Logout</string>
     <string name="cakespiation">Cakespiration</string>
     <string name="search">Search</string>
+    <string name="search_hint">Search...</string>
     <string name="arrow">arrow</string>
     <string name="cakkie_logo">Cakkie logo</string>
     <string name="shop">Shop</string>
@@ -405,6 +406,7 @@
     <string name="proposal_to">"Proposal to "</string>
     <string name="username_taken">Username is taken</string>
     <string name="username_free">Username is free</string>
+    <string name="no_results_found">No results found</string>
 
 
 </resources>
