@@ -56,7 +56,8 @@ fun VideoPlayer(
     mute: Boolean = true,
     vResizeMode: Int = AspectRatioFrameLayout.RESIZE_MODE_FIT,
     onMute: (Boolean) -> Unit = {},
-    isCakespiration: Boolean = false
+    isCakespiration: Boolean = false,
+    isSearchScreen: Boolean = false
 ) {
     val context = LocalContext.current
     var _isPlaying by remember { mutableStateOf(isPlaying) }
@@ -123,24 +124,37 @@ fun VideoPlayer(
             )
         }
 
-        IconButton(
-            onClick = {
-                onMute.invoke(exoPlayer.volume > 0f)
-            },
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.Black.copy(0.5f)),
-                shape = CircleShape
+        if (isSearchScreen) {
+            Icon(
+                painter = painterResource(id = R.drawable.grid_icons_video),
+                contentDescription = "Video",
+                tint = CakkieBackground,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(30.dp)
+                    .padding(5.dp)
+            )
+        } else {
+
+            IconButton(
+                onClick = {
+                    onMute.invoke(exoPlayer.volume > 0f)
+                },
+                modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                Icon(
-                    painter = painterResource(id = if (!mute) R.drawable.sound else R.drawable.mute),
-                    contentDescription = "Speaker",
-                    tint = CakkieBackground,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .padding(5.dp)
-                )
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color.Black.copy(0.5f)),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(id = if (!mute) R.drawable.sound else R.drawable.mute),
+                        contentDescription = "Speaker",
+                        tint = CakkieBackground,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(5.dp)
+                    )
+                }
             }
         }
 
