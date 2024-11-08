@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +52,11 @@ import com.cakkie.data.db.models.Listing
 import com.cakkie.di.CakkieApp.Companion.simpleCache
 import com.cakkie.ui.components.CakkieInputField
 import com.cakkie.ui.components.PageTabs
+import com.cakkie.ui.screens.search.tabs.AllTabContent
+import com.cakkie.ui.screens.search.tabs.JobsTabContent
+import com.cakkie.ui.screens.search.tabs.ListingsTabContent
+import com.cakkie.ui.screens.search.tabs.NoResultContent
+import com.cakkie.ui.screens.search.tabs.ShopsTabContent
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
@@ -84,8 +89,8 @@ fun SearchScreen(navigator: DestinationsNavigator) {
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
 
-    val config = LocalConfiguration.current
-    val height = config.screenHeightDp.dp
+    // val config = LocalConfiguration.current
+    // val height = config.screenHeightDp.dp
 
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
@@ -95,7 +100,9 @@ fun SearchScreen(navigator: DestinationsNavigator) {
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        // viewModel.loadListings()
+        viewModel.loadListings()
+        viewModel.loadJobs()
+        viewModel.loadShops()
         delay(1000)
         refreshing = false
     }
@@ -125,6 +132,16 @@ fun SearchScreen(navigator: DestinationsNavigator) {
     LaunchedEffect(Unit) {
         if (filteredListings.value.isEmpty()) {
             viewModel.loadListings()
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (filteredJobs.value.isEmpty()) {
+            viewModel.loadJobs()
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (filteredShops.value.isEmpty()) {
+            viewModel.loadShops()
         }
     }
 
@@ -219,13 +236,14 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                 && filteredJobs.value.isEmpty() && filteredShops.value.isEmpty()
                 && filteredAll.value.isEmpty()
             ) {
-                NoResultsFound()
+                NoResultContent()
             }
 
             // Tabs for search results
-            if (filteredListings.value.isNotEmpty() && searchQuery.value.isNotEmpty()) {
+            if (filteredListings.value.isNotEmpty() && searchQuery.value.isNotEmpty()
+            ) {
                 Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.height(height.minus(88.dp))) {
+                Column(Modifier.fillMaxHeight()) {
                     PageTabs(
                         pagerState = pagerState, pageCount = pagerState.pageCount, tabs = listOf(
                             stringResource(id = R.string.all),
@@ -243,7 +261,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                     if (filteredListings.value.isEmpty() && filteredJobs.value.isEmpty()
                                         && filteredShops.value.isEmpty()
                                     ) {
-                                        NoResultsFound()
+                                        NoResultContent()
                                     } else {
                                         AllTabContent(
                                             items = filteredAll.value,
@@ -259,7 +277,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                 1 -> {
                                     // Jobs Tab
                                     if (searchQuery.value.isNotEmpty() && !isSearching.value)
-                                        JobTabContent(
+                                        JobsTabContent(
                                             listState = listState,
                                             items = filteredJobs.value,
                                             navigator = navigator
@@ -269,7 +287,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                 2 -> {
                                     // Listings Tab
                                     if (searchQuery.value.isNotEmpty() && !isSearching.value)
-                                        ListingTabContent(
+                                        ListingsTabContent(
                                             items = filteredListings.value,
                                             gridState = gridState,
                                             visibleItem = visibleItemGrid,
@@ -282,8 +300,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                 3 -> {
                                     // Shops Tab
                                     if (searchQuery.value.isNotEmpty() && !isSearching.value)
-
-                                        ShopTabContent(
+                                        ShopsTabContent(
                                             listState = listState,
                                             items = filteredShops.value,
                                             navigator = navigator
@@ -312,6 +329,14 @@ fun SearchScreen(navigator: DestinationsNavigator) {
             )
 
         }
+        if (isSearching.value && !refreshing) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                color = CakkieBrown
+            )
+        }
     }
 }
 
@@ -327,7 +352,7 @@ fun ShowListings(
     navigator: DestinationsNavigator
 ) {
     if (filteredListings.value.isNotEmpty() && searchQuery.value.isEmpty()) {
-        ListingTabContent(
+        ListingsTabContent(
             items = filteredListings.value,
             gridState = gridState,
             visibleItem = visibleItemGrid,

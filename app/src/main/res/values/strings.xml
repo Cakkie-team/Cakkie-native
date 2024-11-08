@@ -407,6 +407,7 @@
     <string name="username_taken">Username is taken</string>
     <string name="username_free">Username is free</string>
     <string name="no_results_found">No results found</string>
+    <string name="shops">Shops</string>
 
 
 </resources>
