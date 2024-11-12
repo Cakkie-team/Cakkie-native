@@ -31,3 +31,9 @@ data class ShopModel(
     val user: User = User(),
     val userId: String = ""
 ) : Parcelable
+
+//@Serializable
+//data class ShopResponses(
+//    val data: List<ShopModel> = listOf(),
+//    val meta: Pagination = Pagination(),
+//)

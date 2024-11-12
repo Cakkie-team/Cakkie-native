@@ -34,6 +34,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
     private val userRepository: UserRepository by inject()
     private val _user = MutableLiveData<User>()
     private val _shop = MutableLiveData<ShopModel>()
+    // private val _shopRes = MutableLiveData<ShopResponses>()
     private val _listings = MutableLiveData<ListingResponse>()
     private val _orders = MutableLiveData<OrderResponse>()
     private val _contracts = MutableLiveData<OrderResponse>()
@@ -42,6 +43,7 @@ class ShopViewModel : ViewModel(), KoinComponent {
 
     val user = _user
     val shop = _shop
+    // val shopRes = _shopRes
     val listings = _listings
     val orders = _orders
     val contracts = _contracts
@@ -249,6 +251,15 @@ class ShopViewModel : ViewModel(), KoinComponent {
     ).addOnSuccessListener {
         _shop.value = it
     }
+
+//    fun getShops(page: Int = 0, size: Int = 20) {
+//        NetworkCalls.get<ShopResponses>(
+//            endpoint = Endpoints.GET_SHOPS(page, size),
+//            body = listOf()
+//        ).addOnSuccessListener { shopList ->
+//            _shopRes.value = shopList
+//        }
+//    }
 
     fun verifyShopName(name: String) = NetworkCalls.get<ShopResponse>(
         endpoint = Endpoints.VERIFY_SHOP_NAME(name),
