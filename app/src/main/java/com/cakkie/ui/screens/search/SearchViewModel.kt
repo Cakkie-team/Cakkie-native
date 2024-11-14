@@ -11,14 +11,13 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -32,6 +31,9 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
@@ -41,32 +43,24 @@ class SearchViewModel : ViewModel(), KoinComponent {
 
     val filteredListings: StateFlow<List<Listing>> =
         searchQuery.applyFilter(_filteredListings) { item, query ->
-            item.name.contains(query, ignoreCase = true)
+            item.matchesSearchQuery(query)
         }
 
     val filteredJobs: StateFlow<List<JobModel>> =
         searchQuery.applyFilter(_filteredJobs) { item, query ->
-            item.title.contains(query, ignoreCase = true)
+            item.matchesSearchQuery(query)
         }
 
     val filteredShops: StateFlow<List<ShopModel>> =
         searchQuery.applyFilter(_filteredShops) { item, query ->
-            item.name.contains(query, ignoreCase = true)
+            item.matchesSearchQuery(query)
         }
 
-    val filteredAll: StateFlow<List<Any>> =
-        searchQuery.debounce(500)
-        .onStart { _isSearching.value = true }
-        .combine(filteredListings) { _, listings -> listings }
-        .combine(filteredJobs) { listings, jobs -> listings + jobs }
-        .combine(filteredShops) { combinedList, shops ->
-            combinedList + shops
-        }
-        .map { combinedList ->
-            combinedList.filter { it.toString().contains(searchQuery.value, ignoreCase = true) }
-        }
-        .onCompletion { _isSearching.value = false }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val filteredAll: StateFlow<List<Any>> = combine(
+        filteredListings, filteredJobs, filteredShops
+    ) { listings, jobs, shops ->
+        listings + jobs + shops
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         loadListings()
@@ -78,37 +72,38 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private fun <T> StateFlow<String>.applyFilter(
         dataFlow: MutableStateFlow<List<T>>,
         filter: (T, String) -> Boolean
-    ): StateFlow<List<T>> = debounce(500)
-        .onStart { _isSearching.value = true }
+    ): StateFlow<List<T>> = debounce(500L)
+        .onEach { _isSearching.update { true } }
         .combine(dataFlow) { query, items ->
             if (query.isBlank()) items else items.filter { filter(it, query) }
         }
-        .onCompletion { _isSearching.value = false }
+        .onEach { _isSearching.update { false } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
-        // _isSearching.value = query.isNotBlank()
+        _isSearching.update { query.isNotBlank() }
     }
 
     fun loadListings() {
-        _isSearching.value = true
         viewModelScope.launch {
             listingRepository.getListings()
-                .onStart { _isSearching.value = true }
-                .onEach { listings -> _filteredListings.value = listings }
-                .onCompletion { _isSearching.value = false }
-                .collectLatest {}
+                .onStart { _isLoading.update { true } }
+                .onEach { listings ->
+                    _filteredListings.value = listings
+                }
+                .onCompletion { _isLoading.update { false } }
+                .collect {}
         }
     }
 
     fun loadJobs() {
-        _isSearching.value = true
         viewModelScope.launch {
+            _isLoading.update { true }
             jobViewModel.getJobs()
             jobViewModel.jobRes.observeForever { jobResponse ->
                 _filteredJobs.value = jobResponse.data
-                _isSearching.value = false
+                _isLoading.update { false }
             }
         }
     }
@@ -125,11 +120,11 @@ class SearchViewModel : ViewModel(), KoinComponent {
 //    }
 
     fun loadShops() {
-        _isSearching.value = true
         viewModelScope.launch {
+            _isLoading.update { true }
             val dummyShops = getDummyShops()
             _filteredShops.value = dummyShops
-            _isSearching.value = false
+            _isLoading.update { false }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.cakkie.ui.screens.shop
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +41,55 @@ import com.google.accompanist.placeholder.placeholder
 
 @Composable
 fun ShopItem(item: ShopModel, onClick: () -> Unit) {
+    var isLoading by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth().background(Color.White)
+            .clickable { onClick.invoke() },
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = item.image,
+                contentDescription = "Image",
+                onState = { isLoading = it is AsyncImagePainter.State.Loading },
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .placeholder(
+                        visible = isLoading,
+                        color = CakkieBrown.copy(0.8f),
+                        highlight = PlaceholderHighlight.shimmer()
+                    ),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = item.city,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 12.sp,
+                    color = TextColorInactive
+                )
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+}
+
+@Composable
+fun AllTabShopItem(item: ShopModel, onClick: () -> Unit) {
     var isLoading by remember { mutableStateOf(false) }
 
     Card(

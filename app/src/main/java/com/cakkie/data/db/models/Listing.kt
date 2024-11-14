@@ -33,7 +33,7 @@ data class Listing(
     val media: List<String> = listOf(""),
     @Embedded(prefix = "meta_")
     val meta: Meta = Meta(),
-    val name: String = "",
+    val name: String = "", 
     val currencySymbol: String = "",
     val price: List<Int> = listOf(0),
     @Embedded(prefix = "currency_")
@@ -44,7 +44,24 @@ data class Listing(
     val sizes: List<String> = listOf(),
     val totalLikes: Int = 0,
     val updatedAt: String = "",
-) : Parcelable
+) : Parcelable {
+    fun matchesSearchQuery(query: String): Boolean {
+        val searchableFields = listOf(
+            name,
+            description,
+            type,
+            shop.name,
+            availablity,
+            sizes.joinToString(" "),
+            price.joinToString(" "),
+            createdAt,
+            updatedAt
+        )
+        return searchableFields.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 
 @Serializable
 data class ListingResponse(

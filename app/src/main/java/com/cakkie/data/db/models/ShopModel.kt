@@ -30,7 +30,25 @@ data class ShopModel(
     @Embedded(prefix = "user_")
     val user: User = User(),
     val userId: String = ""
-) : Parcelable
+) : Parcelable {
+    fun matchesSearchQuery(query: String): Boolean {
+        val searchableFields = listOf(
+            name,
+            description,
+            address,
+            city,
+            country,
+            state,
+            createdAt,
+            updatedAt,
+            if (isPremium) "premium" else "",
+            if (hasBadge) "badge" else ""
+        )
+        return searchableFields.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 
 //@Serializable
 //data class ShopResponses(
