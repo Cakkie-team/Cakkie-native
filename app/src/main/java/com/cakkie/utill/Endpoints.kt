@@ -160,6 +160,12 @@ object Endpoints {
     val GET_ORDER = { id: String -> "$BASE_URL/order/$id" } /* get order */
     val READY_ORDER = { id: String -> "$BASE_URL/order/ready/$id" } /* ready order */
 
+    /**
+     *  Search
+     **/
+    val SEARCH =
+        { query: String, page: Int, size: Int, type: String -> "$BASE_URL/search/$type?query=$query&page=$page&pageSize=$size" }
+
 
     /**
      * Location

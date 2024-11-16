@@ -408,6 +408,7 @@
     <string name="username_free">Username is free</string>
     <string name="no_results_found">No results found</string>
     <string name="shops">Shops</string>
+    <string name="buy_icing_message">Enter the amount of Icing you like to buy</string>
 
 
 </resources>

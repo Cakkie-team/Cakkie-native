@@ -27,11 +27,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -68,9 +68,10 @@ fun SearchScreen(navigator: DestinationsNavigator) {
     val viewModel: SearchViewModel = koinViewModel()
 
     val isSearching = viewModel.isSearching.collectAsState()
-    val isLoading = viewModel.isLoading.collectAsState()
+    val isLoading = viewModel.isLoading.observeAsState(false).value
     val searchQuery = viewModel.searchQuery.collectAsState()
     val filteredListings = viewModel.filteredListings.collectAsState()
+    val searchedListings = viewModel.searchedListing.collectAsState()
     val filteredJobs = viewModel.filteredJobs.collectAsState()
     val filteredShops = viewModel.filteredShops.collectAsState()
     val filteredAll = viewModel.filteredAll.collectAsState()
@@ -193,7 +194,17 @@ fun SearchScreen(navigator: DestinationsNavigator) {
             // Search field
             CakkieInputField(
                 value = searchQuery.value,
-                onValueChange = { query -> viewModel.onSearchQueryChanged(query) },
+                onValueChange = { query ->
+                    viewModel.onSearchQueryChanged(
+                        query, when (pagerState.currentPage) {
+                            0 -> "all"
+                            1 -> "listing"
+                            2 -> "job"
+                            3 -> "shop"
+                            else -> "all"
+                        }
+                    )
+                },
                 placeholder = stringResource(id = R.string.search_hint),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -224,32 +235,34 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                if (isLoading.value) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(16.dp),
-                        color = CakkieBrown
-                    )
-                } else {
-                    // Show Listings on startup and display tabs once a query is entered
-                    ShowListings(
-                        filteredListings,
-                        searchQuery,
-                        gridState,
-                        visibleItemGrid,
-                        isScrollingFast,
-                        progressiveMediaSource,
-                        navigator
-                    )
+                if (searchQuery.value.isEmpty()) {
+                    if (filteredListings.value.isEmpty()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp),
+                            color = CakkieBrown
+                        )
+                    } else {
+                        // Show Listings on startup and display tabs once a query is entered
+                        ShowListings(
+                            filteredListings,
+                            searchQuery,
+                            gridState,
+                            visibleItemGrid,
+                            isScrollingFast,
+                            progressiveMediaSource,
+                            navigator
+                        )
+                    }
                 }
 
-                if (searchQuery.value.isNotEmpty() && filteredListings.value.isEmpty()
-                    && filteredJobs.value.isEmpty() && filteredShops.value.isEmpty()
-                    && filteredAll.value.isEmpty()
-                ) {
-                    NoResultContent()
-                }
+//                if (searchQuery.value.isNotEmpty() && searchedListings.value.isEmpty()
+//                    && filteredJobs.value.isEmpty() && filteredShops.value.isEmpty()
+//                    && filteredAll.value.isEmpty()
+//                ) {
+//                    NoResultContent()
+//                }
                 Log.d("SearchScreen", "Search query: ${searchQuery.value}")
                 Log.d("SearchScreen", "filteredAll size: ${filteredAll.value.size}")
                 Log.d("SearchScreen", "filteredListings size: ${filteredListings.value.size}")
@@ -257,7 +270,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                 Log.d("SearchScreen", "filteredShops size: ${filteredShops.value.size}")
 
                 // Tabs for search results
-                if ((filteredListings.value.isNotEmpty()
+                if ((searchedListings.value.isNotEmpty()
                             || filteredJobs.value.isNotEmpty()
                             || filteredShops.value.isNotEmpty()
                             || filteredAll.value.isNotEmpty())
@@ -281,7 +294,7 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                 when (page) {
                                     0 -> {
                                         // All Tab
-                                        if ((filteredListings.value.isNotEmpty() || filteredJobs.value.isNotEmpty() || filteredShops.value.isNotEmpty() || filteredAll.value.isNotEmpty())
+                                        if ((searchedListings.value.isNotEmpty() || filteredJobs.value.isNotEmpty() || filteredShops.value.isNotEmpty() || filteredAll.value.isNotEmpty())
                                             && searchQuery.value.isNotEmpty()
                                             && !isSearching.value
                                         ) {
@@ -313,9 +326,12 @@ fun SearchScreen(navigator: DestinationsNavigator) {
 
                                     2 -> {
                                         // Listings Tab
-                                        if (filteredListings.value.isNotEmpty() && searchQuery.value.isNotEmpty() && !isSearching.value) {
+                                        if (searchedListings.value.isNotEmpty()
+                                            && searchQuery.value.isNotEmpty()
+                                            && !isSearching.value
+                                        ) {
                                             ListingsTabContent(
-                                                items = filteredListings.value,
+                                                items = searchedListings.value,
                                                 gridState = gridState,
                                                 visibleItem = visibleItemGrid,
                                                 isScrollingFast = isScrollingFast,
@@ -338,7 +354,6 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                         } else {
                                             NoResultContent()
                                         }
-
                                     }
                                 }
                             }
