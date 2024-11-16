@@ -82,7 +82,7 @@ fun Browser(
             if (it.url?.contains("https://cakkie.com?verify=true") == true) {
                 onComplete.navigateBack(result = true)
             }
-            if (it.url == "https://cakkie.com") {
+            if (it.url == "https://cakkie.com/success") {
                 onComplete.navigateBack(result = true)
             }
             webView = it

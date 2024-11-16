@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.cakkie.R
 import com.cakkie.ui.screens.destinations.AssetDetailsDestination
+import com.cakkie.ui.screens.destinations.BuyIcingDestination
 import com.cakkie.ui.screens.destinations.DepositDestination
 import com.cakkie.ui.screens.destinations.EarnDestination
 import com.cakkie.ui.screens.destinations.MyProfileDestination
@@ -187,7 +188,7 @@ fun Wallet(navigator: DestinationsNavigator) {
                             }
                             Column(
                                 modifier = Modifier
-                                    .clickable { }
+                                    .clickable { navigator.navigate(BuyIcingDestination) }
                                     .width(90.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -304,8 +305,8 @@ fun Wallet(navigator: DestinationsNavigator) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "₦" + dec.format(it.exchangeRate)
-                                .replace(Regex("^0\\.00$"), "*.**"),
+                            text = dec.format(it.exchangeRate)
+                                .replace(Regex("^0\\.00$"), "*.**") + " ICING",
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
@@ -321,9 +322,9 @@ fun Wallet(navigator: DestinationsNavigator) {
 
                         )
                         Text(
-                            text = "₦" + dec.format(
+                            text = dec.format(
                                 it.exchangeRate * it.balance
-                            ).replace(Regex("^0\\.00$"), "*.**"),
+                            ).replace(Regex("^0\\.00$"), "*.**") + " ICING",
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextColorDark.copy(0.5f)
                         )
