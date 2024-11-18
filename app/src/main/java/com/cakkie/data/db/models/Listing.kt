@@ -44,24 +44,7 @@ data class Listing(
     val sizes: List<String> = listOf(),
     val totalLikes: Int = 0,
     val updatedAt: String = "",
-) : Parcelable {
-    fun matchesSearchQuery(query: String): Boolean {
-        val searchableFields = listOf(
-            name,
-            description,
-            type,
-            shop.name,
-            availablity,
-            sizes.joinToString(" "),
-            price.joinToString(" "),
-            createdAt,
-            updatedAt
-        )
-        return searchableFields.any {
-            it.contains(query, ignoreCase = true)
-        }
-    }
-}
+) : Parcelable
 
 @Serializable
 data class ListingResponse(

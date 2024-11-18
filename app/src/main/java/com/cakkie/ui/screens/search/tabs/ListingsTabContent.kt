@@ -31,7 +31,7 @@ fun ListingsTabContent(
         NoResultContent()
     } else {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 120.dp),
+            columns = GridCells.Fixed(3),
             state = gridState,
             modifier = Modifier
                 .fillMaxSize()
