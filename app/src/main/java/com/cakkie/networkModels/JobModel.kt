@@ -1,7 +1,6 @@
 package com.cakkie.networkModels
 
 import android.os.Parcelable
-import androidx.room.Query
 import com.cakkie.data.db.models.User
 import com.cakkie.ui.screens.shop.MediaModel
 import kotlinx.parcelize.Parcelize
@@ -35,25 +34,7 @@ data class JobModel(
     val hasApplied: Boolean = false,
     val totalProposal: Int = 0,
     val hasEnoughBalance: Boolean = false,
-) : Parcelable {
-    fun matchesSearchQuery(query: String): Boolean {
-        val searchableFields = listOf(
-            title,
-            description,
-            city,
-            country,
-            state,
-            status,
-            address,
-            productType,
-            createdAt,
-            updatedAt
-        )
-        return searchableFields.any {
-            it.contains(query, ignoreCase = true)
-        }
-    }
-}
+) : Parcelable
 
 @Serializable
 data class JobResponse(

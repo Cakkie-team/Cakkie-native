@@ -21,17 +21,19 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -40,7 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
@@ -53,11 +54,13 @@ import com.cakkie.ui.components.PageTabs
 import com.cakkie.ui.screens.search.tabs.AllTabContent
 import com.cakkie.ui.screens.search.tabs.JobsTabContent
 import com.cakkie.ui.screens.search.tabs.ListingsTabContent
-import com.cakkie.ui.screens.search.tabs.NoResultContent
 import com.cakkie.ui.screens.search.tabs.ShopsTabContent
+import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(UnstableApi::class)
@@ -67,14 +70,13 @@ import org.koin.androidx.compose.koinViewModel
 fun SearchScreen(navigator: DestinationsNavigator) {
     val viewModel: SearchViewModel = koinViewModel()
 
-    val isSearching = viewModel.isSearching.collectAsState()
-    val isLoading = viewModel.isLoading.observeAsState(false).value
-    val searchQuery = viewModel.searchQuery.collectAsState()
-    val filteredListings = viewModel.filteredListings.collectAsState()
-    val searchedListings = viewModel.searchedListing.collectAsState()
-    val filteredJobs = viewModel.filteredJobs.collectAsState()
-    val filteredShops = viewModel.filteredShops.collectAsState()
-    val filteredAll = viewModel.filteredAll.collectAsState()
+    val isSearching = viewModel.isSearching.collectAsState().value
+    val searchQuery = viewModel.searchQuery.collectAsState().value
+    val listings = viewModel.initialListings.collectAsState().value
+    val searchedListings = viewModel.searchedListings.collectAsState().value
+    val searchedJobs = viewModel.searchedJobs.collectAsState().value
+    val searchedShops = viewModel.searchedShops.collectAsState().value
+    val searchedAllResults = viewModel.searchedAllResults.collectAsState().value
 
     val progressiveMediaSource = remember {
         val httpDataSourceFactory = DefaultHttpDataSource.Factory()
@@ -86,25 +88,20 @@ fun SearchScreen(navigator: DestinationsNavigator) {
         ProgressiveMediaSource.Factory(cacheDataSourceFactory)
     }
 
-    // val config = LocalConfiguration.current
-    // val height = config.screenHeightDp.dp
-
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
     val pagerState = rememberPagerState(pageCount = { 4 })
-    // val refreshScope = rememberCoroutineScope()
-    // var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
 
-//    fun refresh() = refreshScope.launch {
-//        refreshing = true
-//        viewModel.loadListings()
-//        viewModel.loadJobs()
-//        viewModel.loadShops()
-//        delay(1000)
-//        refreshing = false
-//    }
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        viewModel.loadListings()
+        delay(1000)
+        refreshing = false
+    }
 
-    // val state = rememberPullRefreshState(refreshing, ::refresh)
+    val state = rememberPullRefreshState(refreshing, ::refresh)
 
     var prevScroll by remember { mutableIntStateOf(0) }
     val scrollFraction =
@@ -125,23 +122,6 @@ fun SearchScreen(navigator: DestinationsNavigator) {
             prevScroll = scrollFractionGrid
         }
     }
-
-//    LaunchedEffect(Unit) {
-//        if (filteredListings.value.isEmpty()) {
-//            viewModel.loadListings()
-//        }
-//        if (filteredJobs.value.isEmpty()) {
-//            viewModel.loadJobs()
-//        }
-//        if (filteredShops.value.isEmpty()) {
-//            viewModel.loadShops()
-//        }
-//        if (filteredAll.value.isEmpty()) {
-//            viewModel.loadListings()
-//            viewModel.loadJobs()
-//            viewModel.loadShops()
-//        }
-//    }
 
     var isScrollingFast by remember { mutableStateOf(false) }
     var lastScrollTime by remember { mutableLongStateOf(0L) }
@@ -193,15 +173,15 @@ fun SearchScreen(navigator: DestinationsNavigator) {
 
             // Search field
             CakkieInputField(
-                value = searchQuery.value,
+                value = searchQuery,
                 onValueChange = { query ->
                     viewModel.onSearchQueryChanged(
                         query, when (pagerState.currentPage) {
-                            0 -> "all"
-                            1 -> "listing"
-                            2 -> "job"
-                            3 -> "shop"
-                            else -> "all"
+                            0 -> "All"
+                            1 -> "Listing"
+                            2 -> "Job"
+                            3 -> "Shop"
+                            else -> "All"
                         }
                     )
                 },
@@ -223,30 +203,34 @@ fun SearchScreen(navigator: DestinationsNavigator) {
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        if (isSearching.value) {
+        if (isSearching) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
+                    .align(Alignment.CenterHorizontally),
                 color = CakkieBrown
             )
         } else {
             Box(
                 modifier = Modifier
+                    .pullRefresh(state = state)
                     .fillMaxSize()
             ) {
-                if (searchQuery.value.isEmpty()) {
-                    if (filteredListings.value.isEmpty()) {
-                        CircularProgressIndicator(
+                if (searchQuery.isEmpty()) {
+                    if (listings.isEmpty()) {
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(16.dp),
-                            color = CakkieBrown
-                        )
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5f),
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center),
+                                color = CakkieBrown
+                            )
+                        }
                     } else {
                         // Show Listings on startup and display tabs once a query is entered
                         ShowListings(
-                            filteredListings,
+                            listings,
                             searchQuery,
                             gridState,
                             visibleItemGrid,
@@ -255,26 +239,22 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                             navigator
                         )
                     }
+
+                    PullRefreshIndicator(
+                        refreshing = refreshing,
+                        state = state,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        backgroundColor = CakkieBackground,
+                        contentColor = CakkieBrown
+                    )
                 }
 
-//                if (searchQuery.value.isNotEmpty() && searchedListings.value.isEmpty()
-//                    && filteredJobs.value.isEmpty() && filteredShops.value.isEmpty()
-//                    && filteredAll.value.isEmpty()
-//                ) {
-//                    NoResultContent()
-//                }
-                Log.d("SearchScreen", "Search query: ${searchQuery.value}")
-                Log.d("SearchScreen", "filteredAll size: ${filteredAll.value.size}")
-                Log.d("SearchScreen", "filteredListings size: ${filteredListings.value.size}")
-                Log.d("SearchScreen", "filteredJobs size: ${filteredJobs.value.size}")
-                Log.d("SearchScreen", "filteredShops size: ${filteredShops.value.size}")
-
                 // Tabs for search results
-                if ((searchedListings.value.isNotEmpty()
-                            || filteredJobs.value.isNotEmpty()
-                            || filteredShops.value.isNotEmpty()
-                            || filteredAll.value.isNotEmpty())
-                    && searchQuery.value.isNotEmpty()
+                if ((searchedListings.isNotEmpty()
+                            || searchedJobs.isNotEmpty()
+                            || searchedShops.isNotEmpty()
+                            || searchedAllResults.isNotEmpty())
+                    && searchQuery.isNotEmpty()
                 ) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Column(Modifier.fillMaxHeight()) {
@@ -294,80 +274,50 @@ fun SearchScreen(navigator: DestinationsNavigator) {
                                 when (page) {
                                     0 -> {
                                         // All Tab
-                                        if ((searchedListings.value.isNotEmpty() || filteredJobs.value.isNotEmpty() || filteredShops.value.isNotEmpty() || filteredAll.value.isNotEmpty())
-                                            && searchQuery.value.isNotEmpty()
-                                            && !isSearching.value
-                                        ) {
-                                            AllTabContent(
-                                                items = filteredAll.value,
-                                                navigator = navigator,
-                                                visibleItem = visibleItem,
-                                                isScrollingFast = isScrollingFast,
-                                                progressiveMediaSource = progressiveMediaSource,
-                                                listState = listState
-                                            )
-                                        } else {
-                                            NoResultContent()
-                                        }
+                                        AllTabContent(
+                                            items = searchedAllResults,
+                                            navigator = navigator,
+                                            visibleItem = visibleItem,
+                                            isScrollingFast = isScrollingFast,
+                                            progressiveMediaSource = progressiveMediaSource,
+                                            listState = listState
+                                        )
                                     }
 
+                                    // Jobs Tab
                                     1 -> {
-                                        // Jobs Tab
-                                        if (filteredJobs.value.isNotEmpty() && searchQuery.value.isNotEmpty() && !isSearching.value) {
-                                            JobsTabContent(
-                                                listState = listState,
-                                                items = filteredJobs.value,
-                                                navigator = navigator
-                                            )
-                                        } else {
-                                            NoResultContent()
-                                        }
+                                        JobsTabContent(
+                                            listState = listState,
+                                            items = searchedJobs,
+                                            navigator = navigator
+                                        )
                                     }
 
+                                    // Listings Tab
                                     2 -> {
-                                        // Listings Tab
-                                        if (searchedListings.value.isNotEmpty()
-                                            && searchQuery.value.isNotEmpty()
-                                            && !isSearching.value
-                                        ) {
-                                            ListingsTabContent(
-                                                items = searchedListings.value,
-                                                gridState = gridState,
-                                                visibleItem = visibleItemGrid,
-                                                isScrollingFast = isScrollingFast,
-                                                navigator = navigator,
-                                                progressiveMediaSource = progressiveMediaSource
-                                            )
-                                        } else {
-                                            NoResultContent()
-                                        }
+                                        ListingsTabContent(
+                                            items = searchedListings,
+                                            gridState = gridState,
+                                            visibleItem = visibleItemGrid,
+                                            isScrollingFast = isScrollingFast,
+                                            navigator = navigator,
+                                            progressiveMediaSource = progressiveMediaSource
+                                        )
                                     }
 
+                                    // Shops Tab
                                     3 -> {
-                                        // Shops Tab
-                                        if (filteredShops.value.isNotEmpty() && searchQuery.value.isNotEmpty() && !isSearching.value) {
-                                            ShopsTabContent(
-                                                listState = listState,
-                                                items = filteredShops.value,
-                                                navigator = navigator
-                                            )
-                                        } else {
-                                            NoResultContent()
-                                        }
+                                        ShopsTabContent(
+                                            listState = listState,
+                                            items = searchedShops,
+                                            navigator = navigator
+                                        )
                                     }
                                 }
                             }
                         }
                     }
                 }
-//                PullRefreshIndicator(
-//                    refreshing = refreshing,
-//                    state = state,
-//                    modifier = Modifier.align(Alignment.TopCenter),
-//                    backgroundColor = CakkieBackground,
-//                    contentColor = CakkieBrown
-//                )
-
             }
         }
     }
@@ -376,17 +326,17 @@ fun SearchScreen(navigator: DestinationsNavigator) {
 @OptIn(UnstableApi::class)
 @Composable
 fun ShowListings(
-    filteredListings: State<List<Listing>>,
-    searchQuery: State<String>,
+    listings: List<Listing>,
+    searchQuery: String,
     gridState: LazyGridState,
     visibleItemGrid: Int,
     isScrollingFast: Boolean,
     progressiveMediaSource: ProgressiveMediaSource.Factory,
     navigator: DestinationsNavigator
 ) {
-    if (filteredListings.value.isNotEmpty() && searchQuery.value.isEmpty()) {
+    if (searchQuery.isEmpty()) {
         ListingsTabContent(
-            items = filteredListings.value,
+            items = listings,
             gridState = gridState,
             visibleItem = visibleItemGrid,
             isScrollingFast = isScrollingFast,

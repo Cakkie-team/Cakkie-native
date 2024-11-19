@@ -74,6 +74,30 @@ fun AllTabContent(
         ) {
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
+            // Shops Section
+            if (shops.isNotEmpty()) {
+                item {
+                    LazyRow(
+                        state = shopsRowState,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(shops) { shop ->
+                            Box(
+                                modifier = Modifier
+                                    .width(itemWidth)
+                            ) {
+                                AllTabShopItem(
+                                    item = shop,
+                                    onClick = {},
+                                )
+                            }
+                        }
+                    }
+                }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+            }
+
             // Listings Section - First 9 Listings
             if (firstNineListings.isNotEmpty()) {
                 item {
@@ -115,30 +139,6 @@ fun AllTabContent(
                                     onClick = {
                                         navigator.navigate(JobDetailsDestination(job.id, job))
                                     },
-                                )
-                            }
-                        }
-                    }
-                }
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-            }
-
-            // Shops Section
-            if (shops.isNotEmpty()) {
-                item {
-                    LazyRow(
-                        state = shopsRowState,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(shops) { shop ->
-                            Box(
-                                modifier = Modifier
-                                    .width(itemWidth)
-                            ) {
-                                AllTabShopItem(
-                                    item = shop,
-                                    onClick = {},
                                 )
                             }
                         }
