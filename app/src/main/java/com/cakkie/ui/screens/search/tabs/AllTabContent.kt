@@ -20,8 +20,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
@@ -86,6 +88,7 @@ fun AllTabContent(
                             Box(
                                 modifier = Modifier
                                     .width(itemWidth)
+                                    .clip(shape = RoundedCornerShape(16.dp))
                             ) {
                                 AllTabShopItem(
                                     item = shop,
@@ -103,8 +106,10 @@ fun AllTabContent(
                 item {
                     LazyVerticalGrid(
                         state = firstGridState,
-                        columns = GridCells.Adaptive(minSize = 120.dp),
-                        modifier = Modifier.fillMaxWidth().heightIn(max = 1000.dp),
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 1000.dp),
                         contentPadding = PaddingValues(1.dp),
                     ) {
                         items(firstNineListings) { listing ->
@@ -133,6 +138,7 @@ fun AllTabContent(
                             Box(
                                 modifier = Modifier
                                     .width(itemWidth)
+                                    .clip(shape = RoundedCornerShape(16.dp))
                             ) {
                                 AllTabJobItem(
                                     item = job,
@@ -152,8 +158,10 @@ fun AllTabContent(
                 item {
                     LazyVerticalGrid(
                         state = secondGridState,
-                        columns = GridCells.Adaptive(minSize = 120.dp),
-                        modifier = Modifier.fillMaxWidth().heightIn(max = 1000.dp),
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 1000.dp),
                         contentPadding = PaddingValues(1.dp),
                     ) {
                         items(remainingListings) { listing ->
@@ -164,7 +172,6 @@ fun AllTabContent(
                                 shouldPlay = index == visibleItem && !isScrollingFast,
                                 progressiveMediaSource = progressiveMediaSource,
                             )
-
                         }
                     }
                 }

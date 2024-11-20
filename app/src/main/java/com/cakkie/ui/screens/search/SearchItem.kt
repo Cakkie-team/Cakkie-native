@@ -160,7 +160,7 @@ private fun ImageContent(mediaUrl: String, listing: Listing) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(5.dp)
+
     ) {
 
         AsyncImage(
