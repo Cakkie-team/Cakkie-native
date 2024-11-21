@@ -24,8 +24,6 @@ enum class SearchType {
 }
 
 class SearchViewModel : ViewModel(), KoinComponent {
-    // private val listingRepository: ListingRepository by inject()
-
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching
 
@@ -56,8 +54,17 @@ class SearchViewModel : ViewModel(), KoinComponent {
 
     fun onSearchQueryChanged(query: String, tab: String) {
         _searchQuery.update { query }
-        performSearch(query, SearchType.valueOf(tab))
-        _isSearching.update { query.isNotBlank() }
+        if (query.isBlank()) {
+            viewModelScope.launch {
+                _isSearching.update { false }
+                _searchedListings.update { _initialListings.value }
+                _searchedShops.update { emptyList() }
+                _searchedJobs.update { emptyList() }
+            }
+        } else {
+            performSearch(query, SearchType.valueOf(tab))
+            _isSearching.update { query.isNotBlank() }
+        }
     }
 
     private fun performSearch(query: String, type: SearchType, page: Int = 0, size: Int = 50) =
@@ -66,10 +73,10 @@ class SearchViewModel : ViewModel(), KoinComponent {
             body = listOf()
         ).addOnSuccessListener { res ->
             viewModelScope.launch {
-                _isSearching.update { true }
                 _searchedListings.update { res.listings }
                 _searchedShops.update { res.shops }
                 _searchedJobs.update { res.jobs }
+                _isSearching.update { false }
             }
         }.addOnFailureListener { exception ->
             viewModelScope.launch {
@@ -93,15 +100,6 @@ class SearchViewModel : ViewModel(), KoinComponent {
                 Timber.e(exception, "Failed to fetch listings")
             }
         }
-
-//    fun loadListings() {
-//        viewModelScope.launch {
-//            listingRepository.getListings()
-//                .onEach { listings ->
-//                    _initialListings.value = listings
-//                }.collect {}
-//        }
-//    }
 }
 
 
