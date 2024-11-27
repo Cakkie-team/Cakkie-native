@@ -1,5 +1,6 @@
 package com.cakkie.ui.screens.explore
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -72,6 +73,7 @@ import com.cakkie.ui.screens.destinations.ProfileDestination
 import com.cakkie.ui.screens.destinations.SendRequestDestination
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
+import com.cakkie.utill.ContentType
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.isVideoUrl
 import com.cakkie.utill.toObject
@@ -206,7 +208,15 @@ fun HeaderSection(listing: Listing, navigator: DestinationsNavigator) {
                 )
             }
         }
-        IconButton(onClick = { navigator.navigate(MoreOptionsDestination) }) {
+        // More Option
+        val context = LocalContext.current
+        IconButton(
+            onClick = {
+                navigator.navigate(MoreOptionsDestination(
+                    contentType = ContentType.Listing,
+                    contentId = listing.id
+                ))
+            }) {
             Image(
                 painter = painterResource(id = R.drawable.options),
                 contentDescription = "options",

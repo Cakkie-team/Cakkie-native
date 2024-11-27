@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +79,8 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
+import com.cakkie.utill.ContentType
+import com.cakkie.utill.ShareUtil
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
@@ -104,6 +107,7 @@ fun MyProfile(navigator: DestinationsNavigator) {
     var activeTab by rememberSaveable {
         mutableStateOf("posts")
     }
+    val context = LocalContext.current
     val config = LocalConfiguration.current
     val height = config.screenHeightDp.dp
 //    Timber.d("offsetY: $offsetY progress: $progress")
@@ -243,7 +247,15 @@ fun MyProfile(navigator: DestinationsNavigator) {
                     navigator.navigate(ChangeProfileDestination)
                 }
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        ShareUtil.share(
+                            contentType = ContentType.Profile,
+                            contentId = user?.id ?: "",
+                            username = user?.name?.lowercase()?.trim(),
+                            context = context ,
+
+                        )
+                    },
                     modifier = Modifier
                         .size(width = 70.dp, height = 34.dp),
                     border = BorderStroke(1.dp, color = CakkieLightBrown),

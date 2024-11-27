@@ -58,6 +58,8 @@ import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieYellow
+import com.cakkie.utill.ContentType
+import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.formatDate
 import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -208,7 +210,13 @@ fun CakespirationItem(
                 contentDescription = "share",
                 tint = CakkieBackground,
                 modifier = Modifier
-                    .clickable { }
+                    .clickable {
+                        ShareUtil.share(
+                            contentType = ContentType.Cakespiration,
+                            contentId = listing.id,
+                            context = context
+                        )
+                    }
                     .padding(8.dp)
                     .width(24.dp)
             )
@@ -233,7 +241,10 @@ fun CakespirationItem(
                 contentDescription = "more",
                 tint = CakkieBackground,
                 modifier = Modifier
-                    .clickable { navigator.navigate(MoreOptionsDestination) }
+                    .clickable { navigator.navigate(MoreOptionsDestination(
+                        contentType = ContentType.Listing,
+                        contentId = listing.id
+                    )) }
                     .padding(8.dp)
                     .width(24.dp)
             )

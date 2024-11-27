@@ -54,6 +54,8 @@ import com.cakkie.ui.screens.explore.ExploreItem
 import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
+import com.cakkie.utill.ContentType
+import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.Toaster
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -154,7 +156,13 @@ fun PreviewListing(
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        ShareUtil.share(
+                            contentType = ContentType.Listing,
+                            context = context,
+                            contentId = id
+                        )
+                    }) {
                         Image(
                             painter = painterResource(id = R.drawable.share),
                             contentDescription = "share",

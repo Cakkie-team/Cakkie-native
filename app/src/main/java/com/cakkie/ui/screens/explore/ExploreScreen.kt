@@ -128,10 +128,7 @@ fun ExploreScreen(navigator: DestinationsNavigator) {
         if (scrollFraction > 20) {
             prevScroll = scrollFraction
         }
-
     }
-
-
 
     LaunchedEffect(Unit) {
         if (listings?.data.isNullOrEmpty()) {
