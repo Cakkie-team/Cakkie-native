@@ -94,7 +94,9 @@ import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
+import com.cakkie.utill.ContentType
 import com.cakkie.utill.Endpoints
+import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.formatDateTime
@@ -751,7 +753,13 @@ fun JobDetails(
 
                         }
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        ShareUtil.share(
+                            context = context,
+                            contentId = job.id,
+                            contentType = ContentType.Job
+                        )
+                    }) {
                         Image(
                             painter = painterResource(id = R.drawable.share),
                             contentDescription = "share",
