@@ -96,12 +96,12 @@ import com.cakkie.ui.theme.TextColorDark
 import com.cakkie.ui.theme.TextColorInactive
 import com.cakkie.utill.ContentType
 import com.cakkie.utill.Endpoints
-import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.createTmpFileFromUri
 import com.cakkie.utill.formatDateTime
 import com.cakkie.utill.formatNumber
 import com.cakkie.utill.isVideoUrl
+import com.cakkie.utill.share
 import com.cakkie.utill.toObjectList
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -754,8 +754,7 @@ fun JobDetails(
                         }
                     }
                     IconButton(onClick = {
-                        ShareUtil.share(
-                            context = context,
+                        context.share(
                             contentId = job.id,
                             contentType = ContentType.Job
                         )

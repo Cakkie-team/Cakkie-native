@@ -59,8 +59,8 @@ import com.cakkie.ui.theme.CakkieBackground
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieYellow
 import com.cakkie.utill.ContentType
-import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.formatDate
+import com.cakkie.utill.share
 import com.cakkie.utill.toObject
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -211,10 +211,9 @@ fun CakespirationItem(
                 tint = CakkieBackground,
                 modifier = Modifier
                     .clickable {
-                        ShareUtil.share(
+                        context.share(
                             contentType = ContentType.Cakespiration,
-                            contentId = listing.id,
-                            context = context
+                            contentId = listing.id
                         )
                     }
                     .padding(8.dp)
@@ -241,10 +240,15 @@ fun CakespirationItem(
                 contentDescription = "more",
                 tint = CakkieBackground,
                 modifier = Modifier
-                    .clickable { navigator.navigate(MoreOptionsDestination(
-                        contentType = ContentType.Listing,
-                        contentId = listing.id
-                    )) }
+                    .clickable {
+                        navigator.navigate(
+                            MoreOptionsDestination(
+                                contentType = ContentType.Listing,
+                                contentId = listing.id,
+                                contentName = listing.shop.name
+                            )
+                        )
+                    }
                     .padding(8.dp)
                     .width(24.dp)
             )
