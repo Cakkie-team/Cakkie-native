@@ -80,7 +80,7 @@ import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
 import com.cakkie.ui.theme.CakkieOrange
 import com.cakkie.utill.ContentType
-import com.cakkie.utill.ShareUtil
+import com.cakkie.utill.share
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
@@ -248,12 +248,10 @@ fun MyProfile(navigator: DestinationsNavigator) {
                 }
                 OutlinedButton(
                     onClick = {
-                        ShareUtil.share(
+                        context.share(
                             contentType = ContentType.Profile,
                             contentId = user?.id ?: "",
-                            username = user?.name?.lowercase()?.trim(),
-                            context = context ,
-
+                            username = user?.name?.lowercase()?.trim()
                         )
                     },
                     modifier = Modifier

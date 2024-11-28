@@ -209,12 +209,12 @@ fun HeaderSection(listing: Listing, navigator: DestinationsNavigator) {
             }
         }
         // More Option
-        val context = LocalContext.current
         IconButton(
             onClick = {
                 navigator.navigate(MoreOptionsDestination(
                     contentType = ContentType.Listing,
-                    contentId = listing.id
+                    contentId = listing.id,
+                    contentName = listing.shop.name
                 ))
             }) {
             Image(

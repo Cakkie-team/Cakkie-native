@@ -55,8 +55,8 @@ import com.cakkie.ui.screens.shop.ShopViewModel
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.Error
 import com.cakkie.utill.ContentType
-import com.cakkie.utill.ShareUtil
 import com.cakkie.utill.Toaster
+import com.cakkie.utill.share
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
@@ -157,9 +157,8 @@ fun PreviewListing(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = {
-                        ShareUtil.share(
+                        context.share(
                             contentType = ContentType.Listing,
-                            context = context,
                             contentId = id
                         )
                     }) {
