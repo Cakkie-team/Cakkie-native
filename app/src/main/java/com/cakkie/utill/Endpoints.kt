@@ -78,6 +78,8 @@ object Endpoints {
     val GET_LISTING = { id: String -> "$BASE_URL/listing/$id" } /* get listing*/
     val GET_SHOP_LISTINGS =
         { id: String, page: Int, size: Int -> "$BASE_URL/listing/shop/$id?page=$page&pageSize=$size" }/* get shop listings  GET*/
+    val FLAG_LISTING = { id: String -> "$BASE_URL/listing/flag/$id"} /* POST request */
+    val REPORT_LISTING = { id: String -> "$BASE_URL/listing/report/$id"} /* POST request */
 
 
     /**

@@ -25,6 +25,8 @@ import com.cakkie.utill.VideoPreLoadingService
 import com.cakkie.utill.isVideoUrl
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinComponent
@@ -41,7 +43,6 @@ class ExploreViewModal : ViewModel(), KoinComponent {
     private val _cakespiration = MutableLiveData<ListingResponse>()
     private val listingRepository: ListingRepository by inject()
     private val _pagination = MutableLiveData(Pagination())
-
 
     val listings = _listings
     val cakespiration = _cakespiration
@@ -233,4 +234,18 @@ class ExploreViewModal : ViewModel(), KoinComponent {
             }
         }
     }
+
+    fun flagListing(listingId: String) =
+        NetworkCalls.post<Listing>(
+            endpoint = Endpoints.FLAG_LISTING(listingId),
+            body = listOf()
+        )
+
+
+    fun reportListing(listingId: String, comment: String) = NetworkCalls.post<Listing>(
+        endpoint = Endpoints.REPORT_LISTING(listingId),
+        body = listOf(
+            Pair("comment", comment)
+        )
+    )
 }

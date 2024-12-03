@@ -213,8 +213,7 @@ fun HeaderSection(listing: Listing, navigator: DestinationsNavigator) {
             onClick = {
                 navigator.navigate(MoreOptionsDestination(
                     contentType = ContentType.Listing,
-                    contentId = listing.id,
-                    contentName = listing.shop.name
+                    contentId = listing.id
                 ))
             }) {
             Image(
