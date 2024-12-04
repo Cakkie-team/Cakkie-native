@@ -1,6 +1,6 @@
 package com.cakkie.ui.screens.explore.bottomUi
 
-import android.widget.Toast
+import ReportOptions
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,10 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,24 +30,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cakkie.R
-import com.cakkie.ui.screens.destinations.ReportDestination
+import com.cakkie.ui.screens.explore.ExploreViewModal
 import com.cakkie.ui.theme.CakkieBrown
 import com.cakkie.ui.theme.CakkieLightBrown
+import com.cakkie.ui.theme.Inactive
 import com.cakkie.utill.ContentType
+import com.cakkie.utill.Toaster
 import com.cakkie.utill.share
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun MoreOptions(
     contentType: ContentType,
     contentId: String,
-    contentName: String?,
-    navigator: DestinationsNavigator
 ) {
+    val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
+    var showReportDialog by remember { mutableStateOf(false) }
+    var processing by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -59,6 +69,15 @@ fun MoreOptions(
             thickness = 8.dp,
         )
         Spacer(modifier = Modifier.height(16.dp))
+
+        // loading indicator if processing
+        if (processing) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                color = CakkieBrown
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         // Share Button
         Row(
@@ -83,7 +102,7 @@ fun MoreOptions(
             Text(
                 text = stringResource(id = R.string.share),
                 style = MaterialTheme.typography.labelLarge,
-                color = CakkieBrown,
+                color = if (processing) Inactive else CakkieBrown,
                 fontSize = 16.sp,
             )
         }
@@ -100,10 +119,34 @@ fun MoreOptions(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
-                .clickable {
-                    Toast
-                        .makeText(context, "Content Flagged", Toast.LENGTH_SHORT)
-                        .show()
+                .clickable(enabled = !processing) {
+                    processing = true
+                    viewModel
+                        .flagListing(contentId)
+                        .addOnSuccessListener {
+                            processing = false
+                            Timber
+                                .tag("MoreOptions")
+                                .d(
+                                    "Successfully flagged content: $contentId"
+                                )
+                            Toaster(
+                                context,
+                                "Content Flagged",
+                                R.drawable.logo
+                            ).show()
+                        }
+                        .addOnFailureListener { error ->
+                            processing = false
+                            Timber
+                                .tag("MoreOptions")
+                                .e(error, "Failed to flag content: $error")
+                            Toaster(
+                                context,
+                                "Failed to flag content: $error",
+                                R.drawable.logo
+                            ).show()
+                        }
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -117,7 +160,7 @@ fun MoreOptions(
             Text(
                 text = stringResource(id = R.string.flag),
                 style = MaterialTheme.typography.labelLarge,
-                color = CakkieBrown,
+                color = if (processing) Inactive else CakkieBrown,
                 fontSize = 16.sp,
             )
         }
@@ -134,8 +177,9 @@ fun MoreOptions(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
-                .clickable {
-                    navigator.navigate(ReportDestination(name = contentName ?: ""))
+                .clickable(enabled = !processing) {
+                    showReportDialog = true
+                    //navigator.navigate(ReportDestination(name = contentName ?: ""))
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -163,5 +207,31 @@ fun MoreOptions(
             thickness = 1.dp,
         )
         Spacer(modifier = Modifier.height(16.dp))
+    }
+
+    if (showReportDialog) {
+        ReportOptions(
+            onDismiss = { showReportDialog = false },
+            onCategorySelected = { category ->
+                processing = true
+                viewModel.reportListing(contentId, comment = category).addOnSuccessListener {
+                    processing = false
+                    Timber.tag("MoreOptions")
+                        .d("Successfully report content: $contentId for category: $category")
+                    Toaster(
+                        context,
+                        "Reported for: $category",
+                        R.drawable.logo
+                    ).show()
+                }.addOnFailureListener { error ->
+                    processing = false
+                    Timber.tag("MoreOptions").e("Failed to report content: $error")
+                    Toaster(
+                        context,
+                        "Failed to report content: $error",
+                        R.drawable.logo
+                    ).show()
+                }
+            })
     }
 }

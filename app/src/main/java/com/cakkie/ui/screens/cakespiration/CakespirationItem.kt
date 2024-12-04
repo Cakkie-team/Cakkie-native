@@ -244,8 +244,7 @@ fun CakespirationItem(
                         navigator.navigate(
                             MoreOptionsDestination(
                                 contentType = ContentType.Listing,
-                                contentId = listing.id,
-                                contentName = listing.shop.name
+                                contentId = listing.id
                             )
                         )
                     }
