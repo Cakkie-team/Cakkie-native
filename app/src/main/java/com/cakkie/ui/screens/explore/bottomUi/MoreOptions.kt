@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +37,7 @@ import com.cakkie.utill.ContentType
 import com.cakkie.utill.Toaster
 import com.cakkie.utill.share
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyleBottomSheet
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -47,6 +47,7 @@ import timber.log.Timber
 fun MoreOptions(
     contentType: ContentType,
     contentId: String,
+    navigator: DestinationsNavigator
 ) {
     val viewModel: ExploreViewModal = koinViewModel()
     val context = LocalContext.current
@@ -71,13 +72,13 @@ fun MoreOptions(
         Spacer(modifier = Modifier.height(16.dp))
 
         // loading indicator if processing
-        if (processing) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                color = CakkieBrown
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+//        if (processing) {
+//            CircularProgressIndicator(
+//                modifier = Modifier.align(Alignment.CenterHorizontally),
+//                color = CakkieBrown
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
+//        }
 
         // Share Button
         Row(
@@ -89,6 +90,7 @@ fun MoreOptions(
                         contentType = contentType,
                         contentId = contentId
                     )
+                    navigator.popBackStack()
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -125,22 +127,19 @@ fun MoreOptions(
                         .flagListing(contentId)
                         .addOnSuccessListener {
                             processing = false
-                            Timber
-                                .tag("MoreOptions")
-                                .d(
-                                    "Successfully flagged content: $contentId"
-                                )
+                            Timber.tag("MoreOptions").d(
+                                "Successfully flagged content: $contentId"
+                            )
                             Toaster(
                                 context,
                                 "Content Flagged",
                                 R.drawable.logo
                             ).show()
+                            navigator.popBackStack()
                         }
                         .addOnFailureListener { error ->
                             processing = false
-                            Timber
-                                .tag("MoreOptions")
-                                .e(error, "Failed to flag content: $error")
+                            Timber.tag("MoreOptions").e(error, "Failed to flag content: $error")
                             Toaster(
                                 context,
                                 "Failed to flag content: $error",
@@ -216,13 +215,13 @@ fun MoreOptions(
                 processing = true
                 viewModel.reportListing(contentId, comment = category).addOnSuccessListener {
                     processing = false
-                    Timber.tag("MoreOptions")
-                        .d("Successfully report content: $contentId for category: $category")
+                    Timber.tag("MoreOptions").d("Successfully report content: $contentId for category: $category")
                     Toaster(
                         context,
                         "Reported for: $category",
                         R.drawable.logo
                     ).show()
+                    navigator.popBackStack()
                 }.addOnFailureListener { error ->
                     processing = false
                     Timber.tag("MoreOptions").e("Failed to report content: $error")
