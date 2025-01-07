@@ -220,6 +220,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onLowMemory() {
         super.onLowMemory()
         Glide.get(this).clearMemory()

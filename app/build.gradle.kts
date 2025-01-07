@@ -11,12 +11,12 @@ plugins {
 
 android {
     namespace = "com.cakkie"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.cakkie"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 50
         versionName = "1.06.7"
 
@@ -55,6 +55,30 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    flavorDimensions += "app"
+    productFlavors {
+        create("lite") {
+            dimension = "app"
+//            applicationId = "com.cakkie.lite"
+            versionNameSuffix = "-lite"
+            applicationIdSuffix = ".lite"
+            resValue("string", "app_name", "Cakkie Lite")
+        }
+        create("shop") {
+            dimension = "app"
+//            applicationId = "com.cakkie.shop"
+            versionNameSuffix = "-shop"
+            applicationIdSuffix = ".shop"
+            resValue("string", "app_name", "Cakkie Shop")
+        }
+        create("combined") {
+            dimension = "app"
+            applicationId = "com.cakkie"
+            versionNameSuffix = ""
+            resValue("string", "app_name", "Cakkie")
         }
     }
 }

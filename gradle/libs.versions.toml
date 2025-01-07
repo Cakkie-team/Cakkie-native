@@ -1,11 +1,10 @@
 [versions]
 accompanistPermissionsVersion = "0.19.0"
 accompanistPlaceholderMaterialVersion = "0.32.0"
-agp = "8.5.0"
+agp = "8.7.3"
 appUpdateVersion = "2.1.0"
 coilGif = "2.1.0"
 commonsIoVersion = "2.13.0"
-engineIoClientVersion = "1.0.0"
 fuelVersion = "2.3.1"
 gsonVersion = "2.10.1"
 installreferrerVersion = "2.2"
@@ -17,7 +16,6 @@ espresso-core = "3.5.1"
 landscapistGlideVersion = "1.3.6"
 lifecycle-runtime-ktx = "2.6.2"
 activity-compose = "1.8.1"
-compose-bom = "2023.10.01"
 compose = "1.5.0"
 material3 = "1.1.2"
 
@@ -80,17 +78,14 @@ firebase-messaging = "23.4.1"
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanisrVersion" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissionsVersion" }
 accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanistPlaceholderMaterialVersion" }
-androidx-material3-v150 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3ExoplayerVersion" }
 androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3ExoplayerVersion" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3ExoplayerVersion" }
-androidx-ui-v154 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
 androidx-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", version.ref = "uiViewbindingVersion" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdateVersion" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdateVersion" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIoVersion" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
-engine-io-client = { module = "io.socket:engine.io-client", version.ref = "engineIoClientVersion" }
 fuel = { module = "com.github.kittinunf.fuel:fuel", version.ref = "fuelVersion" }
 fuel-android = { module = "com.github.kittinunf.fuel:fuel-android", version.ref = "fuelVersion" }
 fuel-coroutines = { module = "com.github.kittinunf.fuel:fuel-coroutines", version.ref = "fuelVersion" }
@@ -104,14 +99,11 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlideVersion" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "compose" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
-sdk = { module = "com.appodeal.ads:sdk", version.ref = "sdkVersion" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmerVersion" }
-socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClientVersion" }
 threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabpVersion" }
 toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarComposeVersion" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
@@ -147,7 +139,6 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 # viewModel
 uploadservice = { module = "net.gotev:uploadservice", version.ref = "uploadserviceVersion" }
-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 # coil
