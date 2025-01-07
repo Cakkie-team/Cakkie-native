@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         //check for update
         checkForUpdate()
-
+        val appPackageName = packageManager.getPackageInfo(packageName, 0).packageName
         //request notification permission
 //        askNotificationPermission()
         askMultiplePermissions()
@@ -220,6 +220,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onLowMemory() {
         super.onLowMemory()
         Glide.get(this).clearMemory()

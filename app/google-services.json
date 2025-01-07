@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "728014565527",
     "project_id": "cakkie",
-    "storage_bucket": "cakkie.appspot.com"
+    "storage_bucket": "cakkie.firebasestorage.app"
   },
   "client": [
     {
@@ -10,6 +10,45 @@
         "mobilesdk_app_id": "1:728014565527:android:e174456cb2fb1cd57079d2",
         "android_client_info": {
           "package_name": "com.cakkie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMFSEg0fzydWoT2nmvl-pXCEtRmLhPPLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-8613748949810587~5868705431"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728014565527:android:6582c2cb3c109c2e7079d2",
+        "android_client_info": {
+          "package_name": "com.cakkie.lite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMFSEg0fzydWoT2nmvl-pXCEtRmLhPPLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728014565527:android:8f8d3c804bac7e247079d2",
+        "android_client_info": {
+          "package_name": "com.cakkie.shop"
         }
       },
       "oauth_client": [],

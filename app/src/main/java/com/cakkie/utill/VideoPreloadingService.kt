@@ -20,6 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
+@UnstableApi
 class VideoPreLoadingService :
     IntentService(VideoPreLoadingService::class.java.simpleName) {
     private val TAG = "VideoPreLoadingService"
@@ -33,6 +34,7 @@ class VideoPreLoadingService :
     private lateinit var cacheDataSourceFactory: CacheDataSource
     private val simpleCache: SimpleCache = CakkieApp.simpleCache
 
+    @Deprecated("Deprecated in Java")
     @OptIn(UnstableApi::class)
     override fun onHandleIntent(intent: Intent?) {
         mContext = applicationContext
@@ -104,6 +106,7 @@ class VideoPreLoadingService :
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         super.onDestroy()
         cachingJob?.cancel()
